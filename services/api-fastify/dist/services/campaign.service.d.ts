@@ -20,24 +20,24 @@ export declare class CampaignService {
     getCampaigns(fastify: FastifyInstance, query: GetCampaignsQuery): Promise<{
         campaigns: ({
             template: {
+                id: string;
                 name: string;
                 type: import("@yeelo/shared-db").$Enums.CampaignType;
                 content: string;
                 variables: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
-                id: string;
                 isActive: boolean;
                 createdAt: Date;
                 updatedAt: Date;
             };
         } & {
+            id: string;
             name: string;
             type: import("@yeelo/shared-db").$Enums.CampaignType;
-            status: import("@yeelo/shared-db").$Enums.CampaignStatus;
             content: string;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             scheduledAt: Date | null;
+            status: import("@yeelo/shared-db").$Enums.CampaignStatus;
             targetAudience: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
             templateId: string | null;
         })[];
@@ -50,24 +50,24 @@ export declare class CampaignService {
     }>;
     getCampaign(fastify: FastifyInstance, id: string): Promise<{
         template: {
+            id: string;
             name: string;
             type: import("@yeelo/shared-db").$Enums.CampaignType;
             content: string;
             variables: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
-            id: string;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
         };
     } & {
+        id: string;
         name: string;
         type: import("@yeelo/shared-db").$Enums.CampaignType;
-        status: import("@yeelo/shared-db").$Enums.CampaignStatus;
         content: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
         scheduledAt: Date | null;
+        status: import("@yeelo/shared-db").$Enums.CampaignStatus;
         targetAudience: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         templateId: string | null;
     }>;
@@ -75,8 +75,8 @@ export declare class CampaignService {
         campaignId: string;
         recipientCount: number;
         recipients: {
-            name: string;
             id: string;
+            name: string;
             phone: string;
             email: string;
         }[];
@@ -91,24 +91,24 @@ export declare class CampaignService {
     }>;
     updateCampaignStatus(fastify: FastifyInstance, id: string, status: string): Promise<{
         template: {
+            id: string;
             name: string;
             type: import("@yeelo/shared-db").$Enums.CampaignType;
             content: string;
             variables: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
-            id: string;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
         };
     } & {
+        id: string;
         name: string;
         type: import("@yeelo/shared-db").$Enums.CampaignType;
-        status: import("@yeelo/shared-db").$Enums.CampaignStatus;
         content: string;
-        id: string;
         createdAt: Date;
         updatedAt: Date;
         scheduledAt: Date | null;
+        status: import("@yeelo/shared-db").$Enums.CampaignStatus;
         targetAudience: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         templateId: string | null;
     }>;

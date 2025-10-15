@@ -33,10 +33,10 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string;
+            phone: string;
             isActive: boolean;
+            address: string;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
@@ -44,8 +44,8 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
+            phone: string;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;
@@ -101,10 +101,10 @@ export declare class FinanceService {
                 createdAt: Date;
                 name: string;
                 updatedAt: Date;
-                phone: string;
                 email: string | null;
-                address: string;
+                phone: string;
                 isActive: boolean;
+                address: string;
                 workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
             };
             customer: {
@@ -112,8 +112,8 @@ export declare class FinanceService {
                 createdAt: Date;
                 name: string;
                 updatedAt: Date;
-                phone: string;
                 email: string | null;
+                phone: string;
                 address: string | null;
                 dateOfBirth: Date | null;
                 gender: string | null;
@@ -175,10 +175,10 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string;
+            phone: string;
             isActive: boolean;
+            address: string;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
@@ -186,8 +186,8 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
+            phone: string;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;
@@ -253,10 +253,10 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string;
+            phone: string;
             isActive: boolean;
+            address: string;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
@@ -264,8 +264,8 @@ export declare class FinanceService {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
+            phone: string;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;

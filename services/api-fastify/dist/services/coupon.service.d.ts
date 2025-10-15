@@ -22,19 +22,19 @@ interface GetCouponsQuery {
 }
 export declare class CouponService {
     createCoupon(fastify: FastifyInstance, data: CreateCouponDto): Promise<{
-        type: import("@yeelo/shared-db").$Enums.CouponType;
-        value: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-        code: string;
         id: string;
+        type: import("@yeelo/shared-db").$Enums.CouponType;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
+        code: string;
+        value: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
         minAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
         maxDiscount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
         usageLimit: number | null;
+        usedCount: number;
         validFrom: Date;
         validUntil: Date;
-        usedCount: number;
     }>;
     validateCoupon(fastify: FastifyInstance, code: string, orderAmount?: number): Promise<{
         valid: boolean;
@@ -64,19 +64,19 @@ export declare class CouponService {
     }>;
     getCoupons(fastify: FastifyInstance, query: GetCouponsQuery): Promise<{
         coupons: {
-            type: import("@yeelo/shared-db").$Enums.CouponType;
-            value: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            code: string;
             id: string;
+            type: import("@yeelo/shared-db").$Enums.CouponType;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
+            code: string;
+            value: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
             minAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
             maxDiscount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
             usageLimit: number | null;
+            usedCount: number;
             validFrom: Date;
             validUntil: Date;
-            usedCount: number;
         }[];
         pagination: {
             page: number;

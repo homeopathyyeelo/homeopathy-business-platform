@@ -9,10 +9,10 @@ export declare class PurchaseController {
         createdAt: Date;
         name: string;
         updatedAt: Date;
-        phone: string;
         email: string | null;
-        address: string | null;
+        phone: string;
         isActive: boolean;
+        address: string | null;
         contactPerson: string;
         gstNumber: string | null;
         creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -24,10 +24,10 @@ export declare class PurchaseController {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string | null;
+            phone: string;
             isActive: boolean;
+            address: string | null;
             contactPerson: string;
             gstNumber: string | null;
             creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -83,10 +83,10 @@ export declare class PurchaseController {
         createdAt: Date;
         name: string;
         updatedAt: Date;
-        phone: string;
         email: string | null;
-        address: string | null;
+        phone: string;
         isActive: boolean;
+        address: string | null;
         contactPerson: string;
         gstNumber: string | null;
         creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -97,10 +97,10 @@ export declare class PurchaseController {
         createdAt: Date;
         name: string;
         updatedAt: Date;
-        phone: string;
         email: string | null;
-        address: string | null;
+        phone: string;
         isActive: boolean;
+        address: string | null;
         contactPerson: string;
         gstNumber: string | null;
         creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -135,10 +135,10 @@ export declare class PurchaseController {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string;
+            phone: string;
             isActive: boolean;
+            address: string;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         vendor: {
@@ -146,10 +146,10 @@ export declare class PurchaseController {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string | null;
+            phone: string;
             isActive: boolean;
+            address: string | null;
             contactPerson: string;
             gstNumber: string | null;
             creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -198,10 +198,10 @@ export declare class PurchaseController {
                 createdAt: Date;
                 name: string;
                 updatedAt: Date;
-                phone: string;
                 email: string | null;
-                address: string;
+                phone: string;
                 isActive: boolean;
+                address: string;
                 workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
             };
             vendor: {
@@ -209,10 +209,10 @@ export declare class PurchaseController {
                 createdAt: Date;
                 name: string;
                 updatedAt: Date;
-                phone: string;
                 email: string | null;
-                address: string | null;
+                phone: string;
                 isActive: boolean;
+                address: string | null;
                 contactPerson: string;
                 gstNumber: string | null;
                 creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
@@ -267,10 +267,10 @@ export declare class PurchaseController {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string;
+            phone: string;
             isActive: boolean;
+            address: string;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         vendor: {
@@ -278,10 +278,10 @@ export declare class PurchaseController {
             createdAt: Date;
             name: string;
             updatedAt: Date;
-            phone: string;
             email: string | null;
-            address: string | null;
+            phone: string;
             isActive: boolean;
+            address: string | null;
             contactPerson: string;
             gstNumber: string | null;
             creditLimit: import("@yeelo/shared-db/generated/client/runtime/library").Decimal | null;
