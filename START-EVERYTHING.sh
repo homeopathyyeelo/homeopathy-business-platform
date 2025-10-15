@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#START-EVERYTHING.sh
 # Yeelo Homeopathy Platform - Complete Startup Script
 echo "🚀 Starting Yeelo Homeopathy Platform..."
 cd "$(dirname "$0")"
