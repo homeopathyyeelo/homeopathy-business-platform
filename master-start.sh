@@ -170,7 +170,8 @@ echo "================================"
 # 1. NestJS API (Port 3001) - Fixed
 echo -e "${YELLOW}Starting NestJS API on port 3001...${NC}"
 cd services/api-nest
-PORT=3001 npm run start:prod > /tmp/nestjs-api.log 2>&1 &
+export PORT=3001
+npm run start:dev > /tmp/nestjs-api.log 2>&1 &
 NESTJS_PID=$!
 PIDS+=($NESTJS_PID)
 cd ../..
@@ -179,7 +180,8 @@ sleep 3
 # 2. Fastify API (Port 3002) - Fixed
 echo -e "${YELLOW}Starting Fastify API on port 3002...${NC}"
 cd services/api-fastify
-PORT=3002 npm run start > /tmp/fastify-api.log 2>&1 &
+export PORT=3002
+npm run dev > /tmp/fastify-api.log 2>&1 &
 FASTIFY_PID=$!
 PIDS+=($FASTIFY_PID)
 cd ../..
@@ -188,7 +190,8 @@ sleep 3
 # 3. Express API (Port 3003)
 echo -e "${YELLOW}Starting Express API on port 3003...${NC}"
 cd services/api-express
-PORT=3003 node src/index-complete.js > /tmp/express-api.log 2>&1 &
+export PORT=3003
+node src/index-complete.js > /tmp/express-api.log 2>&1 &
 EXPRESS_PID=$!
 PIDS+=($EXPRESS_PID)
 cd ../..
@@ -197,7 +200,8 @@ sleep 3
 # 4. Golang API (Port 3004) - Fixed
 echo -e "${YELLOW}Starting Golang API on port 3004...${NC}"
 cd services/api-golang
-PORT=3004 go run . > /tmp/golang-api.log 2>&1 &
+export PORT=3004
+go run . > /tmp/golang-api.log 2>&1 &
 GOLANG_PID=$!
 PIDS+=($GOLANG_PID)
 cd ../..
@@ -206,7 +210,8 @@ sleep 3
 # 5. Auth Service (Port 3005) - Fixed
 echo -e "${YELLOW}Starting Auth Service on port 3005...${NC}"
 cd services/auth-service
-PORT=3005 npm start > /tmp/auth-api.log 2>&1 &
+export PORT=3005
+npm run dev > /tmp/auth-api.log 2>&1 &
 AUTH_PID=$!
 PIDS+=($AUTH_PID)
 cd ../..
