@@ -1,0 +1,250 @@
+version: '3.8'
+
+services:
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+
+  # Kafka for event streaming
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: yeelo_homeopathy
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=vector
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  # MinIO for object storage (S3-compatible)
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+  # Kafka UI for monitoring
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    ports:
+      - "8080:8080"
+
+  # AI Service (Python FastAPI)
+  ai-service:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      MINIO_URL: http://minio:9000
+      KAFKA_BROKERS: kafka:9092
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      PYTHONPATH: /app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    volumes:
+      - ./services/ai-service:/app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+  # Outbox Worker (Node.js)
+  outbox-worker:
+    build:
+      context: ./services/outbox-worker
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      KAFKA_BROKERS: kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+    volumes:
+      - ./services/outbox-worker:/app
+
+  # Campaign Sender (Node.js)
+  campaign-sender:
+    build:
+      context: ./services/campaign-sender
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://yeelo:yeelo@postgres:5432/yeelo
+      KAFKA_BROKERS: kafka:9092
+      WHATSAPP_API_KEY: ${WHATSAPP_API_KEY:-}
+      TWILIO_API_KEY: ${TWILIO_API_KEY:-}
+    depends_on:
+      - postgres
+      - kafka
+    volumes:
+      - ./services/campaign-sender:/app
+
+  # API Gateway (Express)
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      AI_SERVICE_URL: http://ai-service:8001
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+      - ai-service
+    volumes:
+      - ./services/api-gateway:/app
+
+  # Main API (NestJS)
+  api-nest:
+    build:
+      context: ./services/api-nest
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:9092
+      PORT: 3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    volumes:
+      - ./services/api-nest:/app
+
+  # Campaign API (Fastify)
+  api-fastify:
+    build:
+      context: ./services/api-fastify
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:9092
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    volumes:
+      - ./services/api-fastify:/app
+
+  # Next.js Frontend - Run locally with: PORT=4000 npm run dev:app
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.frontend
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://localhost:3000
+  #     NEXT_PUBLIC_AI_SERVICE_URL: http://localhost:8001
+  #   ports:
+  #     - "4000:3000"
+  #   depends_on:
+  #     - api-gateway
+  #   volumes:
+  #     - .:/app
+  #     - /app/node_modules
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  # Grafana for dashboards
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-logs:
+  minio-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  default:
+    name: yeelo-network

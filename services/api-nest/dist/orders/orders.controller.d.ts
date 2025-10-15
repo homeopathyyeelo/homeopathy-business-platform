@@ -1,0 +1,192 @@
+import { OrdersService } from "./orders.service";
+import type { CreateOrderDto } from "./dto/create-order.dto";
+export declare class OrdersController {
+    private readonly ordersService;
+    constructor(ordersService: OrdersService);
+    createOrder(createOrderDto: CreateOrderDto, req: any): Promise<any>;
+    getOrder(id: string): Promise<{
+        user: {
+            shopId: string | null;
+            id: string;
+            createdAt: Date;
+            name: string;
+            updatedAt: Date;
+            phone: string | null;
+            email: string;
+            isActive: boolean;
+            role: import("@yeelo/shared-db").$Enums.UserRole;
+        };
+        shop: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            updatedAt: Date;
+            phone: string;
+            email: string | null;
+            address: string;
+            isActive: boolean;
+            workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
+        };
+        customer: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            updatedAt: Date;
+            phone: string;
+            email: string | null;
+            address: string | null;
+            dateOfBirth: Date | null;
+            gender: string | null;
+            marketingConsent: boolean;
+            loyaltyPoints: number;
+        };
+        orderItems: ({
+            product: {
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                shopId: string;
+                id: string;
+                createdAt: Date;
+                name: string;
+                updatedAt: Date;
+                isActive: boolean;
+                description: string | null;
+                imageUrl: string | null;
+                category: string | null;
+            };
+        } & {
+            productId: string;
+            quantity: number;
+            price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            id: string;
+            createdAt: Date;
+            orderId: string;
+        })[];
+    } & {
+        customerId: string;
+        shopId: string;
+        userId: string | null;
+        orderType: import("@yeelo/shared-db").$Enums.OrderType;
+        paymentStatus: import("@yeelo/shared-db").$Enums.PaymentStatus;
+        notes: string | null;
+        id: string;
+        status: import("@yeelo/shared-db").$Enums.OrderStatus;
+        createdAt: Date;
+        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        updatedAt: Date;
+    }>;
+    getOrders(shopId?: string, customerId?: string, page?: string, limit?: string): Promise<{
+        orders: ({
+            shop: {
+                id: string;
+                createdAt: Date;
+                name: string;
+                updatedAt: Date;
+                phone: string;
+                email: string | null;
+                address: string;
+                isActive: boolean;
+                workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
+            };
+            customer: {
+                id: string;
+                createdAt: Date;
+                name: string;
+                updatedAt: Date;
+                phone: string;
+                email: string | null;
+                address: string | null;
+                dateOfBirth: Date | null;
+                gender: string | null;
+                marketingConsent: boolean;
+                loyaltyPoints: number;
+            };
+            orderItems: ({
+                product: {
+                    price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                    shopId: string;
+                    id: string;
+                    createdAt: Date;
+                    name: string;
+                    updatedAt: Date;
+                    isActive: boolean;
+                    description: string | null;
+                    imageUrl: string | null;
+                    category: string | null;
+                };
+            } & {
+                productId: string;
+                quantity: number;
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                id: string;
+                createdAt: Date;
+                orderId: string;
+            })[];
+        } & {
+            customerId: string;
+            shopId: string;
+            userId: string | null;
+            orderType: import("@yeelo/shared-db").$Enums.OrderType;
+            paymentStatus: import("@yeelo/shared-db").$Enums.PaymentStatus;
+            notes: string | null;
+            id: string;
+            status: import("@yeelo/shared-db").$Enums.OrderStatus;
+            createdAt: Date;
+            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            updatedAt: Date;
+        })[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            pages: number;
+        };
+    }>;
+    updateOrderStatus(id: string, status: string, req: any): Promise<{
+        customer: {
+            id: string;
+            createdAt: Date;
+            name: string;
+            updatedAt: Date;
+            phone: string;
+            email: string | null;
+            address: string | null;
+            dateOfBirth: Date | null;
+            gender: string | null;
+            marketingConsent: boolean;
+            loyaltyPoints: number;
+        };
+        orderItems: ({
+            product: {
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                shopId: string;
+                id: string;
+                createdAt: Date;
+                name: string;
+                updatedAt: Date;
+                isActive: boolean;
+                description: string | null;
+                imageUrl: string | null;
+                category: string | null;
+            };
+        } & {
+            productId: string;
+            quantity: number;
+            price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            id: string;
+            createdAt: Date;
+            orderId: string;
+        })[];
+    } & {
+        customerId: string;
+        shopId: string;
+        userId: string | null;
+        orderType: import("@yeelo/shared-db").$Enums.OrderType;
+        paymentStatus: import("@yeelo/shared-db").$Enums.PaymentStatus;
+        notes: string | null;
+        id: string;
+        status: import("@yeelo/shared-db").$Enums.OrderStatus;
+        createdAt: Date;
+        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        updatedAt: Date;
+    }>;
+}

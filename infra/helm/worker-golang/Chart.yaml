@@ -1,0 +1,15 @@
+apiVersion: v2
+name: worker-golang
+description: Go Kafka Consumer Worker for Yeelo Homeopathy Platform
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - worker
+  - kafka
+  - golang
+  - microservices
+home: https://github.com/yeelo/homeopathy-platform
+maintainers:
+  - name: Yeelo Team
+    email: dev@yeelo.com

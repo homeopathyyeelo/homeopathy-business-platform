@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yeelo-ai-service
+  namespace: yeelo
+  labels:
+    app: yeelo-ai-service
+    tier: ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: yeelo-ai-service
+  template:
+    metadata:
+      labels:
+        app: yeelo-ai-service
+        tier: ai
+    spec:
+      containers:
+      - name: ai-service
+        image: yeelo-ai-service:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: yeelo-secrets
+              key: database_url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: yeelo-secrets
+              key: redis_url
+        - name: MINIO_URL
+          valueFrom:
+            configMapKeyRef:
+              name: yeelo-config
+              key: minio_url
+        - name: KAFKA_BROKERS
+          valueFrom:
+            configMapKeyRef:
+              name: yeelo-config
+              key: kafka_brokers
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: yeelo-secrets
+              key: openai_api_key
+        - name: PYTHONPATH
+          value: "/app"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yeelo-ai-service-service
+  namespace: yeelo
+  labels:
+    app: yeelo-ai-service
+spec:
+  selector:
+    app: yeelo-ai-service
+  ports:
+  - port: 8001
+    targetPort: 8001
+    protocol: TCP
+  type: ClusterIP

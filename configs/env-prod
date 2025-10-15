@@ -1,0 +1,24 @@
+# Production environment template (reference for secrets/Helm)
+NODE_ENV=production
+
+# Database
+DATABASE_URL=postgresql://APP_USER:APP_PASSWORD@DB_HOST:5432/yeelo_homeopathy?schema=public
+
+# Caches & brokers
+REDIS_URL=redis://redis:6379
+KAFKA_BROKERS=kafka:9092
+
+# Auth/JWT
+# Prefer RS256 JWKS managed by auth-service
+JWT_ISSUER=urn:yeelo:auth
+# JWT_SECRET=  # only if using HS256 fallback
+# JWT_PRIVATE_JWK=
+# JWT_PUBLIC_JWK=
+
+# Service URLs (cluster-internal)
+AUTH_SERVICE_URL=http://auth-service:3001
+ORDERS_SERVICE_URL=http://orders-service:3002
+CAMPAIGNS_SERVICE_URL=http://campaigns-service:3003
+AI_SERVICE_URL=http://ai-service:3004
+ANALYTICS_SERVICE_URL=http://analytics-service:3005
+ALLOWED_ORIGINS=https://yourdomain.com

@@ -1,0 +1,35 @@
+import type { Metadata } from 'next'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
+import { AuthProvider } from '@/hooks/useAuth'
+import ProductionERPLayout from '@/components/layout/ProductionERPLayout'
+import { QueryProvider } from '@/components/providers/QueryProvider'
+
+export const metadata: Metadata = {
+  title: 'Yeelo Homeopathy Platform',
+  description: 'Complete homeopathy business management platform',
+  generator: 'Yeelo Platform',
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en">
+      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+        <QueryProvider>
+          <AuthProvider>
+            <ProductionERPLayout>
+              {children}
+            </ProductionERPLayout>
+          </AuthProvider>
+        </QueryProvider>
+        <Analytics />
+      </body>
+    </html>
+  )
+}

@@ -1,0 +1,264 @@
+version: '3.8'
+
+services:
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Kafka for event streaming
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-yeelo_homeopathy}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=vector
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c log_statement=all
+      -c log_min_duration_statement=1000
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # MinIO for object storage (S3-compatible)
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # AI Service (Python FastAPI)
+  ai-service:
+    image: yeelo-ai-service:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      MINIO_URL: http://minio:9000
+      KAFKA_BROKERS: kafka:9092
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      PYTHONPATH: /app
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Outbox Worker (Node.js)
+  outbox-worker:
+    image: yeelo-outbox-worker:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      KAFKA_BROKERS: kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Campaign Sender (Node.js)
+  campaign-sender:
+    image: yeelo-campaign-sender:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      KAFKA_BROKERS: kafka:9092
+      WHATSAPP_API_KEY: ${WHATSAPP_API_KEY}
+      TWILIO_API_KEY: ${TWILIO_API_KEY}
+    depends_on:
+      - postgres
+      - kafka
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # API Gateway (NestJS)
+  api-gateway:
+    image: yeelo-api-gateway:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      AI_SERVICE_URL: http://ai-service:8001
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+      - ai-service
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Main API (NestJS)
+  api-nest:
+    image: yeelo-api-nest:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      KAFKA_BROKERS: kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Campaign API (Fastify)
+  api-fastify:
+    image: yeelo-api-fastify:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-yeelo_homeopathy}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      KAFKA_BROKERS: kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3003:3003"
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Next.js Frontend
+  frontend:
+    image: yeelo-frontend:latest
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+      NEXT_PUBLIC_AI_SERVICE_URL: ${NEXT_PUBLIC_AI_SERVICE_URL:-http://localhost:8001}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Grafana for dashboards
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infra/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - api-gateway
+    restart: unless-stopped
+    networks:
+      - yeelo-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-logs:
+  minio-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  yeelo-network:
+    driver: bridge
+

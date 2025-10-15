@@ -1,0 +1,198 @@
+#!/bin/bash
+
+# Yeelo Homeopathy Platform - Complete Startup Script
+echo "🚀 Starting Yeelo Homeopathy Platform..."
+cd "$(dirname "$0")"
+
+# Set environment variables
+export KAFKAJS_NO_PARTITIONER_WARNING=1
+export NODE_ENV=development
+
+# Function to check if port is available
+check_port() {
+    if ss -tlnp | grep -q ":$1 "; then
+        echo "⚠️  Port $1 is already in use"
+        return 1
+    fi
+    return 0
+}
+
+# Function to wait for service to be ready
+wait_for_service() {
+    local url=$1
+    local name=$2
+    local max_attempts=30
+    local attempt=1
+    
+    echo "⏳ Waiting for $name to start..."
+    while [ $attempt -le $max_attempts ]; do
+        if curl -s "$url" > /dev/null 2>&1; then
+            echo "✅ $name is ready at $url"
+            return 0
+        fi
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    echo "❌ $name failed to start after $max_attempts attempts"
+    return 1
+}
+
+# Start Docker infrastructure
+echo "🐳 Starting Docker infrastructure..."
+docker-compose -f docker-compose.dev.yml up -d
+sleep 5
+
+# Build all services first
+echo "🔨 Building all services..."
+npm run build
+
+# Start services in background with proper ports
+echo "🌐 Starting backend services..."
+
+# 1. Golang API (Port 3004)
+echo "Starting Golang API on port 3004..."
+if [ -d services/api-golang ]; then
+  cd services/api-golang && go run main.go > /tmp/golang-api.log 2>&1 &
+  GOLANG_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping Golang API (services/api-golang not found)"
+fi
+
+# 2. Express API (Port 3013) 
+echo "Starting Express API on port 3013..."
+if [ -d services/api-express ]; then
+  cd services/api-express && npm start > /tmp/express-api.log 2>&1 &
+  EXPRESS_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping Express API (services/api-express not found)"
+fi
+
+# 3. Auth Service (Port 3005)
+echo "Starting Auth Service on port 3005..."
+if [ -d services/auth-service ]; then
+  cd services/auth-service && PORT=3005 npm run dev > /tmp/auth-service.log 2>&1 &
+  AUTH_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping Auth Service (services/auth-service not found)"
+fi
+
+# 4. NestJS API (Port 3002) - Use production mode to avoid hanging
+echo "Starting NestJS API on port 3002..."
+if [ -d services/api-nest ]; then
+  cd services/api-nest && npm run build && npm run start:prod > /tmp/nestjs-api.log 2>&1 &
+  NESTJS_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping NestJS API (services/api-nest not found)"
+fi
+
+# 5. Fastify API (Port 3001)
+echo "Starting Fastify API on port 3001..."
+if [ -d services/api-fastify ]; then
+  cd services/api-fastify && PORT=3001 npm run dev > /tmp/fastify-api.log 2>&1 &
+  FASTIFY_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping Fastify API (services/api-fastify not found)"
+fi
+
+# 6. GraphQL Gateway (Port 4000)
+echo "Starting GraphQL Gateway on port 4000..."
+if [ -d services/graphql-gateway ]; then
+  cd services/graphql-gateway && PORT=4000 npm run dev > /tmp/graphql-gateway.log 2>&1 &
+  GRAPHQL_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping GraphQL Gateway (services/graphql-gateway not found)"
+fi
+
+# 7. API Gateway (Port 3006)
+echo "Starting API Gateway on port 3006..."
+if [ -d services/api-gateway ]; then
+  cd services/api-gateway && PORT=3006 npm run dev > /tmp/api-gateway.log 2>&1 &
+  GATEWAY_PID=$!
+  cd ../..
+else
+  echo "⚠️  Skipping API Gateway (services/api-gateway not found)"
+fi
+
+# Wait a bit for services to initialize
+sleep 10
+
+# 8. Next.js Frontend (Port 3000) - Start last
+echo "🎨 Starting Next.js Frontend on port 3000..."
+npm run dev:app > /tmp/nextjs-frontend.log 2>&1 &
+FRONTEND_PID=$!
+
+# Wait for key services to be ready
+echo "🔍 Checking service health..."
+wait_for_service "http://localhost:3004/health" "Golang API"
+wait_for_service "http://localhost:3013/health" "Express API" 
+wait_for_service "http://localhost:3000" "Next.js Frontend"
+
+# Display status
+echo ""
+echo "🎉 Yeelo Homeopathy Platform Started!"
+echo "=================================="
+echo "🌐 Frontend:           http://localhost:3000"
+echo "🔧 Golang API:        http://localhost:3004"
+echo "📊 Golang Swagger:    http://localhost:3004/swagger"
+echo "⚡ Express API:       http://localhost:3013"
+echo "🔐 Auth Service:      http://localhost:3005"
+echo "🏗️  NestJS API:        http://localhost:3002"
+echo "🚀 Fastify API:       http://localhost:3001"
+echo "📈 GraphQL Gateway:   http://localhost:4000/graphql"
+echo "🌉 API Gateway:       http://localhost:3006"
+echo "📋 Kafka UI:          http://localhost:8080"
+echo ""
+echo "📝 Logs are available in /tmp/*-api.log files"
+echo "🛑 Press Ctrl+C to stop all services"
+
+# Store PIDs for cleanup
+echo "${GOLANG_PID:-} ${EXPRESS_PID:-} ${AUTH_PID:-} ${NESTJS_PID:-} ${FASTIFY_PID:-} ${GRAPHQL_PID:-} ${GATEWAY_PID:-} ${FRONTEND_PID:-}" > /tmp/yeelo-pids.txt
+
+# Trap Ctrl+C to cleanup
+cleanup() {
+    echo ""
+    echo "🛑 Stopping all services..."
+    if [ -f /tmp/yeelo-pids.txt ]; then
+        for pid in $(cat /tmp/yeelo-pids.txt); do
+            kill $pid 2>/dev/null || true
+        done
+        rm /tmp/yeelo-pids.txt
+    fi
+    docker-compose -f docker-compose.dev.yml down
+    echo "✅ All services stopped"
+    exit 0
+}
+
+trap cleanup INT TERM
+
+# Keep script running
+echo "✨ All services are running! Check the URLs above."
+echo "📊 Monitor logs: tail -f /tmp/*-api.log"
+echo ""
+
+# Wait indefinitely
+while true; do
+    sleep 10
+    # Check if any critical service died
+    if [ -n "${GOLANG_PID:-}" ] && ! kill -0 $GOLANG_PID 2>/dev/null; then
+        echo "❌ Golang API died, restarting..."
+        if [ -d services/api-golang ]; then
+          cd services/api-golang && go run . > /tmp/golang-api.log 2>&1 &
+          GOLANG_PID=$!
+          cd ../..
+        else
+          echo "⚠️  Cannot restart Golang API (services/api-golang not found)"
+        fi
+    fi
+    if ! kill -0 $FRONTEND_PID 2>/dev/null; then
+        echo "❌ Frontend died, restarting..."
+        npm run dev:app > /tmp/nextjs-frontend.log 2>&1 &
+        FRONTEND_PID=$!
+    fi
+done

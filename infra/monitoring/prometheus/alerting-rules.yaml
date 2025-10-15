@@ -1,0 +1,191 @@
+# Prometheus Alerting Rules for Yeelo Platform
+# Learning Notes:
+# - Business-specific alerts for homeopathy platform
+# - SLA-based alerting with proper thresholds
+# - Integration with PagerDuty/Slack for incident response
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: yeelo-platform-alerts
+  namespace: yeelo-platform
+  labels:
+    app: prometheus
+    release: prometheus
+spec:
+  groups:
+  - name: yeelo.platform.alerts
+    rules:
+    # API Gateway Alerts
+    - alert: APIGatewayHighErrorRate
+      expr: |
+        (
+          rate(http_requests_total{job="api-gateway",code=~"5.."}[5m]) /
+          rate(http_requests_total{job="api-gateway"}[5m])
+        ) > 0.05
+      for: 2m
+      labels:
+        severity: critical
+        service: api-gateway
+      annotations:
+        summary: "API Gateway error rate is above 5%"
+        description: "API Gateway has {{ $value | humanizePercentage }} error rate for the last 5 minutes"
+    
+    - alert: APIGatewayHighLatency
+      expr: |
+        histogram_quantile(0.95, 
+          rate(http_request_duration_seconds_bucket{job="api-gateway"}[5m])
+        ) > 1.0
+      for: 5m
+      labels:
+        severity: warning
+        service: api-gateway
+      annotations:
+        summary: "API Gateway 95th percentile latency is above 1s"
+        description: "API Gateway 95th percentile latency is {{ $value }}s"
+    
+    # Order Service Alerts
+    - alert: OrderServiceDown
+      expr: up{job="orders-service"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        service: orders-service
+      annotations:
+        summary: "Orders service is down"
+        description: "Orders service has been down for more than 1 minute"
+    
+    - alert: OrderProcessingBacklog
+      expr: |
+        kafka_consumer_lag_sum{topic="orders",consumergroup="orders-service"} > 1000
+      for: 5m
+      labels:
+        severity: warning
+        service: orders-service
+      annotations:
+        summary: "Order processing backlog is high"
+        description: "Order processing has {{ $value }} messages in backlog"
+    
+    # Campaign Service Alerts
+    - alert: CampaignServiceHighMemoryUsage
+      expr: |
+        (
+          container_memory_working_set_bytes{pod=~"campaigns-service-.*"} /
+          container_spec_memory_limit_bytes{pod=~"campaigns-service-.*"}
+        ) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+        service: campaigns-service
+      annotations:
+        summary: "Campaign service memory usage is above 80%"
+        description: "Campaign service memory usage is {{ $value | humanizePercentage }}"
+    
+    - alert: CampaignFailureRate
+      expr: |
+        (
+          rate(campaign_status_total{status="failed"}[10m]) /
+          rate(campaign_status_total[10m])
+        ) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+        service: campaigns-service
+      annotations:
+        summary: "Campaign failure rate is above 10%"
+        description: "{{ $value | humanizePercentage }} of campaigns are failing"
+    
+    # AI Service Alerts
+    - alert: AIServiceHighCost
+      expr: |
+        rate(ai_request_cost_total[1h]) > 100
+      for: 10m
+      labels:
+        severity: warning
+        service: ai-service
+      annotations:
+        summary: "AI service cost is high"
+        description: "AI service is costing ${{ $value }}/hour"
+    
+    - alert: AIServiceTimeout
+      expr: |
+        rate(ai_request_duration_seconds_count{status="timeout"}[5m]) > 0.1
+      for: 2m
+      labels:
+        severity: warning
+        service: ai-service
+      annotations:
+        summary: "AI service experiencing timeouts"
+        description: "AI service has {{ $value }} timeouts per second"
+    
+    # Database Alerts
+    - alert: DatabaseConnectionsHigh
+      expr: |
+        pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+      for: 5m
+      labels:
+        severity: warning
+        service: database
+      annotations:
+        summary: "Database connection usage is high"
+        description: "Database is using {{ $value | humanizePercentage }} of max connections"
+    
+    - alert: DatabaseSlowQueries
+      expr: |
+        rate(pg_stat_statements_mean_time_seconds[5m]) > 1.0
+      for: 5m
+      labels:
+        severity: warning
+        service: database
+      annotations:
+        summary: "Database has slow queries"
+        description: "Average query time is {{ $value }}s"
+    
+    # Kafka Alerts
+    - alert: KafkaConsumerLag
+      expr: |
+        kafka_consumer_lag_sum > 5000
+      for: 5m
+      labels:
+        severity: critical
+        service: kafka
+      annotations:
+        summary: "Kafka consumer lag is high"
+        description: "Consumer group {{ $labels.consumergroup }} has {{ $value }} messages in lag"
+    
+    - alert: KafkaBrokerDown
+      expr: |
+        kafka_brokers < 3
+      for: 1m
+      labels:
+        severity: critical
+        service: kafka
+      annotations:
+        summary: "Kafka broker is down"
+        description: "Only {{ $value }} Kafka brokers are available"
+    
+    # Business Metrics Alerts
+    - alert: DailyRevenueDropped
+      expr: |
+        (
+          sum(increase(order_total_amount[1d])) -
+          sum(increase(order_total_amount[1d] offset 1d))
+        ) / sum(increase(order_total_amount[1d] offset 1d)) < -0.2
+      for: 1h
+      labels:
+        severity: warning
+        service: business
+      annotations:
+        summary: "Daily revenue dropped significantly"
+        description: "Daily revenue dropped by {{ $value | humanizePercentage }} compared to yesterday"
+    
+    - alert: CustomerAcquisitionDown
+      expr: |
+        rate(user_registrations_total[1h]) < 0.5
+      for: 2h
+      labels:
+        severity: warning
+        service: business
+      annotations:
+        summary: "Customer acquisition rate is low"
+        description: "Only {{ $value }} new customers per hour in the last 2 hours"

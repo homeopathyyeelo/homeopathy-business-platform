@@ -1,0 +1,1982 @@
+// Prisma schema for comprehensive ERP master data
+// Supports all 100+ master data types
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// SYSTEM-WIDE MASTERS (CORE MASTERS)
+// ============================================================================
+
+model CompanyProfile {
+  id          String   @id @default(cuid())
+  name        String
+  legal_name  String
+  address     String
+  city        String
+  state       String
+  pincode     String
+  phone       String
+  email       String
+  website     String?
+  gst_number  String
+  pan_number  String
+  license_number String?
+  logo_url    String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("company_profiles")
+}
+
+model Branch {
+  id           String   @id @default(cuid())
+  name         String
+  code         String   @unique
+  address      String
+  city         String
+  state        String
+  pincode      String
+  phone        String
+  email        String?
+  manager_id   String?
+  manager_name String?
+  is_head_office Boolean @default(false)
+  is_active    Boolean  @default(true)
+  working_hours Json?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("branches")
+}
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  head_id     String?
+  head_name   String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("departments")
+}
+
+model Role {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  permissions    Json     // Array of {module: string, actions: string[]}
+  is_system_role Boolean  @default(false)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("roles")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  username       String   @unique
+  email          String   @unique
+  phone          String
+  first_name     String
+  last_name      String
+  role_id        String
+  role_name      String?
+  department_id  String?
+  department_name String?
+  branch_id      String?
+  branch_name    String?
+  employee_code  String?
+  designation    String?
+  date_of_joining DateTime?
+  is_active      Boolean  @default(true)
+  last_login     DateTime?
+  profile_image  String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Currency {
+  id              String   @id @default(cuid())
+  code            String   @unique // INR, USD, EUR
+  name            String
+  symbol          String
+  exchange_rate   Float    @default(1.0)
+  is_base_currency Boolean @default(false)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("currencies")
+}
+
+model TaxSlab {
+  id             String   @id @default(cuid())
+  name           String
+  rate           Float
+  description    String?
+  hsn_code       String?
+  is_active      Boolean  @default(true)
+  effective_from DateTime
+  effective_to   DateTime?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("tax_slabs")
+}
+
+model UOM {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique // ml, gm, bottle, strip
+  category       String   // weight, volume, count, length, area
+  conversion_factor Float @default(1.0)
+  is_base_unit   Boolean  @default(false)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("uoms")
+}
+
+model PaymentMethod {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique // CASH, CARD, UPI, CREDIT
+  type           String   // cash, digital, credit
+  is_active      Boolean  @default(true)
+  processing_fee Float?
+  min_amount     Float?
+  max_amount     Float?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("payment_methods")
+}
+
+model NotificationTemplate {
+  id         String   @id @default(cuid())
+  name       String
+  type       String   // sms, email, whatsapp, push
+  subject    String?
+  body       String
+  variables  Json     // Array of placeholder variables
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("notification_templates")
+}
+
+// ============================================================================
+// PRODUCT & INVENTORY MASTERS
+// ============================================================================
+
+model Product {
+  id                      String   @id @default(cuid())
+  name                    String
+  code                    String   @unique
+  description             String?
+  category_id             String
+  category_name           String?
+  brand_id                String?
+  brand_name              String?
+  potency_id              String?
+  potency_name            String?
+  packing_size_id         String
+  packing_size_name       String?
+  hsn_code_id             String?
+  hsn_code                String?
+  barcode                 String?
+  reorder_level           Int      @default(0)
+  min_stock_level         Int      @default(0)
+  max_stock_level         Int      @default(0)
+  is_prescription_required Boolean @default(false)
+  is_active               Boolean  @default(true)
+  image_url               String?
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  parent_id   String?
+  parent_name String?
+  description String?
+  image_url   String?
+  sort_order  Int      @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Brand {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  country     String?
+  website     String?
+  logo_url    String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("brands")
+}
+
+model ProductGroup {
+  id            String   @id @default(cuid())
+  name          String
+  code          String   @unique
+  description   String?
+  category_ids  Json     // Array of category IDs
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("product_groups")
+}
+
+model Potency {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique // 30C, 200C, 1M, Q
+  value       Float
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("potencies")
+}
+
+model PackingSize {
+  id         String   @id @default(cuid())
+  name       String
+  code       String   @unique
+  quantity   Float
+  unit_id    String
+  unit_name  String?
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("packing_sizes")
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  type        String   // liquid, tablet, powder, cream, drops, syrup
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("product_variants")
+}
+
+model Batch {
+  id                String   @id @default(cuid())
+  batch_number      String
+  product_id        String
+  product_name      String?
+  sku_code          String?
+  manufacturing_date DateTime
+  expiry_date       DateTime
+  quantity          Int
+  purchase_rate     Float
+  selling_rate      Float
+  mrp               Float
+  vendor_id         String?
+  vendor_name       String?
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("batches")
+}
+
+model RackLocation {
+  id                   String   @id @default(cuid())
+  name                 String
+  code                 String   @unique
+  warehouse_id         String?
+  warehouse_name       String?
+  type                 String   // rack, shelf, bin, cold_storage
+  capacity             Int?
+  temperature_controlled Boolean @default(false)
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("rack_locations")
+}
+
+model Warehouse {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  address     String
+  city        String
+  state       String
+  pincode     String
+  phone       String?
+  manager_id  String?
+  manager_name String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("warehouses")
+}
+
+model HSNCode {
+  id             String   @id @default(cuid())
+  code           String   @unique // 8-digit HSN code
+  description    String
+  gst_rate       Float
+  is_active      Boolean  @default(true)
+  effective_from DateTime
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("hsn_codes")
+}
+
+model PriceList {
+  id             String   @id @default(cuid())
+  name           String
+  type           String   // purchase, sale, mrp
+  effective_from DateTime
+  effective_to   DateTime?
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("price_lists")
+}
+
+model SKUCode {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  product_id  String
+  product_name String?
+  variant     String // e.g., "30ml Liquid", "10 Tablets"
+  barcode     String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("sku_codes")
+}
+
+model Subcategory {
+  id                 String   @id @default(cuid())
+  name               String
+  code               String   @unique
+  parent_category_id String
+  parent_category_name String?
+  description        String?
+  image_url          String?
+  sort_order         Int      @default(0)
+  is_active          Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("subcategories")
+}
+
+model DiscountOffer {
+  id                     String   @id @default(cuid())
+  name                   String
+  code                   String   @unique
+  type                   String   // percentage, fixed_amount, buy_x_get_y
+  value                  Float
+  min_purchase_amount    Float?
+  max_discount_amount    Float?
+  valid_from             DateTime
+  valid_to               DateTime
+  applicable_products    Json?    // Array of product IDs
+  applicable_categories  Json?    // Array of category IDs
+  is_active              Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  @@map("discount_offers")
+}
+
+model ReorderLevel {
+  id              String   @id @default(cuid())
+  product_id      String
+  product_name    String?
+  min_level       Int
+  max_level       Int
+  reorder_quantity Int
+  lead_time_days  Int
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("reorder_levels")
+}
+
+// ============================================================================
+// SALES MASTERS
+// ============================================================================
+
+model SalesType {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  is_retail   Boolean  @default(false)
+  is_wholesale Boolean @default(false)
+  is_b2b      Boolean  @default(false)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("sales_types")
+}
+
+model InvoiceSeries {
+  id            String   @id @default(cuid())
+  name          String
+  prefix        String // INV, RET, WHO
+  start_number  Int
+  current_number Int
+  end_number    Int
+  branch_id     String?
+  sales_type_id String?
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("invoice_series")
+}
+
+model PriceLevel {
+  id                   String   @id @default(cuid())
+  name                 String
+  code                 String   @unique
+  description          String?
+  discount_percentage  Float?
+  markup_percentage    Float?
+  is_default           Boolean  @default(false)
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("price_levels")
+}
+
+model Salesperson {
+  id                    String   @id @default(cuid())
+  name                  String
+  code                  String   @unique
+  phone                 String
+  email                 String?
+  department_id         String?
+  branch_id             String?
+  commission_percentage Float?
+  is_active             Boolean  @default(true)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@map("salespeople")
+}
+
+model PaymentTerm {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  days        Int      // 0 for immediate, 7, 15, 30, etc.
+  description String?
+  is_default  Boolean  @default(false)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("payment_terms")
+}
+
+model CreditLimit {
+  id              String   @id @default(cuid())
+  customer_id     String
+  customer_name   String?
+  limit_amount    Float
+  used_amount     Float    @default(0)
+  available_amount Float   @default(0)
+  valid_from      DateTime
+  valid_to        DateTime?
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("credit_limits")
+}
+
+model POSSettings {
+  id                       String   @id @default(cuid())
+  branch_id                String
+  branch_name              String?
+  default_payment_method   String
+  enable_loyalty_points    Boolean  @default(false)
+  loyalty_points_rate      Float    @default(0)
+  enable_discounts         Boolean  @default(true)
+  max_discount_percentage  Float    @default(100)
+  enable_round_off         Boolean  @default(true)
+  round_off_method         String   @default("nearest")
+  print_receipt            Boolean  @default(true)
+  receipt_template_id      String?
+  is_active                Boolean  @default(true)
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  @@map("pos_settings")
+}
+
+model ReturnReason {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  type        String   // damaged, expired, wrong_item, customer_request, quality_issue
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("return_reasons")
+}
+
+// ============================================================================
+// PURCHASE MASTERS
+// ============================================================================
+
+model Vendor {
+  id                String   @id @default(cuid())
+  name              String
+  code              String   @unique
+  contact_person    String
+  phone             String
+  email             String?
+  address           String
+  city              String
+  state             String
+  pincode           String
+  gst_number        String?
+  pan_number        String?
+  payment_terms_id  String?
+  payment_terms_name String?
+  credit_limit      Float?
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("vendors")
+}
+
+model VendorType {
+  id               String   @id @default(cuid())
+  name             String
+  code             String   @unique
+  description      String?
+  is_manufacturer  Boolean  @default(false)
+  is_distributor   Boolean  @default(false)
+  is_importer      Boolean  @default(false)
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("vendor_types")
+}
+
+model PurchaseOrderTerms {
+  id             String   @id @default(cuid())
+  name           String
+  payment_terms  String
+  delivery_terms String
+  warranty_terms String?
+  return_policy  String?
+  is_default     Boolean  @default(false)
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("purchase_order_terms")
+}
+
+model POStatus {
+  id         String   @id @default(cuid())
+  name       String
+  code       String   @unique
+  color      String
+  sort_order Int      @default(0)
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("po_statuses")
+}
+
+model FreightCharge {
+  id               String   @id @default(cuid())
+  name             String
+  type             String   // fixed, percentage, per_unit
+  value            Float
+  min_order_amount Float?
+  max_charge       Float?
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("freight_charges")
+}
+
+model PurchaseReturnReason {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  type        String   // defective, wrong_item, quantity_short, expired, damaged
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("purchase_return_reasons")
+}
+
+model PriceComparison {
+  id                   String   @id @default(cuid())
+  product_id           String
+  product_name         String?
+  vendor_id            String
+  vendor_name          String?
+  purchase_rate        Float
+  mrp                  Float
+  discount_percentage  Float?
+  valid_from           DateTime
+  valid_to             DateTime?
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("price_comparisons")
+}
+
+model GRNTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  template_type String  // pdf, html, json
+  content     String
+  variables   Json     // Array of variables
+  is_default  Boolean  @default(false)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("grn_templates")
+}
+
+model PurchaseTax {
+  id             String   @id @default(cuid())
+  name           String
+  rate           Float
+  type           String   // gst, custom_duty, excise, other
+  is_active      Boolean  @default(true)
+  effective_from DateTime
+  effective_to   DateTime?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("purchase_taxes")
+}
+
+// ============================================================================
+// CUSTOMER / CRM MASTERS
+// ============================================================================
+
+model Customer {
+  id                   String   @id @default(cuid())
+  name                 String
+  code                 String   @unique
+  phone                String
+  email                String?
+  address              String
+  city                 String
+  state                String
+  pincode              String
+  gst_number           String?
+  customer_group_id    String?
+  customer_group_name  String?
+  loyalty_points       Int      @default(0)
+  credit_limit         Float?
+  payment_terms_id     String?
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model CustomerGroup {
+  id                   String   @id @default(cuid())
+  name                 String
+  code                 String   @unique
+  description          String?
+  discount_percentage  Float?
+  credit_limit         Float?
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("customer_groups")
+}
+
+model ContactType {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  type        String   // phone, email, whatsapp, address, social
+  is_primary  Boolean  @default(false)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("contact_types")
+}
+
+model AddressBook {
+  id               String   @id @default(cuid())
+  customer_id      String
+  customer_name    String?
+  type             String   // billing, shipping, office, residence
+  address_line_1   String
+  address_line_2   String?
+  city             String
+  state            String
+  pincode          String
+  country          String   @default("India")
+  landmark         String?
+  is_default       Boolean  @default(false)
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("address_books")
+}
+
+model LoyaltyProgram {
+  id                         String   @id @default(cuid())
+  name                       String
+  code                       String   @unique
+  points_per_purchase        Float
+  points_value               Float    // 1 point = X rupees
+  min_points_for_redemption  Int
+  max_redemption_percentage  Float
+  validity_days              Int
+  is_active                  Boolean  @default(true)
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+
+  @@map("loyalty_programs")
+}
+
+model FeedbackType {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  type        String   // complaint, suggestion, appreciation, query
+  priority    String   // low, medium, high, urgent
+  sla_hours   Int
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("feedback_types")
+}
+
+model LeadSource {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique
+  type           String   // referral, campaign, walk_in, online, social_media, advertisement
+  description    String?
+  conversion_rate Float?
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("lead_sources")
+}
+
+model FollowupStatus {
+  id         String   @id @default(cuid())
+  name       String
+  code       String   @unique
+  color      String
+  sort_order Int      @default(0)
+  is_closed  Boolean  @default(false)
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("followup_statuses")
+}
+
+model TicketCategory {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  parent_id   String?
+  parent_name String?
+  sla_hours   Int
+  priority    String   // low, medium, high, urgent
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("ticket_categories")
+}
+
+// ============================================================================
+// HR & STAFF MASTERS
+// ============================================================================
+
+model Employee {
+  id               String   @id @default(cuid())
+  employee_code    String   @unique
+  first_name       String
+  last_name        String
+  email            String   @unique
+  phone            String
+  department_id    String
+  department_name  String?
+  designation      String
+  branch_id        String?
+  branch_name      String?
+  date_of_joining  DateTime
+  salary           Float?
+  is_active        Boolean  @default(true)
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("employees")
+}
+
+model Designation {
+  id              String   @id @default(cuid())
+  name            String
+  code            String   @unique
+  department_id   String
+  department_name String?
+  grade           String?
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("designations")
+}
+
+model Shift {
+  id            String   @id @default(cuid())
+  name          String
+  code          String   @unique
+  start_time    String
+  end_time      String
+  break_start   String?
+  break_end     String?
+  working_hours Float
+  is_night_shift Boolean @default(false)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("shifts")
+}
+
+model AttendanceRule {
+  id                    String   @id @default(cuid())
+  name                  String
+  code                  String   @unique
+  type                  String   // daily, weekly, monthly
+  min_hours             Float
+  max_late_arrivals     Int
+  grace_period_minutes  Int
+  is_active             Boolean  @default(true)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@map("attendance_rules")
+}
+
+model LeaveType {
+  id                   String   @id @default(cuid())
+  name                 String
+  code                 String   @unique
+  type                 String   // casual, sick, earned, maternity, paternity, emergency
+  max_days_per_year    Int
+  requires_approval    Boolean  @default(true)
+  carry_forward_allowed Boolean @default(false)
+  max_carry_forward    Int      @default(0)
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("leave_types")
+}
+
+model SalaryStructure {
+  id                         String   @id @default(cuid())
+  name                       String
+  code                       String   @unique
+  designation_id             String
+  designation_name           String?
+  basic_percentage           Float
+  hra_percentage             Float
+  da_percentage              Float
+  ta_percentage              Float
+  other_allowances_percentage Float
+  pf_percentage              Float
+  esi_percentage             Float
+  professional_tax           Float
+  is_active                  Boolean  @default(true)
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+
+  @@map("salary_structures")
+}
+
+model CommissionRule {
+  id                     String   @id @default(cuid())
+  name                   String
+  code                   String   @unique
+  type                   String   // percentage, fixed, tiered
+  value                  Float
+  min_sales_amount       Float?
+  max_commission         Float?
+  applicable_products    Json?    // Array of product IDs
+  applicable_categories  Json?    // Array of category IDs
+  is_active              Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  @@map("commission_rules")
+}
+
+model PerformanceMetric {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  category    String   // sales, customer_satisfaction, productivity, quality
+  unit        String   // number, percentage, currency, time
+  target_value Float
+  weightage   Float
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("performance_metrics")
+}
+
+// ============================================================================
+// FINANCE & ACCOUNTING MASTERS
+// ============================================================================
+
+model LedgerAccount {
+  id                   String   @id @default(cuid())
+  account_code         String   @unique
+  account_name         String
+  account_type         String   // asset, liability, equity, income, expense
+  parent_account_id    String?
+  parent_account_name  String?
+  opening_balance      Float    @default(0)
+  current_balance      Float    @default(0)
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("ledger_accounts")
+}
+
+model CostCenter {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique
+  description    String?
+  branch_id      String?
+  branch_name    String?
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("cost_centers")
+}
+
+model ExpenseCategory {
+  id            String   @id @default(cuid())
+  name          String
+  code          String   @unique
+  description   String?
+  parent_id     String?
+  parent_name   String?
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("expense_categories")
+}
+
+model Bank {
+  id             String   @id @default(cuid())
+  name           String
+  code           String   @unique
+  account_number String
+  ifsc_code      String
+  branch_name    String
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("banks")
+}
+
+model PaymentVoucherType {
+  id                 String   @id @default(cuid())
+  name               String
+  code               String   @unique
+  type               String   // cash, bank, upi, cheque, card
+  requires_approval  Boolean  @default(false)
+  max_amount         Float?
+  is_active          Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("payment_voucher_types")
+}
+
+model GSTReturnPeriod {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  period      String   // monthly, quarterly, annual
+  start_month Int
+  end_month   Int
+  due_date    Int      // day of month
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("gst_return_periods")
+}
+
+model ChequeBook {
+  id                 String   @id @default(cuid())
+  bank_id            String
+  bank_name          String?
+  account_number     String
+  cheque_series_start String
+  cheque_series_end  String
+  total_cheques      Int
+  used_cheques       Int      @default(0)
+  issued_date        DateTime
+  is_active          Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("cheque_books")
+}
+
+model VendorCustomerLedger {
+  id                String   @id @default(cuid())
+  party_id          String
+  party_name        String?
+  party_type        String   // vendor, customer
+  transaction_date  DateTime
+  transaction_type  String   // invoice, payment, credit_note, debit_note
+  reference_number  String?
+  debit_amount      Float    @default(0)
+  credit_amount     Float    @default(0)
+  balance           Float    @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("vendor_customer_ledgers")
+}
+
+// ============================================================================
+// MARKETING & CAMPAIGN MASTERS
+// ============================================================================
+
+model CampaignType {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  channel     String   // sms, email, whatsapp, social, push
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("campaign_types")
+}
+
+model MarketingTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // sms, email, whatsapp, push
+  subject     String?
+  body        String
+  variables   Json     // Array of variables
+  category    String   // promotional, informational, transactional
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("marketing_templates")
+}
+
+model OfferCoupon {
+  id                     String   @id @default(cuid())
+  name                   String
+  code                   String   @unique
+  type                   String   // percentage, fixed_amount, buy_x_get_y, free_shipping
+  value                  Float
+  min_purchase_amount    Float?
+  max_discount_amount    Float?
+  usage_limit            Int?
+  used_count             Int      @default(0)
+  valid_from             DateTime
+  valid_to               DateTime
+  applicable_products    Json?    // Array of product IDs
+  applicable_categories  Json?    // Array of category IDs
+  is_active              Boolean  @default(true)
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  @@map("offer_coupons")
+}
+
+model TargetSegment {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  criteria    Json     // Complex criteria object
+  customer_count Int    @default(0)
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("target_segments")
+}
+
+model ChannelConfig {
+  id                   String   @id @default(cuid())
+  name                 String
+  type                 String   // sms, email, whatsapp, push
+  provider             String
+  api_key              String
+  api_secret           String?
+  sender_id            String?
+  is_active            Boolean  @default(true)
+  rate_limit_per_hour  Int      @default(1000)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("channel_configs")
+}
+
+model PostScheduler {
+  id                 String   @id @default(cuid())
+  name               String
+  platforms          Json     // Array of platform names
+  post_type          String   // text, image, video, carousel
+  frequency          String   // daily, weekly, monthly
+  time_slots         Json     // Array of time strings
+  content_categories Json     // Array of category IDs
+  hashtags           Json     // Array of hashtags
+  is_active          Boolean  @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("post_schedulers")
+}
+
+model AIPromptTemplate {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   // content_generation, customer_support, product_description, social_media
+  prompt_text   String
+  variables     Json     // Array of variables
+  output_format String   // text, html, json
+  max_tokens    Int
+  temperature   Float
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("ai_prompt_templates")
+}
+
+model FestivalEvent {
+  id                  String   @id @default(cuid())
+  name                String
+  code                String   @unique
+  start_date          DateTime
+  end_date            DateTime
+  type                String   // festival, seasonal, promotion, holiday
+  discount_percentage Float?
+  special_offers      Json?    // Array of offer descriptions
+  is_active           Boolean  @default(true)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("festival_events")
+}
+
+// ============================================================================
+// SOCIAL MEDIA & AUTOMATION MASTERS
+// ============================================================================
+
+model SocialAccount {
+  id          String   @id @default(cuid())
+  name        String
+  platform    String   // facebook, instagram, google_business, twitter
+  account_id  String
+  access_token String
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("social_accounts")
+}
+
+model HashtagLibrary {
+  id          String   @id @default(cuid())
+  name        String
+  hashtags    Json     // Array of hashtag strings
+  category    String
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("hashtag_libraries")
+}
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("blog_categories")
+}
+
+model AutoPostSchedule {
+  id          String   @id @default(cuid())
+  name        String
+  platforms   Json     // Array of platform names
+  frequency   String   // daily, weekly, monthly
+  time_slots  Json     // Array of time strings
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("auto_post_schedules")
+}
+
+model MediaLibrary {
+  id          String   @id @default(cuid())
+  name        String
+  file_path   String
+  file_type   String   // image, video, document
+  size        Int
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("media_libraries")
+}
+
+model WorkflowRule {
+  id          String   @id @default(cuid())
+  name        String
+  trigger     Json     // Trigger conditions
+  actions     Json     // Array of actions
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("workflow_rules")
+}
+
+// ============================================================================
+// AI & INSIGHTS MASTERS
+// ============================================================================
+
+model AIAgent {
+  id            String   @id @default(cuid())
+  name          String
+  type          String   // content_generator, inventory_optimizer, sales_forecaster, customer_insights
+  description   String?
+  is_active     Boolean  @default(true)
+  model_version String
+  config        Json     // Agent configuration
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("ai_agents")
+}
+
+model AITask {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // demand_forecast, reorder_suggestion, pricing_optimization
+  schedule    String   // cron expression
+  is_active   Boolean  @default(true)
+  config      Json     // Task configuration
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("ai_tasks")
+}
+
+model AIPromptLibrary {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  prompt      String
+  variables   Json     // Array of variables
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("ai_prompt_libraries")
+}
+
+model ModelVersion {
+  id          String   @id @default(cuid())
+  name        String
+  version     String
+  provider    String   // openai, anthropic, google
+  model_name  String
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("model_versions")
+}
+
+model VectorIndex {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // product, customer, content
+  dimensions  Int
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("vector_indexes")
+}
+
+model AIActionTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // suggestion, automation, analysis
+  template    Json     // Action template
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("ai_action_templates")
+}
+
+model BusinessRule {
+  id          String   @id @default(cuid())
+  name        String
+  rule_type   String   // validation, calculation, workflow
+  rule_logic  Json     // Rule definition
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("business_rules")
+}
+
+// ============================================================================
+// SETTINGS MASTERS
+// ============================================================================
+
+model SystemSettings {
+  id                String   @id @default(cuid())
+  key               String   @unique
+  value             Json
+  category          String   // general, finance, inventory, sales, purchases, hr, marketing
+  description       String?
+  is_system_setting Boolean  @default(false)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+model SMSGateway {
+  id                   String   @id @default(cuid())
+  name                 String
+  provider             String
+  api_key              String
+  api_secret           String?
+  sender_id            String?
+  is_active            Boolean  @default(true)
+  rate_limit_per_hour  Int      @default(1000)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("sms_gateways")
+}
+
+model EmailGateway {
+  id                   String   @id @default(cuid())
+  name                 String
+  provider             String
+  smtp_host            String
+  smtp_port            Int
+  smtp_username        String
+  smtp_password        String
+  is_active            Boolean  @default(true)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("email_gateways")
+}
+
+model WhatsAppGateway {
+  id                   String   @id @default(cuid())
+  name                 String
+  provider             String
+  api_key              String
+  api_secret           String?
+  phone_number         String?
+  is_active            Boolean  @default(true)
+  rate_limit_per_hour  Int      @default(1000)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@map("whatsapp_gateways")
+}
+
+model BackupSettings {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // full, incremental, differential
+  schedule        String   // cron expression
+  retention_days  Int
+  storage_path    String
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("backup_settings")
+}
+
+model NotificationPreference {
+  id              String   @id @default(cuid())
+  user_id         String
+  notification_type String  // sms, email, whatsapp, push
+  is_enabled      Boolean  @default(true)
+  frequency       String   // immediate, daily, weekly
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("notification_preferences")
+}
+
+model AuditLogSettings {
+  id                String   @id @default(cuid())
+  table_name        String
+  operation         String   // insert, update, delete
+  track_changes     Boolean  @default(true)
+  track_old_values  Boolean  @default(false)
+  retention_days    Int      @default(365)
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("audit_log_settings")
+}
+
+model SecurityPolicy {
+  id                String   @id @default(cuid())
+  name              String
+  policy_type       String   // password, session, access
+  policy_config     Json     // Policy configuration
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("security_policies")
+}
+
+// ============================================================================
+// USER PROFILE / SECURITY MASTERS
+// ============================================================================
+
+model UserProfile {
+  id                String   @id @default(cuid())
+  user_id           String   @unique
+  profile_data      Json     // User profile information
+  preferences       Json     // User preferences
+  is_active         Boolean  @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  module      String
+  action      String   // create, read, update, delete
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("permissions")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  user_id     String
+  action      String
+  resource    String
+  resource_id String?
+  details     Json?
+  ip_address  String?
+  user_agent  String?
+  created_at  DateTime @default(now())
+
+  @@map("activity_logs")
+}
+
+model TwoFactorSettings {
+  id              String   @id @default(cuid())
+  user_id         String   @unique
+  is_enabled      Boolean  @default(false)
+  method          String   // sms, email, app
+  secret_key      String?
+  backup_codes    Json?    // Array of backup codes
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("two_factor_settings")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  user_id      String
+  session_token String  @unique
+  ip_address   String?
+  user_agent   String?
+  expires_at   DateTime
+  is_active    Boolean  @default(true)
+  created_at   DateTime @default(now())
+
+  @@map("sessions")
+}
+
+// ============================================================================
+// WORKFLOW MANAGEMENT SYSTEM
+// ============================================================================
+
+model WorkflowDefinition {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String   // 'homeopathy' | 'pharmacy' | 'supply-chain' | 'international' | 'analytics' | 'crm'
+  steps       Json     // Array of WorkflowStep objects
+  triggers    Json     // Array of WorkflowTrigger objects
+  automation_rules Json? // Array of AutomationRule objects
+  sla_hours   Int?
+  priority    String   @default("medium") // 'low' | 'medium' | 'high' | 'critical'
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  executions  WorkflowExecution[]
+
+  @@map("workflow_definitions")
+}
+
+model WorkflowExecution {
+  id           String   @id @default(cuid())
+  workflow_id  String
+  status       String   @default("pending") // 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused'
+  start_time   DateTime @default(now())
+  end_time     DateTime?
+  current_step String?
+  executed_steps Json   // Array of step IDs that have been executed
+  step_executions Json  // Array of StepExecution objects
+  triggered_by String
+  trigger_type String   @default("manual") // 'manual' | 'scheduled' | 'automated' | 'api'
+  variables    Json?    // Execution variables
+  errors       Json?    // Array of WorkflowError objects
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relations
+  workflow     WorkflowDefinition @relation(fields: [workflow_id], references: [id])
+
+  @@map("workflow_executions")
+}
+
+model WorkflowMetric {
+  id                String   @id @default(cuid())
+  workflow_id       String?
+  execution_id      String?
+  metric_type       String   // 'success_rate' | 'avg_processing_time' | 'error_rate' | 'completion_rate'
+  metric_value      Float
+  metric_unit       String?
+  recorded_at       DateTime @default(now())
+  aggregation_period String?  // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata          Json?
+
+  @@map("workflow_metrics")
+}
+
+model InventoryLevel {
+  id                    String   @id @default(cuid())
+  location_id           String
+  location_name         String
+  product_id            String?
+  product_name          String?
+  current_stock         Int      @default(0)
+  max_capacity          Int      @default(0)
+  utilization_percentage Float   @default(0)
+  last_updated          DateTime @default(now())
+  status                String   @default("normal") // 'normal' | 'low' | 'critical' | 'overstocked'
+
+  @@map("inventory_levels")
+}
+
+model CustomerServiceMetric {
+  id               String   @id @default(cuid())
+  metric_type      String   // 'avg_response_time' | 'resolution_rate' | 'satisfaction_score'
+  metric_value     Float
+  metric_unit      String?
+  recorded_at      DateTime @default(now())
+  aggregation_period String? // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata         Json?
+
+  @@map("customer_service_metrics")
+}
+
+model FinancialMetric {
+  id               String   @id @default(cuid())
+  metric_type      String   // 'revenue' | 'profit_margin' | 'outstanding_payments' | 'cash_flow'
+  metric_value     Float
+  metric_unit      String?
+  recorded_at      DateTime @default(now())
+  aggregation_period String? // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata         Json?
+
+  @@map("financial_metrics")
+}
+
+// ============================================================================
+// HOMEOPATHY-SPECIFIC WORKFLOW DATA
+// ============================================================================
+
+model MedicinePreparation {
+  id               String   @id @default(cuid())
+  workflow_id      String
+  medicine_type    String   // 'classical' | 'combination' | 'nosode' | 'sarcodes' | 'mother-tincture'
+  base_substance   String
+  target_potency   String
+  dilution_method  String   // 'hahnemanian' | 'korsakovian' | 'continuous-flow'
+  succussion_count Int      @default(0)
+  steps            Json     // Array of preparation steps
+  quality_tests    Json     // Array of quality test results
+  batch_number     String?
+  prepared_by      String?
+  prepared_at      DateTime?
+  status           String   @default("in_progress") // 'in_progress' | 'completed' | 'failed' | 'cancelled'
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("medicine_preparations")
+}
+
+model QualityControl {
+  id            String   @id @default(cuid())
+  workflow_id   String
+  preparation_id String?
+  test_type     String   // 'physical' | 'chemical' | 'biological' | 'microbiological' | 'organoleptic'
+  test_name     String
+  test_result   String   // 'passed' | 'failed' | 'pending'
+  test_value    Float?
+  test_unit     String?
+  acceptance_criteria String
+  performed_by  String?
+  performed_at  DateTime?
+  notes         String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("quality_controls")
+}
+
+model Certification {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  certification_name String
+  issuing_authority String
+  certification_type String // 'ayush' | 'who' | 'iso' | 'fda' | 'custom'
+  issue_date        DateTime
+  expiry_date       DateTime?
+  scope             Json     // Array of covered products/processes
+  status            String   @default("active") // 'active' | 'expired' | 'suspended' | 'revoked'
+  documents         Json     // Array of document URLs
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("certifications")
+}
+
+// ============================================================================
+// PHARMACY COMPLIANCE DATA
+// ============================================================================
+
+model DrugInteraction {
+  id                  String   @id @default(cuid())
+  workflow_id         String
+  medicines           Json     // Array of medicine IDs/names
+  severity            String   // 'low' | 'medium' | 'high' | 'critical'
+  interaction_type    String   // 'pharmacokinetic' | 'pharmacodynamic' | 'pharmaceutical' | 'therapeutic'
+  description         String
+  clinical_significance String
+  management_strategy String
+  references          Json     // Array of reference sources
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("drug_interactions")
+}
+
+model ComplianceAudit {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  regulation_type   String   // 'schedule-h' | 'schedule-x' | 'narcotics' | 'ayush' | 'fda' | 'who-gmp'
+  compliance_checks Json     // Array of ComplianceCheck objects
+  audit_trail       Json     // Array of AuditEntry objects
+  documentation     Json     // Array of required documents
+  status            String   @default("pending") // 'passed' | 'failed' | 'pending' | 'overdue'
+  audited_by        String?
+  audited_at        DateTime?
+  next_audit_date   DateTime?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("compliance_audits")
+}
+
+// ============================================================================
+// SUPPLY CHAIN DATA
+// ============================================================================
+
+model SupplyChainWorkflow {
+  id               String   @id @default(cuid())
+  workflow_id      String
+  supply_chain_type String  // 'procurement' | 'manufacturing' | 'distribution' | 'returns'
+  locations        Json     // Array of LocationWorkflow objects
+  transportation   Json     // TransportationWorkflow object
+  inventory_optimization Json // InventoryOptimizationWorkflow object
+  status           String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("supply_chain_workflows")
+}
+
+model TransportationWorkflow {
+  id                    String   @id @default(cuid())
+  workflow_id           String
+  mode                  String   // 'air' | 'sea' | 'road' | 'rail' | 'courier'
+  carrier               String
+  tracking_number       String?
+  estimated_delivery    DateTime
+  actual_delivery       DateTime?
+  cost                  Float
+  currency              String   @default("INR")
+  insurance             Float?
+  temperature_controlled Boolean @default(false)
+  required_documents    Json     // Array of document requirements
+  status                String   @default("planned") // 'planned' | 'in_transit' | 'delivered' | 'cancelled'
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@map("transportation_workflows")
+}
+
+// ============================================================================
+// INTERNATIONAL EXPANSION DATA
+// ============================================================================
+
+model InternationalWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  target_markets    Json     // Array of target country codes
+  currency_management Json   // CurrencyWorkflow object
+  language_management Json   // LanguageWorkflow object
+  regulatory_compliance Json  // RegulatoryComplianceWorkflow object
+  localization      Json     // LocalizationWorkflow object
+  status            String   @default("planning") // 'planning' | 'active' | 'paused' | 'completed'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("international_workflows")
+}
+
+model CurrencyWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  base_currency     String   @default("INR")
+  target_currencies Json     // Array of target currency codes
+  exchange_rate_source String // 'manual' | 'ecb' | 'fixer' | 'custom-api'
+  auto_update       Boolean  @default(true)
+  update_frequency  String   @default("daily") // 'hourly' | 'daily' | 'weekly'
+  conversion_rules  Json     // Array of CurrencyConversionRule objects
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("currency_workflows")
+}
+
+model LanguageWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  base_language     String   @default("en")
+  supported_languages Json    // Array of supported language codes
+  translation_source String  // 'manual' | 'google-translate' | 'deepl' | 'custom-service'
+  rtl_support       Json     // Array of RTL language codes
+  date_formats      Json     // Language-specific date formats
+  number_formats    Json     // Language-specific number formats
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("language_workflows")
+}
+
+// ============================================================================
+// CRM & LOYALTY DATA
+// ============================================================================
+
+model CRMLifecycle {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  customer_segment  String   // 'retail' | 'wholesale' | 'doctor' | 'hospital' | 'distributor'
+  lifecycle_stages  Json     // Array of CustomerLifecycleStage objects
+  communication_preferences Json // Array of CommunicationPreference objects
+  loyalty_program   Json     // LoyaltyProgramWorkflow object
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("crm_lifecycles")
+}
+
+model LoyaltyProgram {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  program_type      String   // 'points' | 'tier' | 'subscription' | 'referral' | 'cashback'
+  earning_rules     Json     // Array of LoyaltyRule objects
+  redemption_rules  Json     // Array of LoyaltyRule objects
+  tiers             Json?    // Array of LoyaltyTier objects (if tier-based)
+  expiry_policy     Json     // Points and tier expiry policies
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("loyalty_programs")
+}
+
+// ============================================================================
+// ANALYTICS & ML DATA
+// ============================================================================
+
+model AnalyticsWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  data_sources      Json     // Array of data source identifiers
+  analysis_types    Json     // Array of analysis types
+  ml_models         Json     // Array of MLModel objects
+  reporting_frequency String // 'real-time' | 'hourly' | 'daily' | 'weekly' | 'monthly'
+  recipients        Json     // Array of notification recipients
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("analytics_workflows")
+}
+
+model MLModel {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  model_id          String
+  model_type        String   // 'forecasting' | 'classification' | 'clustering' | 'recommendation'
+  algorithm         String
+  features          Json     // Array of feature names
+  target            String
+  accuracy          Float?
+  last_trained      DateTime?
+  next_training     DateTime?
+  status            String   @default("active") // 'active' | 'training' | 'deprecated' | 'failed'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("ml_models")
+}
+
+model AutomationRule {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  rule_id           String
+  name              String
+  trigger           Json     // WorkflowTrigger object
+  conditions        Json     // Array of WorkflowCondition objects
+  actions           Json     // Array of WorkflowAction objects
+  is_active         Boolean  @default(true)
+  last_executed     DateTime?
+  execution_count   Int      @default(0)
+  success_count     Int      @default(0)
+  failure_count     Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("automation_rules")
+}

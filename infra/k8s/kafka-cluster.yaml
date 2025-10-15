@@ -1,0 +1,125 @@
+# Kafka Cluster Configuration for Production
+# Learning Notes:
+# - Uses Strimzi operator for Kafka management
+# - Configures high-availability Kafka cluster
+# - Includes monitoring and security settings
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: yeelo-kafka-cluster
+  namespace: yeelo-platform
+spec:
+  kafka:
+    version: 3.5.0
+    replicas: 3
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+    config:
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      default.replication.factor: 3
+      min.insync.replicas: 2
+      inter.broker.protocol.version: "3.5"
+      auto.create.topics.enable: "false"
+      delete.topic.enable: "true"
+    storage:
+      type: jbod
+      volumes:
+      - id: 0
+        type: persistent-claim
+        size: 100Gi
+        class: fast-ssd
+        deleteClaim: false
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1000m
+      limits:
+        memory: 4Gi
+        cpu: 2000m
+    jvmOptions:
+      -Xms: 1g
+      -Xmx: 2g
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: kafka-metrics-config.yml
+  zookeeper:
+    replicas: 3
+    storage:
+      type: persistent-claim
+      size: 10Gi
+      class: fast-ssd
+      deleteClaim: false
+    resources:
+      requests:
+        memory: 1Gi
+        cpu: 500m
+      limits:
+        memory: 2Gi
+        cpu: 1000m
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: kafka-metrics
+          key: zookeeper-metrics-config.yml
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: orders
+  namespace: yeelo-platform
+  labels:
+    strimzi.io/cluster: yeelo-kafka-cluster
+spec:
+  partitions: 6
+  replicas: 3
+  config:
+    retention.ms: 604800000  # 7 days
+    segment.ms: 86400000     # 1 day
+    cleanup.policy: delete
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: campaigns
+  namespace: yeelo-platform
+  labels:
+    strimzi.io/cluster: yeelo-kafka-cluster
+spec:
+  partitions: 4
+  replicas: 3
+  config:
+    retention.ms: 259200000  # 3 days
+    segment.ms: 86400000     # 1 day
+    cleanup.policy: delete
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: analytics
+  namespace: yeelo-platform
+  labels:
+    strimzi.io/cluster: yeelo-kafka-cluster
+spec:
+  partitions: 8
+  replicas: 3
+  config:
+    retention.ms: 2592000000  # 30 days
+    segment.ms: 86400000      # 1 day
+    cleanup.policy: delete

@@ -1,0 +1,24 @@
+# Copy this to project root as .env for local development
+NODE_ENV=development
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy?schema=public
+
+# Caches & brokers
+REDIS_URL=redis://localhost:6379
+KAFKA_BROKERS=localhost:9092
+
+# Auth/JWT
+JWT_SECRET=changeme-dev
+JWT_ISSUER=urn:yeelo:auth
+# Optional RS256 keys as JWK JSON
+# JWT_PRIVATE_JWK=
+# JWT_PUBLIC_JWK=
+
+# Service URLs
+AUTH_SERVICE_URL=http://localhost:3001
+ORDERS_SERVICE_URL=http://localhost:3002
+CAMPAIGNS_SERVICE_URL=http://localhost:3003
+AI_SERVICE_URL=http://localhost:3004
+ANALYTICS_SERVICE_URL=http://localhost:3005
+ALLOWED_ORIGINS=http://localhost:3000

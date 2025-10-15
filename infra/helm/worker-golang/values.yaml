@@ -1,0 +1,78 @@
+# Go Worker Helm Chart Values
+# Learning Notes:
+# - Configures KEDA for Kafka-based autoscaling
+# - Sets up proper resource limits for Go applications
+# - Includes database connection and monitoring
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/yeelo/worker-golang
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# No service needed for worker (it's a consumer)
+service:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+env:
+  KAFKA_BROKERS: "kafka:9092"
+  CONSUMER_GROUP: "yeelo-worker-golang"
+  DATABASE_URL: ""
+
+# KEDA configuration for Kafka-based autoscaling
+keda:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 20
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: "kafka:9092"
+        topic: "orders"
+        consumerGroup: "yeelo-worker-golang"
+        lagThreshold: "1000"
+    - type: kafka
+      metadata:
+        bootstrapServers: "kafka:9092"
+        topic: "campaigns"
+        consumerGroup: "yeelo-worker-golang"
+        lagThreshold: "500"
+    - type: kafka
+      metadata:
+        bootstrapServers: "kafka:9092"
+        topic: "analytics"
+        consumerGroup: "yeelo-worker-golang"
+        lagThreshold: "2000"
+
+prometheus:
+  enabled: true
+  scrapePath: /metrics
+  scrapePort: 9090
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+nodeSelector: {}
+tolerations: []
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - worker-golang
+        topologyKey: kubernetes.io/hostname

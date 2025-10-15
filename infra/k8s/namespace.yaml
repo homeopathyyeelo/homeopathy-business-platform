@@ -1,0 +1,81 @@
+# Kubernetes Namespace for Yeelo Homeopathy Platform
+# Learning Notes:
+# - Isolates all platform resources in dedicated namespace
+# - Includes resource quotas and network policies
+# - Sets up proper RBAC and security policies
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: yeelo-platform
+  labels:
+    name: yeelo-platform
+    app.kubernetes.io/name: yeelo-platform
+    app.kubernetes.io/part-of: homeopathy-platform
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: yeelo-platform-quota
+  namespace: yeelo-platform
+spec:
+  hard:
+    requests.cpu: "10"
+    requests.memory: 20Gi
+    limits.cpu: "20"
+    limits.memory: 40Gi
+    persistentvolumeclaims: "10"
+    services: "20"
+    secrets: "20"
+    configmaps: "20"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: yeelo-platform-limits
+  namespace: yeelo-platform
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: "512Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
+    type: Container
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: yeelo-platform-network-policy
+  namespace: yeelo-platform
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: yeelo-platform
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: yeelo-platform
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80

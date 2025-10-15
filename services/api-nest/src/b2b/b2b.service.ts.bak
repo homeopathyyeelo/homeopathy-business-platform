@@ -1,0 +1,66 @@
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "../prisma/prisma.service"
+
+@Injectable()
+export class B2BService {
+  constructor(private prisma: PrismaService) {}
+
+  // Orders
+  async createB2BOrder(orderData: any) {
+    // TODO: implement persistence
+    return { id: "stub-order-id", ...orderData, status: "CREATED" }
+  }
+
+  async getB2BOrders(customerId?: string, status?: string, page = 1, limit = 20) {
+    // TODO: implement filters with Prisma
+    return { orders: [], pagination: { page, limit, total: 0, pages: 0 }, filters: { customerId, status } }
+  }
+
+  async getB2BOrder(id: string) {
+    // TODO: fetch from Prisma
+    return { id, status: "NOT_FOUND" }
+  }
+
+  async approveB2BOrder(id: string, approverId?: string) {
+    // TODO: update order status
+    return { id, status: "APPROVED", approverId }
+  }
+
+  async rejectB2BOrder(id: string, reason: string, approverId?: string) {
+    // TODO: update order status with reason
+    return { id, status: "REJECTED", reason, approverId }
+  }
+
+  // Customers
+  async getB2BCustomers(type?: string, page = 1, limit = 20) {
+    // TODO: implement with Prisma
+    return { customers: [], pagination: { page, limit, total: 0, pages: 0 }, filters: { type } }
+  }
+
+  async getB2BCustomer(id: string) {
+    return { id, status: "NOT_FOUND" }
+  }
+
+  async getCustomerCredit(id: string) {
+    return { customerId: id, creditLimit: 0, availableCredit: 0 }
+  }
+
+  // D2D Transactions
+  async createD2DTransaction(transactionData: any) {
+    // TODO: persist
+    return { id: "stub-d2d-id", ...transactionData, status: "RECORDED" }
+  }
+
+  async getD2DTransactions(sellerId?: string, buyerId?: string, page = 1, limit = 20) {
+    return { transactions: [], pagination: { page, limit, total: 0, pages: 0 }, filters: { sellerId, buyerId } }
+  }
+
+  // Pricing & Analytics
+  async getCustomerPricing(customerId: string) {
+    return { customerId, priceList: [] }
+  }
+
+  async getSalesAnalytics(startDate?: string, endDate?: string, customerType?: string) {
+    return { range: { startDate, endDate }, customerType, metrics: {} }
+  }
+}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: api-fastify
+description: Helm chart for Yeelo api-fastify service
+version: 0.1.0
+type: application
+appVersion: "1.0.0"

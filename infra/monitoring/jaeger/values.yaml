@@ -1,0 +1,147 @@
+# Jaeger Distributed Tracing Configuration
+# Learning Notes:
+# - Complete distributed tracing setup for microservices
+# - Elasticsearch backend for trace storage
+# - Sampling configuration for performance optimization
+
+jaeger:
+  strategy: production
+  
+  collector:
+    replicaCount: 2
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 200m
+      limits:
+        memory: 1Gi
+        cpu: 500m
+    
+    service:
+      type: ClusterIP
+      grpc:
+        port: 14250
+      http:
+        port: 14268
+      zipkin:
+        port: 9411
+  
+  query:
+    replicaCount: 2
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+      limits:
+        memory: 512Mi
+        cpu: 200m
+    
+    service:
+      type: ClusterIP
+      port: 16686
+    
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: jaeger.yeelo.com
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: jaeger-tls
+          hosts:
+            - jaeger.yeelo.com
+
+  agent:
+    daemonset:
+      useHostNetwork: true
+      useHostPort: true
+    
+    resources:
+      requests:
+        memory: 128Mi
+        cpu: 50m
+      limits:
+        memory: 256Mi
+        cpu: 100m
+
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      host: elasticsearch-master
+      port: 9200
+      scheme: http
+      user: elastic
+      password: changeme
+      nodesWanOnly: false
+      
+      # Index configuration
+      indexPrefix: jaeger
+      indexDateSeparator: "-"
+      indexRolloverFrequency: day
+      indexMaxAge: 168h  # 7 days
+      indexMaxSize: 5gb
+
+  # Sampling configuration
+  sampling:
+    strategies: |
+      {
+        "service_strategies": [
+          {
+            "service": "api-gateway",
+            "type": "probabilistic",
+            "param": 0.1
+          },
+          {
+            "service": "orders-service",
+            "type": "probabilistic", 
+            "param": 0.2
+          },
+          {
+            "service": "campaigns-service",
+            "type": "probabilistic",
+            "param": 0.1
+          },
+          {
+            "service": "ai-service",
+            "type": "probabilistic",
+            "param": 0.5
+          }
+        ],
+        "default_strategy": {
+          "type": "probabilistic",
+          "param": 0.05
+        }
+      }
+
+# Elasticsearch for Jaeger storage
+elasticsearch:
+  enabled: true
+  replicas: 3
+  minimumMasterNodes: 2
+  
+  esConfig:
+    elasticsearch.yml: |
+      cluster.name: "jaeger"
+      network.host: 0.0.0.0
+      discovery.seed_hosts: "elasticsearch-master-headless"
+      cluster.initial_master_nodes: "elasticsearch-master-0,elasticsearch-master-1,elasticsearch-master-2"
+      
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    limits:
+      cpu: 1000m
+      memory: 4Gi
+  
+  volumeClaimTemplate:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: fast-ssd
+    resources:
+      requests:
+        storage: 100Gi
+  
+  persistence:
+    enabled: true

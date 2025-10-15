@@ -1,0 +1,6 @@
+
+> @yeelo/auth-service@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts
+
+[1G[0K[[36mINFO[0m] [30;1m18:53:43[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[Auth Service] Server running on port 3001

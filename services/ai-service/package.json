@@ -1,0 +1,25 @@
+{
+  "name": "@yeelo/ai-service",
+  "version": "1.0.0",
+  "description": "AI Service for Yeelo Homeopathy Platform - Handles content generation, forecasting, and automation",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "python3 main.py",
+    "build": "echo 'Python service - no build needed'",
+    "start": "python3 main.py",
+    "test": "python3 -m pytest",
+    "lint": "python3 -m flake8 src/",
+    "docker:build": "docker build -t yeelo-ai-service .",
+    "docker:run": "docker run -p 8001:8001 yeelo-ai-service"
+  },
+  "dependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "tsx": "^4.0.0",
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  }
+}

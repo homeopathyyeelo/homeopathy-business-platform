@@ -1,0 +1,19 @@
+{{- if .Values.keda.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "worker-golang.fullname" . }}
+  labels:
+    {{- include "worker-golang.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    name: {{ include "worker-golang.fullname" . }}
+  minReplicaCount: {{ .Values.keda.minReplicas }}
+  maxReplicaCount: {{ .Values.keda.maxReplicas }}
+  triggers:
+    {{- range .Values.keda.triggers }}
+    - type: {{ .type }}
+      metadata:
+        {{- toYaml .metadata | nindent 8 }}
+    {{- end }}
+{{- end }}

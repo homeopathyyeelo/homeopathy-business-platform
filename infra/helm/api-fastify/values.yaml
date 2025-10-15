@@ -1,0 +1,37 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/your-org/api-fastify
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3001
+  targetPort: 3001
+
+env:
+  LOG_LEVEL: info
+  PORT: "3001"
+  REDIS_URL: "redis://redis:6379"
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy?schema=public"
+  KAFKA_BROKERS: "kafka:9092"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 60
+
+prometheus:
+  enabled: true
+  scrapePath: /metrics
+  scrapePort: 3001

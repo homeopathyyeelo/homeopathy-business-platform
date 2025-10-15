@@ -1,0 +1,430 @@
+# Master Docker Compose - All Services Running
+# Complete production-ready setup with all microservices
+version: '3.8'
+
+services:
+  # ==================== INFRASTRUCTURE ====================
+  
+  # Zookeeper for Kafka coordination
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    hostname: zookeeper
+    container_name: yeelo-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-logs:/var/lib/zookeeper/log
+    networks:
+      - yeelo-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kafka for event streaming
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka
+    container_name: yeelo-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      - yeelo-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # PostgreSQL with pgvector extension
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: yeelo-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: yeelo_homeopathy
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c shared_preload_libraries=vector
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+    networks:
+      - yeelo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: yeelo-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - yeelo-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO for object storage (S3-compatible)
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+    container_name: yeelo-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - yeelo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ==================== MONITORING ====================
+
+  # Kafka UI for monitoring
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: yeelo-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: yeelo-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - yeelo-network
+
+  # Schema Registry for Avro schemas
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.4.0
+    hostname: schema-registry
+    container_name: yeelo-schema-registry
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:29092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    networks:
+      - yeelo-network
+
+  # ==================== BACKEND SERVICES ====================
+
+  # NestJS API - Main ERP Backend
+  api-nest:
+    build:
+      context: ./services/api-nest
+      dockerfile: Dockerfile
+    container_name: yeelo-api-nest
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./services/api-nest:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run start:dev
+
+  # Fastify API - High Performance API
+  api-fastify:
+    build:
+      context: ./services/api-fastify
+      dockerfile: Dockerfile
+    container_name: yeelo-api-fastify
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      PORT: 3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/api-fastify:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run dev
+
+  # Express API - Legacy Support
+  api-express:
+    build:
+      context: ./services/api-express
+      dockerfile: Dockerfile
+    container_name: yeelo-api-express
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/api-express:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run dev
+
+  # Golang API - Low Latency Services
+  api-golang:
+    build:
+      context: ./services/api-golang
+      dockerfile: Dockerfile
+    container_name: yeelo-api-golang
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:29092
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      PORT: 3004
+    ports:
+      - "3004:3004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/api-golang:/app
+    networks:
+      - yeelo-network
+    command: go run cmd/server/main.go
+
+  # Python AI Service - ML & AI Operations
+  ai-service:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+    container_name: yeelo-ai-service
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      MINIO_URL: http://minio:9000
+      KAFKA_BROKERS: kafka:29092
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      PYTHONPATH: /app
+      PORT: 8001
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./services/ai-service:/app
+    networks:
+      - yeelo-network
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+  # GraphQL Gateway - Unified API Layer
+  graphql-gateway:
+    build:
+      context: ./services/graphql-gateway
+      dockerfile: Dockerfile
+    container_name: yeelo-graphql-gateway
+    environment:
+      NEST_API_URL: http://api-nest:3001
+      FASTIFY_API_URL: http://api-fastify:3002
+      EXPRESS_API_URL: http://api-express:3003
+      GOLANG_API_URL: http://api-golang:3004
+      AI_SERVICE_URL: http://ai-service:8001
+      REDIS_URL: redis://redis:6379
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - api-nest
+      - api-fastify
+      - redis
+    volumes:
+      - ./services/graphql-gateway:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run dev
+
+  # API Gateway - REST API Aggregation
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: yeelo-api-gateway
+    environment:
+      NEST_API_URL: http://api-nest:3001
+      FASTIFY_API_URL: http://api-fastify:3002
+      EXPRESS_API_URL: http://api-express:3003
+      GOLANG_API_URL: http://api-golang:3004
+      AI_SERVICE_URL: http://ai-service:8001
+      REDIS_URL: redis://redis:6379
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api-nest
+      - api-fastify
+      - redis
+    volumes:
+      - ./services/api-gateway:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run dev
+
+  # ==================== WORKERS ====================
+
+  # Outbox Worker - Event Processing
+  outbox-worker:
+    build:
+      context: ./services/outbox-worker
+      dockerfile: Dockerfile
+    container_name: yeelo-outbox-worker
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      KAFKA_BROKERS: kafka:29092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./services/outbox-worker:/app
+      - /app/node_modules
+    networks:
+      - yeelo-network
+    command: npm run dev
+
+  # Golang Worker - High Performance Processing
+  worker-golang:
+    build:
+      context: ./services/worker-golang
+      dockerfile: Dockerfile
+    container_name: yeelo-worker-golang
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      KAFKA_BROKERS: kafka:29092
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    volumes:
+      - ./services/worker-golang:/app
+    networks:
+      - yeelo-network
+    command: go run cmd/worker/main.go
+
+  # ==================== FRONTEND ====================
+
+  # Next.js Frontend
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+    container_name: yeelo-nextjs-app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+      NEXT_PUBLIC_GRAPHQL_URL: http://localhost:4000/graphql
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+      - graphql-gateway
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - yeelo-network
+    command: npm run dev:app
+
+volumes:
+  postgres-data:
+  redis-data:
+  kafka-data:
+  zookeeper-data:
+  zookeeper-logs:
+  minio-data:
+
+networks:
+  yeelo-network:
+    driver: bridge

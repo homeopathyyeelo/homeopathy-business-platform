@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "api-gateway.fullname" . }}
+  labels:
+    app: {{ include "api-gateway.name" . }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ include "api-gateway.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "api-gateway.name" . }}
+    spec:
+      containers:
+        - name: {{ include "api-gateway.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: NODE_ENV
+              value: "{{ .Values.env.NODE_ENV }}"
+            - name: PORT
+              value: "{{ .Values.env.PORT }}"
+            - name: JWT_SECRET
+              value: "{{ .Values.env.JWT_SECRET }}"
+            - name: AUTH_SERVICE_URL
+              value: "{{ .Values.env.AUTH_SERVICE_URL }}"
+            - name: ORDERS_SERVICE_URL
+              value: "{{ .Values.env.ORDERS_SERVICE_URL }}"
+            - name: CAMPAIGNS_SERVICE_URL
+              value: "{{ .Values.env.CAMPAIGNS_SERVICE_URL }}"
+            - name: AI_SERVICE_URL
+              value: "{{ .Values.env.AI_SERVICE_URL }}"
+            - name: ANALYTICS_SERVICE_URL
+              value: "{{ .Values.env.ANALYTICS_SERVICE_URL }}"
+            - name: ALLOWED_ORIGINS
+              value: "{{ .Values.env.ALLOWED_ORIGINS }}"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}

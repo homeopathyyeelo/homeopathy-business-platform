@@ -1,0 +1,371 @@
+// ============================================================================
+// WORKFLOW MANAGEMENT SYSTEM
+// ============================================================================
+
+model WorkflowDefinition {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String   // 'homeopathy' | 'pharmacy' | 'supply-chain' | 'international' | 'analytics' | 'crm'
+  steps       Json     // Array of WorkflowStep objects
+  triggers    Json     // Array of WorkflowTrigger objects
+  automation_rules Json? // Array of AutomationRule objects
+  sla_hours   Int?
+  priority    String   @default("medium") // 'low' | 'medium' | 'high' | 'critical'
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  executions  WorkflowExecution[]
+
+  @@map("workflow_definitions")
+}
+
+model WorkflowExecution {
+  id           String   @id @default(cuid())
+  workflow_id  String
+  status       String   @default("pending") // 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused'
+  start_time   DateTime @default(now())
+  end_time     DateTime?
+  current_step String?
+  executed_steps Json   // Array of step IDs that have been executed
+  step_executions Json  // Array of StepExecution objects
+  triggered_by String
+  trigger_type String   @default("manual") // 'manual' | 'scheduled' | 'automated' | 'api'
+  variables    Json?    // Execution variables
+  errors       Json?    // Array of WorkflowError objects
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relations
+  workflow     WorkflowDefinition @relation(fields: [workflow_id], references: [id])
+
+  @@map("workflow_executions")
+}
+
+model WorkflowMetric {
+  id                String   @id @default(cuid())
+  workflow_id       String?
+  execution_id      String?
+  metric_type       String   // 'success_rate' | 'avg_processing_time' | 'error_rate' | 'completion_rate'
+  metric_value      Float
+  metric_unit       String?
+  recorded_at       DateTime @default(now())
+  aggregation_period String?  // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata          Json?
+
+  @@map("workflow_metrics")
+}
+
+model InventoryLevel {
+  id                    String   @id @default(cuid())
+  location_id           String
+  location_name         String
+  product_id            String?
+  product_name          String?
+  current_stock         Int      @default(0)
+  max_capacity          Int      @default(0)
+  utilization_percentage Float   @default(0)
+  last_updated          DateTime @default(now())
+  status                String   @default("normal") // 'normal' | 'low' | 'critical' | 'overstocked'
+
+  @@map("inventory_levels")
+}
+
+model CustomerServiceMetric {
+  id               String   @id @default(cuid())
+  metric_type      String   // 'avg_response_time' | 'resolution_rate' | 'satisfaction_score'
+  metric_value     Float
+  metric_unit      String?
+  recorded_at      DateTime @default(now())
+  aggregation_period String? // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata         Json?
+
+  @@map("customer_service_metrics")
+}
+
+model FinancialMetric {
+  id               String   @id @default(cuid())
+  metric_type      String   // 'revenue' | 'profit_margin' | 'outstanding_payments' | 'cash_flow'
+  metric_value     Float
+  metric_unit      String?
+  recorded_at      DateTime @default(now())
+  aggregation_period String? // 'hourly' | 'daily' | 'weekly' | 'monthly'
+  metadata         Json?
+
+  @@map("financial_metrics")
+}
+
+// ============================================================================
+// HOMEOPATHY-SPECIFIC WORKFLOW DATA
+// ============================================================================
+
+model MedicinePreparation {
+  id               String   @id @default(cuid())
+  workflow_id      String
+  medicine_type    String   // 'classical' | 'combination' | 'nosode' | 'sarcodes' | 'mother-tincture'
+  base_substance   String
+  target_potency   String
+  dilution_method  String   // 'hahnemanian' | 'korsakovian' | 'continuous-flow'
+  succussion_count Int      @default(0)
+  steps            Json     // Array of preparation steps
+  quality_tests    Json     // Array of quality test results
+  batch_number     String?
+  prepared_by      String?
+  prepared_at      DateTime?
+  status           String   @default("in_progress") // 'in_progress' | 'completed' | 'failed' | 'cancelled'
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("medicine_preparations")
+}
+
+model QualityControl {
+  id            String   @id @default(cuid())
+  workflow_id   String
+  preparation_id String?
+  test_type     String   // 'physical' | 'chemical' | 'biological' | 'microbiological' | 'organoleptic'
+  test_name     String
+  test_result   String   // 'passed' | 'failed' | 'pending'
+  test_value    Float?
+  test_unit     String?
+  acceptance_criteria String
+  performed_by  String?
+  performed_at  DateTime?
+  notes         String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("quality_controls")
+}
+
+model Certification {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  certification_name String
+  issuing_authority String
+  certification_type String // 'ayush' | 'who' | 'iso' | 'fda' | 'custom'
+  issue_date        DateTime
+  expiry_date       DateTime?
+  scope             Json     // Array of covered products/processes
+  status            String   @default("active") // 'active' | 'expired' | 'suspended' | 'revoked'
+  documents         Json     // Array of document URLs
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("certifications")
+}
+
+// ============================================================================
+// PHARMACY COMPLIANCE DATA
+// ============================================================================
+
+model DrugInteraction {
+  id                  String   @id @default(cuid())
+  workflow_id         String
+  medicines           Json     // Array of medicine IDs/names
+  severity            String   // 'low' | 'medium' | 'high' | 'critical'
+  interaction_type    String   // 'pharmacokinetic' | 'pharmacodynamic' | 'pharmaceutical' | 'therapeutic'
+  description         String
+  clinical_significance String
+  management_strategy String
+  references          Json     // Array of reference sources
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("drug_interactions")
+}
+
+model ComplianceAudit {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  regulation_type   String   // 'schedule-h' | 'schedule-x' | 'narcotics' | 'ayush' | 'fda' | 'who-gmp'
+  compliance_checks Json     // Array of ComplianceCheck objects
+  audit_trail       Json     // Array of AuditEntry objects
+  documentation     Json     // Array of required documents
+  status            String   @default("pending") // 'passed' | 'failed' | 'pending' | 'overdue'
+  audited_by        String?
+  audited_at        DateTime?
+  next_audit_date   DateTime?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("compliance_audits")
+}
+
+// ============================================================================
+// SUPPLY CHAIN DATA
+// ============================================================================
+
+model SupplyChainWorkflow {
+  id               String   @id @default(cuid())
+  workflow_id      String
+  supply_chain_type String  // 'procurement' | 'manufacturing' | 'distribution' | 'returns'
+  locations        Json     // Array of LocationWorkflow objects
+  transportation   Json     // TransportationWorkflow object
+  inventory_optimization Json // InventoryOptimizationWorkflow object
+  status           String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("supply_chain_workflows")
+}
+
+model TransportationWorkflow {
+  id                    String   @id @default(cuid())
+  workflow_id           String
+  mode                  String   // 'air' | 'sea' | 'road' | 'rail' | 'courier'
+  carrier               String
+  tracking_number       String?
+  estimated_delivery    DateTime
+  actual_delivery       DateTime?
+  cost                  Float
+  currency              String   @default("INR")
+  insurance             Float?
+  temperature_controlled Boolean @default(false)
+  required_documents    Json     // Array of document requirements
+  status                String   @default("planned") // 'planned' | 'in_transit' | 'delivered' | 'cancelled'
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@map("transportation_workflows")
+}
+
+// ============================================================================
+// INTERNATIONAL EXPANSION DATA
+// ============================================================================
+
+model InternationalWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  target_markets    Json     // Array of target country codes
+  currency_management Json   // CurrencyWorkflow object
+  language_management Json   // LanguageWorkflow object
+  regulatory_compliance Json  // RegulatoryComplianceWorkflow object
+  localization      Json     // LocalizationWorkflow object
+  status            String   @default("planning") // 'planning' | 'active' | 'paused' | 'completed'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("international_workflows")
+}
+
+model CurrencyWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  base_currency     String   @default("INR")
+  target_currencies Json     // Array of target currency codes
+  exchange_rate_source String // 'manual' | 'ecb' | 'fixer' | 'custom-api'
+  auto_update       Boolean  @default(true)
+  update_frequency  String   @default("daily") // 'hourly' | 'daily' | 'weekly'
+  conversion_rules  Json     // Array of CurrencyConversionRule objects
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("currency_workflows")
+}
+
+model LanguageWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  base_language     String   @default("en")
+  supported_languages Json    // Array of supported language codes
+  translation_source String  // 'manual' | 'google-translate' | 'deepl' | 'custom-service'
+  rtl_support       Json     // Array of RTL language codes
+  date_formats      Json     // Language-specific date formats
+  number_formats    Json     // Language-specific number formats
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("language_workflows")
+}
+
+// ============================================================================
+// CRM & LOYALTY DATA
+// ============================================================================
+
+model CRMLifecycle {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  customer_segment  String   // 'retail' | 'wholesale' | 'doctor' | 'hospital' | 'distributor'
+  lifecycle_stages  Json     // Array of CustomerLifecycleStage objects
+  communication_preferences Json // Array of CommunicationPreference objects
+  loyalty_program   Json     // LoyaltyProgramWorkflow object
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("crm_lifecycles")
+}
+
+model LoyaltyProgram {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  program_type      String   // 'points' | 'tier' | 'subscription' | 'referral' | 'cashback'
+  earning_rules     Json     // Array of LoyaltyRule objects
+  redemption_rules  Json     // Array of LoyaltyRule objects
+  tiers             Json?    // Array of LoyaltyTier objects (if tier-based)
+  expiry_policy     Json     // Points and tier expiry policies
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("loyalty_programs")
+}
+
+// ============================================================================
+// ANALYTICS & ML DATA
+// ============================================================================
+
+model AnalyticsWorkflow {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  data_sources      Json     // Array of data source identifiers
+  analysis_types    Json     // Array of analysis types
+  ml_models         Json     // Array of MLModel objects
+  reporting_frequency String // 'real-time' | 'hourly' | 'daily' | 'weekly' | 'monthly'
+  recipients        Json     // Array of notification recipients
+  status            String   @default("active") // 'active' | 'inactive' | 'paused'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("analytics_workflows")
+}
+
+model MLModel {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  model_id          String
+  model_type        String   // 'forecasting' | 'classification' | 'clustering' | 'recommendation'
+  algorithm         String
+  features          Json     // Array of feature names
+  target            String
+  accuracy          Float?
+  last_trained      DateTime?
+  next_training     DateTime?
+  status            String   @default("active") // 'active' | 'training' | 'deprecated' | 'failed'
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("ml_models")
+}
+
+model AutomationRule {
+  id                String   @id @default(cuid())
+  workflow_id       String
+  rule_id           String
+  name              String
+  trigger           Json     // WorkflowTrigger object
+  conditions        Json     // Array of WorkflowCondition objects
+  actions           Json     // Array of WorkflowAction objects
+  is_active         Boolean  @default(true)
+  last_executed     DateTime?
+  execution_count   Int      @default(0)
+  success_count     Int      @default(0)
+  failure_count     Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("automation_rules")
+}
