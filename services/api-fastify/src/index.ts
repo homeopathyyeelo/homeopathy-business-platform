@@ -46,13 +46,9 @@ fastify.register(authPlugin)
 fastify.register(swaggerPlugin)
 
 // Register API routes
-// fastify.register(authRoutes, { prefix: "/api/auth" })
 fastify.register(productsRoutes, { prefix: "/api/products" })
-// fastify.register(customersRoutes, { prefix: "/api/customers" })
-// fastify.register(ordersRoutes, { prefix: "/api/orders" })
-// fastify.register(analyticsRoutes, { prefix: "/api/analytics" })
 
-// Register existing campaign routes
+// Register marketing routes (Fastify's specialty)
 fastify.register(campaignsRoutes, { prefix: "/api/campaigns" })
 fastify.register(templatesRoutes, { prefix: "/api/templates" })
 fastify.register(couponsRoutes, { prefix: "/api/coupons" })

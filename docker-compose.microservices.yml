@@ -84,7 +84,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-user-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/user_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
       - JWT_SECRET_KEY=your-secret-key-change-in-production
@@ -116,7 +116,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-product-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/product_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
       - ELASTICSEARCH_URL=http://elasticsearch:9200
@@ -146,7 +146,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-order-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/order_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
     ports:
@@ -173,7 +173,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-payment-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/payment_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
       - STRIPE_PUBLIC_KEY=pk_test_mock
@@ -204,7 +204,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-notification-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/notification_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
       - SMTP_SERVER=smtp.gmail.com
@@ -238,7 +238,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-ai-service
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/ai_service_db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - REDIS_URL=redis://redis:6379
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
       - OPENAI_API_KEY=your-openai-api-key
@@ -328,7 +328,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-order-worker
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/yeelo_platform
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
     depends_on:
       postgres:
@@ -345,7 +345,7 @@ services:
       dockerfile: Dockerfile
     container_name: yeelo-notification-worker
     environment:
-      - DATABASE_URL=postgresql://yeelo_user:yeelo_password@postgres:5432/yeelo_platform
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       - RABBITMQ_URL=amqp://yeelo_user:yeelo_password@rabbitmq:5672/
     depends_on:
       postgres:

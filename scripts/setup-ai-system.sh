@@ -56,7 +56,7 @@ check_env() {
             print_warning "No .env.example found. Creating basic .env file..."
             cat > .env << EOF
 # Database
-DATABASE_URL=postgresql://yeelo:yeelo@localhost:5432/yeelo
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
 
 # Redis
 REDIS_URL=redis://localhost:6379

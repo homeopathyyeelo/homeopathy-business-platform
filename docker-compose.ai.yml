@@ -125,7 +125,7 @@ services:
       context: ./services/campaign-sender
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://yeelo:yeelo@postgres:5432/yeelo
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       KAFKA_BROKERS: kafka:9092
       WHATSAPP_API_KEY: ${WHATSAPP_API_KEY:-}
       TWILIO_API_KEY: ${TWILIO_API_KEY:-}
