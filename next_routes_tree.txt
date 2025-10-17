@@ -1,0 +1,379 @@
+# Next.js Routes Tree - Missing Frontend Pages
+
+## Overview
+This document outlines all missing Next.js frontend pages and components that need to be implemented to achieve feature parity with RetailDaddy and MargERP.
+
+## Current Frontend Structure
+```
+app/
+├── (stubs)/                    # Stub pages for development
+├── active-batches/            # ✅ Batch management
+├── ai/                        # ✅ AI features (10 pages)
+├── ai-campaigns/              # ✅ AI campaigns (6 pages)
+├── ai-chat/                   # ✅ AI chat (1 page)
+├── ai-demos/                  # ✅ AI demos (1 page)
+├── ai-insights/               # ✅ AI insights (7 pages)
+├── ai-lab/                    # ✅ AI lab (6 pages)
+├── analytics/                 # ✅ Analytics (9 pages)
+├── api/                       # ✅ API routes (64 routes)
+├── crm/                       # ✅ CRM (8 pages)
+├── customers/                 # ✅ Customers (10 pages)
+├── daily-register/            # ✅ Daily register (1 page)
+├── dashboard/                 # ✅ Dashboard (1 page)
+├── dashboards/                # ✅ Dashboards (1 page)
+├── delivery/                  # ✅ Delivery (1 page)
+├── email/                     # ✅ Email (1 page)
+├── features/                  # ✅ Features (1 page)
+├── finance/                   # ✅ Finance (14 pages) - PARTIALLY IMPLEMENTED
+├── globals.css                # ✅ Global styles
+├── gst/                       # ✅ GST (1 page)
+├── hr/                        # ✅ HR (10 pages) - PARTIALLY IMPLEMENTED
+├── inventory/                 # ✅ Inventory (10 pages) - PARTIALLY IMPLEMENTED
+├── layout.tsx                 # ✅ Layout components
+├── login/                     # ✅ Login (1 page)
+├── loyalty/                   # ✅ Loyalty (1 page)
+├── manufacturing/             # ✅ Manufacturing (1 page)
+├── marketing/                 # ✅ Marketing (10 pages) - PARTIALLY IMPLEMENTED
+├── master/                    # ✅ Master data (1 page)
+├── masters/                   # ✅ Masters (112 pages) - COMPREHENSIVE
+├── not-found.tsx              # ✅ 404 page
+├── notifications/             # ✅ Notifications (1 page)
+├── page.tsx                   # ✅ Home page
+├── pos/                       # ✅ POS (1 page) - BASIC
+├── prescriptions/             # ✅ Prescriptions (1 page)
+├── products/                  # ✅ Products (10 pages) - COMPREHENSIVE
+├── profile/                   # ❌ Profile (0 pages) - MISSING
+├── purchases/                 # ✅ Purchases (9 pages) - PARTIALLY IMPLEMENTED
+├── quick-stats/               # ✅ Quick stats (1 page)
+├── reports/                   # ✅ Reports (12 pages) - PARTIALLY IMPLEMENTED
+├── retail-pos/                # ✅ Retail POS (1 page) - BASIC
+├── sales/                     # ✅ Sales (11 pages) - PARTIALLY IMPLEMENTED
+├── schemes/                   # ✅ Schemes (1 page)
+├── settings/                  # ✅ Settings (12 pages) - PARTIALLY IMPLEMENTED
+├── social/                    # ✅ Social (7 pages)
+├── user/                      # ✅ User (1 page)
+├── vendors/                   # ✅ Vendors (9 pages) - COMPREHENSIVE
+└── warehouse/                 # ✅ Warehouse (1 page)
+```
+
+## Missing Frontend Pages (P0 - Critical)
+
+### Sales & Invoicing (15 missing pages)
+```
+sales/
+├── invoices/
+│   ├── page.tsx                  # ❌ Invoice list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Invoice details - MISSING
+│   ├── create/
+│   │   └── page.tsx              # ❌ Create invoice - MISSING
+│   ├── edit/
+│   │   └── [id]/page.tsx         # ❌ Edit invoice - MISSING
+│   └── reports/
+│       ├── summary/page.tsx      # ❌ Invoice summary report - MISSING
+│       └── outstanding/page.tsx  # ❌ Outstanding invoices - MISSING
+├── sales-orders/
+│   ├── page.tsx                  # ❌ Sales orders list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Sales order details - MISSING
+│   ├── create/
+│   │   └── page.tsx              # ❌ Create sales order - MISSING
+│   └── convert/
+│       └── [id]/page.tsx         # ❌ Convert order to invoice - MISSING
+├── returns/
+│   ├── page.tsx                  # ❌ Returns list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Return details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create return - MISSING
+├── invoice-series/
+│   ├── page.tsx                  # ❌ Invoice series management - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create invoice series - MISSING
+└── commissions/
+    ├── page.tsx                  # ❌ Commissions list - MISSING
+    ├── [id]/
+    │   └── page.tsx              # ❌ Commission details - MISSING
+    └── approve/
+        └── [id]/page.tsx         # ❌ Approve commission - MISSING
+```
+
+### Purchases & Vendors (10 missing pages)
+```
+purchases/
+├── purchase-orders/
+│   ├── page.tsx                  # ❌ Purchase orders list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Purchase order details - MISSING
+│   ├── create/
+│   │   └── page.tsx              # ❌ Create purchase order - MISSING
+│   └── approve/
+│       └── [id]/page.tsx         # ❌ Approve purchase order - MISSING
+├── grn/
+│   ├── page.tsx                  # ❌ GRN list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ GRN details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create GRN - MISSING
+├── vendor-invoices/
+│   ├── page.tsx                  # ❌ Vendor invoices list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Vendor invoice details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create vendor invoice - MISSING
+└── price-comparison/
+    └── page.tsx                  # ❌ Vendor price comparison - MISSING
+```
+
+### Finance & Accounting (8 missing pages)
+```
+finance/
+├── ledgers/
+│   ├── sales/
+│   │   └── page.tsx              # ❌ Sales ledger - MISSING
+│   ├── purchase/
+│   │   └── page.tsx              # ❌ Purchase ledger - MISSING
+│   └── customer/
+│       └── [id]/page.tsx         # ❌ Customer ledger - MISSING
+├── cashbook/
+│   ├── page.tsx                  # ❌ Cash book - MISSING
+│   └── entries/
+│       └── create/page.tsx       # ❌ Add cash entry - MISSING
+├── bankbook/
+│   ├── page.tsx                  # ❌ Bank book - MISSING
+│   └── reconciliation/
+│       └── page.tsx              # ❌ Bank reconciliation - MISSING
+├── expenses/
+│   ├── page.tsx                  # ❌ Expenses list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Expense details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create expense - MISSING
+└── gst/
+    ├── returns/
+    │   └── page.tsx              # ❌ GST returns - MISSING
+    └── eway-bills/
+        └── page.tsx              # ❌ E-way bills - MISSING
+```
+
+### Reports & Analytics (12 missing pages)
+```
+reports/
+├── sales/
+│   ├── daily/page.tsx            # ❌ Daily sales report - MISSING
+│   ├── weekly/page.tsx           # ❌ Weekly sales report - MISSING
+│   ├── monthly/page.tsx          # ❌ Monthly sales report - MISSING
+│   ├── product/page.tsx          # ❌ Product-wise sales - MISSING
+│   ├── customer/page.tsx         # ❌ Customer-wise sales - MISSING
+│   └── salesman/page.tsx         # ❌ Salesman performance - MISSING
+├── inventory/
+│   ├── stock/page.tsx            # ❌ Stock summary - MISSING
+│   ├── expiry/page.tsx           # ❌ Expiry reports - MISSING
+│   ├── movement/page.tsx         # ❌ Stock movement - MISSING
+│   └── valuation/page.tsx        # ❌ Inventory valuation - MISSING
+└── finance/
+    ├── receivables/page.tsx      # ❌ Accounts receivable - MISSING
+    ├── payables/page.tsx        # ❌ Accounts payable - MISSING
+    ├── profit/page.tsx          # ❌ Profit analysis - MISSING
+    ├── trial-balance/page.tsx   # ❌ Trial balance - MISSING
+    ├── balance-sheet/page.tsx   # ❌ Balance sheet - MISSING
+    └── cash-flow/page.tsx       # ❌ Cash flow statement - MISSING
+```
+
+### Marketing & Communication (6 missing pages)
+```
+marketing/
+├── campaigns/
+│   ├── page.tsx                  # ❌ Campaigns list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Campaign details - MISSING
+│   ├── create/
+│   │   └── page.tsx              # ❌ Create campaign - MISSING
+│   └── launch/
+│       └── [id]/page.tsx         # ❌ Launch campaign - MISSING
+├── whatsapp/
+│   ├── send/page.tsx             # ❌ Send WhatsApp - MISSING
+│   ├── bulk/page.tsx             # ❌ Bulk WhatsApp - MISSING
+│   └── templates/
+│       └── page.tsx              # ❌ WhatsApp templates - MISSING
+└── communication/
+    └── history/page.tsx          # ❌ Communication history - MISSING
+```
+
+### HR & Employee Management (8 missing pages)
+```
+hr/
+├── employees/
+│   ├── page.tsx                  # ❌ Employees list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Employee details - MISSING
+│   ├── create/
+│   │   └── page.tsx              # ❌ Create employee - MISSING
+│   └── edit/
+│       └── [id]/page.tsx         # ❌ Edit employee - MISSING
+├── roles/
+│   ├── page.tsx                  # ❌ Roles list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Role details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create role - MISSING
+├── attendance/
+│   ├── page.tsx                  # ❌ Attendance records - MISSING
+│   └── mark/
+│       └── page.tsx              # ❌ Mark attendance - MISSING
+└── payroll/
+    ├── salary/
+    │   └── page.tsx              # ❌ Salary records - MISSING
+    └── reports/
+        └── page.tsx              # ❌ Payroll reports - MISSING
+```
+
+### Settings & Configuration (6 missing pages)
+```
+settings/
+├── company/
+│   ├── page.tsx                  # ❌ Company settings - MISSING
+│   └── edit/page.tsx             # ❌ Edit company info - MISSING
+├── branches/
+│   ├── page.tsx                  # ❌ Branches list - MISSING
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Branch details - MISSING
+│   └── create/
+│       └── page.tsx              # ❌ Create branch - MISSING
+├── system/
+│   ├── page.tsx                  # ❌ System configuration - MISSING
+│   └── config/
+│       └── [key]/page.tsx        # ❌ System config editor - MISSING
+└── integrations/
+    └── page.tsx                  # ❌ Integration settings - MISSING
+```
+
+## Missing Components & Features (P1 - Important)
+
+### Advanced POS Features
+```
+pos/
+├── hold-bill/page.tsx            # ❌ Hold bill functionality
+├── customer-display/page.tsx     # ❌ Customer display screen
+└── dual-panel/page.tsx           # ❌ Dual panel POS mode
+```
+
+### Payment Integration
+```
+payments/
+├── stripe/page.tsx               # ❌ Stripe payment processing
+├── razorpay/page.tsx             # ❌ Razorpay payment processing
+└── gateway-status/page.tsx       # ❌ Payment gateway status
+```
+
+### Hardware Integration
+```
+hardware/
+├── weighing/page.tsx             # ❌ Weighing machine integration
+├── barcode-scanner/page.tsx      # ❌ Barcode scanner integration
+└── devices/page.tsx              # ❌ Connected devices management
+```
+
+### Multi-Company/Branch Features
+```
+companies/
+├── page.tsx                      # ❌ Companies list
+├── [id]/
+│   └── page.tsx                  # ❌ Company details
+└── create/page.tsx               # ❌ Create company
+
+branches/
+├── page.tsx                      # ❌ Branches list
+├── [id]/
+│   └── page.tsx                  # ❌ Branch details
+└── create/page.tsx               # ❌ Create branch
+```
+
+## Homeopathy-Specific Features (P2 - Nice to Have)
+
+### Doctor & Patient Management
+```
+medical/
+├── doctors/
+│   ├── page.tsx                  # ❌ Doctors list
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Doctor profile
+│   └── create/page.tsx           # ❌ Add doctor
+├── patients/
+│   ├── page.tsx                  # ❌ Patients list
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Patient records
+│   └── create/page.tsx           # ❌ Add patient
+├── prescriptions/
+│   ├── page.tsx                  # ❌ Prescriptions list
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Prescription details
+│   └── create/page.tsx           # ❌ Create prescription
+├── appointments/
+│   ├── page.tsx                  # ❌ Appointments list
+│   ├── [id]/
+│   │   └── page.tsx              # ❌ Appointment details
+│   └── book/page.tsx             # ❌ Book appointment
+└── treatment/
+    ├── plans/page.tsx            # ❌ Treatment plans
+    └── outcomes/page.tsx         # ❌ Treatment outcomes
+```
+
+### Advanced Reporting
+```
+reports/
+├── doctor/
+│   ├── patients/page.tsx         # ❌ Doctor-patient reports
+│   └── performance/page.tsx      # ❌ Doctor performance
+├── prescription/
+│   └── analysis/page.tsx         # ❌ Prescription analysis
+└── treatment/
+    └── outcomes/page.tsx         # ❌ Treatment outcomes
+```
+
+## Total Missing Pages Summary
+
+### P0 Critical (Must implement first)
+- **Sales & Invoicing**: 15 pages
+- **Purchases & Vendors**: 10 pages
+- **Finance & Accounting**: 8 pages
+- **Reports & Analytics**: 12 pages
+- **Marketing & Communication**: 6 pages
+- **HR & Employee Management**: 8 pages
+- **Settings & Configuration**: 6 pages
+
+**Total P0**: 65 pages
+
+### P1 Important (Next sprint)
+- **Advanced POS Features**: 3 pages
+- **Payment Integration**: 3 pages
+- **Hardware Integration**: 3 pages
+- **Multi-Company/Branch**: 5 pages
+
+**Total P1**: 14 pages
+
+### P2 Nice to Have (Future)
+- **Homeopathy-Specific**: 12 pages
+- **Advanced Reporting**: 4 pages
+
+**Total P2**: 16 pages
+
+## Implementation Priority
+1. **Sales/Invoices/POS** - Core business functionality (15 pages)
+2. **Purchases/Vendors/GRN** - Supply chain management (10 pages)
+3. **Finance/Accounting** - Financial compliance (8 pages)
+4. **Reports/Analytics** - Business intelligence (12 pages)
+5. **Marketing/Campaigns** - Customer engagement (6 pages)
+6. **HR/Employees** - User management (8 pages)
+7. **Settings/Configuration** - System administration (6 pages)
+
+## Technical Requirements
+Each page must include:
+- ✅ SWR hooks for data fetching
+- ✅ Loading states and error handling
+- ✅ Form validation and submission
+- ✅ Responsive design
+- ✅ Proper TypeScript types
+- ✅ API integration with Go backend
+- ✅ Pagination, filtering, sorting
+- ✅ Audit trails and logging

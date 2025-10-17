@@ -477,16 +477,127 @@ type MLModel struct {
 	F1Score         float64   `gorm:"default:0;check:f1_score >= 0 AND f1_score <= 1" json:"f1_score" validate:"min=0,max=1"`
 	TrainingDate    time.Time `gorm:"not null" json:"training_date"`
 	LastUsed        *time.Time `gorm:"null" json:"last_used"`
-	IsActive        bool      `gorm:"default:true" json:"is_active"`
-	ModelFilePath   string    `gorm:"size:500" json:"model_file_path"`
-	Metadata        map[string]interface{} `gorm:"type:jsonb" json:"metadata"`
+	IsActive        bool      `gorm:"default:true" json:"is_active"`}
+
+// ==================== HR & USER MANAGEMENT MODELS ====================
+
+// Attendance represents employee attendance records
+type Attendance struct {
+	BaseEntity
+	UserID         string    `gorm:"not null;index" json:"user_id" validate:"required"`
+	AttendanceDate time.Time `gorm:"not null" json:"attendance_date" validate:"required"`
+	CheckInTime    time.Time `gorm:"not null" json:"check_in_time" validate:"required"`
+	CheckOutTime   *time.Time `gorm:"null" json:"check_out_time"`
+	Status         string    `gorm:"not null;size:20" json:"status" validate:"oneof=present absent late half_day"`
+	Notes          string    `gorm:"type:text" json:"notes"`
+	Location       string    `gorm:"size:255" json:"location"`
+	IPAddress      string    `gorm:"size:45" json:"ip_address"`
 }
 
-// AutomationRule tracks automation rules (already defined above)
+// SalaryRecord represents employee salary records
+type SalaryRecord struct {
+	BaseEntity
+	UserID          string    `gorm:"not null;index" json:"user_id" validate:"required"`
+	SalaryMonth     int       `gorm:"not null" json:"salary_month" validate:"min=1,max=12"`
+	SalaryYear      int       `gorm:"not null" json:"salary_year" validate:"min=2000,max=2100"`
+	BasicSalary     float64   `gorm:"type:decimal(15,2);not null" json:"basic_salary" validate:"min=0"`
+	Allowances      float64   `gorm:"type:decimal(15,2);default:0" json:"allowances" validate:"min=0"`
+	Deductions      float64   `gorm:"type:decimal(15,2);default:0" json:"deductions" validate:"min=0"`
+	NetSalary       float64   `gorm:"type:decimal(15,2);not null" json:"net_salary" validate:"min=0"`
+	PaymentDate     *time.Time `gorm:"null" json:"payment_date"`
+	PaymentStatus   string    `gorm:"not null;default:pending;size:20" json:"payment_status" validate:"oneof=pending paid failed"`
+	PaymentReference string   `gorm:"size:255" json:"payment_reference"`
+}
 
-// Import required packages
-import (
-	"context"
-	"fmt"
-	"gorm.io/driver/postgres"
-)
+// ==================== PAYMENT GATEWAY MODELS ====================
+
+// PaymentLog represents payment transaction logs
+type PaymentLog struct {
+	BaseEntity
+	Gateway        string    `gorm:"not null;size:50" json:"gateway" validate:"required"`
+	TransactionID  string    `gorm:"not null;uniqueIndex;size:255" json:"transaction_id" validate:"required"`
+	Amount         float64   `gorm:"type:decimal(15,2);not null" json:"amount" validate:"min=0"`
+	Currency       string    `gorm:"not null;size:10" json:"currency" validate:"required"`
+	Status         string    `gorm:"not null;size:20" json:"status" validate:"oneof=pending completed failed refunded"`
+	PaymentMethod  string    `gorm:"size:50" json:"payment_method"`
+	CustomerID     string    `gorm:"index;size:100" json:"customer_id"`
+	InvoiceID      string    `gorm:"index;size:100" json:"invoice_id"`
+	PaymentData    string    `gorm:"type:jsonb" json:"payment_data"`
+	ErrorMessage   string    `gorm:"type:text" json:"error_message"`
+}
+
+// RefundLog represents refund transaction logs
+type RefundLog struct {
+	BaseEntity
+	PaymentTransactionID string  `gorm:"not null;index;size:255" json:"payment_transaction_id" validate:"required"`
+	RefundID            string  `gorm:"not null;size:255" json:"refund_id" validate:"required"`
+	Amount              float64 `gorm:"type:decimal(15,2);not null" json:"amount" validate:"min=0"`
+	Currency            string  `gorm:"not null;size:10" json:"currency" validate:"required"`
+	Status              string  `gorm:"not null;size:20" json:"status" validate:"oneof=pending completed failed"`
+	}
+
+// ==================== MULTI-PC SHARING MODELS ====================
+
+// SharedSession represents a shared session across multiple devices
+type SharedSession struct {
+	BaseEntity
+	SessionName  string                 `gorm:"not null;size:255" json:"session_name" validate:"required"`
+	UserID       string                 `gorm:"not null;index" json:"user_id" validate:"required"`
+	DeviceIDs    []string               `gorm:"type:jsonb" json:"device_ids"`
+	Status       string                 `gorm:"not null;size:20" json:"status" validate:"oneof=active inactive"`
+	Settings     map[string]interface{} `gorm:"type:jsonb" json:"settings"`
+	LastActivity time.Time              `gorm:"not null" json:"last_activity"`
+	User         User                   `gorm:"foreignKey:UserID" json:"user,omitempty"`
+}
+
+// SharedCart represents a cart shared across multiple devices
+type SharedCart struct {
+	BaseEntity
+	SessionID    string     `gorm:"not null;index" json:"session_id" validate:"required"`
+	CustomerID   string     `gorm:"index" json:"customer_id"`
+	Items        []CartItem `gorm:"type:jsonb" json:"items"`
+	Total        float64    `gorm:"type:decimal(10,2)" json:"total"`
+	Status       string     `gorm:"not null;size:20" json:"status" validate:"oneof=active completed cancelled"`
+	Description  string     `gorm:"type:text" json:"description"`
+	LastModified time.Time  `gorm:"not null" json:"last_modified"`
+	ModifiedBy   string     `gorm:"not null" json:"modified_by"`
+	Notes        string     `gorm:"type:text" json:"notes"`
+	Session      SharedSession `gorm:"foreignKey:SessionID" json:"session,omitempty"`
+}
+
+// SharedHeldBill represents a bill held across multiple devices
+type SharedHeldBill struct {
+	BaseEntity
+	SessionID   string     `gorm:"not null;index" json:"session_id" validate:"required"`
+	CustomerID  string     `gorm:"index" json:"customer_id"`
+	Items       []BillItem `gorm:"type:jsonb" json:"items"`
+	Total       float64    `gorm:"type:decimal(10,2)" json:"total"`
+	Status      string     `gorm:"not null;size:20" json:"status" validate:"oneof=held resumed completed"`
+	Notes       string     `gorm:"type:text" json:"notes"`
+	HoldReason  string     `gorm:"type:text" json:"hold_reason"`
+	HeldAt      time.Time  `gorm:"not null" json:"held_at"`
+	HeldBy      string     `gorm:"not null" json:"held_by"`
+	ResumedAt   *time.Time `gorm:"null" json:"resumed_at"`
+	ResumedBy   string     `gorm:"null" json:"resumed_by"`
+	}
+
+// CartItem represents an item in a cart
+type CartItem struct {
+	ProductID string  `json:"product_id"`
+	Name      string  `json:"name"`
+	Quantity  int     `json:"quantity"`
+	Price     float64 `json:"price"`
+	Discount  float64 `json:"discount"`
+	Total     float64 `json:"total"`
+}
+
+// BillItem represents an item in a bill
+type BillItem struct {
+	ProductID string  `json:"product_id"`
+	Name      string  `json:"name"`
+	Quantity  int     `json:"quantity"`
+	Price     float64 `json:"price"`
+	Discount  float64 `json:"discount"`
+	Total     float64 `json:"total"`
+}
+

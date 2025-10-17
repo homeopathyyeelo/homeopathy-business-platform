@@ -343,13 +343,15 @@ func (c *CacheService) Get(ctx context.Context, key string) (interface{}, error)
 	return result, nil
 }
 
-func (c *CacheService) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	data, err := json.Marshal(value)
+func (c *CacheService) DeletePattern(ctx context.Context, pattern string) error {
+	keys, err := c.client.Keys(ctx, pattern).Result()
 	if err != nil {
 		return err
 	}
-
-	return c.client.Set(ctx, key, data, expiration).Err()
+	if len(keys) > 0 {
+		return c.client.Del(ctx, keys...).Err()
+	}
+	return nil
 }
 
 // Circuit Breaker for External Services
@@ -639,7 +641,13 @@ func (wp *WorkflowProcessor) processWorkflow(ctx context.Context, execution Work
 	}
 }
 
-// Enhanced HTTP Handlers with Context and Error Handling (defined in handlers.go)
+// Sales Handler for invoices, orders, returns, and commissions
+type SalesHandler struct {
+	repo *GORMDatabase
+	cache *CacheService
+}
+
+
 
 // Main Application Setup
 func main() {
@@ -672,12 +680,38 @@ func main() {
 	middleware := NewMiddleware(db, cache, circuitBreaker, rateLimiter, config)
 
 	// Initialize services
-	workflowService := NewWorkflowService(db, validator, cache, circuitBreaker)
-	inventoryService := NewInventoryService(db, validator, cache, circuitBreaker)
-	customerService := NewCustomerServiceService(db, validator, cache, circuitBreaker)
+	productService := NewProductService(db, cache)
+	inventoryService := NewInventoryService(db, cache)
+	customerService := NewCustomerService(db, cache)
 	financialService := NewFinancialService(db, validator, cache, circuitBreaker)
+	workflowService := NewWorkflowService(db, cache, circuitBreaker)
 	workflowProcessor := NewWorkflowProcessor(db, 10) // 10 worker goroutines
+	companyBranchHandler := NewCompanyBranchHandler(db, cache)
 
+	// Initialize payment services
+	stripeService := NewStripeService("sk_test_mock", "whsec_mock")
+	razorpayService := NewRazorpayService("rzp_test_mock", "mock_secret")
+
+	// Initialize offline services
+	storageService := NewOfflineStorageService("/tmp/offline_storage")
+	syncService := NewSyncService()
+
+	offlineHandler := NewOfflineHandler(db, cache, storageService, syncService)
+
+	// Initialize multi-PC sharing services
+	sessionStore := NewSharedSessionStore()
+	syncManager := NewPCSyncManager()
+
+	multiPCSharingHandler := NewMultiPCSharingHandler(db, cache, sessionStore, syncManager)
+
+	// Initialize hardware services
+	serialService := NewSerialPortService("/dev/ttyUSB0", 9600)
+	printerService := NewPrinterService("PRINTER_001")
+	displayService := NewCustomerDisplayService("DISPLAY_001")
+
+	hardwareIntegrationHandler := NewHardwareIntegrationHandler(db, cache, serialService, printerService, displayService)
+
+// ...
 	// Start workflow processor
 	ctx := context.Background()
 	workflowProcessor.Start(ctx)
@@ -690,6 +724,8 @@ func main() {
 		financialService:  financialService,
 		workflowProcessor: workflowProcessor,
 	}
+	productHandler := NewProductHandler(productService, db, cache, config)
+	inventoryHandler := NewInventoryHandler(inventoryService)
 
 	// Setup Gin router with advanced middleware
 	router := gin.New()
@@ -724,23 +760,128 @@ func main() {
 		inventory.Use(middleware.RateLimit(100))
 		inventory.Use(middleware.Cache(2 * time.Minute))
 		{
-			inventory.GET("", handler.GetInventory)
-			inventory.GET("/:id", handler.GetInventoryItem)
-			inventory.POST("", middleware.AuthRequired(), handler.CreateInventoryItem)
-			inventory.PUT("/:id", middleware.AuthRequired(), handler.UpdateInventoryItem)
-			inventory.DELETE("/:id", middleware.AuthRequired(), handler.DeleteInventoryItem)
-			inventory.GET("/low-stock", handler.GetLowStockItems)
-			inventory.PUT("/:id/stock", middleware.AuthRequired(), handler.UpdateStock)
+			inventory.GET("", inventoryHandler.GetInventoryItems)
+			inventory.GET("/:id", inventoryHandler.GetInventoryItem)
+			inventory.POST("", middleware.AuthRequired(), inventoryHandler.CreateInventoryItem)
+			inventory.PUT("/:id", middleware.AuthRequired(), inventoryHandler.UpdateInventoryItem)
+			inventory.DELETE("/:id", middleware.AuthRequired(), inventoryHandler.DeleteInventoryItem)
+			inventory.GET("/low-stock", inventoryHandler.GetLowStockItems)
+			inventory.PUT("/:id/stock", middleware.AuthRequired(), inventoryHandler.UpdateStock)
+			inventory.GET("/:id/adjustments", inventoryHandler.GetStockAdjustments)
+			inventory.GET("/reports/summary", inventoryHandler.GetInventorySummary)
+			inventory.GET("/reports/utilization", inventoryHandler.GetWarehouseUtilization)
 		}
 
-		// Customer Service routes
-		customerService := api.Group("/customer-service")
-		customerService.Use(middleware.RateLimit(100))
-		customerService.Use(middleware.Cache(3 * time.Minute))
+		// Customer routes
+		customers := api.Group("/customers")
+		customers.Use(middleware.RateLimit(100))
+		customers.Use(middleware.Cache(3 * time.Minute))
 		{
-			customerService.GET("/metrics", handler.GetCustomerServiceMetrics)
-			customerService.GET("/agents/:id", handler.GetAgentPerformance)
-			customerService.GET("/departments/:department", handler.GetDepartmentMetrics)
+			customers.GET("", customerHandler.GetCustomers)
+			// Offline mode routes
+			offline := api.Group("/offline")
+			offline.Use(middleware.RateLimit(100))
+			offline.Use(middleware.Cache(5 * time.Minute))
+			{
+				// Offline status
+				offline.GET("/status", offlineHandler.GetOfflineStatus)
+				offline.POST("/mode", middleware.AuthRequired(), offlineHandler.SetOfflineMode)
+
+				// Offline storage
+				storage := offline.Group("/storage")
+				{
+					storage.GET("/:entity_type/:entity_id", offlineHandler.GetOfflineData)
+					storage.POST("/:entity_type/:entity_id", offlineHandler.StoreOfflineData)
+					storage.DELETE("/:entity_type/:entity_id", offlineHandler.DeleteOfflineData)
+				}
+
+				// Offline queue
+				queue := offline.Group("/queue")
+				{
+					queue.GET("", offlineHandler.GetOfflineQueue)
+					queue.POST("/operations", offlineHandler.QueueOfflineOperation)
+					queue.POST("/process", middleware.AuthRequired(), offlineHandler.ProcessOfflineQueue)
+				}
+
+				// Data synchronization
+				sync := offline.Group("/sync")
+				{
+					sync.POST("", offlineHandler.SyncOfflineData)
+					sync.GET("/status", offlineHandler.GetSyncStatus)
+					sync.GET("/conflicts", offlineHandler.GetSyncConflicts)
+					sync.POST("/conflicts/:conflict_id/resolve", middleware.AuthRequired(), offlineHandler.ResolveSyncConflict)
+				}
+
+				// Offline reporting
+				reports := offline.Group("/reports")
+				{
+					reports.GET("", offlineHandler.GetOfflineReports)
+					reports.POST("/:report_id/generate", offlineHandler.GenerateOfflineReport)
+				}
+			}
+			multiPC := api.Group("/multi-pc")
+			multiPC.Use(middleware.RateLimit(100))
+			multiPC.Use(middleware.Cache(5 * time.Minute))
+			{
+				// Shared sessions
+				sessions := multiPC.Group("/sessions")
+				{
+					sessions.POST("", middleware.AuthRequired(), multiPCSharingHandler.CreateSharedSession)
+					sessions.GET("/users/:user_id", multiPCSharingHandler.GetSharedSessions)
+					sessions.POST("/:session_id/join", multiPCSharingHandler.JoinSharedSession)
+					sessions.POST("/:session_id/leave", multiPCSharingHandler.LeaveSharedSession)
+				}
+
+				// Shared carts
+				carts := multiPC.Group("/carts")
+				{
+					carts.POST("", middleware.AuthRequired(), multiPCSharingHandler.CreateSharedCart)
+					carts.GET("/:cart_id", multiPCSharingHandler.GetSharedCart)
+					carts.PUT("/:cart_id", middleware.AuthRequired(), multiPCSharingHandler.UpdateSharedCart)
+				}
+
+				// Shared billing
+				billing := multiPC.Group("/billing")
+				{
+					billing.POST("/hold", middleware.AuthRequired(), multiPCSharingHandler.HoldSharedBill)
+					billing.POST("/:bill_id/resume", middleware.AuthRequired(), multiPCSharingHandler.ResumeSharedBill)
+				}
+
+				// Device management
+				devices := multiPC.Group("/devices")
+				{
+					devices.GET("/sessions/:session_id", multiPCSharingHandler.GetConnectedDevices)
+					devices.POST("/:device_id/message", middleware.AuthRequired(), multiPCSharingHandler.SendMessageToDevice)
+				}
+
+				// WebSocket for real-time sync
+				multiPC.GET("/ws", multiPCSharingHandler.HandleWebSocket)
+			}
+			customers.POST("", middleware.AuthRequired(), customerHandler.CreateCustomer)
+			customers.PUT("/:id", middleware.AuthRequired(), customerHandler.UpdateCustomer)
+			customers.DELETE("/:id", middleware.AuthRequired(), customerHandler.DeleteCustomer)
+
+			// Customer groups
+			customers.GET("/groups", customerHandler.GetCustomerGroups)
+			customers.POST("/groups", middleware.AuthRequired(), customerHandler.CreateCustomerGroup)
+			customers.POST("/:customer_id/groups/:group_id", middleware.AuthRequired(), customerHandler.AddCustomerToGroup)
+			customers.DELETE("/:customer_id/groups/:group_id", middleware.AuthRequired(), customerHandler.RemoveCustomerFromGroup)
+
+			// Loyalty programs
+			customers.GET("/loyalty/programs", customerHandler.GetLoyaltyPrograms)
+			customers.POST("/loyalty/programs", middleware.AuthRequired(), customerHandler.CreateLoyaltyProgram)
+			customers.POST("/:customer_id/loyalty/points", middleware.AuthRequired(), customerHandler.AddLoyaltyPoints)
+			customers.POST("/:customer_id/loyalty/redeem", middleware.AuthRequired(), customerHandler.RedeemLoyaltyPoints)
+			customers.GET("/:customer_id/loyalty/transactions", customerHandler.GetLoyaltyTransactions)
+
+			// Customer interactions
+			customers.POST("/:customer_id/interactions", middleware.AuthRequired(), customerHandler.CreateInteraction)
+			customers.GET("/:customer_id/interactions", customerHandler.GetCustomerInteractions)
+
+			// Analytics
+			customers.GET("/analytics", customerHandler.GetCustomerAnalytics)
+			customers.GET("/:customer_id/lifetime-value", customerHandler.GetCustomerLifetimeValue)
+			customers.GET("/segments", customerHandler.SegmentCustomers)
 		}
 
 		// Products routes
@@ -748,21 +889,466 @@ func main() {
 		products.Use(middleware.RateLimit(100))
 		products.Use(middleware.Cache(2 * time.Minute))
 		{
-			products.GET("", handler.GetProducts)
-			products.GET("/:id", handler.GetProduct)
-			products.POST("", middleware.AuthRequired(), handler.CreateProduct)
-			products.PUT("/:id", middleware.AuthRequired(), handler.UpdateProduct)
-			products.DELETE("/:id", middleware.AuthRequired(), handler.DeleteProduct)
+			products.GET("", productHandler.GetProducts)
+			products.GET("/:id", productHandler.GetProduct)
+			products.POST("", middleware.AuthRequired(), productHandler.CreateProduct)
+			products.PUT("/:id", middleware.AuthRequired(), productHandler.UpdateProduct)
+			products.DELETE("/:id", middleware.AuthRequired(), productHandler.DeleteProduct)
+			products.GET("/low-stock", productHandler.GetLowStockProducts)
 		}
 
-		// Master data import routes
-		imports := api.Group("/imports")
-		imports.Use(middleware.AuthRequired())
+		// Categories routes
+		categories := api.Group("/categories")
+		categories.Use(middleware.RateLimit(100))
+		categories.Use(middleware.Cache(5 * time.Minute))
 		{
-			imports.POST("/products/excel", HandleImportProducts)
+			categories.GET("", productHandler.GetCategories)
+			categories.POST("", middleware.AuthRequired(), productHandler.CreateCategory)
 		}
-	}
 
+		// Brands routes
+		brands := api.Group("/brands")
+		brands.Use(middleware.RateLimit(100))
+		brands.Use(middleware.Cache(5 * time.Minute))
+		{
+			brands.GET("", productHandler.GetBrands)
+			brands.POST("", middleware.AuthRequired(), productHandler.CreateBrand)
+		}
+
+		// Units routes
+		units := api.Group("/units")
+		units.Use(middleware.RateLimit(100))
+		units.Use(middleware.Cache(5 * time.Minute))
+		{
+			units.GET("", productHandler.GetUnits)
+			units.POST("", middleware.AuthRequired(), productHandler.CreateUnit)
+		}
+
+		// Sales routes
+		// Invoice routes
+		invoices := api.Group("/invoices")
+		invoices.Use(middleware.RateLimit(100))
+		invoices.Use(middleware.Cache(2 * time.Minute))
+		{
+			invoices.GET("", salesHandler.GetInvoices)
+			invoices.GET("/:id", salesHandler.GetInvoice)
+			invoices.POST("", middleware.AuthRequired(), salesHandler.CreateInvoice)
+			invoices.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdateInvoice)
+			invoices.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeleteInvoice)
+			invoices.GET("/customer/:customer_id", salesHandler.GetInvoicesByCustomer)
+			invoices.GET("/salesman/:salesman_id", salesHandler.GetInvoicesBySalesman)
+			invoices.PUT("/:id/status", middleware.AuthRequired(), salesHandler.UpdateInvoiceStatus)
+			invoices.PUT("/:id/approve", middleware.AuthRequired(), salesHandler.ApproveInvoice)
+			invoices.GET("/reports/summary", salesHandler.GetInvoiceSummary)
+			invoices.GET("/reports/outstanding", salesHandler.GetOutstandingInvoices)
+		}
+
+		// Sales Order routes
+		orders := api.Group("/sales-orders")
+		orders.Use(middleware.RateLimit(100))
+		orders.Use(middleware.Cache(3 * time.Minute))
+		{
+			orders.GET("", salesHandler.GetSalesOrders)
+			orders.GET("/:id", salesHandler.GetSalesOrder)
+			orders.POST("", middleware.AuthRequired(), salesHandler.CreateSalesOrder)
+			orders.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdateSalesOrder)
+			orders.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeleteSalesOrder)
+			orders.POST("/:id/convert", middleware.AuthRequired(), salesHandler.ConvertOrderToInvoice)
+			orders.GET("/customer/:customer_id", salesHandler.GetOrdersByCustomer)
+		}
+
+		// Return routes
+		returns := api.Group("/returns")
+		returns.Use(middleware.RateLimit(100))
+		returns.Use(middleware.Cache(2 * time.Minute))
+		{
+			returns.GET("", salesHandler.GetReturns)
+			returns.GET("/:id", salesHandler.GetReturn)
+			returns.POST("", middleware.AuthRequired(), salesHandler.CreateReturn)
+			returns.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdateReturn)
+			returns.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeleteReturn)
+			returns.PUT("/:id/approve", middleware.AuthRequired(), salesHandler.ApproveReturn)
+			returns.GET("/invoice/:invoice_id", salesHandler.GetReturnsByInvoice)
+		}
+
+		// Invoice Series routes
+		invoiceSeries := api.Group("/invoice-series")
+		invoiceSeries.Use(middleware.RateLimit(100))
+		invoiceSeries.Use(middleware.Cache(5 * time.Minute))
+		{
+			invoiceSeries.GET("", salesHandler.GetInvoiceSeries)
+			invoiceSeries.GET("/:id", salesHandler.GetInvoiceSeriesByID)
+			invoiceSeries.POST("", middleware.AuthRequired(), salesHandler.CreateInvoiceSeries)
+			invoiceSeries.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdateInvoiceSeries)
+			invoiceSeries.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeleteInvoiceSeries)
+		}
+
+		// Commission routes
+		commissions := api.Group("/commissions")
+		commissions.Use(middleware.RateLimit(100))
+		commissions.Use(middleware.Cache(3 * time.Minute))
+		{
+			commissions.GET("", salesHandler.GetCommissions)
+			commissions.GET("/:id", salesHandler.GetCommission)
+			commissions.POST("", middleware.AuthRequired(), salesHandler.CreateCommission)
+			commissions.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdateCommission)
+			commissions.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeleteCommission)
+			commissions.PUT("/:id/approve", middleware.AuthRequired(), salesHandler.ApproveCommission)
+			commissions.GET("/salesman/:salesman_id", salesHandler.GetCommissionsBySalesman)
+		}
+
+		// Payment routes
+		payments := api.Group("/payments")
+		payments.Use(middleware.RateLimit(100))
+		payments.Use(middleware.Cache(2 * time.Minute))
+		{
+			payments.GET("", salesHandler.GetPayments)
+			payments.GET("/:id", salesHandler.GetPayment)
+			payments.POST("", middleware.AuthRequired(), salesHandler.CreatePayment)
+			payments.PUT("/:id", middleware.AuthRequired(), salesHandler.UpdatePayment)
+			payments.DELETE("/:id", middleware.AuthRequired(), salesHandler.DeletePayment)
+			// Purchase Order routes
+		purchaseOrders := api.Group("/purchase-orders")
+		purchaseOrders.Use(middleware.RateLimit(100))
+		purchaseOrders.Use(middleware.Cache(3 * time.Minute))
+		{
+			purchaseOrders.GET("", purchaseHandler.GetPurchaseOrders)
+			purchaseOrders.GET("/:id", purchaseHandler.GetPurchaseOrder)
+			purchaseOrders.POST("", middleware.AuthRequired(), purchaseHandler.CreatePurchaseOrder)
+			purchaseOrders.PUT("/:id", middleware.AuthRequired(), purchaseHandler.UpdatePurchaseOrder)
+			purchaseOrders.DELETE("/:id", middleware.AuthRequired(), purchaseHandler.DeletePurchaseOrder)
+			purchaseOrders.PUT("/:id/approve", middleware.AuthRequired(), purchaseHandler.ApprovePurchaseOrder)
+			purchaseOrders.GET("/vendor/:vendor_id", purchaseHandler.GetOrdersByVendor)
+		}
+
+		// GRN routes
+		grn := api.Group("/grn")
+		grn.Use(middleware.RateLimit(100))
+		grn.Use(middleware.Cache(2 * time.Minute))
+		{
+			grn.GET("", purchaseHandler.GetGRN)
+			grn.GET("/:id", purchaseHandler.GetGRNByID)
+			grn.POST("", middleware.AuthRequired(), purchaseHandler.CreateGRN)
+			grn.PUT("/:id", middleware.AuthRequired(), purchaseHandler.UpdateGRN)
+			grn.DELETE("/:id", middleware.AuthRequired(), purchaseHandler.DeleteGRN)
+			grn.GET("/po/:po_id", purchaseHandler.GetGRNByPurchaseOrder)
+		}
+
+		// Vendor Invoice routes
+		vendorInvoices := api.Group("/vendor-invoices")
+		vendorInvoices.Use(middleware.RateLimit(100))
+		vendorInvoices.Use(middleware.Cache(2 * time.Minute))
+		{
+			vendorInvoices.GET("", purchaseHandler.GetVendorInvoices)
+			vendorInvoices.GET("/:id", purchaseHandler.GetVendorInvoice)
+			vendorInvoices.POST("", middleware.AuthRequired(), purchaseHandler.CreateVendorInvoice)
+			vendorInvoices.PUT("/:id", middleware.AuthRequired(), purchaseHandler.UpdateVendorInvoice)
+			vendorInvoices.DELETE("/:id", middleware.AuthRequired(), purchaseHandler.DeleteVendorInvoice)
+			vendorInvoices.PUT("/:id/approve", middleware.AuthRequired(), purchaseHandler.ApproveVendorInvoice)
+		}
+
+		// Vendor routes
+		vendors := api.Group("/vendors")
+		vendors.Use(middleware.RateLimit(100))
+		vendors.Use(middleware.Cache(3 * time.Minute))
+		{
+			vendors.GET("", purchaseHandler.GetVendors)
+			vendors.GET("/:id", purchaseHandler.GetVendor)
+			vendors.POST("", middleware.AuthRequired(), purchaseHandler.CreateVendor)
+			vendors.PUT("/:id", middleware.AuthRequired(), purchaseHandler.UpdateVendor)
+			vendors.DELETE("/:id", middleware.AuthRequired(), purchaseHandler.DeleteVendor)
+			vendors.GET("/performance", purchaseHandler.GetVendorPerformance)
+			// Finance routes
+		// Ledger routes
+		ledgers := api.Group("/ledgers")
+		ledgers.Use(middleware.RateLimit(100))
+		ledgers.Use(middleware.Cache(5 * time.Minute))
+		{
+			ledgers.GET("/sales", financeHandler.GetSalesLedger)
+			ledgers.GET("/purchase", financeHandler.GetPurchaseLedger)
+			ledgers.GET("/customer/:customer_id", financeHandler.GetCustomerLedger)
+			ledgers.GET("/vendor/:vendor_id", financeHandler.GetVendorLedger)
+		}
+
+		// Cash Book routes
+		cashbook := api.Group("/cashbook")
+		cashbook.Use(middleware.RateLimit(100))
+		cashbook.Use(middleware.Cache(3 * time.Minute))
+		{
+			cashbook.GET("", financeHandler.GetCashBook)
+			cashbook.POST("", middleware.AuthRequired(), financeHandler.CreateCashBookEntry)
+		}
+
+		// Bank Book routes
+		bankbook := api.Group("/bankbook")
+		bankbook.Use(middleware.RateLimit(100))
+		bankbook.Use(middleware.Cache(3 * time.Minute))
+		{
+			bankbook.GET("", financeHandler.GetBankBook)
+			bankbook.POST("", middleware.AuthRequired(), financeHandler.CreateBankBookEntry)
+		}
+
+		// Expense routes
+		expenses := api.Group("/expenses")
+		expenses.Use(middleware.RateLimit(100))
+		expenses.Use(middleware.Cache(2 * time.Minute))
+		{
+			expenses.GET("", financeHandler.GetExpenses)
+			expenses.GET("/:id", financeHandler.GetExpense)
+			expenses.POST("", middleware.AuthRequired(), financeHandler.CreateExpense)
+			expenses.PUT("/:id", middleware.AuthRequired(), financeHandler.UpdateExpense)
+			expenses.DELETE("/:id", middleware.AuthRequired(), financeHandler.DeleteExpense)
+			expenses.GET("/categories", financeHandler.GetExpenseCategories)
+		}
+
+		// GST routes
+		gst := api.Group("/gst")
+		gst.Use(middleware.RateLimit(100))
+		gst.Use(middleware.Cache(5 * time.Minute))
+		{
+			gst.GET("/returns", financeHandler.GetGSTReturns)
+			gst.POST("/returns", middleware.AuthRequired(), financeHandler.CreateGSTReturn)
+			gst.GET("/eway-bills", financeHandler.GetEWayBills)
+			gst.POST("/eway-bills", middleware.AuthRequired(), financeHandler.CreateEWayBill)
+			gst.PUT("/eway-bills/:eway_bill_number/cancel", middleware.AuthRequired(), financeHandler.CancelEWayBill)
+		}
+
+		// Financial Reports routes
+		financeReports := api.Group("/finance")
+		financeReports.Use(middleware.RateLimit(100))
+		financeReports.Use(middleware.Cache(10 * time.Minute))
+		{
+			financeReports.GET("/trial-balance", financeHandler.GetTrialBalance)
+			financeReports.GET("/balance-sheet", financeHandler.GetBalanceSheet)
+			financeReports.GET("/profit-loss", financeHandler.GetProfitLoss)
+			financeReports.GET("/cash-flow", financeHandler.GetCashFlow)
+			financeReports.GET("/receivables", financeHandler.GetAccountsReceivable)
+			// Reports routes
+		reports := api.Group("/reports")
+		reports.Use(middleware.RateLimit(100))
+		reports.Use(middleware.Cache(10 * time.Minute))
+		{
+			// Sales Reports
+			reports.GET("/sales/daily", reportsHandler.GetDailySalesReport)
+			reports.GET("/sales/weekly", reportsHandler.GetWeeklySalesReport)
+			reports.GET("/sales/monthly", reportsHandler.GetMonthlySalesReport)
+			reports.GET("/sales/product", reportsHandler.GetProductWiseSales)
+			reports.GET("/sales/customer", reportsHandler.GetCustomerWiseSales)
+			reports.GET("/sales/salesman", reportsHandler.GetSalesmanPerformance)
+
+			// Inventory Reports
+			reports.GET("/inventory/stock", reportsHandler.GetStockSummary)
+			reports.GET("/inventory/expiry", reportsHandler.GetExpiryReports)
+			reports.GET("/inventory/movement", reportsHandler.GetStockMovement)
+			reports.GET("/inventory/valuation", reportsHandler.GetInventoryValuation)
+
+			// Purchase Reports
+			reports.GET("/purchases/vendor", reportsHandler.GetVendorPerformance)
+			reports.GET("/purchases/product", reportsHandler.GetProductPurchaseAnalysis)
+
+			// Financial Reports
+			reports.GET("/finance/profit", reportsHandler.GetProfitAnalysis)
+
+			// Homeopathy-Specific Reports
+			reports.GET("/doctor/patients", reportsHandler.GetDoctorPatientReports)
+			reports.GET("/prescription/analysis", reportsHandler.GetPrescriptionAnalysis)
+			// Marketing routes
+		marketing := api.Group("/marketing")
+		marketing.Use(middleware.RateLimit(100))
+		marketing.Use(middleware.Cache(5 * time.Minute))
+		{
+			// Campaign routes
+			campaigns := marketing.Group("/campaigns")
+			{
+				campaigns.GET("", marketingHandler.GetCampaigns)
+				campaigns.GET("/:id", marketingHandler.GetCampaign)
+				campaigns.POST("", middleware.AuthRequired(), marketingHandler.CreateCampaign)
+				campaigns.PUT("/:id", middleware.AuthRequired(), marketingHandler.UpdateCampaign)
+				campaigns.DELETE("/:id", middleware.AuthRequired(), marketingHandler.DeleteCampaign)
+				campaigns.POST("/:id/launch", middleware.AuthRequired(), marketingHandler.LaunchCampaign)
+				campaigns.GET("/:id/analytics", marketingHandler.GetCampaignAnalytics)
+			}
+
+			// WhatsApp routes
+			whatsapp := marketing.Group("/whatsapp")
+			{
+				whatsapp.POST("/send", middleware.AuthRequired(), marketingHandler.SendWhatsApp)
+				whatsapp.POST("/bulk", middleware.AuthRequired(), marketingHandler.SendBulkWhatsApp)
+				whatsapp.GET("/templates", marketingHandler.GetWhatsAppTemplates)
+				whatsapp.POST("/templates", middleware.AuthRequired(), marketingHandler.CreateWhatsAppTemplate)
+			}
+
+			// SMS routes
+			sms := marketing.Group("/sms")
+			{
+				sms.POST("/send", middleware.AuthRequired(), marketingHandler.SendSMS)
+			}
+
+			// Email routes
+			email := marketing.Group("/email")
+			{
+				email.POST("/send", middleware.AuthRequired(), marketingHandler.SendEmail)
+			}
+
+			// Communication history
+			communication := marketing.Group("/communication")
+			{
+				communication.GET("/history", marketingHandler.GetCommunicationHistory)
+			}
+			// Company and Branch routes
+			companyBranch := api.Group("/company-branch")
+			companyBranch.Use(middleware.RateLimit(100))
+			companyBranch.Use(middleware.Cache(5 * time.Minute))
+			{
+				// Company routes
+				companies := companyBranch.Group("/companies")
+				{
+					companies.GET("", companyBranchHandler.GetCompanies)
+					companies.GET("/user", companyBranchHandler.GetUserCompanies)
+					companies.GET("/:id", companyBranchHandler.GetCompany)
+					companies.POST("", middleware.AuthRequired(), companyBranchHandler.CreateCompany)
+					companies.PUT("/:id", middleware.AuthRequired(), companyBranchHandler.UpdateCompany)
+					companies.GET("/:company_id/branches", companyBranchHandler.GetCompanyBranches)
+					companies.GET("/:company_id/stats", companyBranchHandler.GetCompanyStats)
+				}
+
+				// Branch routes
+				branches := companyBranch.Group("/branches")
+				{
+					branches.GET("", companyBranchHandler.GetBranches)
+					branches.GET("/:id", companyBranchHandler.GetBranch)
+					branches.POST("", middleware.AuthRequired(), companyBranchHandler.CreateBranch)
+					branches.PUT("/:id", middleware.AuthRequired(), companyBranchHandler.UpdateBranch)
+				}
+
+				// Multi-tenancy context
+				companyBranch.POST("/context", companyBranchHandler.SetCompanyContext)
+
+				// Payment Gateway routes
+				payments := api.Group("/payments")
+				payments.Use(middleware.RateLimit(100))
+				payments.Use(middleware.Cache(5 * time.Minute))
+				{
+					// Stripe routes
+					stripe := payments.Group("/stripe")
+					{
+						stripe.POST("/payment-intent", paymentGatewayHandler.CreateStripePaymentIntent)
+						stripe.POST("/payment-intent/:payment_intent_id/confirm", paymentGatewayHandler.ConfirmStripePayment)
+						stripe.POST("/refund", paymentGatewayHandler.CreateStripeRefund)
+					}
+
+					// Razorpay routes
+					razorpay := payments.Group("/razorpay")
+					{
+						razorpay.POST("/order", paymentGatewayHandler.CreateRazorpayOrder)
+						razorpay.POST("/verify", paymentGatewayHandler.VerifyRazorpayPayment)
+						razorpay.POST("/refund", paymentGatewayHandler.CreateRazorpayRefund)
+					}
+
+					// Payment logs and analytics
+					payments.GET("/logs", paymentGatewayHandler.GetPaymentLogs)
+					payments.GET("/logs/:id", paymentGatewayHandler.GetPaymentLog)
+					payments.GET("/refunds", paymentGatewayHandler.GetRefundLogs)
+					payments.GET("/analytics", paymentGatewayHandler.GetPaymentAnalytics)
+					payments.GET("/config", paymentGatewayHandler.GetPaymentGatewayConfig)
+
+					// Webhook handlers
+					webhooks := payments.Group("/webhooks")
+					{
+						webhooks.POST("/stripe", paymentGatewayHandler.HandleStripeWebhook)
+						webhooks.POST("/razorpay", paymentGatewayHandler.HandleRazorpayWebhook)
+					}
+					// Hardware Integration routes
+					hardware := api.Group("/hardware")
+					hardware.Use(middleware.RateLimit(100))
+					hardware.Use(middleware.Cache(5 * time.Minute))
+					{
+						// Weighing machine routes
+						weighing := hardware.Group("/weighing")
+						{
+							weighing.GET("/weight", hardwareIntegrationHandler.GetWeight)
+							weighing.POST("/calibrate", middleware.AuthRequired(), hardwareIntegrationHandler.CalibrateScale)
+						}
+
+						// Barcode scanner routes
+						barcode := hardware.Group("/barcode")
+						{
+							barcode.POST("/scan", hardwareIntegrationHandler.ScanBarcode)
+							barcode.GET("/history", hardwareIntegrationHandler.GetBarcodeHistory)
+						}
+
+						// Customer display routes
+						display := hardware.Group("/display")
+						{
+							display.POST("/update", hardwareIntegrationHandler.UpdateCustomerDisplay)
+							display.GET("/:display_id/status", hardwareIntegrationHandler.GetCustomerDisplayStatus)
+						}
+
+						// Printer routes
+						printer := hardware.Group("/printer")
+						{
+							printer.POST("/receipt", hardwareIntegrationHandler.PrintReceipt)
+							printer.POST("/report", hardwareIntegrationHandler.PrintReport)
+						}
+
+						// POS features
+						pos := hardware.Group("/pos")
+						{
+							pos.POST("/hold-bill", hardwareIntegrationHandler.HoldBill)
+							pos.GET("/held-bills", hardwareIntegrationHandler.GetHeldBills)
+							pos.POST("/held-bills/:bill_id/resume", hardwareIntegrationHandler.ResumeHeldBill)
+							pos.POST("/switch-panel", hardwareIntegrationHandler.SwitchPOSPanel)
+							pos.GET("/layout", hardwareIntegrationHandler.GetPOSLayout)
+						}
+
+						// Hardware status
+						hardware.GET("/status", hardwareIntegrationHandler.GetHardwareStatus)
+
+						// Loyalty system routes
+						loyalty := api.Group("/loyalty")
+						loyalty.Use(middleware.RateLimit(100))
+						loyalty.Use(middleware.Cache(5 * time.Minute))
+						{
+							// Loyalty program management
+							programs := loyalty.Group("/programs")
+							{
+								programs.GET("", loyaltyHandler.GetLoyaltyPrograms)
+								programs.GET("/:id", loyaltyHandler.GetLoyaltyProgram)
+								programs.POST("", middleware.AuthRequired(), loyaltyHandler.CreateLoyaltyProgram)
+								programs.PUT("/:id", middleware.AuthRequired(), loyaltyHandler.UpdateLoyaltyProgram)
+							}
+
+							// Customer loyalty
+							customerLoyalty := loyalty.Group("/customers")
+							{
+								customerLoyalty.GET("/:customer_id", loyaltyHandler.GetCustomerLoyalty)
+								customerLoyalty.POST("/:customer_id/earn", middleware.AuthRequired(), loyaltyHandler.EarnLoyaltyPoints)
+								customerLoyalty.POST("/:customer_id/redeem", middleware.AuthRequired(), loyaltyHandler.RedeemLoyaltyPoints)
+								customerLoyalty.GET("/:customer_id/transactions", loyaltyHandler.GetLoyaltyTransactions)
+							}
+
+							// Rewards management
+							rewards := loyalty.Group("/rewards")
+							{
+								rewards.GET("", loyaltyHandler.GetRewards)
+								rewards.GET("/:id", loyaltyHandler.GetReward)
+								rewards.POST("", middleware.AuthRequired(), loyaltyHandler.CreateReward)
+								rewards.PUT("/:id", middleware.AuthRequired(), loyaltyHandler.UpdateReward)
+							}
+
+							// Gift cards
+							giftCards := loyalty.Group("/gift-cards")
+							{
+								loyalty.GET("/analytics", loyaltyHandler.GetLoyaltyAnalytics)
+		}
+
+	// WhatsApp routes
+	whatsapp := marketing.Group("/whatsapp")
+	{
+		whatsapp.POST("/send", middleware.AuthRequired(), marketingHandler.SendWhatsApp)
+		whatsapp.POST("/bulk", middleware.AuthRequired(), marketingHandler.SendBulkWhatsApp)
+		whatsapp.GET("/templates", marketingHandler.GetWhatsAppTemplates)
+		whatsapp.POST("/templates", middleware.AuthRequired(), marketingHandler.CreateWhatsAppTemplate)
 	// Graceful shutdown
 	srv := &http.Server{
 		Addr:         ":" + config.Server.Port,
@@ -797,7 +1383,6 @@ func main() {
 	cache.client.Close()
 
 	log.Println("Server exited")
-}
 
 // Configuration Loading
 func loadConfig() Config {
