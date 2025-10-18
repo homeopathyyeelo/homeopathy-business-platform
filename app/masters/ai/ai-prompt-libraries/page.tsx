@@ -1,7 +1,7 @@
 import { Bot } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const aiprompt-librariesConfig = {
+const aiPromptLibrariesConfig = {
   endpoint: 'ai-prompt-libraries',
   title: 'AI Prompt Libraries',
   description: 'Manage ai prompt libraries for your ERP system',
@@ -26,6 +26,6 @@ const aiprompt-librariesConfig = {
   }
 }
 
-export default function AIPromptLibrariesPage() {
-  return <GenericMasterPage config={aiprompt-librariesConfig} />
+export default function AiPromptLibrariesPage() {
+  return <GenericMasterPage config={aiPromptLibrariesConfig} />
 }

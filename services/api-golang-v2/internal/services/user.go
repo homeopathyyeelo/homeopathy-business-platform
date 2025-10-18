@@ -1,10 +1,11 @@
 package services
 
 import (
+	"gorm.io/gorm"
+"time"
 	"errors"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/models"
-	"gorm.io/gorm"
 )
 
 type UserService struct{}
@@ -101,6 +102,6 @@ func (s *UserService) DeactivateUser(id string) error {
 }
 
 func (s *UserService) UpdateLastLogin(id string) error {
-	now := gorm.NowFunc()
+	now := time.Now()
 	return s.UpdateUser(id, map[string]interface{}{"last_login": &now})
 }

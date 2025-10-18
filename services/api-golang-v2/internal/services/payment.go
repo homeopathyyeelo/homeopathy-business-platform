@@ -1,11 +1,12 @@
 package services
 
 import (
+"gorm.io/gorm"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 )
 
 type PaymentService struct {
-	db *database.DB
+	db *gorm.DB
 }
 
 func NewPaymentService() *PaymentService {

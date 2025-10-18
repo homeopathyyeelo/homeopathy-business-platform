@@ -1,2 +1,2 @@
-# github.com/yeelo/homeopathy-erp/internal/models
-internal/models/auth.go:25:20: undefined: gorm
+# github.com/yeelo/homeopathy-erp/internal/services
+internal/services/user.go:4:2: "gorm.io/gorm" imported and not used

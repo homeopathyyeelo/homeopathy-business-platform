@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+	
+	"gorm.io/gorm"
 )
 
 // User model with all required fields

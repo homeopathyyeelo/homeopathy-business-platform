@@ -1,13 +1,14 @@
 package services
 
 import (
+"gorm.io/gorm"
 	"time"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/models"
 )
 
 type SalesService struct {
-	db *database.DB
+	db *gorm.DB
 }
 
 func NewSalesService() *SalesService {
@@ -20,7 +21,7 @@ func (s *SalesService) ListSales(page, limit int, search, customerID, status, st
 	var sales []models.SalesOrder
 	var total int64
 
-	query := s.db.DB.Model(&models.SalesOrder{})
+	query := s.db.Model(&models.SalesOrder{})
 
 	if search != "" {
 		query = query.Where("order_number ILIKE ?", "%"+search+"%")
@@ -48,16 +49,16 @@ func (s *SalesService) ListSales(page, limit int, search, customerID, status, st
 
 func (s *SalesService) GetSalesOrderByID(id string) (*models.SalesOrder, error) {
 	var order models.SalesOrder
-	err := s.db.DB.Preload("Items").Where("id = ?", id).First(&order).Error
+	err := s.db.Preload("Items").Where("id = ?", id).First(&order).Error
 	return &order, err
 }
 
 func (s *SalesService) CreateSalesOrder(order *models.SalesOrder) error {
-	return s.db.DB.Create(order).Error
+	return s.db.Create(order).Error
 }
 
 func (s *SalesService) UpdateSalesOrderStatus(id, status string) error {
-	return s.db.DB.Model(&models.SalesOrder{}).Where("id = ?", id).Updates(map[string]interface{}{
+	return s.db.Model(&models.SalesOrder{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"status":     status,
 		"updated_at": time.Now(),
 	}).Error
@@ -79,7 +80,7 @@ func (s *SalesService) GetSalesReport(startDate, endDate, groupBy string) (inter
 		ORDER BY period DESC
 	`
 	
-	err := s.db.DB.Raw(query, groupBy, startDate, endDate).Scan(&results).Error
+	err := s.db.Raw(query, groupBy, startDate, endDate).Scan(&results).Error
 	return results, err
 }
 
@@ -87,7 +88,7 @@ func (s *SalesService) GetCustomerSalesHistory(customerID string, page, limit in
 	var sales []models.SalesOrder
 	var total int64
 
-	query := s.db.DB.Model(&models.SalesOrder{}).Where("customer_id = ?", customerID)
+	query := s.db.Model(&models.SalesOrder{}).Where("customer_id = ?", customerID)
 	query.Count(&total)
 
 	offset := (page - 1) * limit

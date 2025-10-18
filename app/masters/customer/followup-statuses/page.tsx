@@ -26,6 +26,6 @@ const followupstatusesConfig = {
   }
 }
 
-export default function Follow-upStatusesPage() {
+export default function FollowUpStatusesPage() {
   return <GenericMasterPage config={followupstatusesConfig} />
 }

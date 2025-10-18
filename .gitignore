@@ -4,6 +4,18 @@
 node_modules/
 **/node_modules/
 
+services/ai-service/venv/
+services/auth-service/venv/
+services/graphql-gateway/venv/
+services/kafka-events/venv/
+services/shared-db/venv/
+services/shared-kafka/venv/
+services/api-express/venv/
+services/api-fastify/venv/
+services/api-nest/venv/
+services/api-gateway/venv/
+services/ai-service/venv/
+
 # next.js
 /.next/
 /out/

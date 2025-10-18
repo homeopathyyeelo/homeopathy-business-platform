@@ -1,12 +1,13 @@
 package services
 
 import (
+"gorm.io/gorm"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/models"
 )
 
 type BrandService struct {
-	db *database.DB
+	db *gorm.DB
 }
 
 func NewBrandService() *BrandService {
@@ -17,6 +18,6 @@ func NewBrandService() *BrandService {
 
 func (s *BrandService) GetBrandByID(id string) (*models.Brand, error) {
 	var brand models.Brand
-	err := s.db.DB.Where("id = ?", id).First(&brand).Error
+	err := s.db.Where("id = ?", id).First(&brand).Error
 	return &brand, err
 }
