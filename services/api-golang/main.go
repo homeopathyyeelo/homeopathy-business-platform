@@ -1339,16 +1339,18 @@ func main() {
 							// Gift cards
 							giftCards := loyalty.Group("/gift-cards")
 							{
-								loyalty.GET("/analytics", loyaltyHandler.GetLoyaltyAnalytics)
-		}
+								giftCards.GET("", loyaltyHandler.GetGiftCards)
+								giftCards.POST("", middleware.AuthRequired(), loyaltyHandler.CreateGiftCard)
+							}
 
-	// WhatsApp routes
-	whatsapp := marketing.Group("/whatsapp")
-	{
-		whatsapp.POST("/send", middleware.AuthRequired(), marketingHandler.SendWhatsApp)
-		whatsapp.POST("/bulk", middleware.AuthRequired(), marketingHandler.SendBulkWhatsApp)
-		whatsapp.GET("/templates", marketingHandler.GetWhatsAppTemplates)
-		whatsapp.POST("/templates", middleware.AuthRequired(), marketingHandler.CreateWhatsAppTemplate)
+							loyalty.GET("/analytics", loyaltyHandler.GetLoyaltyAnalytics)
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// Graceful shutdown
 	srv := &http.Server{
 		Addr:         ":" + config.Server.Port,
@@ -1383,6 +1385,7 @@ func main() {
 	cache.client.Close()
 
 	log.Println("Server exited")
+}
 
 // Configuration Loading
 func loadConfig() Config {

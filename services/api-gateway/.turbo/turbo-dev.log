@@ -2,17 +2,4 @@
 > @yeelo/api-gateway@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[1G[0K[[36mINFO[0m] [30;1m18:53:43[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-[HPM] Proxy created: /  -> http://auth-service:3001
-[HPM] Proxy rewrite rule created: "^/api/auth" ~> ""
-[HPM] Proxy created: /  -> http://orders-service:3002
-[HPM] Proxy rewrite rule created: "^/api/orders" ~> ""
-[HPM] Proxy created: /  -> http://campaigns-service:3003
-[HPM] Proxy rewrite rule created: "^/api/campaigns" ~> ""
-[HPM] Proxy created: /  -> http://ai-service:3004
-[HPM] Proxy rewrite rule created: "^/api/ai" ~> ""
-[HPM] Proxy created: /  -> http://analytics-service:3005
-[HPM] Proxy rewrite rule created: "^/api/analytics" ~> ""
-[API Gateway] Server running on port 3000
-[API Gateway] Environment: development
-[API Gateway] Services configured: [ [32m'auth'[39m, [32m'orders'[39m, [32m'campaigns'[39m, [32m'ai'[39m, [32m'analytics'[39m ]
+[1G[0K

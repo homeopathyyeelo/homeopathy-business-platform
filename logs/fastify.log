@@ -1,0 +1,7 @@
+
+> @yeelo/api-fastify@1.0.0 start
+> node dist/index.js
+
+[11:12:02.305] [32mINFO[39m (37357): [36mServer listening at http://0.0.0.0:3002[39m
+[11:12:02.306] [32mINFO[39m (37357): [36m🚀 Fastify API server listening on 0.0.0.0:3002[39m
+[11:12:02.306] [32mINFO[39m (37357): [36m📚 Swagger docs available at http://0.0.0.0:3002/documentation[39m

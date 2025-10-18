@@ -1,0 +1,2 @@
+# github.com/yeelo/homeopathy-erp/internal/models
+internal/models/auth.go:25:20: undefined: gorm

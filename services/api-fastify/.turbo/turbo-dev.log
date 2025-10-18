@@ -2,16 +2,4 @@
 > @yeelo/api-fastify@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[1G[0K[[36mINFO[0m] [30;1m18:53:43[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-Error: unable to determine transport target for "pino-pretty"
-    at fixTarget (/var/www/homeopathy-business-platform/node_modules/pino/lib/transport.js:160:13)
-    at transport (/var/www/homeopathy-business-platform/node_modules/pino/lib/transport.js:130:22)
-    at normalizeArgs (/var/www/homeopathy-business-platform/node_modules/pino/lib/tools.js:358:16)
-    at pino (/var/www/homeopathy-business-platform/node_modules/pino/pino.js:91:28)
-    at createPinoLogger (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/lib/logger.js:42:14)
-    at createLogger (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/lib/logger.js:101:18)
-    at fastify (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/fastify.js:135:33)
-    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-fastify/src/index.ts:16:24)
-    at Module.<anonymous> (node:internal/modules/cjs/loader:1688:14)
-    at Module._compile (/var/www/homeopathy-business-platform/node_modules/source-map-support/source-map-support.js:568:25)
-[[31;1mERROR[0m] [30;1m18:53:45[0m Error: unable to determine transport target for "pino-pretty"
+[1G[0K[[36mINFO[0m] [30;1m00:06:24[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)

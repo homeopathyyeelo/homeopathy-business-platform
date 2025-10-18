@@ -1,6 +1,35 @@
 
-
 > @yeelo/api-gateway@1.0.0 build
 > tsc
 
-[1G[0K[1G[0K⠙[1G[0K
+src/index.ts(142,5): error TS2353: Object literal may only specify known properties, and 'onError' does not exist in type 'Options<IncomingMessage, ServerResponse<IncomingMessage>>'.
+src/index.ts(142,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/index.ts(142,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/index.ts(142,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/index.ts(156,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+src/index.ts(156,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+src/index.ts(162,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/index.ts(162,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/index.ts(162,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/index.ts(176,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+src/index.ts(176,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+src/index.ts(182,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/index.ts(182,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/index.ts(182,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/index.ts(196,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+src/index.ts(196,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+src/index.ts(202,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/index.ts(202,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/index.ts(202,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/index.ts(216,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+src/index.ts(216,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+src/index.ts(222,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/index.ts(222,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/index.ts(222,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path /var/www/homeopathy-business-platform/services/api-gateway
+npm error workspace @yeelo/api-gateway@1.0.0
+npm error location /var/www/homeopathy-business-platform/services/api-gateway
+npm error command failed
+npm error command sh -c tsc

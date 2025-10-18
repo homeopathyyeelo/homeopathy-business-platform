@@ -1,0 +1,6 @@
+
+> @yeelo/api-express@1.0.0 start
+> node src/index.js
+
+🚀 Express API running on port 3004
+📚 Swagger docs available at http://localhost:3004/api-docs

@@ -3,7 +3,7 @@
 > python3 main.py
 
 [1G[0KTraceback (most recent call last):
-  File "/var/www/homeopathy-business-platform/services/ai-service/main.py", line 1, in <module>
+  File "/var/www/homeopathy-business-platform/services/ai-service/main.py", line 3, in <module>
     from fastapi import FastAPI, HTTPException
 ModuleNotFoundError: No module named 'fastapi'
 [1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `dev` failed with error:

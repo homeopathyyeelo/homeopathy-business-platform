@@ -1,0 +1,182 @@
+psql:db/migrations/003_pos_sessions.sql:21: ERROR:  relation "users" does not exist
+psql:db/migrations/003_pos_sessions.sql:38: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:41: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:42: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:43: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:44: ERROR:  relation "pos_session_items" does not exist
+psql:db/migrations/003_pos_sessions.sql:45: ERROR:  relation "pos_session_items" does not exist
+CREATE FUNCTION
+psql:db/migrations/003_pos_sessions.sql:59: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:62: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:63: ERROR:  relation "pos_session_items" does not exist
+psql:db/migrations/003_pos_sessions.sql:64: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:65: ERROR:  relation "pos_sessions" does not exist
+CREATE TABLE
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:73: ERROR:  relation "products" does not exist
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:108: ERROR:  relation "purchase_order_items" does not exist
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE FUNCTION
+CREATE TRIGGER
+COMMENT
+COMMENT
+COMMENT
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+psql:db/migrations/003_pos_sessions.sql:21: ERROR:  relation "users" does not exist
+psql:db/migrations/003_pos_sessions.sql:38: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:41: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:42: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:43: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:44: ERROR:  relation "pos_session_items" does not exist
+psql:db/migrations/003_pos_sessions.sql:45: ERROR:  relation "pos_session_items" does not exist
+CREATE FUNCTION
+psql:db/migrations/003_pos_sessions.sql:59: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:62: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:63: ERROR:  relation "pos_session_items" does not exist
+psql:db/migrations/003_pos_sessions.sql:64: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/003_pos_sessions.sql:65: ERROR:  relation "pos_sessions" does not exist
+psql:db/migrations/004_purchases_complete.sql:31: NOTICE:  relation "vendors" already exists, skipping
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:56: NOTICE:  relation "purchase_orders" already exists, skipping
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:73: ERROR:  relation "products" does not exist
+psql:db/migrations/004_purchases_complete.sql:91: NOTICE:  relation "grn" already exists, skipping
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:108: ERROR:  relation "purchase_order_items" does not exist
+psql:db/migrations/004_purchases_complete.sql:123: NOTICE:  relation "vendor_payments" already exists, skipping
+CREATE TABLE
+psql:db/migrations/004_purchases_complete.sql:126: ERROR:  relation "idx_vendors_code" already exists
+psql:db/migrations/004_purchases_complete.sql:127: ERROR:  relation "idx_vendors_active" already exists
+psql:db/migrations/004_purchases_complete.sql:128: ERROR:  relation "idx_po_number" already exists
+psql:db/migrations/004_purchases_complete.sql:129: ERROR:  relation "idx_po_vendor" already exists
+psql:db/migrations/004_purchases_complete.sql:130: ERROR:  relation "idx_po_status" already exists
+psql:db/migrations/004_purchases_complete.sql:131: ERROR:  relation "idx_po_date" already exists
+psql:db/migrations/004_purchases_complete.sql:132: ERROR:  relation "idx_grn_number" already exists
+psql:db/migrations/004_purchases_complete.sql:133: ERROR:  relation "idx_grn_po" already exists
+psql:db/migrations/004_purchases_complete.sql:134: ERROR:  relation "idx_grn_date" already exists
+CREATE FUNCTION
+psql:db/migrations/004_purchases_complete.sql:147: ERROR:  trigger "trigger_po_timestamp" for relation "purchase_orders" already exists
+COMMENT
+COMMENT
+COMMENT
+psql:db/migrations/005_marketing_complete.sql:27: NOTICE:  relation "marketing_campaigns" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:43: NOTICE:  relation "campaign_messages" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:59: NOTICE:  relation "message_templates" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:82: NOTICE:  relation "coupons" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:92: NOTICE:  relation "coupon_usage" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:107: NOTICE:  relation "social_media_accounts" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:123: NOTICE:  relation "social_media_posts" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:137: NOTICE:  relation "email_campaigns" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:149: NOTICE:  relation "customer_segments" already exists, skipping
+CREATE TABLE
+psql:db/migrations/005_marketing_complete.sql:152: ERROR:  relation "idx_campaigns_status" already exists
+psql:db/migrations/005_marketing_complete.sql:153: ERROR:  relation "idx_campaigns_type" already exists
+psql:db/migrations/005_marketing_complete.sql:154: ERROR:  relation "idx_campaigns_date" already exists
+psql:db/migrations/005_marketing_complete.sql:155: ERROR:  relation "idx_campaign_messages_campaign" already exists
+psql:db/migrations/005_marketing_complete.sql:156: ERROR:  relation "idx_campaign_messages_status" already exists
+psql:db/migrations/005_marketing_complete.sql:157: ERROR:  relation "idx_coupons_code" already exists
+psql:db/migrations/005_marketing_complete.sql:158: ERROR:  relation "idx_coupons_active" already exists
+psql:db/migrations/005_marketing_complete.sql:159: ERROR:  relation "idx_coupons_validity" already exists
+psql:db/migrations/005_marketing_complete.sql:160: ERROR:  relation "idx_social_posts_status" already exists
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+psql:db/migrations/006_integrations_complete.sql:19: NOTICE:  relation "payment_gateways" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:39: NOTICE:  relation "payment_transactions" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:57: NOTICE:  relation "hardware_devices" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:72: NOTICE:  relation "api_integrations" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:85: NOTICE:  relation "webhook_logs" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:96: NOTICE:  relation "sms_gateways" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:110: NOTICE:  relation "sms_logs" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:122: NOTICE:  relation "whatsapp_config" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:139: NOTICE:  relation "whatsapp_messages" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:153: NOTICE:  relation "email_smtp_config" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:165: NOTICE:  relation "email_logs" already exists, skipping
+CREATE TABLE
+psql:db/migrations/006_integrations_complete.sql:168: ERROR:  relation "idx_payment_transactions_order" already exists
+psql:db/migrations/006_integrations_complete.sql:169: ERROR:  relation "idx_payment_transactions_status" already exists
+psql:db/migrations/006_integrations_complete.sql:170: ERROR:  relation "idx_payment_transactions_date" already exists
+psql:db/migrations/006_integrations_complete.sql:171: ERROR:  relation "idx_hardware_devices_type" already exists
+psql:db/migrations/006_integrations_complete.sql:172: ERROR:  relation "idx_hardware_devices_active" already exists
+psql:db/migrations/006_integrations_complete.sql:173: ERROR:  relation "idx_webhook_logs_source" already exists
+psql:db/migrations/006_integrations_complete.sql:174: ERROR:  relation "idx_webhook_logs_date" already exists
+psql:db/migrations/006_integrations_complete.sql:175: ERROR:  relation "idx_sms_logs_status" already exists
+psql:db/migrations/006_integrations_complete.sql:176: ERROR:  relation "idx_whatsapp_messages_status" already exists
+COMMENT
+COMMENT
+COMMENT
+COMMENT

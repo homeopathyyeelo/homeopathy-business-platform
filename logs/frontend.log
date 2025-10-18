@@ -1,0 +1,9 @@
+
+> homeopathy-business-platform@0.2.0 start
+> turbo run start
+
+turbo 2.5.8
+
+  x Missing tasks in project
+  `->   x Could not find task `start` in project
+

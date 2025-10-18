@@ -18,7 +18,7 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
-    "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/platform-express": "^10.4.20",
     "@nestjs/swagger": "^7.1.0",
     "@yeelo/shared-db": "file:../../packages/shared-db",
     "@yeelo/shared-kafka": "file:../../packages/shared-kafka",

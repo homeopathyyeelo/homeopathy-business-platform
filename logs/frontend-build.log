@@ -1,0 +1,91 @@
+
+> homeopathy-business-platform@0.2.0 build
+> turbo run build
+
+turbo 2.5.8
+
+• Packages in scope: @yeelo/ai-service, @yeelo/api-express, @yeelo/api-fastify, @yeelo/api-gateway, @yeelo/api-nest, @yeelo/auth-service, @yeelo/graphql-gateway, @yeelo/kafka-events, @yeelo/shared-db, @yeelo/shared-kafka, outbox-worker
+• Running build in 11 packages
+• Remote caching disabled
+@yeelo/ai-service:build: cache miss, executing fd8d7470aed062d7
+@yeelo/shared-kafka:build: cache miss, executing 3533c17488b3e770
+@yeelo/auth-service:build: cache miss, executing 04b46212947253f6
+@yeelo/kafka-events:build: cache miss, executing 34753afcb306e295
+@yeelo/graphql-gateway:build: cache miss, executing 2790bf023008fc95
+@yeelo/api-gateway:build: cache miss, executing 20383b8b83b5c750
+@yeelo/api-fastify:build: cache miss, executing d617304a4a3f0d77
+@yeelo/shared-kafka:build: 
+@yeelo/shared-kafka:build: > @yeelo/shared-kafka@1.0.0 build
+@yeelo/shared-kafka:build: > tsc
+@yeelo/shared-kafka:build: 
+@yeelo/ai-service:build: 
+@yeelo/ai-service:build: > @yeelo/ai-service@1.0.0 build
+@yeelo/ai-service:build: > echo 'Python service - no build needed'
+@yeelo/ai-service:build: 
+@yeelo/ai-service:build: Python service - no build needed
+@yeelo/api-gateway:build: 
+@yeelo/api-gateway:build: > @yeelo/api-gateway@1.0.0 build
+@yeelo/api-gateway:build: > tsc
+@yeelo/api-gateway:build: 
+@yeelo/kafka-events:build: 
+@yeelo/kafka-events:build: > @yeelo/kafka-events@1.0.0 build
+@yeelo/kafka-events:build: > tsc
+@yeelo/kafka-events:build: 
+@yeelo/graphql-gateway:build: 
+@yeelo/graphql-gateway:build: > @yeelo/graphql-gateway@1.0.0 build
+@yeelo/graphql-gateway:build: > tsc
+@yeelo/graphql-gateway:build: 
+@yeelo/api-fastify:build: 
+@yeelo/api-fastify:build: > @yeelo/api-fastify@1.0.0 build
+@yeelo/api-fastify:build: > tsc
+@yeelo/api-fastify:build: 
+@yeelo/auth-service:build: 
+@yeelo/auth-service:build: > @yeelo/auth-service@1.0.0 build
+@yeelo/auth-service:build: > tsc
+@yeelo/auth-service:build: 
+@yeelo/api-nest:build: cache miss, executing b2bff4c2c51cac41
+@yeelo/api-nest:build: 
+@yeelo/api-nest:build: > @yeelo/api-nest@1.0.0 build
+@yeelo/api-nest:build: > nest build
+@yeelo/api-nest:build: 
+@yeelo/api-gateway:build: src/index.ts(142,5): error TS2353: Object literal may only specify known properties, and 'onError' does not exist in type 'Options<IncomingMessage, ServerResponse<IncomingMessage>>'.
+@yeelo/api-gateway:build: src/index.ts(142,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(142,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(142,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(156,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+@yeelo/api-gateway:build: src/index.ts(156,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(162,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(162,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(162,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(176,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+@yeelo/api-gateway:build: src/index.ts(176,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(182,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(182,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(182,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(196,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+@yeelo/api-gateway:build: src/index.ts(196,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(202,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(202,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(202,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(216,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+@yeelo/api-gateway:build: src/index.ts(216,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(222,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(222,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
+@yeelo/api-gateway:build: src/index.ts(222,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
+@yeelo/api-gateway:build: npm error Lifecycle script `build` failed with error:
+@yeelo/api-gateway:build: npm error code 2
+@yeelo/api-gateway:build: npm error path /var/www/homeopathy-business-platform/services/api-gateway
+@yeelo/api-gateway:build: npm error workspace @yeelo/api-gateway@1.0.0
+@yeelo/api-gateway:build: npm error location /var/www/homeopathy-business-platform/services/api-gateway
+@yeelo/api-gateway:build: npm error command failed
+@yeelo/api-gateway:build: npm error command sh -c tsc
+@yeelo/api-gateway:build: ERROR: command finished with error: command (/var/www/homeopathy-business-platform/services/api-gateway) /home/yeelo-homeopathy/.nvm/versions/node/v22.18.0/bin/npm run build exited (2)
+@yeelo/api-gateway#build: command (/var/www/homeopathy-business-platform/services/api-gateway) /home/yeelo-homeopathy/.nvm/versions/node/v22.18.0/bin/npm run build exited (2)
+
+ Tasks:    4 successful, 8 total
+Cached:    0 cached, 8 total
+  Time:    4.912s 
+Failed:    @yeelo/api-gateway#build
+
+ WARNING  no output files found for task @yeelo/ai-service#build. Please check your `outputs` key in `turbo.json`
+ ERROR  run failed: command  exited (2)
