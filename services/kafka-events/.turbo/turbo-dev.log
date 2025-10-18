@@ -2,7 +2,7 @@
 > @yeelo/kafka-events@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[INFO] 11:51:41 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[1G[0K[[36mINFO[0m] [30;1m12:21:10[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
 Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-events/src/consumer' imported from /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts
     at finalizeResolution (node:internal/modules/esm/resolve:274:11)
     at moduleResolve (node:internal/modules/esm/resolve:859:10)
@@ -14,4 +14,4 @@ Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-
     at ModuleLoader.#cachedResolveSync (node:internal/modules/esm/loader:726:25)
     at ModuleLoader.getModuleJobForRequire (node:internal/modules/esm/loader:453:50)
     at new ModuleJobSync (node:internal/modules/esm/module_job:393:34)
-[ERROR] 11:51:42 Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-events/src/consumer' imported from /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts
+[[31;1mERROR[0m] [30;1m12:21:11[0m Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-events/src/consumer' imported from /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts

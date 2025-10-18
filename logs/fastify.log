@@ -2,21 +2,21 @@
 > @yeelo/api-fastify@1.0.0 start
 > node dist/index.js
 
-[11:29:21.834] [32mINFO[39m (57056): [36mServer listening at http://0.0.0.0:3002[39m
-[11:29:21.835] [32mINFO[39m (57056): [36m🚀 Fastify API server listening on 0.0.0.0:3002[39m
-[11:29:21.835] [32mINFO[39m (57056): [36m📚 Swagger docs available at http://0.0.0.0:3002/documentation[39m
-[11:29:44.025] [32mINFO[39m (57056): [36mincoming request[39m
+[12:04:52.011] [32mINFO[39m (98308): [36mServer listening at http://0.0.0.0:3002[39m
+[12:04:52.011] [32mINFO[39m (98308): [36m🚀 Fastify API server listening on 0.0.0.0:3002[39m
+[12:04:52.011] [32mINFO[39m (98308): [36m📚 Swagger docs available at http://0.0.0.0:3002/documentation[39m
+[12:05:14.242] [32mINFO[39m (98308): [36mincoming request[39m
     [35mreqId[39m: "req-1"
     [35mreq[39m: {
       "method": "GET",
       "url": "/health",
       "hostname": "localhost:3002",
       "remoteAddress": "127.0.0.1",
-      "remotePort": 50904
+      "remotePort": 57584
     }
-[11:29:44.030] [32mINFO[39m (57056): [36mrequest completed[39m
+[12:05:14.246] [32mINFO[39m (98308): [36mrequest completed[39m
     [35mreqId[39m: "req-1"
     [35mres[39m: {
       "statusCode": 200
     }
-    [35mresponseTime[39m: 4.759659999981523
+    [35mresponseTime[39m: 3.941572000272572

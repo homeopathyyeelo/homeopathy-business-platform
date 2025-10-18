@@ -72,7 +72,7 @@ app.get("/metrics", async (_req, res) => {
     res.setHeader("Content-Type", register.contentType);
     res.end(await register.metrics());
 });
-const authServiceBase = process.env.AUTH_SERVICE_URL || "http://auth-service:3001";
+const authServiceBase = process.env.AUTH_SERVICE_URL || "http://api-nest:3001";
 const jwks = (0, jose_1.createRemoteJWKSet)(new URL(`${authServiceBase}/.well-known/jwks.json`));
 async function verifyTokenRS256(token) {
     const issuer = process.env.JWT_ISSUER || "urn:yeelo:auth";
@@ -110,10 +110,10 @@ const authenticateToken = async (req, res, next) => {
 };
 const services = {
     auth: authServiceBase,
-    orders: process.env.ORDERS_SERVICE_URL || "http://orders-service:3002",
-    campaigns: process.env.CAMPAIGNS_SERVICE_URL || "http://campaigns-service:3003",
-    ai: process.env.AI_SERVICE_URL || "http://ai-service:3004",
-    analytics: process.env.ANALYTICS_SERVICE_URL || "http://analytics-service:3005",
+    orders: process.env.ORDERS_SERVICE_URL || "http://api-fastify:3002",
+    campaigns: process.env.CAMPAIGNS_SERVICE_URL || "http://api-express:3003",
+    ai: process.env.AI_SERVICE_URL || "http://ai-service:8001",
+    analytics: process.env.ANALYTICS_SERVICE_URL || "http://api-golang:3004",
 };
 app.get("/health", (req, res) => {
     res.json({ status: "healthy", timestamp: new Date().toISOString(), services: Object.keys(services), version: process.env.APP_VERSION || "1.0.0" });
@@ -121,70 +121,82 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", (0, http_proxy_middleware_1.createProxyMiddleware)({
     target: services.auth,
     changeOrigin: true,
-    pathRewrite: { "^/api/auth": "" },
-    onError: (err, req, res) => {
-        console.error("[API Gateway] Auth service error:", err);
-        res.status(503).json({ error: "Auth service unavailable" });
+    pathRewrite: {
+        "^/api/auth": "",
+    },
+    on: {
+        error: (err, req, res) => {
+            console.error("[API Gateway] Auth service error:", err);
+            res.status(503).json({ error: "Auth service unavailable" });
+        },
     },
 }));
 app.use("/api/orders", authenticateToken, (0, http_proxy_middleware_1.createProxyMiddleware)({
     target: services.orders,
     changeOrigin: true,
     pathRewrite: { "^/api/orders": "" },
-    onProxyReq: (proxyReq, req) => {
-        if (req.user) {
-            proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
-            proxyReq.setHeader("X-User-Role", req.user.role || "");
-        }
-    },
-    onError: (err, req, res) => {
-        console.error("[API Gateway] Orders service error:", err);
-        res.status(503).json({ error: "Orders service unavailable" });
+    on: {
+        proxyReq: (proxyReq, req) => {
+            if (req.user) {
+                proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
+                proxyReq.setHeader("X-User-Role", req.user.role || "");
+            }
+        },
+        error: (err, req, res) => {
+            console.error("[API Gateway] Orders service error:", err);
+            res.status(503).json({ error: "Orders service unavailable" });
+        },
     },
 }));
 app.use("/api/campaigns", authenticateToken, (0, http_proxy_middleware_1.createProxyMiddleware)({
     target: services.campaigns,
     changeOrigin: true,
     pathRewrite: { "^/api/campaigns": "" },
-    onProxyReq: (proxyReq, req) => {
-        if (req.user) {
-            proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
-            proxyReq.setHeader("X-User-Role", req.user.role || "");
-        }
-    },
-    onError: (err, req, res) => {
-        console.error("[API Gateway] Campaigns service error:", err);
-        res.status(503).json({ error: "Campaigns service unavailable" });
+    on: {
+        proxyReq: (proxyReq, req) => {
+            if (req.user) {
+                proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
+                proxyReq.setHeader("X-User-Role", req.user.role || "");
+            }
+        },
+        error: (err, req, res) => {
+            console.error("[API Gateway] Campaigns service error:", err);
+            res.status(503).json({ error: "Campaigns service unavailable" });
+        },
     },
 }));
 app.use("/api/ai", authenticateToken, (0, http_proxy_middleware_1.createProxyMiddleware)({
     target: services.ai,
     changeOrigin: true,
     pathRewrite: { "^/api/ai": "" },
-    onProxyReq: (proxyReq, req) => {
-        if (req.user) {
-            proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
-            proxyReq.setHeader("X-User-Role", req.user.role || "");
-        }
-    },
-    onError: (err, req, res) => {
-        console.error("[API Gateway] AI service error:", err);
-        res.status(503).json({ error: "AI service unavailable" });
+    on: {
+        proxyReq: (proxyReq, req) => {
+            if (req.user) {
+                proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
+                proxyReq.setHeader("X-User-Role", req.user.role || "");
+            }
+        },
+        error: (err, req, res) => {
+            console.error("[API Gateway] AI service error:", err);
+            res.status(503).json({ error: "AI service unavailable" });
+        },
     },
 }));
 app.use("/api/analytics", authenticateToken, (0, http_proxy_middleware_1.createProxyMiddleware)({
     target: services.analytics,
     changeOrigin: true,
     pathRewrite: { "^/api/analytics": "" },
-    onProxyReq: (proxyReq, req) => {
-        if (req.user) {
-            proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
-            proxyReq.setHeader("X-User-Role", req.user.role || "");
-        }
-    },
-    onError: (err, req, res) => {
-        console.error("[API Gateway] Analytics service error:", err);
-        res.status(503).json({ error: "Analytics service unavailable" });
+    on: {
+        proxyReq: (proxyReq, req) => {
+            if (req.user) {
+                proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "");
+                proxyReq.setHeader("X-User-Role", req.user.role || "");
+            }
+        },
+        error: (err, req, res) => {
+            console.error("[API Gateway] Analytics service error:", err);
+            res.status(503).json({ error: "Analytics service unavailable" });
+        },
     },
 }));
 app.use((err, req, res, next) => {

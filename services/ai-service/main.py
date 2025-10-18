@@ -225,11 +225,15 @@ class ChatbotRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
 
 class FraudCheckRequest(BaseModel):
-    user_id: int
-    order_id: str
+    transaction_id: str
+    user_id: str
     amount: float
     payment_method: str
     user_behavior: Dict[str, Any]
+
+# Initialize FastAPI app
+app = FastAPI(title="AI Service", version="1.0.0")
+recommendation_engine = RecommendationEngine()
 
 # Enhanced endpoints
 @app.post('/v1/recommendations')
@@ -392,7 +396,7 @@ def _connect_redis():
         return None
 
 
-app = FastAPI(title="AI Inference Service", version="0.1.0")
+# App already initialized above
 
 pg_conn = _connect_postgres()
 redis_client = _connect_redis()

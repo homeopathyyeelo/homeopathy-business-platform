@@ -2,5 +2,104 @@
 > @yeelo/api-nest@1.0.0 dev
 > nest start --watch
 
-[2J[3J[H[[90m11:51:43 AM[0m] Starting compilation in watch mode...
+[1G[0K[2J[3J[H[[90m12:21:11 PM[0m] Starting compilation in watch mode...
 
+[[90m12:21:17 PM[0m] Found 0 errors. Watching for file changes.
+
+{"level":"WARN","timestamp":"2025-10-18T06:51:18.249Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
+{"level":"WARN","timestamp":"2025-10-18T06:51:18.250Z","logger":"kafkajs","message":"[Producer] Limiting retries for the idempotent producer may invalidate EoS guarantees"}
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOutboxModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInventoryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAIModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mB2BModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPurchaseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFinanceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrdersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/}:[39m[38;5;3m +37ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/health, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrdersController {/orders}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders/:id/status, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mInventoryController {/inventory}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/inventory/summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/inventory/low-stock, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/inventory/add, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/inventory/adjust, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mB2BController {/b2b}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/orders, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/orders, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/orders/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/orders/:id/approve, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/orders/:id/reject, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/customers, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/customers/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/customers/:id/credit, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/d2d/transactions, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/d2d/transactions, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/pricing/:customerId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/b2b/analytics/sales, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPurchaseController {/purchase}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/vendors, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/vendors, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/vendors/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/vendors/:id, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/orders, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/orders, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/orders/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/orders/:id/status, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/grn, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchase/analytics, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFinanceController {/finance}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/invoices, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/invoices, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/invoices/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/invoices/:id/status, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/payments, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/reports/profit-loss, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/reports/cash-flow, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/reports/gst, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/currency/rates, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/finance/currency/convert, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAIController {/ai}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/generate, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/embed, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/models, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/prompts, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/requests, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/requests/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/forecast/demand, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/pricing/dynamic, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/content/campaign, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/recommendations/products, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/ai/analytics/usage, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +88ms[39m
+[31m[Nest] 18806  - [39m10/18/2025, 12:21:18 PM [31m  ERROR[39m [38;5;3m[NestApplication] [39m[31mError: listen EADDRINUSE: address already in use :::3001[39m[38;5;3m +8ms[39m
+node:net:1940
+    const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+               ^
+
+Error: listen EADDRINUSE: address already in use :::3001
+[90m    at Server.setupListenHandle [as _listen2] (node:net:1940:16)[39m
+[90m    at listenInCluster (node:net:1997:12)[39m
+[90m    at Server.listen (node:net:2102:7)[39m
+    at ExpressAdapter.listen [90m(/var/www/homeopathy-business-platform/services/api-nest/[39mnode_modules/[4m@nestjs[24m/platform-express/adapters/express-adapter.js:95:32[90m)[39m
+    at [90m/var/www/homeopathy-business-platform/services/api-nest/[39mnode_modules/[4m@nestjs[24m/core/nest-application.js:183:30
+    at new Promise (<anonymous>)
+    at NestApplication.listen [90m(/var/www/homeopathy-business-platform/services/api-nest/[39mnode_modules/[4m@nestjs[24m/core/nest-application.js:173:16[90m)[39m
+    at async bootstrap [90m(/var/www/homeopathy-business-platform/services/api-nest/[39msrc/main.ts:26:3[90m)[39m {
+  code: [32m'EADDRINUSE'[39m,
+  errno: [33m-98[39m,
+  syscall: [32m'listen'[39m,
+  address: [32m'::'[39m,
+  port: [33m3001[39m
+}
+
+Node.js v22.18.0

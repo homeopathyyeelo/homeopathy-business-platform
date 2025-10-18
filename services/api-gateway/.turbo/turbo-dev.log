@@ -2,18 +2,17 @@
 > @yeelo/api-gateway@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[INFO] 11:51:42 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-[HPM] Proxy created: /  -> http://auth-service:3001
+[1G[0K[[36mINFO[0m] [30;1m12:21:10[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[HPM] Proxy created: /  -> http://api-nest:3001
 [HPM] Proxy rewrite rule created: "^/api/auth" ~> ""
-[HPM] Proxy created: /  -> http://orders-service:3002
+[HPM] Proxy created: /  -> http://api-fastify:3002
 [HPM] Proxy rewrite rule created: "^/api/orders" ~> ""
-[HPM] Proxy created: /  -> http://campaigns-service:3003
+[HPM] Proxy created: /  -> http://api-express:3003
 [HPM] Proxy rewrite rule created: "^/api/campaigns" ~> ""
-[HPM] Proxy created: /  -> http://ai-service:3004
+[HPM] Proxy created: /  -> http://ai-service:8001
 [HPM] Proxy rewrite rule created: "^/api/ai" ~> ""
-[HPM] Proxy created: /  -> http://analytics-service:3005
+[HPM] Proxy created: /  -> http://api-golang:3004
 [HPM] Proxy rewrite rule created: "^/api/analytics" ~> ""
-[ERROR] 11:51:44 TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
 TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
     at name (/var/www/homeopathy-business-platform/node_modules/path-to-regexp/src/index.ts:153:13)
     at lexer (/var/www/homeopathy-business-platform/node_modules/path-to-regexp/src/index.ts:171:21)
@@ -25,3 +24,4 @@ TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError
     at parse (/var/www/homeopathy-business-platform/node_modules/path-to-regexp/src/index.ts:320:18)
     at /var/www/homeopathy-business-platform/node_modules/path-to-regexp/src/index.ts:503:40
     at Array.map (<anonymous>)
+[[31;1mERROR[0m] [30;1m12:21:12[0m TypeError: Missing parameter name at 1: https://git.new/pathToRegexpError

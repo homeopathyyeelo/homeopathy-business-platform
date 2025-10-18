@@ -1,35 +1,56 @@
 
+
 > @yeelo/api-gateway@1.0.0 build
 > tsc
 
-src/index.ts(142,5): error TS2353: Object literal may only specify known properties, and 'onError' does not exist in type 'Options<IncomingMessage, ServerResponse<IncomingMessage>>'.
-src/index.ts(142,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
-src/index.ts(142,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
-src/index.ts(142,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
-src/index.ts(156,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
-src/index.ts(156,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
-src/index.ts(162,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
-src/index.ts(162,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
-src/index.ts(162,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
-src/index.ts(176,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
-src/index.ts(176,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
-src/index.ts(182,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
-src/index.ts(182,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
-src/index.ts(182,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
-src/index.ts(196,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
-src/index.ts(196,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
-src/index.ts(202,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
-src/index.ts(202,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
-src/index.ts(202,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
-src/index.ts(216,5): error TS2353: Object literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
-src/index.ts(216,18): error TS7006: Parameter 'proxyReq' implicitly has an 'any' type.
-src/index.ts(222,15): error TS7006: Parameter 'err' implicitly has an 'any' type.
-src/index.ts(222,20): error TS7006: Parameter 'req' implicitly has an 'any' type.
-src/index.ts(222,25): error TS7006: Parameter 'res' implicitly has an 'any' type.
-npm error Lifecycle script `build` failed with error:
-npm error code 2
-npm error path /var/www/homeopathy-business-platform/services/api-gateway
-npm error workspace @yeelo/api-gateway@1.0.0
-npm error location /var/www/homeopathy-business-platform/services/api-gateway
-npm error command failed
-npm error command sh -c tsc
+[1G[0K[96msrc/index.ts[0m:[93m160[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+
+[7m160[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m160[0m:[93m18[0m - [91merror[0m[90m TS7006: [0mParameter 'proxyReq' implicitly has an 'any' type.
+
+[7m160[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m                 ~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m182[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+
+[7m182[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m182[0m:[93m18[0m - [91merror[0m[90m TS7006: [0mParameter 'proxyReq' implicitly has an 'any' type.
+
+[7m182[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m                 ~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m204[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+
+[7m204[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m204[0m:[93m18[0m - [91merror[0m[90m TS7006: [0mParameter 'proxyReq' implicitly has an 'any' type.
+
+[7m204[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m                 ~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m226[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and 'onProxyReq' does not exist in type 'Options<Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, Response<any, Record<string, any>, number>>'.
+
+[7m226[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m    ~~~~~~~~~~[0m
+
+[96msrc/index.ts[0m:[93m226[0m:[93m18[0m - [91merror[0m[90m TS7006: [0mParameter 'proxyReq' implicitly has an 'any' type.
+
+[7m226[0m     onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
+[7m   [0m [91m                 ~~~~~~~~[0m
+
+
+Found 8 errors in the same file, starting at: src/index.ts[90m:160[0m
+
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `build` failed with error:
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcode[39m [33m2[39m
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mpath[39m /var/www/homeopathy-business-platform/services/api-gateway
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mworkspace[39m @yeelo/api-gateway@1.0.0
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mlocation[39m /var/www/homeopathy-business-platform/services/api-gateway
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m command failed
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcommand[39m sh -c tsc
+[1G[0K⠙[1G[0K
