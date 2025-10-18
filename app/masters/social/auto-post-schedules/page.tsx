@@ -1,7 +1,7 @@
 import { MessageSquare } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const autopost-schedulesConfig = {
+const autoPostSchedulesConfig = {
   endpoint: 'auto-post-schedules',
   title: 'Auto Post Schedules',
   description: 'Manage auto post schedules for your ERP system',
@@ -27,5 +27,5 @@ const autopost-schedulesConfig = {
 }
 
 export default function AutoPostSchedulesPage() {
-  return <GenericMasterPage config={autopost-schedulesConfig} />
+  return <GenericMasterPage config={autoPostSchedulesConfig} />
 }

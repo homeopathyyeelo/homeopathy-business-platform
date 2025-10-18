@@ -1,7 +1,7 @@
 import { Calculator } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const paymentvoucher-typesConfig = {
+const paymentVoucherTypesConfig = {
   endpoint: 'payment-voucher-types',
   title: 'Payment Voucher Types',
   description: 'Manage payment voucher types for your ERP system',
@@ -27,5 +27,5 @@ const paymentvoucher-typesConfig = {
 }
 
 export default function PaymentVoucherTypesPage() {
-  return <GenericMasterPage config={paymentvoucher-typesConfig} />
+  return <GenericMasterPage config={paymentVoucherTypesConfig} />
 }

@@ -1,7 +1,7 @@
 import { Truck } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const purchaseorder-termsConfig = {
+const purchaseOrderTermsConfig = {
   endpoint: 'purchase-order-terms',
   title: 'Purchase Order Terms',
   description: 'Manage purchase order terms for your ERP system',
@@ -27,5 +27,5 @@ const purchaseorder-termsConfig = {
 }
 
 export default function PurchaseOrderTermsPage() {
-  return <GenericMasterPage config={purchaseorder-termsConfig} />
+  return <GenericMasterPage config={purchaseOrderTermsConfig} />
 }

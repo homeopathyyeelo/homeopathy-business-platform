@@ -6,6 +6,7 @@ import './globals.css'
 import { AuthProvider } from '@/hooks/useAuth'
 import ProductionERPLayout from '@/components/layout/ProductionERPLayout'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { Toaster } from '@/components/ui/toaster'
 
 export const metadata: Metadata = {
   title: 'Yeelo Homeopathy Platform',
@@ -28,6 +29,7 @@ export default function RootLayout({
             </ProductionERPLayout>
           </AuthProvider>
         </QueryProvider>
+        <Toaster />
         <Analytics />
       </body>
     </html>

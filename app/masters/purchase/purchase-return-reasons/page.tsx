@@ -1,7 +1,7 @@
 import { Truck } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const purchasereturn-reasonsConfig = {
+const purchaseReturnReasonsConfig = {
   endpoint: 'purchase-return-reasons',
   title: 'Purchase Return Reasons',
   description: 'Manage purchase return reasons for your ERP system',
@@ -27,5 +27,5 @@ const purchasereturn-reasonsConfig = {
 }
 
 export default function PurchaseReturnReasonsPage() {
-  return <GenericMasterPage config={purchasereturn-reasonsConfig} />
+  return <GenericMasterPage config={purchaseReturnReasonsConfig} />
 }

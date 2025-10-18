@@ -1,7 +1,7 @@
 import { TrendingUp } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const aiprompt-templatesConfig = {
+const aiPromptTemplatesConfig = {
   endpoint: 'ai-prompt-templates',
   title: 'AI Prompt Templates',
   description: 'Manage ai prompt templates for your ERP system',
@@ -27,5 +27,5 @@ const aiprompt-templatesConfig = {
 }
 
 export default function AIPromptTemplatesPage() {
-  return <GenericMasterPage config={aiprompt-templatesConfig} />
+  return <GenericMasterPage config={aiPromptTemplatesConfig} />
 }

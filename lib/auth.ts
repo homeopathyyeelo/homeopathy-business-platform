@@ -169,16 +169,23 @@ export function hasAnyRole(user: User, requiredRoles: UserRole[]): boolean {
 }
 
 /**
- * Get user from request headers
+ * Get user from request headers or cookies
  */
 export function getUserFromRequest(request: NextRequest): User | null {
+  // Try authorization header first
   const authHeader = request.headers.get('authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7)
+    return getUserFromToken(token)
   }
   
-  const token = authHeader.substring(7)
-  return getUserFromToken(token)
+  // Try cookie as fallback
+  const cookieToken = request.cookies.get('auth-token')?.value
+  if (cookieToken) {
+    return getUserFromToken(cookieToken)
+  }
+  
+  return null
 }
 
 /**

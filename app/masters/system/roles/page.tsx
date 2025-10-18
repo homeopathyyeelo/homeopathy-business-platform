@@ -26,6 +26,6 @@ const rolesConfig = {
   }
 }
 
-export default function Roles&PermissionsPage() {
+export default function RolesAndPermissionsPage() {
   return <GenericMasterPage config={rolesConfig} />
 }
