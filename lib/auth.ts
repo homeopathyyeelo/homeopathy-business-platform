@@ -274,3 +274,102 @@ export function requireAnyRole(requiredRoles: UserRole[], handler: (request: Nex
     return handler(request, user)
   }
 }
+
+/**
+ * Validate password strength
+ */
+export function validatePasswordStrength(password: string): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters long');
+  }
+  
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter');
+  }
+  
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter');
+  }
+  
+  if (!/[0-9]/.test(password)) {
+    errors.push('Password must contain at least one number');
+  }
+  
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    errors.push('Password must contain at least one special character');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Change user password
+ */
+export function changePassword(userId: string, currentPassword: string, newPassword: string): { success: boolean; error?: string } {
+  try {
+    // Find user in mock database
+    const user = MOCK_USERS.find((u: User) => u.id === userId);
+    if (!user) {
+      return { success: false, error: 'User not found' };
+    }
+    
+    // Note: In development, we skip password verification for simplicity
+    // In production, you'd verify the current password properly
+    
+    // Validate new password
+    const validation = validatePasswordStrength(newPassword);
+    if (!validation.isValid) {
+      return { success: false, error: validation.errors.join(', ') };
+    }
+    
+    // Note: In development, we don't actually update the password
+    // In production, you'd hash and store the new password
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Change password error:', error);
+    return { success: false, error: 'Internal server error' };
+  }
+}
+
+/**
+ * Create new user
+ */
+export function createUser(userData: { email: string; password: string; name: string; role: UserRole; shopId?: string }): { success: boolean; user?: User; error?: string } {
+  try {
+    // Validate password
+    const validation = validatePasswordStrength(userData.password);
+    if (!validation.isValid) {
+      return { success: false, error: validation.errors.join(', ') };
+    }
+    
+    // Check if user already exists
+    const existingUser = MOCK_USERS.find((u: User) => u.email === userData.email);
+    if (existingUser) {
+      return { success: false, error: 'User with this email already exists' };
+    }
+    
+    // Create new user
+    const newUser: User = {
+      id: (MOCK_USERS.length + 1).toString(),
+      email: userData.email,
+      name: userData.name,
+      role: userData.role,
+      shopId: userData.shopId || "1",
+      isActive: true
+    };
+    
+    // Note: In development, we don't actually add to the mock users array
+    // In production, you'd save to the database
+    
+    return { success: true, user: newUser };
+  } catch (error) {
+    console.error('Create user error:', error);
+    return { success: false, error: 'Internal server error' };
+  }
+}

@@ -787,22 +787,6 @@ model AddressBook {
   @@map("address_books")
 }
 
-model LoyaltyProgram {
-  id                         String   @id @default(cuid())
-  name                       String
-  code                       String   @unique
-  points_per_purchase        Float
-  points_value               Float    // 1 point = X rupees
-  min_points_for_redemption  Int
-  max_redemption_percentage  Float
-  validity_days              Int
-  is_active                  Boolean  @default(true)
-  created_at                 DateTime @default(now())
-  updated_at                 DateTime @updatedAt
-
-  @@map("loyalty_programs")
-}
-
 model FeedbackType {
   id          String   @id @default(cuid())
   name        String
