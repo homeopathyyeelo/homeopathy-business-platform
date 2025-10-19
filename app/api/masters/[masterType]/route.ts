@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { masterDataAPI } from '@/lib/services/master-data-service'
+import { masterDataAPI } from '@/lib/services/master-data-service-simple'
 
 // Generic master data API route
 export async function GET(

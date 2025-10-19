@@ -39,6 +39,9 @@ const createAPIClient = (baseURL: string): AxiosInstance => {
   return client
 }
 
+// Next.js API routes (fallback when microservices unavailable)
+const nextAPI = createAPIClient('/api')
+
 export const golangAPI = createAPIClient(process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3004')
 export const expressAPI = createAPIClient(process.env.NEXT_PUBLIC_EXPRESS_API_URL || 'http://localhost:3003')
 export const nestjsAPI = createAPIClient(process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001')
@@ -120,27 +123,27 @@ export const api = {
   },
 
   branches: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/branches', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/branches/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/branches', data),
-    update: (id: string, data: any) => golangAPI.put(`/api/erp/branches/${id}`, data),
-    delete: (id: string) => golangAPI.delete(`/api/erp/branches/${id}`),
+    getAll: (params?: any) => nextAPI.get('/branches', { params }).catch(() => golangAPI.get('/api/erp/branches', { params })),
+    getById: (id: string) => nextAPI.get(`/branches/${id}`).catch(() => golangAPI.get(`/api/erp/branches/${id}`)),
+    create: (data: any) => nextAPI.post('/branches', data).catch(() => golangAPI.post('/api/erp/branches', data)),
+    update: (id: string, data: any) => nextAPI.put(`/branches/${id}`, data).catch(() => golangAPI.put(`/api/erp/branches/${id}`, data)),
+    delete: (id: string) => nextAPI.delete(`/branches/${id}`).catch(() => golangAPI.delete(`/api/erp/branches/${id}`)),
   },
 
   categories: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/categories', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/categories/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/categories', data),
-    update: (id: string, data: any) => golangAPI.put(`/api/erp/categories/${id}`, data),
-    delete: (id: string) => golangAPI.delete(`/api/erp/categories/${id}`),
+    getAll: (params?: any) => nextAPI.get('/categories', { params }).catch(() => golangAPI.get('/api/erp/categories', { params })),
+    getById: (id: string) => nextAPI.get(`/categories/${id}`).catch(() => golangAPI.get(`/api/erp/categories/${id}`)),
+    create: (data: any) => nextAPI.post('/categories', data).catch(() => golangAPI.post('/api/erp/categories', data)),
+    update: (id: string, data: any) => nextAPI.put(`/categories/${id}`, data).catch(() => golangAPI.put(`/api/erp/categories/${id}`, data)),
+    delete: (id: string) => nextAPI.delete(`/categories/${id}`).catch(() => golangAPI.delete(`/api/erp/categories/${id}`)),
   },
 
   brands: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/brands', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/brands/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/brands', data),
-    update: (id: string, data: any) => golangAPI.put(`/api/erp/brands/${id}`, data),
-    delete: (id: string) => golangAPI.delete(`/api/erp/brands/${id}`),
+    getAll: (params?: any) => nextAPI.get('/brands', { params }).catch(() => golangAPI.get('/api/erp/brands', { params })),
+    getById: (id: string) => nextAPI.get(`/brands/${id}`).catch(() => golangAPI.get(`/api/erp/brands/${id}`)),
+    create: (data: any) => nextAPI.post('/brands', data).catch(() => golangAPI.post('/api/erp/brands', data)),
+    update: (id: string, data: any) => nextAPI.put(`/brands/${id}`, data).catch(() => golangAPI.put(`/api/erp/brands/${id}`, data)),
+    delete: (id: string) => nextAPI.delete(`/brands/${id}`).catch(() => golangAPI.delete(`/api/erp/brands/${id}`)),
   },
 
   finance: {

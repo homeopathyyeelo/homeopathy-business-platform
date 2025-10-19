@@ -87,6 +87,9 @@ OPENAI_API_KEY=
 
 # Redis (optional)
 REDIS_URL=redis://localhost:6379
+
+# Suppress Kafka warnings
+KAFKAJS_NO_PARTITIONER_WARNING=1
 EOF
         log "✅ Created default .env file"
     fi
@@ -156,7 +159,7 @@ start_service() {
         log "▶️  Starting $name on port $port..."
         if [ -n "$dir" ] && [ -d "$dir" ]; then
             cd "$dir"
-            $cmd > "../logs/${name}.log" 2>&1 &
+            $cmd > "../../logs/${name}.log" 2>&1 &
             cd - > /dev/null
         else
             $cmd > "logs/${name}.log" 2>&1 &
