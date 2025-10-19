@@ -1,0 +1,68 @@
+
+> homeopathy-business-platform@0.2.0 db:seed
+> npm --workspace @yeelo/shared-db run seed
+
+
+> @yeelo/shared-db@1.0.0 seed
+> tsx src/seed.ts
+
+PrismaClientKnownRequestError: 
+Invalid `prisma.inventory.update()` invocation in
+/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:55:30
+
+  52 for (const batch of batches) {
+  53   if (remaining <= 0) break
+  54   const deduct = Math.min(batch.quantity, remaining)
+→ 55   await prisma.inventory.update(
+The column `new` does not exist in the current database.
+    at $n.handleRequestError (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:6623)
+    at $n.request (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:6307)
+    at async l (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:130:9633)
+    at async createSampleOrder (/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:55:7)
+    at async main (/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:161:3) {
+  code: 'P2022',
+  clientVersion: '5.22.0',
+  meta: { modelName: 'Inventory', column: 'new' }
+}
+npm error Lifecycle script `seed` failed with error:
+npm error code 1
+npm error path /var/www/homeopathy-business-platform/packages/shared-db
+npm error workspace @yeelo/shared-db@1.0.0
+npm error location /var/www/homeopathy-business-platform/packages/shared-db
+npm error command failed
+npm error command sh -c tsx src/seed.ts
+
+> homeopathy-business-platform@0.2.0 db:seed
+> npm --workspace @yeelo/shared-db run seed
+
+
+> @yeelo/shared-db@1.0.0 seed
+> tsx src/seed.ts
+
+PrismaClientKnownRequestError: 
+Invalid `prisma.inventory.update()` invocation in
+/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:55:30
+
+  52 for (const batch of batches) {
+  53   if (remaining <= 0) break
+  54   const deduct = Math.min(batch.quantity, remaining)
+→ 55   await prisma.inventory.update(
+The column `new` does not exist in the current database.
+    at $n.handleRequestError (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:7315)
+    at $n.handleAndLogRequestError (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:6623)
+    at $n.request (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:121:6307)
+    at async l (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:130:9633)
+    at async createSampleOrder (/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:55:7)
+    at async main (/var/www/homeopathy-business-platform/packages/shared-db/src/seed.ts:161:3) {
+  code: 'P2022',
+  clientVersion: '5.22.0',
+  meta: { modelName: 'Inventory', column: 'new' }
+}
+npm error Lifecycle script `seed` failed with error:
+npm error code 1
+npm error path /var/www/homeopathy-business-platform/packages/shared-db
+npm error workspace @yeelo/shared-db@1.0.0
+npm error location /var/www/homeopathy-business-platform/packages/shared-db
+npm error command failed
+npm error command sh -c tsx src/seed.ts

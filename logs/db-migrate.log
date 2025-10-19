@@ -1,0 +1,64 @@
+
+> homeopathy-business-platform@0.2.0 db:migrate
+> npm --workspace @yeelo/shared-db run migrate
+
+
+> @yeelo/shared-db@1.0.0 migrate
+> prisma migrate deploy
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "yeelo_homeopathy", schema "public" at "localhost:5433"
+
+1 migration found in prisma/migrations
+
+
+No pending migrations to apply.
+
+> homeopathy-business-platform@0.2.0 db:migrate
+> npm --workspace @yeelo/shared-db run migrate
+
+
+> @yeelo/shared-db@1.0.0 migrate
+> prisma migrate deploy
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "yeelo_homeopathy", schema "public" at "localhost:5433"
+
+1 migration found in prisma/migrations
+
+
+No pending migrations to apply.
+
+> homeopathy-business-platform@0.2.0 db:migrate
+> npm --workspace @yeelo/shared-db run migrate
+
+
+> @yeelo/shared-db@1.0.0 migrate
+> prisma migrate deploy
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "yeelo_homeopathy", schema "public" at "localhost:5433"
+
+1 migration found in prisma/migrations
+
+
+No pending migrations to apply.
+
+> homeopathy-business-platform@0.2.0 db:migrate
+> npm --workspace @yeelo/shared-db run migrate
+
+
+> @yeelo/shared-db@1.0.0 migrate
+> prisma migrate deploy
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": PostgreSQL database "yeelo_homeopathy", schema "public" at "localhost:5433"
+
+1 migration found in prisma/migrations
+
+
+No pending migrations to apply.

@@ -2,8 +2,3 @@
 > @yeelo/api-fastify@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[1G[0K[[36mINFO[0m] [30;1m12:21:10[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-[36mprisma:info[39m Starting a postgresql pool with 9 connections.
-[12:21:13.277] [32mINFO[39m (18309): [36mServer listening at http://0.0.0.0:3002[39m
-[12:21:13.278] [32mINFO[39m (18309): [36m🚀 Fastify API server listening on 0.0.0.0:3002[39m
-[12:21:13.278] [32mINFO[39m (18309): [36m📚 Swagger docs available at http://0.0.0.0:3002/documentation[39m

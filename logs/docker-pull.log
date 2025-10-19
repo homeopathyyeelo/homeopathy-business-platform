@@ -1,0 +1,13 @@
+time="2025-10-18T19:47:31+05:30" level=warning msg="/var/www/homeopathy-business-platform/docker-compose.infra.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ postgres Pulling 
+ minio Pulling 
+ redis Pulling 
+ kafka-ui Pulling 
+ zookeeper Pulling 
+ kafka Pulling 
+ kafka-ui Pulled 
+ kafka Pulled 
+ zookeeper Pulled 
+ minio Pulled 
+ postgres Pulled 
+ redis Pulled 

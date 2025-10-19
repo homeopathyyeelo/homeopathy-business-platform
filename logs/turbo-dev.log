@@ -1,0 +1,164 @@
+
+> homeopathy-business-platform@0.2.0 dev
+> turbo run dev --parallel
+
+turbo 2.5.8
+
+• Packages in scope: @yeelo/ai-service, @yeelo/api-express, @yeelo/api-fastify, @yeelo/api-gateway, @yeelo/api-nest, @yeelo/auth-service, @yeelo/graphql-gateway, @yeelo/kafka-events, @yeelo/shared-db, @yeelo/shared-kafka, outbox-worker
+• Running dev in 11 packages
+• Remote caching disabled
+@yeelo/kafka-events:dev: cache bypass, force executing 753f7fd0696e46f7
+@yeelo/shared-kafka:dev: cache bypass, force executing c8b1bf27ca8c5574
+@yeelo/api-fastify:dev: cache bypass, force executing 45ca063c54f5e135
+@yeelo/api-express:dev: cache bypass, force executing 03b627195b88d136
+@yeelo/graphql-gateway:dev: cache bypass, force executing 6659289efa1111b2
+@yeelo/ai-service:dev: cache bypass, force executing c54a9b22612391fb
+@yeelo/api-gateway:dev: cache bypass, force executing 04623f01d7029c27
+@yeelo/api-nest:dev: cache bypass, force executing e87b3e085608f612
+@yeelo/auth-service:dev: cache bypass, force executing f47abbdad12d403d
+@yeelo/shared-kafka:dev: 
+@yeelo/shared-kafka:dev: > @yeelo/shared-kafka@1.0.0 dev
+@yeelo/shared-kafka:dev: > tsc --watch
+@yeelo/shared-kafka:dev: 
+@yeelo/api-fastify:dev: 
+@yeelo/api-fastify:dev: > @yeelo/api-fastify@1.0.0 dev
+@yeelo/api-fastify:dev: > ts-node-dev --respawn --transpile-only src/index.ts
+@yeelo/api-fastify:dev: 
+@yeelo/graphql-gateway:dev: 
+@yeelo/graphql-gateway:dev: > @yeelo/graphql-gateway@1.0.0 dev
+@yeelo/graphql-gateway:dev: > ts-node-dev --respawn --transpile-only src/index.ts
+@yeelo/graphql-gateway:dev: 
+@yeelo/api-gateway:dev: 
+@yeelo/api-gateway:dev: > @yeelo/api-gateway@1.0.0 dev
+@yeelo/api-gateway:dev: > ts-node-dev --respawn --transpile-only src/index.ts
+@yeelo/api-gateway:dev: 
+@yeelo/kafka-events:dev: 
+@yeelo/kafka-events:dev: > @yeelo/kafka-events@1.0.0 dev
+@yeelo/kafka-events:dev: > ts-node-dev --respawn --transpile-only src/index.ts
+@yeelo/kafka-events:dev: 
+@yeelo/api-express:dev: 
+@yeelo/api-express:dev: > @yeelo/api-express@1.0.0 dev
+@yeelo/api-express:dev: > nodemon src/index.js
+@yeelo/api-express:dev: 
+@yeelo/auth-service:dev: 
+@yeelo/auth-service:dev: > @yeelo/auth-service@1.0.0 dev
+@yeelo/auth-service:dev: > ts-node-dev --respawn --transpile-only src/index.ts
+@yeelo/auth-service:dev: 
+@yeelo/ai-service:dev: 
+@yeelo/ai-service:dev: > @yeelo/ai-service@1.0.0 dev
+@yeelo/ai-service:dev: > ./venv/bin/python main.py
+@yeelo/ai-service:dev: 
+@yeelo/api-nest:dev: 
+@yeelo/api-nest:dev: > @yeelo/api-nest@1.0.0 dev
+@yeelo/api-nest:dev: > nest start --watch
+@yeelo/api-nest:dev: 
+@yeelo/api-nest:dev: node:internal/modules/cjs/loader:1368
+@yeelo/api-nest:dev:   throw err;
+@yeelo/api-nest:dev:   ^
+@yeelo/api-nest:dev: 
+@yeelo/api-nest:dev: Error: Cannot find module 'node-emoji'
+@yeelo/api-nest:dev: Require stack:
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js
+@yeelo/api-nest:dev: - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js
+@yeelo/api-nest:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)
+@yeelo/api-nest:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)
+@yeelo/api-nest:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)
+@yeelo/api-nest:dev:     at Function._load (node:internal/modules/cjs/loader:1175:37)
+@yeelo/api-nest:dev:     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+@yeelo/api-nest:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+@yeelo/api-nest:dev:     at Module.require (node:internal/modules/cjs/loader:1445:12)
+@yeelo/api-nest:dev:     at require (node:internal/modules/helpers:135:16)
+@yeelo/api-nest:dev:     at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js:4:22)
+@yeelo/api-nest:dev:     at Module._compile (node:internal/modules/cjs/loader:1688:14) {
+@yeelo/api-nest:dev:   code: 'MODULE_NOT_FOUND',
+@yeelo/api-nest:dev:   requireStack: [
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js',
+@yeelo/api-nest:dev:     '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js'
+@yeelo/api-nest:dev:   ]
+@yeelo/api-nest:dev: }
+@yeelo/api-nest:dev: 
+@yeelo/api-nest:dev: Node.js v22.18.0
+@yeelo/api-express:dev: [33m[nodemon] 3.1.10[39m
+@yeelo/api-express:dev: [33m[nodemon] to restart at any time, enter `rs`[39m
+@yeelo/api-express:dev: [33m[nodemon] watching path(s): *.*[39m
+@yeelo/api-express:dev: [33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+@yeelo/api-express:dev: [32m[nodemon] starting `node src/index.js`[39m
+@yeelo/api-nest:dev: npm error Lifecycle script `dev` failed with error:
+@yeelo/api-nest:dev: npm error code 1
+@yeelo/api-nest:dev: npm error path /var/www/homeopathy-business-platform/services/api-nest
+@yeelo/api-nest:dev: npm error workspace @yeelo/api-nest@1.0.0
+@yeelo/api-nest:dev: npm error location /var/www/homeopathy-business-platform/services/api-nest
+@yeelo/api-nest:dev: npm error command failed
+@yeelo/api-nest:dev: npm error command sh -c nest start --watch
+@yeelo/api-nest:dev: ERROR: command finished with error: command (/var/www/homeopathy-business-platform/services/api-nest) /home/yeelo-homeopathy/.nvm/versions/node/v22.18.0/bin/npm run dev exited (1)
+@yeelo/ai-service:dev: Traceback (most recent call last):
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/main.py", line 3, in <module>
+@yeelo/ai-service:dev:     from fastapi import FastAPI, HTTPException
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/__init__.py", line 7, in <module>
+@yeelo/ai-service:dev:     from .applications import FastAPI as FastAPI
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/applications.py", line 16, in <module>
+@yeelo/ai-service:dev:     from fastapi import routing
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/routing.py", line 27, in <module>
+@yeelo/ai-service:dev:     from fastapi import params, temp_pydantic_v1_params
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/params.py", line 5, in <module>
+@yeelo/ai-service:dev:     from fastapi.openapi.models import Example
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/openapi/models.py", line 4, in <module>
+@yeelo/ai-service:dev:     from fastapi._compat import (
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/__init__.py", line 1, in <module>
+@yeelo/ai-service:dev:     from .main import BaseConfig as BaseConfig
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/main.py", line 11, in <module>
+@yeelo/ai-service:dev:     from fastapi._compat import v1
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/v1.py", line 16, in <module>
+@yeelo/ai-service:dev:     from fastapi._compat import shared
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/shared.py", line 20, in <module>
+@yeelo/ai-service:dev:     from fastapi.types import UnionType
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/types.py", line 5, in <module>
+@yeelo/ai-service:dev:     from pydantic import BaseModel
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/__init__.py", line 5, in <module>
+@yeelo/ai-service:dev:     from ._migration import getattr_migration
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_migration.py", line 4, in <module>
+@yeelo/ai-service:dev:     from pydantic.warnings import PydanticDeprecatedSince20
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/warnings.py", line 5, in <module>
+@yeelo/ai-service:dev:     from .version import version_short
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/version.py", line 7, in <module>
+@yeelo/ai-service:dev:     from pydantic_core import __version__ as __pydantic_core_version__
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/__init__.py", line 31, in <module>
+@yeelo/ai-service:dev:     from .core_schema import CoreConfig, CoreSchema, CoreSchemaType, ErrorType
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 4341, in <module>
+@yeelo/ai-service:dev:     @deprecated('`field_before_validator_function` is deprecated, use `with_info_before_validator_function` instead.')
+@yeelo/ai-service:dev:      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@yeelo/ai-service:dev:   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/typing_extensions.py", line 2997, in __call__
+@yeelo/ai-service:dev:     import asyncio.coroutines
+@yeelo/ai-service:dev:   File "/usr/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+@yeelo/ai-service:dev:     from .base_events import *
+@yeelo/ai-service:dev:   File "/usr/lib/python3.12/asyncio/base_events.py", line 35, in <module>
+@yeelo/ai-service:dev:     import ssl
+@yeelo/ai-service:dev:   File "/usr/lib/python3.12/ssl.py", line 133, in <module>
+@yeelo/ai-service:dev:     _IntEnum._convert_(
+@yeelo/ai-service:dev:   File "/usr/lib/python3.12/enum.py", line 953, in _convert_
+@yeelo/ai-service:dev:     sys.modules[cls.__module__].__dict__.update(cls.__members__)
+@yeelo/ai-service:dev:                                                 ^^^^^^^^^^^^^^^
+@yeelo/ai-service:dev:   File "/usr/lib/python3.12/enum.py", line 828, in __members__
+@yeelo/ai-service:dev:     @bltns.property
+@yeelo/ai-service:dev: 
+@yeelo/ai-service:dev: KeyboardInterrupt
+@yeelo/api-nest#dev: command (/var/www/homeopathy-business-platform/services/api-nest) /home/yeelo-homeopathy/.nvm/versions/node/v22.18.0/bin/npm run dev exited (1)
+
+ Tasks:    0 successful, 9 total
+Cached:    0 cached, 9 total
+  Time:    665ms 
+Failed:    @yeelo/api-nest#dev
+
+ ERROR  run failed: command  exited (1)
