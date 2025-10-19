@@ -35,21 +35,18 @@ Traceback (most recent call last):
     from pydantic_core import __version__ as __pydantic_core_version__
   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/__init__.py", line 31, in <module>
     from .core_schema import CoreConfig, CoreSchema, CoreSchemaType, ErrorType
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 4341, in <module>
-    @deprecated('`field_before_validator_function` is deprecated, use `with_info_before_validator_function` instead.')
-     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/typing_extensions.py", line 2997, in __call__
-    import asyncio.coroutines
-  File "/usr/lib/python3.12/asyncio/__init__.py", line 8, in <module>
-    from .base_events import *
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 35, in <module>
-    import ssl
-  File "/usr/lib/python3.12/ssl.py", line 133, in <module>
-    _IntEnum._convert_(
-  File "/usr/lib/python3.12/enum.py", line 953, in _convert_
-    sys.modules[cls.__module__].__dict__.update(cls.__members__)
-                                                ^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/enum.py", line 828, in __members__
-    @bltns.property
-
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 43, in <module>
+    class CoreConfig(TypedDict, total=False):
+  File "/usr/lib/python3.12/typing.py", line 2881, in __new__
+    n: _type_check(tp, msg, module=tp_dict.__module__)
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/typing.py", line 193, in _type_check
+    arg = _type_convert(arg, module=module, allow_special_forms=allow_special_forms)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/typing.py", line 171, in _type_convert
+    return ForwardRef(arg, module=module, is_class=allow_special_forms)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/typing.py", line 897, in __init__
+    code = compile(arg_to_compile, '<string>', 'eval')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 KeyboardInterrupt

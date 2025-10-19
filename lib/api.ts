@@ -119,6 +119,30 @@ export const api = {
     create: (data: any) => golangAPI.post('/api/erp/employees', data),
   },
 
+  branches: {
+    getAll: (params?: any) => golangAPI.get('/api/erp/branches', { params }),
+    getById: (id: string) => golangAPI.get(`/api/erp/branches/${id}`),
+    create: (data: any) => golangAPI.post('/api/erp/branches', data),
+    update: (id: string, data: any) => golangAPI.put(`/api/erp/branches/${id}`, data),
+    delete: (id: string) => golangAPI.delete(`/api/erp/branches/${id}`),
+  },
+
+  categories: {
+    getAll: (params?: any) => golangAPI.get('/api/erp/categories', { params }),
+    getById: (id: string) => golangAPI.get(`/api/erp/categories/${id}`),
+    create: (data: any) => golangAPI.post('/api/erp/categories', data),
+    update: (id: string, data: any) => golangAPI.put(`/api/erp/categories/${id}`, data),
+    delete: (id: string) => golangAPI.delete(`/api/erp/categories/${id}`),
+  },
+
+  brands: {
+    getAll: (params?: any) => golangAPI.get('/api/erp/brands', { params }),
+    getById: (id: string) => golangAPI.get(`/api/erp/brands/${id}`),
+    create: (data: any) => golangAPI.post('/api/erp/brands', data),
+    update: (id: string, data: any) => golangAPI.put(`/api/erp/brands/${id}`, data),
+    delete: (id: string) => golangAPI.delete(`/api/erp/brands/${id}`),
+  },
+
   finance: {
     getLedgerBalance: (ledgerId: string) => golangAPI.get(`/api/erp/finance/ledger/${ledgerId}/balance`),
     createExpense: (data: any) => golangAPI.post('/api/erp/finance/expenses', data),

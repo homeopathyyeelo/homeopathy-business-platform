@@ -1,6 +1,49 @@
 
-
 > @yeelo/api-nest@1.0.0 build
 > nest build
 
-[1G[0K
+node:internal/modules/cjs/loader:1368
+  throw err;
+  ^
+
+Error: Cannot find module 'node-emoji'
+Require stack:
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)
+    at Function._load (node:internal/modules/cjs/loader:1175:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1445:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js:4:22)
+    at Module._compile (node:internal/modules/cjs/loader:1688:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js'
+  ]
+}
+
+Node.js v22.18.0
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /var/www/homeopathy-business-platform/services/api-nest
+npm error workspace @yeelo/api-nest@1.0.0
+npm error location /var/www/homeopathy-business-platform/services/api-nest
+npm error command failed
+npm error command sh -c nest build
