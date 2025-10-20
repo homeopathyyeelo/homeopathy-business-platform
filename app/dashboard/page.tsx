@@ -151,12 +151,12 @@ export default function DashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-gray-600">Business overview and key metrics</p>
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Homeopathy ERP Dashboard</h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Complete business overview and key metrics</p>
         </div>
         <div className="flex items-center space-x-4">
           <Select value={selectedBranch} onValueChange={setSelectedBranch}>
@@ -184,77 +184,92 @@ export default function DashboardPage() {
       </div>
 
       {/* Key Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <ShoppingCart className="w-4 h-4 mr-2" />
+            <CardTitle className="text-sm font-medium flex items-center text-green-700 dark:text-green-400">
+              <div className="p-2 bg-green-500 rounded-lg mr-3">
+                <ShoppingCart className="w-5 h-5 text-white" />
+              </div>
               Total Sales
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalSales)}</div>
-            <div className="flex items-center text-xs text-green-600">
-              <ArrowUp className="w-3 h-3 mr-1" />
-              +12% from last month
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400">{formatCurrency(stats.totalSales)}</div>
+            <div className="flex items-center text-sm text-green-600 dark:text-green-400 mt-2">
+              <ArrowUp className="w-4 h-4 mr-1" />
+              <span className="font-semibold">+12%</span>
+              <span className="ml-1 text-gray-600 dark:text-gray-400">from last month</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-blue-50 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Truck className="w-4 h-4 mr-2" />
+            <CardTitle className="text-sm font-medium flex items-center text-blue-700 dark:text-blue-400">
+              <div className="p-2 bg-blue-500 rounded-lg mr-3">
+                <Truck className="w-5 h-5 text-white" />
+              </div>
               Total Purchases
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalPurchases)}</div>
-            <div className="flex items-center text-xs text-blue-600">
-              <ArrowUp className="w-3 h-3 mr-1" />
-              +8% from last month
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{formatCurrency(stats.totalPurchases)}</div>
+            <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 mt-2">
+              <ArrowUp className="w-4 h-4 mr-1" />
+              <span className="font-semibold">+8%</span>
+              <span className="ml-1 text-gray-600 dark:text-gray-400">from last month</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <Package className="w-4 h-4 mr-2" />
+            <CardTitle className="text-sm font-medium flex items-center text-purple-700 dark:text-purple-400">
+              <div className="p-2 bg-purple-500 rounded-lg mr-3">
+                <Package className="w-5 h-5 text-white" />
+              </div>
               Stock Value
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalStock)}</div>
-            <div className="flex items-center text-xs text-purple-600">
-              <ArrowDown className="w-3 h-3 mr-1" />
-              -2% from last month
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">{formatCurrency(stats.totalStock)}</div>
+            <div className="flex items-center text-sm text-purple-600 dark:text-purple-400 mt-2">
+              <ArrowDown className="w-4 h-4 mr-1" />
+              <span className="font-semibold">-2%</span>
+              <span className="ml-1 text-gray-600 dark:text-gray-400">from last month</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center">
-              <TrendingUp className="w-4 h-4 mr-2" />
+            <CardTitle className="text-sm font-medium flex items-center text-amber-700 dark:text-amber-400">
+              <div className="p-2 bg-amber-500 rounded-lg mr-3">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
               Net Profit
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalProfit)}</div>
-            <div className="flex items-center text-xs text-green-600">
-              <ArrowUp className="w-3 h-3 mr-1" />
-              +15% from last month
+            <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">{formatCurrency(stats.totalProfit)}</div>
+            <div className="flex items-center text-sm text-amber-600 dark:text-amber-400 mt-2">
+              <ArrowUp className="w-4 h-4 mr-1" />
+              <span className="font-semibold">+15%</span>
+              <span className="ml-1 text-gray-600 dark:text-gray-400">from last month</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Period Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Today's Performance</CardTitle>
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="bg-white dark:bg-gray-800 border-2 border-indigo-200 dark:border-indigo-800 hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border-b border-indigo-100 dark:border-indigo-800">
+            <CardTitle className="text-lg font-bold text-indigo-700 dark:text-indigo-400 flex items-center">
+              <Calendar className="w-5 h-5 mr-2" />
+              Today's Performance
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex justify-between">
@@ -272,9 +287,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">This Week</CardTitle>
+        <Card className="bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-800 hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 border-b border-blue-100 dark:border-blue-800">
+            <CardTitle className="text-lg font-bold text-blue-700 dark:text-blue-400 flex items-center">
+              <Activity className="w-5 h-5 mr-2" />
+              This Week
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex justify-between">
@@ -288,9 +306,12 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">This Month</CardTitle>
+        <Card className="bg-white dark:bg-gray-800 border-2 border-emerald-200 dark:border-emerald-800 hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 border-b border-emerald-100 dark:border-emerald-800">
+            <CardTitle className="text-lg font-bold text-emerald-700 dark:text-emerald-400 flex items-center">
+              <TrendingUp className="w-5 h-5 mr-2" />
+              This Month
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex justify-between">
@@ -306,11 +327,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts and Alerts Row */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Sales vs Purchase Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Sales vs Purchase Trend</CardTitle>
+        <Card className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800 border-b border-gray-200 dark:border-gray-700">
+            <CardTitle className="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center">
+              <BarChart className="w-6 h-6 mr-2 text-blue-600" />
+              Sales vs Purchase Trend
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -326,10 +350,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Alerts */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Bell className="w-5 h-5 mr-2" />
+        <Card className="bg-white dark:bg-gray-800 border-2 border-red-200 dark:border-red-800 hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/30 dark:to-orange-900/30 border-b border-red-200 dark:border-red-800">
+            <CardTitle className="text-xl font-bold text-red-700 dark:text-red-400 flex items-center">
+              <Bell className="w-6 h-6 mr-2 animate-pulse" />
               Alerts & Notifications
             </CardTitle>
           </CardHeader>

@@ -5,16 +5,14 @@ export function useVendors() {
   return useQuery({
     queryKey: ['vendors', 'list'],
     queryFn: async () => {
-      // Try NestJS API first, fallback to Go API if needed
       try {
-        const res = await nestjsAPI.get('/api/vendors')
-        const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+        const res = await fetch('/api/vendors')
+        const json = await res.json()
+        const data = Array.isArray(json.data) ? json.data : []
         return data as any[]
       } catch (error) {
-        // Fallback to Go API
-        const res = await golangAPI.get('/api/vendors')
-        const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-        return data as any[]
+        console.error('Failed to fetch vendors:', error)
+        return []
       }
     },
     staleTime: 60_000,

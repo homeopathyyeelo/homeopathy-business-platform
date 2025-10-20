@@ -5,10 +5,15 @@ export function useCustomers() {
   return useQuery({
     queryKey: ['customers', 'list'],
     queryFn: async () => {
-      const res = await api.customers.getAll()
-      // assume backend returns array or {data: []}
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      try {
+        const res = await fetch('/api/customers')
+        const json = await res.json()
+        const data = Array.isArray(json.data) ? json.data : []
+        return data as any[]
+      } catch (error) {
+        console.error('Failed to fetch customers:', error)
+        return []
+      }
     },
     staleTime: 60_000,
   })

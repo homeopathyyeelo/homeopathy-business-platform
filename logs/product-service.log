@@ -1,9 +1,9 @@
 
-2025/10/20 22:34:56 [35m/var/www/homeopathy-business-platform/services/product-service/main.go:141
-[0m[31m[error] [0mfailed to initialize database, got error failed to connect to `user=erp_user database=products_db`:
-	127.0.0.1:5432 (localhost): tls error: server refused TLS connection
-	127.0.0.1:5432 (localhost): failed SASL auth: FATAL: password authentication failed for user "erp_user" (SQLSTATE 28P01)
-2025/10/20 22:34:56 Failed to connect to database: failed to connect to `user=erp_user database=products_db`:
-	127.0.0.1:5432 (localhost): tls error: server refused TLS connection
-	127.0.0.1:5432 (localhost): failed SASL auth: FATAL: password authentication failed for user "erp_user" (SQLSTATE 28P01)
+2025/10/20 23:04:05 [35m/var/www/homeopathy-business-platform/services/product-service/main.go:141
+[0m[31m[error] [0mfailed to initialize database, got error failed to connect to `user=postgres database=yeelo_homeopathy`:
+	hostname resolving error: lookup postgres on 127.0.0.53:53: server misbehaving
+	lookup postgres on 127.0.0.53:53: server misbehaving
+2025/10/20 23:04:05 Failed to connect to database: failed to connect to `user=postgres database=yeelo_homeopathy`:
+	hostname resolving error: lookup postgres on 127.0.0.53:53: server misbehaving
+	lookup postgres on 127.0.0.53:53: server misbehaving
 exit status 1

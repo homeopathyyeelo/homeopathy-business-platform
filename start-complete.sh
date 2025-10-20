@@ -308,10 +308,12 @@ echo ""
 
 log "🌐 Starting Next.js frontend..."
 
-# Clean Next.js cache
-rm -rf .next 2>/dev/null || true
+# Clean Next.js cache to prevent corruption
+info "Cleaning Next.js build cache..."
+rm -rf .next node_modules/.cache 2>/dev/null || true
 
 # Start frontend
+cd "$PROJECT_ROOT"
 npm run dev:app > logs/frontend.log 2>&1 &
 echo $! > logs/frontend.pid
 log "✅ Frontend started (PID: $(cat logs/frontend.pid), Port: 3000)"
