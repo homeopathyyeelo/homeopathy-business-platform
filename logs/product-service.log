@@ -1,36 +1,9 @@
 
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[5.299ms] [34;1m[rows:1][0m SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'categories' AND table_type = 'BASE TABLE'
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[0.570ms] [34;1m[rows:1][0m SELECT CURRENT_DATABASE()
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[14.177ms] [34;1m[rows:-][0m SELECT c.column_name, c.is_nullable = 'YES', c.udt_name, c.character_maximum_length, c.numeric_precision, c.numeric_precision_radix, c.numeric_scale, c.datetime_precision, 8 * typlen, c.column_default, pd.description, c.identity_increment FROM information_schema.columns AS c JOIN pg_type AS pgt ON c.udt_name = pgt.typname LEFT JOIN pg_catalog.pg_description as pd ON pd.objsubid = c.ordinal_position AND pd.objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = c.table_name AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = c.table_schema)) where table_catalog = 'yeelo_homeopathy' AND table_schema = CURRENT_SCHEMA() AND table_name = 'categories'
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[0.438ms] [34;1m[rows:-][0m SELECT * FROM "categories" LIMIT 5
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[17.314ms] [34;1m[rows:-][0m SELECT constraint_name FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'yeelo_homeopathy' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'categories' AND constraint_type = 'UNIQUE'
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[14.230ms] [34;1m[rows:-][0m SELECT c.column_name, constraint_name, constraint_type FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_catalog, table_name, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name WHERE constraint_type IN ('PRIMARY KEY', 'UNIQUE') AND c.table_catalog = 'yeelo_homeopathy' AND c.table_schema = CURRENT_SCHEMA() AND c.table_name = 'categories'
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[1.152ms] [34;1m[rows:-][0m SELECT a.attname as column_name, format_type(a.atttypid, a.atttypmod) AS data_type
-		FROM pg_attribute a JOIN pg_class b ON a.attrelid = b.oid AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA())
-		WHERE a.attnum > 0 -- hide internal columns
-		AND NOT a.attisdropped -- hide deleted columns
-		AND b.relname = 'categories'
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[4.353ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'categories' AND column_name = 'id') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'categories' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
-
-2025/10/19 14:21:26 [32m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36
-[0m[33m[4.132ms] [34;1m[rows:0][0m SELECT description FROM pg_catalog.pg_description WHERE objsubid = (SELECT ordinal_position FROM information_schema.columns WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'categories' AND column_name = 'name') AND objoid = (SELECT oid FROM pg_catalog.pg_class WHERE relname = 'categories' AND relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = CURRENT_SCHEMA()))
-
-2025/10/19 14:21:26 [31;1m/var/www/homeopathy-business-platform/services/product-service/internal/database/postgres.go:36 [35;1mERROR: column "code" of relation "categories" contains null values (SQLSTATE 23502)
-[0m[33m[0.732ms] [34;1m[rows:0][0m ALTER TABLE "categories" ADD "code" text NOT NULL
-{"level":"fatal","ts":1760863886.5415063,"caller":"server/main.go:45","msg":"Failed to migrate database","error":"ERROR: column \"code\" of relation \"categories\" contains null values (SQLSTATE 23502)","stacktrace":"main.main\n\t/var/www/homeopathy-business-platform/services/product-service/cmd/server/main.go:45\nruntime.main\n\t/usr/lib/go-1.22/src/runtime/proc.go:271"}
+2025/10/20 22:34:56 [35m/var/www/homeopathy-business-platform/services/product-service/main.go:141
+[0m[31m[error] [0mfailed to initialize database, got error failed to connect to `user=erp_user database=products_db`:
+	127.0.0.1:5432 (localhost): tls error: server refused TLS connection
+	127.0.0.1:5432 (localhost): failed SASL auth: FATAL: password authentication failed for user "erp_user" (SQLSTATE 28P01)
+2025/10/20 22:34:56 Failed to connect to database: failed to connect to `user=erp_user database=products_db`:
+	127.0.0.1:5432 (localhost): tls error: server refused TLS connection
+	127.0.0.1:5432 (localhost): failed SASL auth: FATAL: password authentication failed for user "erp_user" (SQLSTATE 28P01)
 exit status 1

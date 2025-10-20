@@ -1,0 +1,104 @@
+
+[0;34m╔════════════════════════════════════════════════════════════╗[0m
+[0;34m║                                                            ║[0m
+[0;34m║     🏥 Yeelo Homeopathy ERP - Complete Startup 🏥        ║[0m
+[0;34m║                                                            ║[0m
+[0;34m╚════════════════════════════════════════════════════════════╝[0m
+
+[0;32m[22:22:10][0m 🔍 Running pre-flight checks...
+[0;32m[22:22:10][0m ✅ Docker 28.3.3 detected
+[0;32m[22:22:10][0m ✅ Docker Compose v2.21.0 detected
+[0;32m[22:22:10][0m ✅ Node.js v22.18.0 detected
+[0;32m[22:22:10][0m ✅ npm 10.9.3 detected
+[0;32m[22:22:10][0m ✅ Go go1.22.2 detected
+[0;32m[22:22:10][0m ✅ Python 3.12.3 detected
+
+[0;32m[22:22:10][0m 📝 Setting up environment...
+[0;32m[22:22:10][0m ✅ .env file exists
+
+[0;32m[22:22:10][0m 📦 Installing dependencies...
+[0;32m[22:22:10][0m ✅ Dependencies already installed
+
+[0;32m[22:22:10][0m 🐳 Starting Docker services...
+[0;32m[22:22:10][0m Stopping existing containers...
+[0;36m[22:22:10][0m Checking for port conflicts...
+[0;36m[22:22:10][0m Starting PostgreSQL, Redis, Kafka, MinIO...
+ Network homeopathy-business-platform_erp-network  Creating
+ Network homeopathy-business-platform_erp-network  Created
+ Volume "homeopathy-business-platform_minio_data"  Creating
+ Volume "homeopathy-business-platform_minio_data"  Created
+ Volume "homeopathy-business-platform_zookeeper_data"  Creating
+ Volume "homeopathy-business-platform_zookeeper_data"  Created
+ Volume "homeopathy-business-platform_kafka_data"  Creating
+ Volume "homeopathy-business-platform_kafka_data"  Created
+ Volume "homeopathy-business-platform_postgres_data"  Creating
+ Volume "homeopathy-business-platform_postgres_data"  Created
+ Volume "homeopathy-business-platform_redis_data"  Creating
+ Volume "homeopathy-business-platform_redis_data"  Created
+ Container erp-redis  Creating
+ Container erp-minio  Creating
+ Container erp-zookeeper  Creating
+ Container erp-postgres  Creating
+ Container erp-postgres  Created
+ Container erp-minio  Created
+ Container erp-redis  Created
+ Container erp-zookeeper  Created
+ Container erp-kafka  Creating
+ Container erp-kafka  Created
+ Container erp-redis  Starting
+ Container erp-minio  Starting
+ Container erp-zookeeper  Starting
+ Container erp-postgres  Starting
+ Container erp-zookeeper  Started
+ Container erp-kafka  Starting
+ Container erp-minio  Started
+ Container erp-redis  Started
+ Container erp-kafka  Started
+Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint erp-postgres (58b172c2557dc419d42e9bba78cafe2566f4d76391a2c837dc7e874b8a9241d4): failed to bind host port for 0.0.0.0:5432:172.20.0.5:5432/tcp: address already in use
+[0;32m[22:22:11][0m ⏳ Waiting for Docker services to be ready...
+[0;36m[22:22:21][0m Checking PostgreSQL...
+[1;33m[22:22:50][0m ⚠️  PostgreSQL took longer than expected, but may still be initializing...
+[0;36m[22:22:52][0m Checking Redis...
+[0;32m[22:22:52][0m ✅ Redis is ready
+[0;36m[22:22:52][0m Checking Kafka...
+[0;32m[22:22:57][0m ✅ Kafka starting (will be ready in ~30s)
+[0;36m[22:22:57][0m Checking MinIO...
+[0;32m[22:22:57][0m ✅ MinIO is ready
+
+[0;32m[22:22:57][0m 🗄️  Running database migrations...
+[0;36m[22:22:57][0m Applying outbox pattern migration...
+[1;33m[22:22:57][0m ⚠️  Migration may have already been applied
+[0;32m[22:22:57][0m ✅ Database migrations complete
+
+[0;32m[22:22:57][0m 🚀 Starting microservices...
+[0;36m[22:22:57][0m Starting product-service...
+[0;32m[22:22:57][0m ✅ product-service started (PID: 12192, Port: 8001)
+[0;36m[22:22:57][0m Starting inventory-service...
+[0;32m[22:22:57][0m ✅ inventory-service started (PID: 12199, Port: 8002)
+[0;36m[22:22:57][0m Starting sales-service...
+[0;32m[22:22:57][0m ✅ sales-service started (PID: 12210, Port: 8003)
+[0;36m[22:22:57][0m Starting api-gateway...
+[0;32m[22:22:57][0m ✅ api-gateway started (PID: 12221, Port: 4000)
+[0;36m[22:22:57][0m Starting AI service...
+[0;32m[22:22:57][0m ✅ AI service started (PID: 12227, Port: 8010)
+[0;32m[22:22:57][0m ⏳ Waiting for services to initialize...
+
+[0;32m[22:23:02][0m 🌐 Starting Next.js frontend...
+[0;32m[22:23:02][0m ✅ Frontend started (PID: 12301, Port: 3000)
+
+[0;32m[22:23:02][0m 🔍 Running health checks...
+[0;36m[22:23:12][0m Checking Docker services...
+[1;33m[22:23:12][0m ⚠️  PostgreSQL health check failed (may still be starting)
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+[1;33m[22:23:12][0m ⚠️  Redis health check failed (may still be starting)
+NAME        IMAGE            COMMAND                                                            SERVICE   CREATED              STATUS              PORTS
+erp-redis   redis:7-alpine   "docker-entrypoint.sh redis-server --requirepass redis_password"   redis     About a minute ago   Up About a minute   0.0.0.0:6379->6379/tcp, :::6379->6379/tcp
+[0;32m[22:23:12][0m ✅ MinIO is healthy
+[0;36m[22:23:12][0m Checking microservices...
+[1;33m[22:23:12][0m ⚠️  Product Service health check failed (may still be starting)
+[1;33m[22:23:12][0m ⚠️  Inventory Service health check failed (may still be starting)
+[1;33m[22:23:12][0m ⚠️  Sales Service health check failed (may still be starting)
+[1;33m[22:23:12][0m ⚠️  API Gateway health check failed (may still be starting)
+[1;33m[22:23:12][0m ⚠️  AI Service health check failed (may still be starting)
+[0;36m[22:23:12][0m Checking frontend...
+[1;33m[22:23:17][0m ⚠️  Frontend health check failed (may still be starting)

@@ -1,202 +1,493 @@
-# 🏥 Yeelo Homeopathy ERP Platform
+# Homeopathy ERP - Full-Stack Polyglot Microservices Platform
 
-Complete ERP solution for Homeopathy businesses with AI-powered features.
+> **Enterprise-grade ERP system** with 4-sided Next.js UI, polyglot microservices (Go, Node.js, Python), event-driven architecture (Kafka), and AI-powered features.
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Next.js Frontend (Port 3000)                 │
+│              4-Side Layout: Top | Left | Right | Bottom          │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│              API Gateway (NestJS + GraphQL - Port 4000)          │
+│         JWT Auth | RBAC | Rate Limiting | Aggregation           │
+└──┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬─────┘
+   │      │      │      │      │      │      │      │      │
+   ▼      ▼      ▼      ▼      ▼      ▼      ▼      ▼      ▼
+┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐┌──────┐
+│Product││Inven-││Sales ││Cust- ││Vendor││Finance││  HR  ││  AI  │
+│Service││tory  ││Service││omer ││Service││Service││Service││Service│
+│ Gin  ││Fiber ││ Echo ││NestJS││NestJS││NestJS││NestJS││FastAPI│
+│:8001 ││:8002 ││:8003 ││:8005 ││:8006 ││:8007 ││:8008 ││:8010 │
+└──┬───┘└──┬───┘└──┬───┘└──┬───┘└──┬───┘└──┬───┘└──┬───┘└──┬───┘
+   │       │       │       │       │       │       │       │
+   └───────┴───────┴───────┴───────┴───────┴───────┴───────┘
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+   ┌─────────┐      ┌──────────┐      ┌──────────┐
+   │PostgreSQL│      │  Kafka   │      │  Redis   │
+   │  :5432  │      │  :9092   │      │  :6379   │
+   └─────────┘      └──────────┘      └──────────┘
+```
+
+---
+
+## 📦 Tech Stack
+
+### Frontend
+- **Next.js 14** (App Router) - React framework with SSR/SSG
+- **TypeScript** - Type safety
+- **TailwindCSS** - Utility-first CSS
+- **shadcn/ui** - Component library
+- **SWR** - Data fetching & caching
+- **Lucide Icons** - Icon library
+
+### Backend Services
+- **Go** (Gin, Fiber, Echo) - High-performance services
+- **Node.js/NestJS** - API Gateway, orchestration services
+- **Python/FastAPI** - AI/ML service
+- **TypeScript** - Type-safe backend code
+
+### Data Layer
+- **PostgreSQL** - Primary database (per-service)
+- **Redis** - Caching, sessions, rate limiting
+- **Kafka** - Event streaming & async messaging
+- **MinIO** - S3-compatible object storage
+- **pgvector** - Vector embeddings for AI
+
+### Infrastructure
+- **Docker** - Containerization
+- **Docker Compose** - Local development
+- **Kubernetes** - Production orchestration
+- **ArgoCD** - GitOps deployment
+- **GitHub Actions** - CI/CD pipelines
+
+### Observability
+- **OpenTelemetry** - Distributed tracing
+- **Jaeger** - Trace visualization
+- **Prometheus** - Metrics collection
+- **Grafana** - Dashboards & alerting
+
+---
 
 ## 🚀 Quick Start
 
+### Prerequisites
 ```bash
-# Start the application
-./start.sh
+# Required
+- Docker & Docker Compose
+- Node.js 18+ (for frontend development)
+- Go 1.21+ (for Go services development)
+- Python 3.11+ (for AI service development)
 
-# Stop the application
-./stop.sh
+# Optional (for production)
+- Kubernetes cluster
+- ArgoCD
 ```
 
-The application will be available at: **http://localhost:3000**
+### 1. Clone Repository
+```bash
+git clone <repository-url>
+cd homeopathy-business-platform
+```
 
-## ✨ Features
+### 2. Start Infrastructure Services
+```bash
+# Start all infrastructure (Postgres, Kafka, Redis, MinIO)
+docker-compose up -d postgres kafka redis minio
 
-- **Multi-Layout System**: Choose from 6 different layouts including the new Hybrid Mega Menu
-- **Master Data Management**: Branches, Categories, Brands, Products, Customers, Vendors
-- **Sales & Purchase**: Complete billing, invoicing, and order management
-- **Inventory**: Real-time stock tracking, batch management, expiry alerts
-- **CRM**: Customer relationship management with AI insights
-- **Marketing**: Campaign management, WhatsApp/SMS integration
-- **AI Features**: Chat assistant, demand forecasting, price optimization
-- **Analytics**: Comprehensive dashboards and reports
+# Wait for services to be ready (~30 seconds)
+docker-compose ps
+```
+
+### 3. Initialize Databases
+```bash
+# Run migrations for all services
+docker-compose exec postgres psql -U erp_user -d postgres -f /docker-entrypoint-initdb.d/init-databases.sql
+
+# Apply outbox pattern
+docker-compose exec postgres psql -U erp_user -d products_db -f /migrations/000_outbox_pattern.sql
+```
+
+### 4. Start Backend Services
+```bash
+# Start all microservices
+docker-compose up -d product-service inventory-service sales-service api-gateway ai-service
+
+# Check logs
+docker-compose logs -f product-service
+```
+
+### 5. Start Frontend
+```bash
+cd apps/next-erp
+npm install
+npm run dev
+```
+
+### 6. Access Applications
+- **Frontend**: http://localhost:3000
+- **API Gateway**: http://localhost:4000
+- **API Docs**: http://localhost:4000/api/docs
+- **Product Service**: http://localhost:8001
+- **Inventory Service**: http://localhost:8002
+- **Sales Service**: http://localhost:8003
+
+---
 
 ## 📁 Project Structure
 
 ```
-├── app/                    # Next.js 15 App Router
-│   ├── api/               # API routes (fallback when microservices unavailable)
-│   ├── masters/           # Master data pages (branches, categories, brands, etc.)
-│   └── ...                # Other feature pages
-├── components/            # React components
-│   ├── layout/           # Layout components (HybridMegaThreeLayout, etc.)
-│   └── ui/               # shadcn/ui components
-├── lib/                   # Utilities and configurations
-│   ├── api.ts            # API client with fallback support
-│   ├── hooks/            # React Query hooks
-│   └── services/         # Service integrations
-├── services/             # Backend microservices (optional)
-│   ├── api-golang/       # Golang API (high-performance)
-│   ├── api-nestjs/       # NestJS API (enterprise features)
-│   ├── api-fastify/      # Fastify API (marketing)
-│   └── api-express/      # Express API (legacy support)
-├── start.sh              # Production startup script
-└── stop.sh               # Stop all services
+homeopathy-business-platform/
+├── apps/
+│   └── next-erp/                    # Next.js frontend
+│       ├── app/                     # App router pages
+│       ├── components/              # React components
+│       │   └── layout/              # AppShell, TopBar, LeftSidebar, RightPanel, BottomBar
+│       ├── providers/               # Context providers
+│       └── lib/                     # Utilities
+│
+├── services/
+│   ├── api-gateway/                 # NestJS API Gateway
+│   │   ├── src/
+│   │   │   ├── auth/               # Authentication module
+│   │   │   ├── users/              # User management
+│   │   │   ├── search/             # Global search
+│   │   │   └── health/             # Health checks
+│   │   └── package.json
+│   │
+│   ├── product-service/             # Go (Gin) - Products, Categories, Brands
+│   │   ├── main.go
+│   │   └── go.mod
+│   │
+│   ├── inventory-service/           # Go (Fiber) - Stock, Batches, Movements
+│   │   ├── main.go
+│   │   └── go.mod
+│   │
+│   ├── sales-service/               # Go (Echo) - Invoices, Orders, POS
+│   │   ├── main.go
+│   │   └── go.mod
+│   │
+│   └── ai-service/                  # Python (FastAPI) - AI/ML features
+│       ├── main.py
+│       └── requirements.txt
+│
+├── infra/
+│   ├── service-mapping.yaml         # Service inventory
+│   ├── kafka-topics.json            # Kafka topic definitions
+│   ├── rbac-config.json             # RBAC configuration
+│   └── menu-navigation.json         # Menu structure
+│
+├── db/
+│   └── migrations/
+│       └── 000_outbox_pattern.sql   # Outbox pattern implementation
+│
+├── docker-compose.yml               # Local development environment
+├── ARCHITECTURE-POLYGLOT-SERVICES.md # Architecture documentation
+└── README.md                        # This file
 ```
 
-## 🎨 Layout System
+---
 
-The platform supports multiple layouts. Access layout preferences at `/user/layout-preferences`:
+## 🎨 Frontend Features
 
-1. **Hybrid: Mega + 3-Side** (NEW) - Top hover megamenu + left sidebar + right quick access
-2. **E-Commerce Mega Menu** - Full e-commerce style navigation
-3. **Three Panel Layout** - Traditional 3-panel design
-4. **Mega Menu Only** - Top megamenu with dropdowns
-5. **Classic Sidebar** - Left sidebar navigation
-6. **Minimal Top Bar** - Clean minimal design
+### 4-Side AppShell Layout
 
-## 🔧 Configuration
+#### **Top Bar** (Always Visible)
+- Logo & branding
+- Branch/shop selector
+- Global search (products, customers, invoices)
+- Quick create menu (invoice, PO, customer, product)
+- Notifications with badge
+- Language selector
+- Theme toggle (light/dark)
+- User profile menu
 
-### Environment Variables
+#### **Left Sidebar** (Collapsible)
+- Hierarchical navigation menu
+- Search within menu
+- Module icons with badges
+- Expandable submenus
+- Active route highlighting
+- Responsive (drawer on mobile)
 
-Create a `.env` file (automatically created by start.sh):
+#### **Right Panel** (Contextual)
+- **Filters Tab**: Quick filters, date ranges, saved filters
+- **AI Tab**: AI suggestions, recommendations, insights
+- **Activity Tab**: Recent activity, pending approvals
 
-```env
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/homeopathy_erp"
+#### **Bottom Bar** (Status & Utilities)
+- System status indicators (DB, Kafka, Redis)
+- Open tabs/documents
+- Background jobs counter
+- Pending approvals
+- Current user & role
+- Keyboard shortcuts hint
+- Version & environment
 
-# API URLs (optional - uses Next.js API routes as fallback)
-NEXT_PUBLIC_GOLANG_API_URL=http://localhost:3004
-NEXT_PUBLIC_NESTJS_API_URL=http://localhost:3001
-NEXT_PUBLIC_FASTIFY_API_URL=http://localhost:3002
+---
 
-# JWT
-JWT_SECRET=your-super-secret-jwt-key
+## 🔐 Authentication & Authorization
 
-# OpenAI (optional)
-OPENAI_API_KEY=your-openai-key
-```
-
-### Layout Preferences
-
-Change layout via localStorage:
-
-```javascript
-localStorage.setItem('layout-preferences', JSON.stringify({
-  layoutType: 'hybrid-mega-three',
-  showLeftSidebar: true,
-  showRightSidebar: true,
-  showTopMegaMenu: true,
-  compactMode: false,
-  theme: 'light'
-}));
-// Refresh page
-```
-
-## 📦 API Integration
-
-The platform uses a **fallback architecture**:
-
-1. **Next.js API Routes** (Primary) - Always available, in-memory data
-2. **Microservices** (Optional) - High-performance backend services
-
-### Master Data APIs
-
-All master data endpoints support full CRUD:
-
-- `/api/branches` - Branch management
-- `/api/categories` - Product categories
-- `/api/brands` - Brand management
-- `/api/products` - Product catalog
-- `/api/customers` - Customer management
-- `/api/vendors` - Vendor management
-
-### Usage Example
-
+### JWT-Based Authentication
 ```typescript
-import api from '@/lib/api';
+// Login
+POST /api/auth/login
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
 
-// Create a branch
-const branch = await api.branches.create({
-  name: 'New Branch',
-  code: 'BR002',
-  address: '123 Street',
-  city: 'Mumbai',
-  state: 'Maharashtra',
-  pincode: '400001',
-  phone: '9876543210',
-  email: 'branch@yeelo.com'
-});
-
-// Get all branches
-const branches = await api.branches.getAll();
-
-// Update a branch
-await api.branches.update('1', { name: 'Updated Name' });
-
-// Delete a branch
-await api.branches.delete('1');
+// Response
+{
+  "success": true,
+  "data": {
+    "user": { "id": "...", "name": "Admin", "role": "SUPER_ADMIN" },
+    "accessToken": "eyJ...",
+    "refreshToken": "eyJ...",
+    "expiresIn": 900
+  }
+}
 ```
 
-## 🛠️ Development
+### RBAC Roles
+- `SUPER_ADMIN` - Full system access
+- `ACCOUNTANT` - Finance & accounting
+- `INVENTORY_MANAGER` - Inventory management
+- `SALES_REP` - Sales & POS
+- `PURCHASE_MANAGER` - Procurement
+- `WAREHOUSE_STAFF` - Stock operations
+- `HR_MANAGER` - HR & payroll
+- `MARKETING` - Campaigns & promotions
+- `ANALYST` - Reports & analytics
+- `CASHIER` - POS only
+
+---
+
+## 📊 Key Modules
+
+### 1. **Products Management**
+- Product CRUD with variants
+- Categories & brands
+- Barcode generation
+- Bulk import/export
+- HSN codes & tax rates
+
+### 2. **Inventory Management**
+- Real-time stock tracking
+- Batch & expiry management
+- Stock adjustments & transfers
+- Low stock alerts
+- Reconciliation
+
+### 3. **Sales & POS**
+- Fast POS billing
+- Invoice generation
+- Sales orders
+- Returns & refunds
+- Credit sales tracking
+- Hold/resume bills
+
+### 4. **Purchases**
+- Purchase orders
+- GRN (Goods Receipt Note)
+- Vendor management
+- Purchase returns
+
+### 5. **Finance**
+- Ledger management
+- GST/Tax compliance
+- E-Way bills
+- P&L statements
+- Payment tracking
+
+### 6. **AI Features**
+- Product recommendations
+- Sales forecasting
+- Chatbot assistance
+- Fraud detection
+- Campaign generation
+
+---
+
+## 🔄 Event-Driven Architecture
+
+### Kafka Topics
+```json
+{
+  "orders.events.v1": ["order.created", "order.paid", "order.cancelled"],
+  "inventory.events.v1": ["stock.adjusted", "batch.expiring"],
+  "products.events.v1": ["product.created", "product.updated"],
+  "customers.events.v1": ["customer.created", "loyalty.updated"]
+}
+```
+
+### Outbox Pattern
+All services use the transactional outbox pattern for reliable event publishing:
+
+1. Write business data + event to outbox in same transaction
+2. Background worker polls outbox
+3. Publish to Kafka
+4. Mark as published
+
+---
+
+## 🧪 Testing
 
 ```bash
-# Install dependencies
-npm install
+# Frontend tests
+cd apps/next-erp
+npm run test
+npm run test:e2e
 
-# Run in development mode
-npm run dev:app
+# Go service tests
+cd services/product-service
+go test ./...
 
-# Build for production
-npm run build:app
+# API Gateway tests
+cd services/api-gateway
+npm run test
+npm run test:e2e
 
-# Start production server
-npm run start:app
+# AI Service tests
+cd services/ai-service
+pytest
 ```
 
-## 📊 Monitoring
+---
 
-Logs are stored in the `logs/` directory:
+## 📈 Monitoring & Observability
 
+### Health Checks
 ```bash
-# View frontend logs
-tail -f logs/frontend.log
+# API Gateway
+curl http://localhost:4000/health
 
-# View all service logs
-tail -f logs/*.log
+# Product Service
+curl http://localhost:8001/health
 
-# Check running services
-cat logs/services.json
+# All services
+docker-compose ps
 ```
 
-## 🔐 Security
+### Distributed Tracing
+- Each request gets a `X-Trace-ID` header
+- Propagated across all services
+- View traces in Jaeger UI
 
-- JWT-based authentication
-- Role-based access control (RBAC)
-- API rate limiting
-- CORS protection
-- Input validation with Zod
+### Metrics
+- Prometheus metrics exposed on `/metrics`
+- Grafana dashboards for visualization
+- Alerts configured for critical issues
+
+---
+
+## 🚢 Deployment
+
+### Development
+```bash
+docker-compose up -d
+```
+
+### Staging/Production
+```bash
+# Build images
+docker-compose build
+
+# Push to registry
+docker-compose push
+
+# Deploy with Kubernetes
+kubectl apply -f k8s/
+
+# Or use ArgoCD for GitOps
+argocd app create erp-platform --repo <repo-url> --path k8s --dest-server https://kubernetes.default.svc
+```
+
+---
+
+## 🛠️ Development Workflow
+
+### Adding a New Service
+
+1. **Create service directory**
+```bash
+mkdir -p services/new-service
+```
+
+2. **Add to service-mapping.yaml**
+```yaml
+- name: new-service
+  framework: nestjs
+  port: 8011
+  database: new_service_db
+```
+
+3. **Add to docker-compose.yml**
+```yaml
+new-service:
+  build: ./services/new-service
+  ports:
+    - "8011:8011"
+  depends_on:
+    - postgres
+    - kafka
+```
+
+4. **Create database**
+```sql
+CREATE DATABASE new_service_db;
+```
+
+5. **Implement service & deploy**
+
+---
+
+## 📝 API Documentation
+
+- **API Gateway Swagger**: http://localhost:4000/api/docs
+- **Service Mapping**: `infra/service-mapping.yaml`
+- **Architecture Docs**: `ARCHITECTURE-POLYGLOT-SERVICES.md`
+
+---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📝 License
-
-Proprietary - Yeelo Technologies
-
-## 🆘 Support
-
-For support, email: support@yeelo.com
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ---
 
-**Built with ❤️ using Next.js 15, React 19, TypeScript, and Tailwind CSS**
+## 📄 License
+
+This project is proprietary and confidential.
+
+---
+
+## 👥 Team
+
+- **Architecture**: Polyglot microservices with event-driven design
+- **Frontend**: Next.js 14 with modern UI/UX
+- **Backend**: Go, Node.js, Python services
+- **DevOps**: Docker, Kubernetes, ArgoCD
+
+---
+
+## 📞 Support
+
+For issues and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check documentation in `/docs`
+
+---
+
+**Built with ❤️ for modern ERP needs**

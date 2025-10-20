@@ -130,14 +130,14 @@ else
 fi
 
 # ============================================================================
-# Build Application
+# Build Application (Skip for faster startup)
 # ============================================================================
 
-log "🔨 Building Next.js application..."
-npm run build:app || {
-    warn "⚠️  Build failed, starting in dev mode instead..."
-    DEV_MODE=true
-}
+log "🧹 Cleaning Next.js cache..."
+rm -rf .next 2>/dev/null || true
+
+log "⚡ Starting in development mode for faster startup..."
+DEV_MODE=true
 
 # ============================================================================
 # Start Services
@@ -200,11 +200,7 @@ sleep 3
 
 # Start Next.js Frontend
 log "🌐 Starting Next.js frontend..."
-if [ "$DEV_MODE" = true ]; then
-    npm run dev:app > logs/frontend.log 2>&1 &
-else
-    npm run start:app > logs/frontend.log 2>&1 &
-fi
+npm run dev:app > logs/frontend.log 2>&1 &
 echo $! > logs/frontend.pid
 log "✅ Frontend started (PID: $(cat logs/frontend.pid))"
 

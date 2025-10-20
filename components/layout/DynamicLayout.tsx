@@ -7,8 +7,7 @@ import { DEFAULT_LAYOUT_PREFERENCES, type LayoutPreferences } from '@/lib/layout
 // Import all layout components
 import EcommerceMegaMenu from './EcommerceMegaMenu';
 import ThreePanelLayout from './ThreePanelLayout';
-import CompleteMegaMenuNew from './CompleteMegaMenuNew';
-import HybridMegaThreeLayout from './HybridMegaThreeLayout';
+import ERPLayout from './erp/ERPLayout';
 
 interface DynamicLayoutProps {
   children: React.ReactNode;
@@ -49,25 +48,20 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
 
   // Render based on selected layout
   switch (preferences.layoutType) {
+    case 'erp-layout':
+      return <ERPLayout>{children}</ERPLayout>;
+    
     case 'ecommerce-mega':
       return <EcommerceMegaMenu>{children}</EcommerceMegaMenu>;
     
     case 'three-panel':
       return <ThreePanelLayout>{children}</ThreePanelLayout>;
     
-    case 'mega-menu':
-      return <CompleteMegaMenuNew>{children}</CompleteMegaMenuNew>;
-    
-    case 'hybrid-mega-three':
-      return <HybridMegaThreeLayout>{children}</HybridMegaThreeLayout>;
-    
     case 'classic-sidebar':
       return <ThreePanelLayout>{children}</ThreePanelLayout>;
     
-    case 'minimal-top':
-      return <CompleteMegaMenuNew>{children}</CompleteMegaMenuNew>;
-    
     default:
-      return <EcommerceMegaMenu>{children}</EcommerceMegaMenu>;
+      // Default to new ERP layout
+      return <ERPLayout>{children}</ERPLayout>;
   }
 }

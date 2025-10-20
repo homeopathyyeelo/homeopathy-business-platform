@@ -8,6 +8,13 @@ import type { NextRequest } from "next/server"
 import { getShopInventory, updateInventory, bulkUpdateInventory } from "@/lib/products"
 import { createApiResponse, createErrorResponse, getUserFromRequest } from "@/lib/api-utils"
 
+let inventory = [
+  { id: '1', productId: '1', productName: 'Arnica Montana 30C', quantity: 150, location: 'Rack A1', batch: 'B001', expiry: '2026-12-31' },
+  { id: '2', productId: '2', productName: 'Belladonna 200C', quantity: 120, location: 'Rack A2', batch: 'B002', expiry: '2026-11-30' },
+  { id: '3', productId: '3', productName: 'Calendula Q', quantity: 80, location: 'Rack B1', batch: 'B003', expiry: '2025-10-31' },
+  { id: '4', productId: '4', productName: 'Calc Phos 6X', quantity: 200, location: 'Rack B2', batch: 'B004', expiry: '2027-01-31' },
+]
+
 export async function GET(request: NextRequest) {
   try {
     const user = getUserFromRequest(request)

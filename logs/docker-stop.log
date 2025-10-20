@@ -1,0 +1,4 @@
+ Container erp-redis  Stopping
+ Container erp-postgres  Stopping
+ Container erp-redis  Stopped
+ Container erp-postgres  Stopped

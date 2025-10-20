@@ -1,0 +1,376 @@
+{
+  "version": "1.0",
+  "description": "Kafka topic definitions for ERP event-driven architecture",
+  "topics": [
+    {
+      "name": "orders.events.v1",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Order lifecycle events",
+      "event_types": [
+        "order.created",
+        "order.updated",
+        "order.paid",
+        "order.cancelled",
+        "order.refunded"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "order_id": "uuid",
+          "shop_id": "uuid",
+          "customer_id": "uuid",
+          "items": "array",
+          "total": "decimal",
+          "status": "string"
+        }
+      },
+      "producers": ["sales-service"],
+      "consumers": ["analytics-ingest", "inventory-service", "finance-service"]
+    },
+    {
+      "name": "inventory.events.v1",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Inventory and stock events",
+      "event_types": [
+        "inventory.adjusted",
+        "inventory.transferred",
+        "inventory.low_stock",
+        "batch.expiring",
+        "batch.expired"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "product_id": "uuid",
+          "shop_id": "uuid",
+          "batch_no": "string",
+          "qty": "decimal",
+          "reason": "string",
+          "expiry_date": "date"
+        }
+      },
+      "producers": ["inventory-service"],
+      "consumers": ["analytics-ingest", "ai-service", "campaign-sender"]
+    },
+    {
+      "name": "purchase.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Purchase order and GRN events",
+      "event_types": [
+        "po.created",
+        "po.approved",
+        "po.cancelled",
+        "grn.received",
+        "purchase.invoiced",
+        "purchase.returned"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "po_id": "uuid",
+          "vendor_id": "uuid",
+          "items": "array",
+          "expected_delivery": "date",
+          "status": "string"
+        }
+      },
+      "producers": ["purchase-service"],
+      "consumers": ["analytics-ingest", "inventory-service", "finance-service"]
+    },
+    {
+      "name": "campaigns.events.v1",
+      "partitions": 12,
+      "replication_factor": 1,
+      "retention_ms": 2592000000,
+      "description": "Marketing campaign events",
+      "event_types": [
+        "campaign.created",
+        "campaign.generated",
+        "campaign.scheduled",
+        "campaign.sent",
+        "campaign.failed",
+        "message.delivered",
+        "message.read",
+        "message.clicked"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "campaign_id": "uuid",
+          "channel": "string",
+          "content": "string",
+          "segment": "string",
+          "recipient_count": "integer",
+          "status": "string"
+        }
+      },
+      "producers": ["ai-service", "campaign-sender"],
+      "consumers": ["analytics-ingest", "campaign-sender"]
+    },
+    {
+      "name": "ai.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "AI/ML processing events",
+      "event_types": [
+        "ai.requested",
+        "ai.completed",
+        "ai.failed",
+        "forecast.generated",
+        "reorder.suggested",
+        "embedding.created"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "request_id": "uuid",
+          "model": "string",
+          "prompt": "string",
+          "result": "object",
+          "tokens_used": "integer",
+          "duration_ms": "integer"
+        }
+      },
+      "producers": ["ai-service"],
+      "consumers": ["analytics-ingest"]
+    },
+    {
+      "name": "audit.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 31536000000,
+      "description": "Audit trail for sensitive operations",
+      "event_types": [
+        "audit.recorded",
+        "user.login",
+        "user.logout",
+        "permission.changed",
+        "data.exported"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "user_id": "uuid",
+          "action": "string",
+          "resource": "string",
+          "resource_id": "uuid",
+          "ip_address": "string",
+          "user_agent": "string"
+        }
+      },
+      "producers": ["api-gateway", "all-services"],
+      "consumers": ["analytics-ingest"]
+    },
+    {
+      "name": "billing.events.v1",
+      "partitions": 6,
+      "replication_factor": 1,
+      "retention_ms": 2592000000,
+      "description": "Billing and invoice events",
+      "event_types": [
+        "invoice.issued",
+        "invoice.edited",
+        "invoice.cancelled",
+        "payment.received",
+        "payment.failed"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "invoice_id": "uuid",
+          "customer_id": "uuid",
+          "amount": "decimal",
+          "tax": "decimal",
+          "status": "string"
+        }
+      },
+      "producers": ["sales-service", "finance-service"],
+      "consumers": ["analytics-ingest", "finance-service"]
+    },
+    {
+      "name": "sync.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Integration sync events",
+      "event_types": [
+        "integration.sync_request",
+        "integration.sync_response",
+        "integration.sync_failed",
+        "webhook.received"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "integration_id": "uuid",
+          "provider": "string",
+          "sync_type": "string",
+          "records_synced": "integer",
+          "status": "string"
+        }
+      },
+      "producers": ["integration-adapters"],
+      "consumers": ["analytics-ingest"]
+    },
+    {
+      "name": "products.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Product master data events",
+      "event_types": [
+        "product.created",
+        "product.updated",
+        "product.deleted",
+        "category.created",
+        "brand.created"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "product_id": "uuid",
+          "name": "string",
+          "sku": "string",
+          "category_id": "uuid",
+          "brand_id": "uuid"
+        }
+      },
+      "producers": ["product-service"],
+      "consumers": ["analytics-ingest", "inventory-service", "ai-service"]
+    },
+    {
+      "name": "customers.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "Customer CRM events",
+      "event_types": [
+        "customer.created",
+        "customer.updated",
+        "customer.deleted",
+        "customer.loyalty_earned"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "customer_id": "uuid",
+          "name": "string",
+          "phone": "string",
+          "email": "string",
+          "group_id": "uuid"
+        }
+      },
+      "producers": ["customer-vendor-service"],
+      "consumers": ["analytics-ingest", "campaign-sender"]
+    },
+    {
+      "name": "hr.events.v1",
+      "partitions": 3,
+      "replication_factor": 1,
+      "retention_ms": 604800000,
+      "description": "HR and payroll events",
+      "event_types": [
+        "employee.created",
+        "employee.updated",
+        "attendance.marked",
+        "payroll.processed",
+        "commission.calculated"
+      ],
+      "schema": {
+        "event_id": "uuid",
+        "event_type": "string",
+        "version": "string",
+        "timestamp": "iso8601",
+        "trace_id": "uuid",
+        "source_service": "string",
+        "payload": {
+          "employee_id": "uuid",
+          "action": "string",
+          "amount": "decimal",
+          "period": "string"
+        }
+      },
+      "producers": ["hr-service"],
+      "consumers": ["analytics-ingest", "finance-service"]
+    }
+  ],
+  "consumer_groups": [
+    {
+      "name": "analytics-ingest-group",
+      "topics": ["*"],
+      "description": "Consumes all events for analytics"
+    },
+    {
+      "name": "inventory-sync-group",
+      "topics": ["orders.events.v1", "purchase.events.v1"],
+      "description": "Updates inventory based on orders and purchases"
+    },
+    {
+      "name": "campaign-sender-group",
+      "topics": ["campaigns.events.v1", "inventory.events.v1"],
+      "description": "Sends campaigns and stock alerts"
+    },
+    {
+      "name": "finance-sync-group",
+      "topics": ["orders.events.v1", "purchase.events.v1", "billing.events.v1"],
+      "description": "Updates financial ledgers"
+    }
+  ]
+}

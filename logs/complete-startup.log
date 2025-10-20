@@ -1,0 +1,49 @@
+
+[0;34m╔════════════════════════════════════════════════════════════╗[0m
+[0;34m║                                                            ║[0m
+[0;34m║     🏥 Yeelo Homeopathy ERP - Complete Startup 🏥        ║[0m
+[0;34m║                                                            ║[0m
+[0;34m╚════════════════════════════════════════════════════════════╝[0m
+
+[0;32m[12:19:18][0m 🔍 Running pre-flight checks...
+[0;32m[12:19:18][0m ✅ Docker 28.3.3 detected
+[0;32m[12:19:18][0m ✅ Docker Compose v2.21.0 detected
+[0;32m[12:19:18][0m ✅ Node.js v22.18.0 detected
+[0;32m[12:19:18][0m ✅ npm 10.9.3 detected
+[0;32m[12:19:18][0m ✅ Go go1.22.2 detected
+[0;32m[12:19:18][0m ✅ Python 3.12.3 detected
+
+[0;32m[12:19:18][0m 📝 Setting up environment...
+[0;32m[12:19:18][0m ✅ .env file exists
+
+[0;32m[12:19:18][0m 📦 Installing dependencies...
+[0;32m[12:19:18][0m ✅ Dependencies already installed
+
+[0;32m[12:19:18][0m 🐳 Starting Docker services...
+[0;36m[12:19:18][0m Stopping existing containers...
+[0;36m[12:19:19][0m Starting PostgreSQL, Redis, Kafka, MinIO...
+ Network homeopathy-business-platform_erp-network  Creating
+ Network homeopathy-business-platform_erp-network  Created
+ Container erp-zookeeper  Creating
+ Container erp-redis  Creating
+ Container erp-minio  Creating
+ Container erp-postgres  Creating
+ Container erp-minio  Created
+ Container erp-redis  Created
+ Container erp-postgres  Created
+ Container erp-zookeeper  Created
+ Container erp-kafka  Creating
+ Container erp-kafka  Created
+ Container erp-zookeeper  Starting
+ Container erp-postgres  Starting
+ Container erp-redis  Starting
+ Container erp-minio  Starting
+ Container erp-postgres  Started
+ Container erp-redis  Started
+ Container erp-zookeeper  Started
+ Container erp-kafka  Starting
+ Container erp-minio  Started
+ Container erp-kafka  Started
+[0;32m[12:19:20][0m ⏳ Waiting for Docker services to be ready...
+[0;36m[12:19:30][0m Checking PostgreSQL...
+[0;31m[12:20:00][0m ❌ PostgreSQL failed to start

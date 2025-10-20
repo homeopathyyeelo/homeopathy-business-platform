@@ -1,0 +1,498 @@
+version: "1.0"
+name: "Homeopathy ERP - Polyglot Microservices"
+description: "Service inventory with frameworks, ports, and responsibilities"
+
+services:
+  # ============================================
+  # GATEWAY & FRONTEND
+  # ============================================
+  
+  - name: api-gateway
+    type: gateway
+    framework: nestjs
+    language: typescript
+    port: 4000
+    repository: services/api-gateway
+    dockerfile: services/api-gateway/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - JWT authentication & RBAC
+      - GraphQL federation gateway
+      - REST API aggregation
+      - Rate limiting
+      - Trace ID injection
+    endpoints:
+      - POST /auth/login
+      - POST /auth/refresh
+      - GET /graphql
+      - POST /api/v1/search
+    database: shared_postgres
+    cache: redis
+    
+  - name: next-erp
+    type: frontend
+    framework: nextjs
+    language: typescript
+    port: 3000
+    repository: apps/next-erp
+    dockerfile: Dockerfile.nextjs
+    dependencies:
+      - api-gateway
+    responsibilities:
+      - 4-side ERP shell (Top/Left/Right/Bottom)
+      - All UI pages & components
+      - Client-side routing
+      - SWR data fetching
+    
+  # ============================================
+  # CORE BUSINESS SERVICES (Golang)
+  # ============================================
+  
+  - name: product-service
+    type: microservice
+    framework: gin
+    language: go
+    port: 8001
+    repository: services/product-service
+    dockerfile: services/product-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - Product CRUD
+      - Categories, brands, variants
+      - Barcode management
+      - Bulk import/export
+    endpoints:
+      - GET /api/v1/products
+      - POST /api/v1/products
+      - PUT /api/v1/products/:id
+      - DELETE /api/v1/products/:id
+      - POST /api/v1/products/bulk-import
+      - GET /api/v1/categories
+      - POST /api/v1/barcodes/generate
+    database: products_db
+    events_published:
+      - product.created
+      - product.updated
+      - product.deleted
+      - category.created
+    
+  - name: inventory-service
+    type: microservice
+    framework: fiber
+    language: go
+    port: 8002
+    repository: services/inventory-service
+    dockerfile: services/inventory-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - Real-time stock tracking
+      - Batch & expiry management
+      - Stock transfers
+      - Stock adjustments
+      - Negative stock prevention
+    endpoints:
+      - GET /api/v1/inventory/stock
+      - POST /api/v1/inventory/adjust
+      - POST /api/v1/inventory/transfer
+      - GET /api/v1/inventory/batches
+      - GET /api/v1/inventory/expiry-alerts
+      - POST /api/v1/inventory/reconcile
+    database: inventory_db
+    events_published:
+      - inventory.adjusted
+      - inventory.transferred
+      - inventory.low_stock
+      - batch.expiring
+    
+  - name: sales-service
+    type: microservice
+    framework: echo
+    language: go
+    port: 8003
+    repository: services/sales-service
+    dockerfile: services/sales-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - POS billing (real-time)
+      - Sales orders & invoices
+      - Hold bills & resume
+      - Credit sales tracking
+      - Sales returns
+      - Commission calculation
+    endpoints:
+      - POST /api/v1/pos/invoice
+      - POST /api/v1/pos/hold
+      - GET /api/v1/pos/held-bills
+      - POST /api/v1/sales/orders
+      - POST /api/v1/sales/returns
+      - GET /api/v1/sales/dues
+      - WS /ws/pos
+    database: sales_db
+    websocket: true
+    events_published:
+      - order.created
+      - order.paid
+      - order.cancelled
+      - invoice.issued
+      - return.processed
+    
+  - name: purchase-service
+    type: microservice
+    framework: gin
+    language: go
+    port: 8004
+    repository: services/purchase-service
+    dockerfile: services/purchase-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - Purchase orders (PO)
+      - Goods Receipt Note (GRN)
+      - Purchase invoices
+      - Vendor pricing
+      - Purchase returns
+    endpoints:
+      - POST /api/v1/purchases/orders
+      - POST /api/v1/purchases/grn
+      - POST /api/v1/purchases/invoices
+      - POST /api/v1/purchases/returns
+      - GET /api/v1/purchases/vendor-pricing
+    database: purchase_db
+    events_published:
+      - po.created
+      - po.approved
+      - grn.received
+      - purchase.invoiced
+    
+  - name: hr-service
+    type: microservice
+    framework: gin
+    language: go
+    port: 8007
+    repository: services/hr-service
+    dockerfile: services/hr-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - Employee management
+      - Attendance tracking
+      - Shift scheduling
+      - Payroll processing
+      - Commission rules
+    endpoints:
+      - GET /api/v1/hr/employees
+      - POST /api/v1/hr/attendance
+      - POST /api/v1/hr/payroll/process
+      - GET /api/v1/hr/shifts
+      - POST /api/v1/hr/commissions
+    database: hr_db
+    events_published:
+      - employee.created
+      - attendance.marked
+      - payroll.processed
+    
+  # ============================================
+  # NODE.JS SERVICES
+  # ============================================
+  
+  - name: customer-vendor-service
+    type: microservice
+    framework: nestjs
+    language: typescript
+    port: 8005
+    repository: services/customer-vendor-service
+    dockerfile: services/customer-vendor-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - Customer CRM
+      - Vendor management
+      - Ledgers
+      - Credit limits
+      - Customer segmentation
+    endpoints:
+      - GET /api/v1/customers
+      - POST /api/v1/customers
+      - GET /api/v1/customers/:id/ledger
+      - POST /api/v1/vendors
+      - GET /api/v1/vendors/:id/performance
+    database: crm_db
+    events_published:
+      - customer.created
+      - customer.updated
+      - vendor.created
+    
+  - name: finance-service
+    type: microservice
+    framework: nestjs
+    language: typescript
+    port: 8006
+    repository: services/finance-service
+    dockerfile: services/finance-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - General ledger
+      - Chart of accounts
+      - GST compliance
+      - E-way bills
+      - Financial reports
+    endpoints:
+      - GET /api/v1/finance/ledgers
+      - POST /api/v1/finance/journal-entry
+      - GET /api/v1/finance/gst/gstr1
+      - POST /api/v1/finance/eway-bill
+      - GET /api/v1/finance/reports/pl
+    database: finance_db
+    events_published:
+      - payment.received
+      - payment.made
+      - gst.filed
+    
+  - name: analytics-ingest
+    type: worker
+    framework: nestjs
+    language: typescript
+    port: 8010
+    repository: services/analytics-ingest
+    dockerfile: services/analytics-ingest/Dockerfile
+    dependencies:
+      - kafka
+      - clickhouse
+    responsibilities:
+      - Consume Kafka events
+      - Write to OLAP store
+      - Real-time KPI aggregation
+    database: analytics_db
+    events_consumed:
+      - "*" # All events
+    
+  - name: reporting-service
+    type: microservice
+    framework: nestjs
+    language: typescript
+    port: 8011
+    repository: services/reporting-service
+    dockerfile: services/reporting-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+    responsibilities:
+      - Heavy aggregation queries
+      - Report generation (PDF, Excel)
+      - Scheduled reports
+      - Dashboard data API
+    endpoints:
+      - GET /api/v1/reports/sales
+      - GET /api/v1/reports/inventory
+      - GET /api/v1/reports/finance
+      - POST /api/v1/reports/generate
+    database: read_replicas
+    
+  # ============================================
+  # PYTHON SERVICES
+  # ============================================
+  
+  - name: ai-service
+    type: microservice
+    framework: fastapi
+    language: python
+    port: 8008
+    repository: services/ai-service
+    dockerfile: services/ai-service/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - RAG (Retrieval-Augmented Generation)
+      - LLM inference
+      - Campaign content generation
+      - Sales forecasting
+      - Reorder suggestions
+      - Embeddings (pgvector)
+    endpoints:
+      - POST /api/v1/ai/chat
+      - POST /api/v1/ai/generate-campaign
+      - POST /api/v1/ai/forecast
+      - POST /api/v1/ai/reorder-suggest
+      - POST /api/v1/ai/embeddings
+    database: ai_db
+    events_published:
+      - ai.requested
+      - ai.completed
+      - ai.failed
+    
+  # ============================================
+  # WORKERS
+  # ============================================
+  
+  - name: campaign-sender
+    type: worker
+    framework: fiber
+    language: go
+    port: 8009
+    repository: services/campaign-sender
+    dockerfile: services/campaign-sender/Dockerfile
+    dependencies:
+      - postgres
+      - redis
+      - kafka
+    responsibilities:
+      - High-throughput message sending
+      - WhatsApp Business API
+      - SMS gateway integration
+      - Email sending
+      - Rate limiting & retry
+    endpoints:
+      - POST /api/v1/campaigns/send
+      - GET /api/v1/campaigns/:id/status
+      - POST /api/v1/campaigns/bulk-send
+    database: campaigns_db
+    events_consumed:
+      - campaign.created
+      - campaign.scheduled
+    events_published:
+      - campaign.sent
+      - campaign.failed
+      - message.delivered
+    
+  - name: outbox-worker
+    type: worker
+    framework: none
+    language: go
+    port: null
+    repository: services/outbox-worker
+    dockerfile: services/outbox-worker/Dockerfile
+    dependencies:
+      - postgres
+      - kafka
+    responsibilities:
+      - Poll outbox tables
+      - Publish events to Kafka
+      - Mark events as published
+      - Retry failed publishes
+    database: all_service_dbs
+
+# ============================================
+# INFRASTRUCTURE SERVICES
+# ============================================
+
+infrastructure:
+  - name: postgres
+    type: database
+    image: postgres:16-alpine
+    port: 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+  - name: redis
+    type: cache
+    image: redis:7-alpine
+    port: 6379
+    volumes:
+      - redis_data:/data
+    
+  - name: kafka
+    type: message_broker
+    image: confluentinc/cp-kafka:7.5.0
+    port: 9092
+    depends_on:
+      - zookeeper
+    
+  - name: zookeeper
+    type: coordination
+    image: confluentinc/cp-zookeeper:7.5.0
+    port: 2181
+    
+  - name: kafka-ui
+    type: monitoring
+    image: provectuslabs/kafka-ui:latest
+    port: 8080
+    
+  - name: minio
+    type: object_storage
+    image: minio/minio:latest
+    port: 9000
+    console_port: 9001
+    volumes:
+      - minio_data:/data
+    
+  - name: clickhouse
+    type: olap_database
+    image: clickhouse/clickhouse-server:latest
+    port: 8123
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    
+  - name: jaeger
+    type: tracing
+    image: jaegertracing/all-in-one:latest
+    port: 16686
+    
+  - name: prometheus
+    type: metrics
+    image: prom/prometheus:latest
+    port: 9090
+    
+  - name: grafana
+    type: visualization
+    image: grafana/grafana:latest
+    port: 3001
+
+# ============================================
+# KAFKA TOPICS
+# ============================================
+
+kafka_topics:
+  - name: orders.events.v1
+    partitions: 6
+    replication_factor: 1
+    
+  - name: inventory.events.v1
+    partitions: 6
+    replication_factor: 1
+    
+  - name: purchase.events.v1
+    partitions: 3
+    replication_factor: 1
+    
+  - name: campaigns.events.v1
+    partitions: 12
+    replication_factor: 1
+    
+  - name: ai.events.v1
+    partitions: 3
+    replication_factor: 1
+    
+  - name: audit.events.v1
+    partitions: 3
+    replication_factor: 1
+    
+  - name: billing.events.v1
+    partitions: 6
+    replication_factor: 1
+    
+  - name: sync.events.v1
+    partitions: 3
+    replication_factor: 1

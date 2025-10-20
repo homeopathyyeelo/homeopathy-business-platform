@@ -5,7 +5,22 @@ import { getUserFromRequest, createErrorResponse } from "@/lib/auth"
 export async function GET(request: NextRequest) {
   try {
     const user = getUserFromRequest(request)
+    
+    // For development: Return mock admin user if not authenticated
     if (!user) {
+      // In development mode, return a default admin user
+      if (process.env.NODE_ENV === 'development') {
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: "1",
+            email: "admin@yeelo.com",
+            name: "Admin User",
+            role: "ADMIN",
+            shopId: "dist-yeelo"
+          }
+        })
+      }
       return createErrorResponse('Not authenticated', 401)
     }
     

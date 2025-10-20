@@ -1,0 +1,7 @@
+npm error Lifecycle script `start:dev` failed with error:
+npm error workspace @yeelo/api-gateway@1.0.0
+npm error location /var/www/homeopathy-business-platform/services/api-gateway
+npm error Missing script: "start:dev"
+npm error
+npm error To see a list of scripts, run:
+npm error   npm run --workspace=@yeelo/api-gateway@1.0.0

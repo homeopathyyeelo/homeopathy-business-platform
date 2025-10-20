@@ -2,3 +2,27 @@
 > @yeelo/api-fastify@1.0.0 start
 > node dist/index.js
 
+prisma:info Starting a postgresql pool with 9 connections.
+[11:51:44.956] [31mERROR[39m (10053): [36mCan't reach database server at `localhost:5433`
+
+Please make sure your database server is running at `localhost:5433`.[39m
+    err: {
+      "type": "PrismaClientInitializationError",
+      "message": "Can't reach database server at `localhost:5433`\n\nPlease make sure your database server is running at `localhost:5433`.",
+      "stack":
+          PrismaClientInitializationError: Can't reach database server at `localhost:5433`
+          
+          Please make sure your database server is running at `localhost:5433`.
+              at t (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:112:2488)
+              at async registerPrisma (/var/www/homeopathy-business-platform/services/api-fastify/dist/plugins/prisma.js:13:5)
+      "name": "PrismaClientInitializationError",
+      "clientVersion": "5.22.0",
+      "errorCode": "P1001"
+    }
+npm error Lifecycle script `start` failed with error:
+npm error code 1
+npm error path /var/www/homeopathy-business-platform/services/api-fastify
+npm error workspace @yeelo/api-fastify@1.0.0
+npm error location /var/www/homeopathy-business-platform/services/api-fastify
+npm error command failed
+npm error command sh -c node dist/index.js

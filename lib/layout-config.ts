@@ -1,6 +1,7 @@
 // Layout Configuration with User Preferences
 
 export type LayoutType = 
+  | 'erp-layout'            // New ERP layout (Simple or Full 4-side)
   | 'three-panel'           // Left sidebar + Top bar + Right sidebar
   | 'mega-menu'             // Top mega menu only
   | 'classic-sidebar'       // Left sidebar only
@@ -18,7 +19,7 @@ export interface LayoutPreferences {
 }
 
 export const DEFAULT_LAYOUT_PREFERENCES: LayoutPreferences = {
-  layoutType: 'ecommerce-mega',
+  layoutType: 'erp-layout',
   showLeftSidebar: true,
   showRightSidebar: true,
   showTopMegaMenu: true,
@@ -27,6 +28,13 @@ export const DEFAULT_LAYOUT_PREFERENCES: LayoutPreferences = {
 };
 
 export const LAYOUT_OPTIONS = [
+  {
+    id: 'erp-layout',
+    name: 'ERP Layout',
+    description: 'Professional ERP layout with customizable panels (Simple or Full 4-side)',
+    icon: '🏢',
+    preview: '/images/layouts/erp-layout.png',
+  },
   {
     id: 'ecommerce-mega',
     name: 'E-Commerce Mega Menu',

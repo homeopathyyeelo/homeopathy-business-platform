@@ -46,4 +46,3 @@ npm error path /var/www/homeopathy-business-platform/services/api-nest
 npm error workspace @yeelo/api-nest@1.0.0
 npm error location /var/www/homeopathy-business-platform/services/api-nest
 npm error command failed
-npm error command sh -c nest start --watch
