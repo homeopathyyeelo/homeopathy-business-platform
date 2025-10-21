@@ -1,0 +1,6 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'services/api-gateway'
+  - 'services/finance-service'
+  - 'services/analytics-service'

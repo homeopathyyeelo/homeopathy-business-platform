@@ -2,7 +2,7 @@
 > @yeelo/api-nest@1.0.0 dev
 > nest start --watch
 
-node:internal/modules/cjs/loader:1368
+[1G[0Knode:internal/modules/cjs/loader:1368
   throw err;
   ^
 
@@ -16,33 +16,35 @@ Require stack:
 - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js
 - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js
 - /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js
-    at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)
-    at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)
-    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)
-    at Function._load (node:internal/modules/cjs/loader:1175:37)
-    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
-    at Module.require (node:internal/modules/cjs/loader:1445:12)
-    at require (node:internal/modules/helpers:135:16)
-    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js:4:22)
-    at Module._compile (node:internal/modules/cjs/loader:1688:14) {
-  code: 'MODULE_NOT_FOUND',
+[90m    at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)[39m
+[90m    at Function._load (node:internal/modules/cjs/loader:1175:37)[39m
+[90m    at TracingChannel.traceSync (node:diagnostics_channel:322:14)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1445:12)[39m
+[90m    at require (node:internal/modules/helpers:135:16)[39m
+    at Object.<anonymous> [90m(/var/www/homeopathy-business-platform/services/api-nest/[39mnode_modules/[4m@nestjs[24m/cli/lib/ui/emojis.js:4:22[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1688:14)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
   requireStack: [
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js',
-    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js'
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/emojis.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/ui/index.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/compiler/helpers/tsconfig-provider.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/build.action.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js'[39m,
+    [32m'/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js'[39m
   ]
 }
 
 Node.js v22.18.0
-npm error Lifecycle script `dev` failed with error:
-npm error code 1
-npm error path /var/www/homeopathy-business-platform/services/api-nest
-npm error workspace @yeelo/api-nest@1.0.0
-npm error location /var/www/homeopathy-business-platform/services/api-nest
-npm error command failed
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m Lifecycle script `dev` failed with error:
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcode[39m [33m1[39m
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mpath[39m /var/www/homeopathy-business-platform/services/api-nest
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mworkspace[39m @yeelo/api-nest@1.0.0
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mlocation[39m /var/www/homeopathy-business-platform/services/api-nest
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m command failed
+[1G[0K⠙[1G[0K[1mnpm[22m [31merror[39m [94mcommand[39m sh -c nest start --watch
+[1G[0K⠙[1G[0K

@@ -2,3 +2,43 @@
 > @yeelo/ai-service@1.0.0 dev
 > ./venv/bin/python main.py
 
+[1G[0KTraceback (most recent call last):
+  File "/var/www/homeopathy-business-platform/services/ai-service/main.py", line 3, in <module>
+    from fastapi import FastAPI, HTTPException
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/__init__.py", line 7, in <module>
+    from .applications import FastAPI as FastAPI
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/applications.py", line 16, in <module>
+    from fastapi import routing
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/routing.py", line 27, in <module>
+    from fastapi import params, temp_pydantic_v1_params
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/params.py", line 5, in <module>
+    from fastapi.openapi.models import Example
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/openapi/models.py", line 4, in <module>
+    from fastapi._compat import (
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/__init__.py", line 1, in <module>
+    from .main import BaseConfig as BaseConfig
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/main.py", line 11, in <module>
+    from fastapi._compat import v1
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/v1.py", line 16, in <module>
+    from fastapi._compat import shared
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat/shared.py", line 20, in <module>
+    from fastapi.types import UnionType
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/types.py", line 5, in <module>
+    from pydantic import BaseModel
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/__init__.py", line 5, in <module>
+    from ._migration import getattr_migration
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_migration.py", line 4, in <module>
+    from pydantic.warnings import PydanticDeprecatedSince20
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/warnings.py", line 5, in <module>
+    from .version import version_short
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/version.py", line 7, in <module>
+    from pydantic_core import __version__ as __pydantic_core_version__
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/__init__.py", line 31, in <module>
+    from .core_schema import CoreConfig, CoreSchema, CoreSchemaType, ErrorType
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 284, in <module>
+    FieldPlainInfoSerializerFunction = Callable[[Any, Any, FieldSerializationInfo[Any]], Any]
+                                                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/usr/lib/python3.12/typing.py", line 392, in inner
+    @functools.wraps(func)
+
+KeyboardInterrupt

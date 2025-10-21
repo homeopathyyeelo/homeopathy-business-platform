@@ -1,22 +1,22 @@
  Network homeopathy-business-platform_erp-network  Creating
  Network homeopathy-business-platform_erp-network  Created
  Container erp-redis  Creating
+ Container erp-minio  Creating
  Container erp-zookeeper  Creating
  Container erp-postgres  Creating
- Container erp-minio  Creating
+ Container erp-redis  Created
  Container erp-postgres  Created
  Container erp-minio  Created
- Container erp-redis  Created
  Container erp-zookeeper  Created
  Container erp-kafka  Creating
  Container erp-kafka  Created
+ Container erp-minio  Starting
  Container erp-zookeeper  Starting
  Container erp-postgres  Starting
  Container erp-redis  Starting
- Container erp-minio  Starting
+ Container erp-redis  Started
  Container erp-zookeeper  Started
  Container erp-kafka  Starting
- Container erp-postgres  Started
- Container erp-redis  Started
  Container erp-minio  Started
+ Container erp-postgres  Started
  Container erp-kafka  Started
