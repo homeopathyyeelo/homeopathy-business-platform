@@ -35,6 +35,14 @@ export interface JWTPayload {
 // Mock users for development
 const MOCK_USERS: User[] = [
   {
+    id: "0",
+    email: "admin@admin.com",
+    name: "Super Admin",
+    role: UserRole.ADMIN,
+    shopId: "main-branch",
+    isActive: true
+  },
+  {
     id: "1",
     email: "admin@yeelo.com",
     name: "Admin User",

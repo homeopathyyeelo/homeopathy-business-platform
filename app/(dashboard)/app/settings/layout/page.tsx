@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Monitor, Maximize2, Check } from 'lucide-react';
-import { updateLayoutPreferences, type LayoutMode } from '@/components/layout/erp/ERPLayout';
+import { updateLayoutPreferences, type LayoutMode } from '@/components/layout/ERPLayout';
 
 export default function LayoutSettingsPage() {
   const [currentMode, setCurrentMode] = useState<LayoutMode>('full');

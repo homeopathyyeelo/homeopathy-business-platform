@@ -7,7 +7,8 @@ import { DEFAULT_LAYOUT_PREFERENCES, type LayoutPreferences } from '@/lib/layout
 // Import all layout components
 import EcommerceMegaMenu from './EcommerceMegaMenu';
 import ThreePanelLayout from './ThreePanelLayout';
-import ERPLayout from './erp/ERPLayout';
+import ERPLayout from './ERPLayout';
+import FinalERPLayout from './FinalERPLayout';
 
 interface DynamicLayoutProps {
   children: React.ReactNode;
@@ -61,7 +62,7 @@ export default function DynamicLayout({ children }: DynamicLayoutProps) {
       return <ThreePanelLayout>{children}</ThreePanelLayout>;
     
     default:
-      // Default to new ERP layout
+      // Default to ERP layout (working version)
       return <ERPLayout>{children}</ERPLayout>;
   }
 }

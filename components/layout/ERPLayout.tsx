@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import SimpleLayout from './SimpleLayout';
-import FullLayout from './FullLayout';
+import SimpleLayout from './ERPSimpleLayout';
+import FullLayout from './ERPFullLayout';
 
 interface ERPLayoutProps {
   children: React.ReactNode;

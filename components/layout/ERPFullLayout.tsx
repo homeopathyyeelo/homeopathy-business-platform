@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import TopBar from './TopBar';
-import LeftSidebar from './LeftSidebar';
-import RightPanel from './RightPanel';
-import BottomBar from './BottomBar';
+import TopBar from './ERPTopBar';
+import LeftSidebar from './ERPLeftSidebar';
+import RightPanel from './ERPRightPanel';
+import BottomBar from './ERPBottomBar';
 
 interface FullLayoutProps {
   children: React.ReactNode;

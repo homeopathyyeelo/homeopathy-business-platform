@@ -176,7 +176,7 @@ export default function LoginPage() {
         
         <div className="px-8 pb-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Admin Login: medicine@yeelohomeopathy.com / XXghosh@147
+            Demo Login: admin@admin.com / admin@1234
           </p>
         </div>
       </Card>
