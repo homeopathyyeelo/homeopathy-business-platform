@@ -1,34 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
+  reactStrictMode: false,
   webpack: (config, { isServer }) => {
-    // Exclude server-only modules from client bundle
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        path: false,
-        stream: false,
-        util: false,
-        os: false,
-        child_process: false,
-        'pg-native': false,
-        'better-sqlite3': false,
-      };
-    }
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    // Ensure proper charset
+    config.output.charset = true;
     return config;
   },
+  // Disable telemetry
+  telemetry: false,
 }
 
 export default nextConfig
