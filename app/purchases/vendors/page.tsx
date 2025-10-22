@@ -127,7 +127,7 @@ export default function VendorsPage() {
                       <p className="text-sm text-gray-500">GST: {vendor.gstNumber}</p>
                       <div className="flex gap-4 mt-2">
                         <span className="text-sm">Payment Terms: {vendor.paymentTerms} days</span>
-                        <span className="text-sm">Credit Limit: ₹{vendor.creditLimit?.toLocaleString()}</span>
+                        <span className="text-sm">Credit Limit: {vendor.creditLimit?.toLocaleString()}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">

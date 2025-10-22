@@ -127,7 +127,7 @@ const ProductTable = ({
                   </div>
                 </td>
                 <td className="p-3 text-sm">
-                  ₹{product.defaultSellingPriceRetail?.toFixed(2) || '0.00'}
+                  {product.defaultSellingPriceRetail?.toFixed(2) || '0.00'}
                 </td>
                 <td className="p-3">
                   <div className="flex gap-1">

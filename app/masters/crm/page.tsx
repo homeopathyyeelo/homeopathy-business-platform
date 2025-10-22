@@ -176,7 +176,7 @@ export default function CRMLoyaltyPrograms() {
                       <p className="text-sm text-gray-600 mb-3">{program.description}</p>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-gray-600">Points per ₹100:</span>
+                          <span className="text-gray-600">Points per 100:</span>
                           <span className="font-medium ml-2">{program.points_per_purchase}</span>
                         </div>
                         <div>
@@ -209,7 +209,7 @@ export default function CRMLoyaltyPrograms() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Points Redeemed</span>
-                    <span className="font-bold">₹45,230</span>
+                    <span className="font-bold">45,230</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Avg. Points Balance</span>
@@ -404,11 +404,11 @@ export default function CRMLoyaltyPrograms() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm">Points Redeemed</span>
-                      <span className="font-medium">₹67,890</span>
+                      <span className="font-medium">67,890</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm">Avg. Redemption</span>
-                      <span className="font-medium">₹342</span>
+                      <span className="font-medium">342</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm">Top Reward</span>

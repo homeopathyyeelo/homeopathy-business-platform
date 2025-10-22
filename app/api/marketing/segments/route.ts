@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         customerCount: customers.filter(c => 
           c.orders.reduce((sum, order) => sum + Number(order.totalAmount), 0) > 1000
         ).length,
-        criteria: "Total spent > ₹1000",
+        criteria: "Total spent > 1000",
         updatedAt: new Date(),
       },
       {

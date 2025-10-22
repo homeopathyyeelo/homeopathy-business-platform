@@ -218,7 +218,7 @@ const ExpiryAlertSystem = () => {
                         {getUrgencyBadge(item.expiryDate)}
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">₹{valueAtRisk.toLocaleString('en-IN')}</span>
+                        <span className="font-medium">{valueAtRisk.toLocaleString('en-IN')}</span>
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-2">

@@ -229,7 +229,7 @@ export default function DualPanelPOSPage() {
                   onClick={() => resumeSession(session.id)}
                 >
                   <Play className="w-3 h-3 mr-1" />
-                  {session.id.substring(0, 8)} - ₹{session.total_amount.toFixed(2)}
+                  {session.id.substring(0, 8)} - {session.total_amount.toFixed(2)}
                 </Badge>
               ))}
             </div>
@@ -258,7 +258,7 @@ function POSPanel({ session }: { session: POSSession }) {
       <div className="border-t p-4 space-y-4">
         <div className="flex justify-between items-center text-2xl font-bold">
           <span>Total:</span>
-          <span>₹{session.total_amount.toFixed(2)}</span>
+          <span>{session.total_amount.toFixed(2)}</span>
         </div>
         <Button className="w-full" size="lg">
           <DollarSign className="w-5 h-5 mr-2" />

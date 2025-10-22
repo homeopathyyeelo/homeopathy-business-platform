@@ -20,7 +20,7 @@ export default function PurchaseBillsPage() {
   const columns = [
     { key: 'bill_number', title: 'Bill #', sortable: true, render: (val: any) => <span className="font-mono">{val}</span> },
     { key: 'vendor_name', title: 'Vendor', sortable: true },
-    { key: 'bill_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold">₹{val?.toLocaleString()}</span> },
+    { key: 'bill_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold">{val?.toLocaleString()}</span> },
     { key: 'due_date', title: 'Due Date', sortable: true, render: (val: any) => new Date(val).toLocaleDateString() },
     { key: 'payment_status', title: 'Payment', sortable: true, render: (val: any) => <Badge variant={val === 'PAID' ? 'default' : 'destructive'}>{val}</Badge> },
     { key: 'created_at', title: 'Created', sortable: true, render: (val: any) => new Date(val).toLocaleDateString() },
@@ -79,7 +79,7 @@ export default function PurchaseBillsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{stats.totalAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats.totalAmount.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>

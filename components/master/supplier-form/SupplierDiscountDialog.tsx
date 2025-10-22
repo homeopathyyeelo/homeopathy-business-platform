@@ -230,7 +230,7 @@ const SupplierDiscountDialog = ({ open, onOpenChange, supplierId, supplierName }
                       />
                     </div>
                     <div>
-                      <Label htmlFor="minAmount">Min Amount (₹)</Label>
+                      <Label htmlFor="minAmount">Min Amount ()</Label>
                       <Input
                         id="minAmount"
                         type="number"
@@ -269,7 +269,7 @@ const SupplierDiscountDialog = ({ open, onOpenChange, supplierId, supplierName }
                     />
                   </div>
                   <div>
-                    <Label htmlFor="discountAmount">Fixed Discount (₹)</Label>
+                    <Label htmlFor="discountAmount">Fixed Discount ()</Label>
                     <Input
                       id="discountAmount"
                       type="number"
@@ -351,7 +351,7 @@ const SupplierDiscountDialog = ({ open, onOpenChange, supplierId, supplierName }
                           </Badge>
                           <div className="text-sm text-muted-foreground mt-1">
                             {discount.discount_percentage}% discount
-                            {discount.discount_amount && ` + ₹${discount.discount_amount} fixed`}
+                            {discount.discount_amount && ` + ${discount.discount_amount} fixed`}
                           </div>
                         </div>
                         <Button
@@ -388,7 +388,7 @@ const SupplierDiscountDialog = ({ open, onOpenChange, supplierId, supplierName }
                       
                       {discount.min_amount && (
                         <div className="text-sm">
-                          <span className="font-medium">Min Amount:</span> ₹{discount.min_amount}
+                          <span className="font-medium">Min Amount:</span> {discount.min_amount}
                         </div>
                       )}
                       

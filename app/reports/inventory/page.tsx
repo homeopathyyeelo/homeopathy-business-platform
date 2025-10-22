@@ -40,7 +40,7 @@ export default function InventoryReportsPage() {
                 <TableCell>50</TableCell>
                 <TableCell>75</TableCell>
                 <TableCell>75</TableCell>
-                <TableCell className="font-semibold">₹15,000</TableCell>
+                <TableCell className="font-semibold">15,000</TableCell>
               </TableRow>
             </TableBody>
           </Table>

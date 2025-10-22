@@ -258,7 +258,7 @@ export default function DashboardOverview() {
                         <p className="font-medium text-sm">{activity.title}</p>
                         <p className="text-xs text-muted-foreground">{activity.description}</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {activity.userName} • {activity.timestamp}
+                          {activity.userName}  {activity.timestamp}
                         </p>
                       </div>
                       {activity.amount && (
@@ -282,7 +282,7 @@ export default function DashboardOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{kpis?.lowStockCount || 0}</div>
             <Button variant="link" className="p-0 h-auto" onClick={() => router.push('/inventory/low-stock')}>
-              View Details →
+              View Details 
             </Button>
           </CardContent>
         </Card>
@@ -294,7 +294,7 @@ export default function DashboardOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{kpis?.expiryAlertCount || 0}</div>
             <Button variant="link" className="p-0 h-auto" onClick={() => router.push('/inventory/expiry-alerts')}>
-              View Details →
+              View Details 
             </Button>
           </CardContent>
         </Card>
@@ -306,7 +306,7 @@ export default function DashboardOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{kpis?.pendingOrdersCount || 0}</div>
             <Button variant="link" className="p-0 h-auto" onClick={() => router.push('/sales/orders')}>
-              View Details →
+              View Details 
             </Button>
           </CardContent>
         </Card>
@@ -318,7 +318,7 @@ export default function DashboardOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{kpis?.activeCustomers || 0}</div>
             <Button variant="link" className="p-0 h-auto" onClick={() => router.push('/customers')}>
-              View Details →
+              View Details 
             </Button>
           </CardContent>
         </Card>

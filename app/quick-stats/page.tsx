@@ -4,7 +4,7 @@ export default function QuickStatsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">⚡ Quick Stats</h1>
+        <h1 className="text-3xl font-bold text-gray-900"> Quick Stats</h1>
         <p className="text-gray-500 mt-1">Real-time metrics</p>
       </div>
 
@@ -23,13 +23,13 @@ export default function QuickStatsPage() {
         </div>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="text-sm text-gray-600">Total Value</div>
-          <div className="text-2xl font-bold text-blue-600 mt-1">₹0</div>
+          <div className="text-2xl font-bold text-blue-600 mt-1">0</div>
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">⚡</div>
+          <div className="text-6xl mb-4"></div>
           <div className="text-2xl font-bold text-gray-900 mb-2">Quick Stats</div>
           <div className="text-gray-500 mb-6">Real-time metrics</div>
           <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

@@ -185,7 +185,7 @@ export default function POSPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 print:shadow-none">
           {/* Receipt Header */}
           <div className="text-center border-b-2 border-gray-300 pb-4 mb-6">
-            <h1 className="text-3xl font-bold text-blue-600">🏥 Yeelo Homeopathy</h1>
+            <h1 className="text-3xl font-bold text-blue-600"> Yeelo Homeopathy</h1>
             <p className="text-gray-600 mt-1">Complete Homeopathy Solutions</p>
             <p className="text-sm text-gray-500">Ph: +91 98765 43210 | Email: info@yeelo.com</p>
           </div>
@@ -229,8 +229,8 @@ export default function POSPage() {
                     <div className="text-xs text-gray-500">{item.sku}</div>
                   </td>
                   <td className="px-4 py-2 text-center">{item.quantity}</td>
-                  <td className="px-4 py-2 text-right">₹{(item.price ?? item.unit_price ?? 0).toFixed(2)}</td>
-                  <td className="px-4 py-2 text-right font-medium">₹{((item.price ?? item.unit_price ?? 0) * item.quantity).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right">{(item.price ?? item.unit_price ?? 0).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-right font-medium">{((item.price ?? item.unit_price ?? 0) * item.quantity).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -240,21 +240,21 @@ export default function POSPage() {
           <div className="border-t-2 border-gray-300 pt-4">
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Subtotal:</span>
-              <span className="font-medium">₹{lastOrder.subtotal.toFixed(2)}</span>
+              <span className="font-medium">{lastOrder.subtotal.toFixed(2)}</span>
             </div>
             {lastOrder.discount > 0 && (
               <div className="flex justify-between mb-2 text-green-600">
                 <span>Discount:</span>
-                <span className="font-medium">- ₹{lastOrder.discount.toFixed(2)}</span>
+                <span className="font-medium">- {lastOrder.discount.toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">GST (18%):</span>
-              <span className="font-medium">₹{lastOrder.tax.toFixed(2)}</span>
+              <span className="font-medium">{lastOrder.tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-xl font-bold border-t border-gray-300 pt-2 mt-2">
               <span>Total:</span>
-              <span className="text-blue-600">₹{lastOrder.total.toFixed(2)}</span>
+              <span className="text-blue-600">{lastOrder.total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -270,13 +270,13 @@ export default function POSPage() {
               onClick={printReceipt}
               className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
-              🖨️ Print Receipt
+               Print Receipt
             </button>
             <button
               onClick={resetPOS}
               className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
             >
-              ✓ New Sale
+               New Sale
             </button>
           </div>
         </div>
@@ -289,7 +289,7 @@ export default function POSPage() {
       {/* Left: Products & Inventory */}
       <div className="flex-1 bg-white rounded-lg shadow overflow-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">💊 Product Inventory</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3"> Product Inventory</h2>
           
           <input
             type="text"
@@ -334,10 +334,10 @@ export default function POSPage() {
                     {product.name}
                   </div>
                   <div className="text-xs text-gray-500 mb-2">
-                    {product.sku} {product.potency && `• ${product.potency}`}
+                    {product.sku} {product.potency && ` ${product.potency}`}
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold text-blue-600">₹{(product.price ?? product.unit_price ?? 0).toFixed(2)}</div>
+                    <div className="text-lg font-bold text-blue-600">{(product.price ?? product.unit_price ?? 0).toFixed(2)}</div>
                     <div className={`text-xs px-2 py-1 rounded ${
                       (product.stock ?? product.stock_qty ?? 0) === 0 ? 'bg-red-100 text-red-800' :
                       (product.stock ?? product.stock_qty ?? 0) < 10 ? 'bg-orange-100 text-orange-800' :
@@ -356,7 +356,7 @@ export default function POSPage() {
       {/* Right: Cart & Checkout */}
       <div className="w-96 bg-white rounded-lg shadow flex flex-col">
         <div className="p-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">🛒 Current Sale</h2>
+          <h2 className="text-xl font-bold text-gray-900"> Current Sale</h2>
         </div>
 
         <div className="p-4 border-b border-gray-200 space-y-3">
@@ -386,7 +386,7 @@ export default function POSPage() {
         <div className="flex-1 overflow-auto p-4">
           {cart.length === 0 ? (
             <div className="text-center text-gray-500 py-12">
-              <div className="text-6xl mb-4">🛒</div>
+              <div className="text-6xl mb-4"></div>
               <div className="font-medium">Cart is empty</div>
               <div className="text-sm mt-1">Click products to add</div>
             </div>
@@ -399,11 +399,11 @@ export default function POSPage() {
                     className="text-red-600 hover:text-red-800 font-bold"
                     title="Remove"
                   >
-                    ✕
+                    
                   </button>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-sm text-gray-900 truncate">{item.name}</div>
-                    <div className="text-xs text-gray-500">₹{(item.price ?? item.unit_price ?? 0).toFixed(2)} each</div>
+                    <div className="text-xs text-gray-500">{(item.price ?? item.unit_price ?? 0).toFixed(2)} each</div>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
@@ -421,7 +421,7 @@ export default function POSPage() {
                     </button>
                   </div>
                   <div className="w-20 text-right font-bold text-gray-900">
-                    ₹{((item.price ?? item.unit_price ?? 0) * item.quantity).toFixed(2)}
+                    {((item.price ?? item.unit_price ?? 0) * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -467,21 +467,21 @@ export default function POSPage() {
         <div className="p-4 border-t border-gray-200 space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Subtotal:</span>
-            <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+            <span className="font-medium">{subtotal.toFixed(2)}</span>
           </div>
           {discount > 0 && (
             <div className="flex justify-between text-sm text-green-600">
               <span>Discount ({discount}%):</span>
-              <span className="font-medium">- ₹{discountAmount.toFixed(2)}</span>
+              <span className="font-medium">- {discountAmount.toFixed(2)}</span>
             </div>
           )}
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">GST (18%):</span>
-            <span className="font-medium">₹{gst.toFixed(2)}</span>
+            <span className="font-medium">{gst.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-xl font-bold pt-2 border-t border-gray-300">
             <span>Total:</span>
-            <span className="text-blue-600">₹{total.toFixed(2)}</span>
+            <span className="text-blue-600">{total.toFixed(2)}</span>
           </div>
         </div>
 
@@ -492,7 +492,7 @@ export default function POSPage() {
             disabled={cart.length === 0}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium text-lg"
           >
-            💳 Complete Sale - ₹{total.toFixed(2)}
+             Complete Sale - {total.toFixed(2)}
           </button>
           <div className="flex gap-2">
             <button

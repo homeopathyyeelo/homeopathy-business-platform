@@ -21,7 +21,7 @@ export default function PurchaseReturnsPage() {
     { key: 'return_number', title: 'Return #', sortable: true, render: (val: any) => <span className="font-mono">{val}</span> },
     { key: 'grn_number', title: 'GRN', sortable: true },
     { key: 'vendor_name', title: 'Vendor', sortable: true },
-    { key: 'return_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold text-red-600">₹{val?.toLocaleString()}</span> },
+    { key: 'return_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold text-red-600">{val?.toLocaleString()}</span> },
     { key: 'reason', title: 'Reason', sortable: true },
     { key: 'status', title: 'Status', sortable: true, render: (val: any) => <Badge>{val}</Badge> },
     { key: 'created_at', title: 'Date', sortable: true, render: (val: any) => new Date(val).toLocaleDateString() },
@@ -59,7 +59,7 @@ export default function PurchaseReturnsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">₹{stats.totalAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-red-600">{stats.totalAmount.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>

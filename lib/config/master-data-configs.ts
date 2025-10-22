@@ -245,7 +245,7 @@ export const masterDataConfigs: MasterDataConfig[] = [
       { key: 'code', label: 'Code', sortable: true },
       { key: 'description', label: 'Description' },
       { key: 'discount_percentage', label: 'Discount %', render: (value) => value ? `${value}%` : 'N/A' },
-      { key: 'credit_limit', label: 'Credit Limit', render: (value) => value ? `₹${value}` : 'No Limit' },
+      { key: 'credit_limit', label: 'Credit Limit', render: (value) => value ? `${value}` : 'No Limit' },
       { key: 'is_active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
     ],
     searchFields: ['name', 'code'],

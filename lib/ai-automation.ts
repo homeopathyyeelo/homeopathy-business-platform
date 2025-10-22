@@ -171,8 +171,8 @@ export class AIAutomationService {
     const pricingPrompt = `
       Analyze the following pricing scenario for a homeopathy product:
       
-      Current Price: ₹${params.current_price}
-      Cost Price: ₹${params.cost_price}
+      Current Price: ${params.current_price}
+      Cost Price: ${params.cost_price}
       Current Stock: ${params.current_stock} units
       Demand Forecast: ${params.demand_forecast} units
       Expiry Date: ${params.expiry_date || 'Not specified'}
@@ -243,7 +243,7 @@ export class AIAutomationService {
       
       Season: ${params.season}
       Target Audience: ${params.target_audience || 'General health-conscious customers'}
-      Budget: ₹${params.budget || 'Flexible'}
+      Budget: ${params.budget || 'Flexible'}
       Channels: ${params.channels.join(', ')}
       Relevant Products: ${relevantProducts.map(p => p.name).join(', ')}
       

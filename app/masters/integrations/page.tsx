@@ -73,7 +73,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>Transactions: 12,847</div>
                     <div>Success Rate: 98.5%</div>
-                    <div>Total Volume: ₹45.2L</div>
+                    <div>Total Volume: 45.2L</div>
                   </div>
                 </div>
 
@@ -99,7 +99,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>UPI Transactions: 8,234</div>
                     <div>Wallet Users: 1,245</div>
-                    <div>Bank Transfer: ₹12.3L</div>
+                    <div>Bank Transfer: 12.3L</div>
                   </div>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>Messages Sent: 45,231</div>
                     <div>Delivery Rate: 97.8%</div>
-                    <div>Cost: ₹0.25/msg</div>
+                    <div>Cost: 0.25/msg</div>
                   </div>
                 </div>
 
@@ -185,7 +185,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>Shipments: 3,456</div>
                     <div>On-time: 94.2%</div>
-                    <div>Avg. Cost: ₹67</div>
+                    <div>Avg. Cost: 67</div>
                   </div>
                 </div>
 
@@ -284,7 +284,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>Products Synced: 847</div>
                     <div>Orders: 2,345</div>
-                    <div>Revenue: ₹12.5L</div>
+                    <div>Revenue: 12.5L</div>
                   </div>
                 </div>
 
@@ -310,7 +310,7 @@ export default function ThirdPartyIntegrations() {
                   <div className="text-xs text-gray-500">
                     <div>Listings: 234</div>
                     <div>Orders: 1,456</div>
-                    <div>Rating: 4.5★</div>
+                    <div>Rating: 4.5</div>
                   </div>
                 </div>
               </div>

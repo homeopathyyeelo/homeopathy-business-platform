@@ -197,7 +197,7 @@ class AISuggestionsEngine {
         Monthly Sales Average: ${productData.monthly_sales_avg || 10}
         Lead Time (days): ${productData.lead_time_days || 7}
 
-        Formula: Reorder Level = (Monthly Sales × Lead Time) + Safety Stock
+        Formula: Reorder Level = (Monthly Sales  Lead Time) + Safety Stock
         Use safety stock of 20% of monthly sales.
 
         Respond with only the number.
@@ -224,7 +224,7 @@ class AISuggestionsEngine {
         Product: ${productData.name}
         Category: ${productData.category_name}
         Brand: ${productData.brand_name}
-        Cost Price: ₹${productData.purchase_rate || 0}
+        Cost Price: ${productData.purchase_rate || 0}
 
         Consider:
         - 30-50% markup for MRP

@@ -312,10 +312,10 @@ export default function Home() {
 
         <div className="mt-16 text-center">
           <p className="text-sm text-muted-foreground">
-            © 2024 YEELO HOMEOPATHY - Complete ERP Management System for Homeopathy Pharmacies
+             2024 YEELO HOMEOPATHY - Complete ERP Management System for Homeopathy Pharmacies
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Features: Batch Management • Potency Tracking • GST Compliance • Multi-Database Support
+            Features: Batch Management  Potency Tracking  GST Compliance  Multi-Database Support
           </p>
         </div>
       </div>

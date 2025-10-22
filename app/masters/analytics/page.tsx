@@ -87,7 +87,7 @@ export default function AdvancedAnalyticsDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{financialAnalytics.totalRevenue?.toLocaleString() || '0'}</div>
+            <div className="text-2xl font-bold">{financialAnalytics.totalRevenue?.toLocaleString() || '0'}</div>
             <p className="text-xs text-muted-foreground">
               {financialAnalytics.revenueGrowth > 0 ? '+' : ''}{financialAnalytics.revenueGrowth || 0}% from last period
             </p>
@@ -113,7 +113,7 @@ export default function AdvancedAnalyticsDashboard() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{inventoryAnalytics.totalValue?.toLocaleString() || '0'}</div>
+            <div className="text-2xl font-bold">{inventoryAnalytics.totalValue?.toLocaleString() || '0'}</div>
             <p className="text-xs text-muted-foreground">
               {inventoryAnalytics.inventoryTurnover || 0}x turnover rate
             </p>
@@ -152,7 +152,7 @@ export default function AdvancedAnalyticsDashboard() {
                         style={{ width: `${(point.value / Math.max(...salesAnalytics.trend.map((p: any) => p.value))) * 100}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm font-medium">₹{point.value}</span>
+                    <span className="text-sm font-medium">{point.value}</span>
                   </div>
                 </div>
               ))}
@@ -172,7 +172,7 @@ export default function AdvancedAnalyticsDashboard() {
                     <p className="font-medium">{product.name}</p>
                     <p className="text-sm text-gray-600">{product.unitsSold} units sold</p>
                   </div>
-                  <Badge variant="outline">₹{product.revenue}</Badge>
+                  <Badge variant="outline">{product.revenue}</Badge>
                 </div>
               ))}
             </div>
@@ -217,7 +217,7 @@ export default function AdvancedAnalyticsDashboard() {
                 <p className="text-sm text-gray-600">Expected Growth</p>
               </div>
               <div className="text-center p-4 border rounded">
-                <div className="text-2xl font-bold text-blue-600">₹2.5L</div>
+                <div className="text-2xl font-bold text-blue-600">2.5L</div>
                 <p className="text-sm text-gray-600">Predicted Revenue</p>
               </div>
               <div className="text-center p-4 border rounded">
@@ -263,11 +263,11 @@ export default function AdvancedAnalyticsDashboard() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm">Average CLV</span>
-                <span className="font-bold">₹{customerAnalytics.averageCLV || '0'}</span>
+                <span className="font-bold">{customerAnalytics.averageCLV || '0'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Top 10% CLV</span>
-                <span className="font-bold">₹{customerAnalytics.topCLV || '0'}</span>
+                <span className="font-bold">{customerAnalytics.topCLV || '0'}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Retention Rate</span>
@@ -293,7 +293,7 @@ export default function AdvancedAnalyticsDashboard() {
             </div>
             <div className="text-center p-4 border rounded">
               <div className="text-2xl font-bold text-blue-600">
-                ₹{financialAnalytics.cashFlow || '0'}
+                {financialAnalytics.cashFlow || '0'}
               </div>
               <p className="text-sm text-gray-600">Cash Flow</p>
             </div>

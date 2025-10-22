@@ -112,7 +112,7 @@ export default function InternationalExpansion() {
                 <div className="mt-2 space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">INR (Base)</span>
-                    <span className="font-medium">₹45.00</span>
+                    <span className="font-medium">45.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">USD</span>
@@ -120,7 +120,7 @@ export default function InternationalExpansion() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">EUR</span>
-                    <span className="font-medium">€0.48</span>
+                    <span className="font-medium">0.48</span>
                   </div>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default function InternationalExpansion() {
                 <div className="mt-2 space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">INR (Base)</span>
-                    <span className="font-medium">₹65.00</span>
+                    <span className="font-medium">65.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">USD</span>
@@ -137,7 +137,7 @@ export default function InternationalExpansion() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">GBP</span>
-                    <span className="font-medium">£0.62</span>
+                    <span className="font-medium">0.62</span>
                   </div>
                 </div>
               </div>

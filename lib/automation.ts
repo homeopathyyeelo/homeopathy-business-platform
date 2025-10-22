@@ -230,7 +230,7 @@ export class AutomationEngine {
     const personalizedData = {
       customer_name: customer.name,
       customer_phone: customer.phone,
-      cart_value: `₹${customer.cart_value}`,
+      cart_value: `${customer.cart_value}`,
       cart_items: customer.cart_items,
       recovery_discount: "10% OFF",
       recovery_code: `CART${customer.id}${Date.now()}`,
@@ -270,7 +270,7 @@ export class AutomationEngine {
       customer_name: order.name,
       customer_phone: order.phone,
       order_id: order.order_id,
-      order_amount: `₹${order.total_amount}`,
+      order_amount: `${order.total_amount}`,
       delivery_date: order.delivered_at,
       feedback_link: `https://yeelohomeopathy.com/feedback/${order.order_id}`,
     }

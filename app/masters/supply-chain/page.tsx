@@ -205,8 +205,8 @@ export default function SupplyChainManagement() {
                       </div>
                       <div>
                         <h4 className="font-medium">{supplier.name}</h4>
-                        <p className="text-sm text-gray-600">{supplier.contact_person} • {supplier.city}</p>
-                        <p className="text-xs text-gray-500">Products: {supplier.product_count} • Rating: {supplier.rating}/5</p>
+                        <p className="text-sm text-gray-600">{supplier.contact_person}  {supplier.city}</p>
+                        <p className="text-xs text-gray-500">Products: {supplier.product_count}  Rating: {supplier.rating}/5</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -242,7 +242,7 @@ export default function SupplyChainManagement() {
                       </div>
                       <div>
                         <h4 className="font-medium">{item.product_name}</h4>
-                        <p className="text-sm text-gray-600">SKU: {item.sku} • Batch: {item.batch_number}</p>
+                        <p className="text-sm text-gray-600">SKU: {item.sku}  Batch: {item.batch_number}</p>
                         <div className="flex items-center space-x-4 mt-1">
                           <Badge variant="outline">{item.location}</Badge>
                           <span className="text-sm">Qty: {item.quantity}</span>
@@ -330,7 +330,7 @@ export default function SupplyChainManagement() {
                   <p className="text-sm text-blue-700">Route Efficiency</p>
                 </div>
                 <div className="text-center p-4 border rounded bg-green-50">
-                  <div className="text-2xl font-bold text-green-600">₹2,450</div>
+                  <div className="text-2xl font-bold text-green-600">2,450</div>
                   <p className="text-sm text-green-700">Cost Savings</p>
                 </div>
                 <div className="text-center p-4 border rounded bg-purple-50">
@@ -361,7 +361,7 @@ export default function SupplyChainManagement() {
                   <p className="text-sm text-gray-600">Inventory Turnover</p>
                 </div>
                 <div className="text-center p-4 border rounded">
-                  <div className="text-2xl font-bold text-purple-600">₹4.2L</div>
+                  <div className="text-2xl font-bold text-purple-600">4.2L</div>
                   <p className="text-sm text-gray-600">Monthly Savings</p>
                 </div>
                 <div className="text-center p-4 border rounded">

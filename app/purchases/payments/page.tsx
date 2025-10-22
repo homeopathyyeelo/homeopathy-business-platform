@@ -20,7 +20,7 @@ export default function VendorPaymentsPage() {
   const columns = [
     { key: 'payment_number', title: 'Payment #', sortable: true, render: (val: any) => <span className="font-mono">{val}</span> },
     { key: 'vendor_name', title: 'Vendor', sortable: true },
-    { key: 'amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold text-green-600">₹{val?.toLocaleString()}</span> },
+    { key: 'amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold text-green-600">{val?.toLocaleString()}</span> },
     { key: 'payment_method', title: 'Method', sortable: true, render: (val: any) => <Badge variant="outline">{val}</Badge> },
     { key: 'reference_number', title: 'Reference', sortable: true },
     { key: 'created_at', title: 'Date', sortable: true, render: (val: any) => new Date(val).toLocaleDateString() },
@@ -58,7 +58,7 @@ export default function VendorPaymentsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">₹{stats.totalAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.totalAmount.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>

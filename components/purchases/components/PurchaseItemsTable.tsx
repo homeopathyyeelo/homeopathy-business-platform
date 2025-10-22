@@ -76,7 +76,7 @@ const PurchaseItemsTable = ({
             <div>
               <h4 className="font-medium text-green-800">Supplier Discounts Applied</h4>
               <p className="text-sm text-green-600">
-                Total Savings: ₹{getTotalDiscountAmount().toFixed(2)} on ₹{getTotalOriginalAmount().toFixed(2)}
+                Total Savings: {getTotalDiscountAmount().toFixed(2)} on {getTotalOriginalAmount().toFixed(2)}
               </p>
             </div>
             <Badge className="bg-green-100 text-green-800">
@@ -125,7 +125,7 @@ const PurchaseItemsTable = ({
                               <div className="flex flex-col">
                                 <span>{product.name}</span>
                                 <span className="text-xs text-muted-foreground">
-                                  {product.product_code} | ₹{product.purchase_price || 0}
+                                  {product.product_code} | {product.purchase_price || 0}
                                 </span>
                               </div>
                             </SelectItem>
@@ -167,7 +167,7 @@ const PurchaseItemsTable = ({
                         />
                         {discount && (
                           <div className="text-xs text-green-600">
-                            Effective: ₹{pricing?.discountedRate.toFixed(2)}
+                            Effective: {pricing?.discountedRate.toFixed(2)}
                           </div>
                         )}
                       </div>
@@ -175,10 +175,10 @@ const PurchaseItemsTable = ({
                     
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-medium">₹{itemTotal.toFixed(2)}</div>
+                        <div className="font-medium">{itemTotal.toFixed(2)}</div>
                         {discount && (
                           <div className="text-xs text-muted-foreground line-through">
-                            ₹{discount.originalAmount.toFixed(2)}
+                            {discount.originalAmount.toFixed(2)}
                           </div>
                         )}
                       </div>

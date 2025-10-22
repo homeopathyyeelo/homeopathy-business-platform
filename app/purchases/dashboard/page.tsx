@@ -19,7 +19,7 @@ export default function PurchaseDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹5,45,000</div>
+            <div className="text-2xl font-bold">5,45,000</div>
             <p className="text-xs text-muted-foreground">This month</p>
           </CardContent>
         </Card>
@@ -41,7 +41,7 @@ export default function PurchaseDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹22,708</div>
+            <div className="text-2xl font-bold">22,708</div>
             <p className="text-xs text-green-600">+12% vs last month</p>
           </CardContent>
         </Card>
@@ -52,7 +52,7 @@ export default function PurchaseDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">₹1,25,000</div>
+            <div className="text-2xl font-bold text-orange-600">1,25,000</div>
             <p className="text-xs text-muted-foreground">Due this week</p>
           </CardContent>
         </Card>

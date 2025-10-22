@@ -98,7 +98,7 @@ const GSTComplianceSystem = () => {
             <Calculator className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{gstSummary.totalTax.toLocaleString('en-IN')}</div>
+            <div className="text-2xl font-bold">{gstSummary.totalTax.toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
               From {gstSummary.invoiceCount} invoices
             </p>
@@ -111,7 +111,7 @@ const GSTComplianceSystem = () => {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{gstSummary.totalSales.toLocaleString('en-IN')}</div>
+            <div className="text-2xl font-bold">{gstSummary.totalSales.toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
               Total sales value
             </p>
@@ -180,8 +180,8 @@ const GSTComplianceSystem = () => {
                       <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
                       <TableCell>{new Date(invoice.invoiceDate).toLocaleDateString('en-IN')}</TableCell>
                       <TableCell>{invoice.customer?.firstName || 'Walk-in Customer'}</TableCell>
-                      <TableCell>₹{invoice.total.toLocaleString('en-IN')}</TableCell>
-                      <TableCell>₹{(invoice.taxAmount || 0).toLocaleString('en-IN')}</TableCell>
+                      <TableCell>{invoice.total.toLocaleString('en-IN')}</TableCell>
+                      <TableCell>{(invoice.taxAmount || 0).toLocaleString('en-IN')}</TableCell>
                       <TableCell>{getComplianceStatus(invoice)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
@@ -264,19 +264,19 @@ const GSTComplianceSystem = () => {
               <div className="grid gap-4 md:grid-cols-3 mb-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-2xl font-bold">₹{gstSummary.totalSales.toLocaleString('en-IN')}</div>
+                    <div className="text-2xl font-bold">{gstSummary.totalSales.toLocaleString('en-IN')}</div>
                     <p className="text-sm text-muted-foreground">Total Taxable Value</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-2xl font-bold">₹{gstSummary.totalTax.toLocaleString('en-IN')}</div>
+                    <div className="text-2xl font-bold">{gstSummary.totalTax.toLocaleString('en-IN')}</div>
                     <p className="text-sm text-muted-foreground">Total Tax Collected</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-2xl font-bold">₹0</div>
+                    <div className="text-2xl font-bold">0</div>
                     <p className="text-sm text-muted-foreground">Tax Payable</p>
                   </CardContent>
                 </Card>
@@ -315,13 +315,13 @@ const GSTComplianceSystem = () => {
                 <div className="flex items-center space-x-2">
                   <input type="checkbox" id="auto-einvoice" defaultChecked />
                   <label htmlFor="auto-einvoice" className="text-sm">
-                    Auto-generate E-Invoice for invoices above ₹500
+                    Auto-generate E-Invoice for invoices above 500
                   </label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <input type="checkbox" id="auto-eway" defaultChecked />
                   <label htmlFor="auto-eway" className="text-sm">
-                    Auto-generate E-Way Bill for invoices above ₹50,000
+                    Auto-generate E-Way Bill for invoices above 50,000
                   </label>
                 </div>
               </div>

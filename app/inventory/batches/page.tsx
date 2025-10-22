@@ -27,11 +27,11 @@ export default function BatchTrackingPage() {
       const isExpiringSoon = daysLeft < 90;
       return (
         <span className={isExpiringSoon ? 'text-red-600 font-semibold' : ''}>
-          {date.toLocaleDateString()} {isExpiringSoon && '⚠️'}
+          {date.toLocaleDateString()} {isExpiringSoon && ''}
         </span>
       );
     }},
-    { key: 'mrp', title: 'MRP', sortable: true, render: (val: any) => `₹${val?.toLocaleString()}` },
+    { key: 'mrp', title: 'MRP', sortable: true, render: (val: any) => `${val?.toLocaleString()}` },
     { key: 'status', title: 'Status', sortable: true, render: (val: any) => <Badge variant={val === 'ACTIVE' ? 'default' : 'secondary'}>{val}</Badge> },
   ];
 

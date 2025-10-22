@@ -209,7 +209,7 @@ export default function BrandsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalValue.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -258,7 +258,7 @@ export default function BrandsPage() {
                     <TableCell>{brand.description || 'No description'}</TableCell>
                     <TableCell>{brand.country || 'N/A'}</TableCell>
                     <TableCell>{brand.product_count || 0}</TableCell>
-                    <TableCell>₹{brand.total_value?.toLocaleString() || '0'}</TableCell>
+                    <TableCell>{brand.total_value?.toLocaleString() || '0'}</TableCell>
                     <TableCell>
                       <Badge variant={brand.is_active !== false ? 'default' : 'secondary'}>
                         {brand.is_active !== false ? 'Active' : 'Inactive'}

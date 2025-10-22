@@ -100,7 +100,7 @@ export default function POSPage() {
                     <div className="space-y-2">
                       <div className="font-medium text-sm line-clamp-2">{product.name}</div>
                       <Badge variant="outline" className="text-xs">{product.code}</Badge>
-                      <div className="text-lg font-bold text-green-600">₹{product.sellingPrice}</div>
+                      <div className="text-lg font-bold text-green-600">{product.sellingPrice}</div>
                       <div className="text-xs text-muted-foreground">Stock: {product.currentStock || 0}</div>
                     </div>
                   </CardContent>
@@ -161,7 +161,7 @@ export default function POSPage() {
                           className="w-16 h-8"
                         />
                       </TableCell>
-                      <TableCell>₹{(item.sellingPrice * item.quantity).toFixed(2)}</TableCell>
+                      <TableCell>{(item.sellingPrice * item.quantity).toFixed(2)}</TableCell>
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -183,15 +183,15 @@ export default function POSPage() {
           <CardContent className="p-4 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+              <span className="font-medium">{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Tax (12%):</span>
-              <span className="font-medium">₹{tax.toFixed(2)}</span>
+              <span className="font-medium">{tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-lg font-bold border-t pt-2">
               <span>Total:</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>{total.toFixed(2)}</span>
             </div>
           </CardContent>
         </Card>

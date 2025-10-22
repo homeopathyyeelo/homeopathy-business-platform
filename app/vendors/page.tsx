@@ -245,7 +245,7 @@ export default function VendorsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">₹{stats.totalOutstanding.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-red-600">{stats.totalOutstanding.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -304,15 +304,15 @@ export default function VendorsPage() {
                       {vendor.email && <div className="text-xs text-muted-foreground">{vendor.email}</div>}
                     </TableCell>
                     <TableCell>{vendor.gst_number || 'N/A'}</TableCell>
-                    <TableCell>₹{formatCurrency(vendor.credit_limit || 0)}</TableCell>
+                    <TableCell>{formatCurrency(vendor.credit_limit || 0)}</TableCell>
                     <TableCell className="text-right">
                       {vendor.outstanding > 0 ? (
-                        <span className="text-red-600">₹{formatCurrency(vendor.outstanding)}</span>
-                      ) : <span className="text-green-600">₹0</span>}
+                        <span className="text-red-600">{formatCurrency(vendor.outstanding)}</span>
+                      ) : <span className="text-green-600">0</span>}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <span className="text-sm mr-1">⭐</span>
+                        <span className="text-sm mr-1"></span>
                         <span className="text-sm">{vendor.rating || 'N/A'}</span>
                       </div>
                     </TableCell>

@@ -135,7 +135,7 @@ export default function VendorPurchaseHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalAmount.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -147,7 +147,7 @@ export default function VendorPurchaseHistoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">₹{pendingPayments.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-red-600">{pendingPayments.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -219,7 +219,7 @@ export default function VendorPurchaseHistoryPage() {
                   <TableCell>{record.vendor_name}</TableCell>
                   <TableCell>{new Date(record.invoice_date).toLocaleDateString()}</TableCell>
                   <TableCell>{record.total_items}</TableCell>
-                  <TableCell>₹{record.total_amount.toLocaleString()}</TableCell>
+                  <TableCell>{record.total_amount.toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge variant={
                       record.status === 'received' ? 'default' :

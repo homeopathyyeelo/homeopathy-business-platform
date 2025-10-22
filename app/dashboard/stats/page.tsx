@@ -26,7 +26,7 @@ export default function DashboardStatsPage() {
   ];
 
   const stats = [
-    { title: "Total Revenue", value: "₹3,28,000", change: "+12.5%", icon: DollarSign, color: "text-green-600", up: true },
+    { title: "Total Revenue", value: "3,28,000", change: "+12.5%", icon: DollarSign, color: "text-green-600", up: true },
     { title: "Total Orders", value: "1,245", change: "+8.2%", icon: ShoppingCart, color: "text-blue-600", up: true },
     { title: "Total Customers", value: "856", change: "+15.3%", icon: Users, color: "text-purple-600", up: true },
     { title: "Total Products", value: "2,450", change: "-2.1%", icon: Package, color: "text-orange-600", up: false },

@@ -37,7 +37,7 @@ const DailyBillingDashboard = () => {
     averageTicket: todayInvoices.length > 0 ? (todayInvoices.reduce((sum: number, inv: any) => sum + (inv.total || 0), 0) / todayInvoices.length) : 0
   };
 
-  const formatCurrency = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+  const formatCurrency = (amount: number) => `${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 
   return (
     <div className="space-y-6">

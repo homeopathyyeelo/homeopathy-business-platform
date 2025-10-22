@@ -259,7 +259,7 @@ export default function BusinessWorkflows() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge variant="outline">{transfer.fromLocation || 'Source'} → {transfer.toLocation || 'Destination'}</Badge>
+                        <Badge variant="outline">{transfer.fromLocation || 'Source'}  {transfer.toLocation || 'Destination'}</Badge>
                         <p className="text-xs text-gray-500 mt-1">{transfer.createdAt || 'N/A'}</p>
                       </div>
                     </div>
@@ -591,7 +591,7 @@ export default function BusinessWorkflows() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {financialMetrics?.revenue ? `₹${financialMetrics.revenue}` : 'Loading...'}
+              {financialMetrics?.revenue ? `${financialMetrics.revenue}` : 'Loading...'}
             </div>
             <p className="text-xs text-muted-foreground">
               {financialMetrics?.revenueGrowth ? `+${financialMetrics.revenueGrowth}% from last month` : 'Revenue data'}
@@ -617,7 +617,7 @@ export default function BusinessWorkflows() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-orange-600">
-              {financialMetrics?.outstandingPayments ? `₹${financialMetrics.outstandingPayments}` : 'Loading...'}
+              {financialMetrics?.outstandingPayments ? `${financialMetrics.outstandingPayments}` : 'Loading...'}
             </div>
             <p className="text-xs text-muted-foreground">Within credit limits</p>
             <Clock className="w-5 h-5 text-orange-600 mt-2" />
@@ -632,7 +632,7 @@ export default function BusinessWorkflows() {
               {financialMetrics?.cashFlowStatus || 'Loading...'}
             </div>
             <p className="text-xs text-muted-foreground">
-              {financialMetrics?.cashFlowAmount ? `₹${financialMetrics.cashFlowAmount} surplus` : 'Cash flow data'}
+              {financialMetrics?.cashFlowAmount ? `${financialMetrics.cashFlowAmount} surplus` : 'Cash flow data'}
             </p>
             <CheckCircle className="w-5 h-5 text-blue-600 mt-2" />
           </CardContent>

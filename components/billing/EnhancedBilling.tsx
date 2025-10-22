@@ -374,11 +374,11 @@ const EnhancedBilling = () => {
                     </div>
                     <div>
                       <Label className="text-sm text-muted-foreground">Credit Limit</Label>
-                      <p className="font-medium">₹{selectedCustomer.max_credit_limit || 0}</p>
+                      <p className="font-medium">{selectedCustomer.max_credit_limit || 0}</p>
                     </div>
                     <div>
                       <Label className="text-sm text-muted-foreground">Outstanding</Label>
-                      <p className="font-medium">₹{selectedCustomer.outstanding_balance || 0}</p>
+                      <p className="font-medium">{selectedCustomer.outstanding_balance || 0}</p>
                     </div>
                     <div>
                       <Label className="text-sm text-muted-foreground">Loyalty Points</Label>
@@ -468,7 +468,7 @@ const EnhancedBilling = () => {
                           className="w-16"
                         />
                       </TableCell>
-                      <TableCell>₹{item.unitPrice.toFixed(2)}</TableCell>
+                      <TableCell>{item.unitPrice.toFixed(2)}</TableCell>
                       <TableCell>
                         <Input
                           type="number"
@@ -479,7 +479,7 @@ const EnhancedBilling = () => {
                           className="w-16"
                         />
                       </TableCell>
-                      <TableCell>₹{item.total.toFixed(2)}</TableCell>
+                      <TableCell>{item.total.toFixed(2)}</TableCell>
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -508,38 +508,38 @@ const EnhancedBilling = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span>₹{totals.subtotal}</span>
+                <span>{totals.subtotal}</span>
               </div>
               <div className="flex justify-between text-sm text-orange-600">
                 <span>Item Discounts:</span>
-                <span>-₹{totals.itemDiscounts}</span>
+                <span>-{totals.itemDiscounts}</span>
               </div>
               <div className="flex justify-between text-sm text-blue-600">
                 <span>Bill Discount ({billDiscountPercent}%):</span>
-                <span>-₹{totals.billDiscountAmount}</span>
+                <span>-{totals.billDiscountAmount}</span>
               </div>
               {loyaltyPointsUsed > 0 && (
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Loyalty Points ({loyaltyPointsUsed}):</span>
-                  <span>-₹{totals.loyaltyDiscount}</span>
+                  <span>-{totals.loyaltyDiscount}</span>
                 </div>
               )}
               <div className="flex justify-between font-medium">
                 <span>Total Discounts:</span>
-                <span>-₹{totals.totalDiscounts}</span>
+                <span>-{totals.totalDiscounts}</span>
               </div>
               <div className="flex justify-between">
                 <span>Taxable Amount:</span>
-                <span>₹{totals.taxableAmount}</span>
+                <span>{totals.taxableAmount}</span>
               </div>
               <div className="flex justify-between">
                 <span>GST:</span>
-                <span>₹{totals.gstAmount}</span>
+                <span>{totals.gstAmount}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total:</span>
-                <span>₹{totals.total}</span>
+                <span>{totals.total}</span>
               </div>
             </div>
 

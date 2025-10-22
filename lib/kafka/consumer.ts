@@ -26,7 +26,7 @@ class KafkaConsumerService {
     await consumer.subscribe({ topics, fromBeginning: false });
 
     this.consumers.set(groupId, consumer);
-    console.log(`✅ Kafka Consumer connected: ${groupId}`);
+    console.log(` Kafka Consumer connected: ${groupId}`);
 
     return consumer;
   }
@@ -43,7 +43,7 @@ class KafkaConsumerService {
         try {
           await handler(payload);
         } catch (error) {
-          console.error('❌ Error processing message:', error);
+          console.error(' Error processing message:', error);
         }
       },
     });
@@ -54,14 +54,14 @@ class KafkaConsumerService {
     if (consumer) {
       await consumer.disconnect();
       this.consumers.delete(groupId);
-      console.log(`❌ Kafka Consumer disconnected: ${groupId}`);
+      console.log(` Kafka Consumer disconnected: ${groupId}`);
     }
   }
 
   async disconnectAll(): Promise<void> {
     for (const [groupId, consumer] of this.consumers.entries()) {
       await consumer.disconnect();
-      console.log(`❌ Kafka Consumer disconnected: ${groupId}`);
+      console.log(` Kafka Consumer disconnected: ${groupId}`);
     }
     this.consumers.clear();
   }

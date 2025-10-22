@@ -6,53 +6,53 @@ import { usePathname } from 'next/navigation'
 
 const menuItems = [
   // Core Operations
-  { name: 'Dashboard', path: '/dashboard', icon: '📊', category: 'Core' },
-  { name: 'Master Data', path: '/master', icon: '🗂️', category: 'Core' },
-  { name: 'Inventory', path: '/inventory', icon: '📦', category: 'Core' },
-  { name: 'Sales', path: '/sales', icon: '💰', category: 'Core' },
-  { name: 'Purchases', path: '/purchases', icon: '🛒', category: 'Core' },
+  { name: 'Dashboard', path: '/dashboard', icon: '', category: 'Core' },
+  { name: 'Master Data', path: '/master', icon: '', category: 'Core' },
+  { name: 'Inventory', path: '/inventory', icon: '', category: 'Core' },
+  { name: 'Sales', path: '/sales', icon: '', category: 'Core' },
+  { name: 'Purchases', path: '/purchases', icon: '', category: 'Core' },
   
   // Point of Sale
-  { name: 'POS System', path: '/pos', icon: '💳', category: 'POS' },
-  { name: 'Retail POS', path: '/retail-pos', icon: '🏪', category: 'POS' },
-  { name: 'Daily Billing', path: '/daily-register', icon: '📝', category: 'POS' },
+  { name: 'POS System', path: '/pos', icon: '', category: 'POS' },
+  { name: 'Retail POS', path: '/retail-pos', icon: '', category: 'POS' },
+  { name: 'Daily Billing', path: '/daily-register', icon: '', category: 'POS' },
   
   // Customer Management
-  { name: 'Customers', path: '/customers', icon: '👥', category: 'Customers' },
-  { name: 'CRM', path: '/crm', icon: '🎯', category: 'Customers' },
-  { name: 'Prescriptions', path: '/prescriptions', icon: '💊', category: 'Customers' },
-  { name: 'Loyalty Program', path: '/loyalty', icon: '⭐', category: 'Customers' },
+  { name: 'Customers', path: '/customers', icon: '', category: 'Customers' },
+  { name: 'CRM', path: '/crm', icon: '', category: 'Customers' },
+  { name: 'Prescriptions', path: '/prescriptions', icon: '', category: 'Customers' },
+  { name: 'Loyalty Program', path: '/loyalty', icon: '', category: 'Customers' },
   
   // Marketing & Communication
-  { name: 'Marketing', path: '/marketing', icon: '📢', category: 'Marketing' },
-  { name: 'Email Campaigns', path: '/email', icon: '✉️', category: 'Marketing' },
-  { name: 'AI Campaigns', path: '/ai-campaigns', icon: '🤖', category: 'Marketing' },
+  { name: 'Marketing', path: '/marketing', icon: '', category: 'Marketing' },
+  { name: 'Email Campaigns', path: '/email', icon: '', category: 'Marketing' },
+  { name: 'AI Campaigns', path: '/ai-campaigns', icon: '', category: 'Marketing' },
   
   // Analytics & Reports
-  { name: 'Reports', path: '/reports', icon: '📈', category: 'Reports' },
-  { name: 'Analytics', path: '/analytics', icon: '📊', category: 'Reports' },
-  { name: 'Dashboards', path: '/dashboards', icon: '📉', category: 'Reports' },
-  { name: 'Quick Stats', path: '/quick-stats', icon: '⚡', category: 'Reports' },
+  { name: 'Reports', path: '/reports', icon: '', category: 'Reports' },
+  { name: 'Analytics', path: '/analytics', icon: '', category: 'Reports' },
+  { name: 'Dashboards', path: '/dashboards', icon: '', category: 'Reports' },
+  { name: 'Quick Stats', path: '/quick-stats', icon: '', category: 'Reports' },
   
   // Operations
-  { name: 'Delivery', path: '/delivery', icon: '🚚', category: 'Operations' },
-  { name: 'Warehouse', path: '/warehouse', icon: '🏭', category: 'Operations' },
-  { name: 'Manufacturing', path: '/manufacturing', icon: '⚙️', category: 'Operations' },
-  { name: 'Active Batches', path: '/active-batches', icon: '🔄', category: 'Operations' },
+  { name: 'Delivery', path: '/delivery', icon: '', category: 'Operations' },
+  { name: 'Warehouse', path: '/warehouse', icon: '', category: 'Operations' },
+  { name: 'Manufacturing', path: '/manufacturing', icon: '', category: 'Operations' },
+  { name: 'Active Batches', path: '/active-batches', icon: '', category: 'Operations' },
   
   // AI & Automation
-  { name: 'AI Insights', path: '/ai-insights', icon: '🧠', category: 'AI' },
-  { name: 'AI Chat', path: '/ai-chat', icon: '💬', category: 'AI' },
-  { name: 'AI Demos', path: '/ai-demos', icon: '🎨', category: 'AI' },
+  { name: 'AI Insights', path: '/ai-insights', icon: '', category: 'AI' },
+  { name: 'AI Chat', path: '/ai-chat', icon: '', category: 'AI' },
+  { name: 'AI Demos', path: '/ai-demos', icon: '', category: 'AI' },
   
   // Administration
-  { name: 'GST Compliance', path: '/gst', icon: '📋', category: 'Admin' },
-  { name: 'Finance', path: '/finance', icon: '💵', category: 'Admin' },
-  { name: 'HR Management', path: '/hr', icon: '👔', category: 'Admin' },
-  { name: 'User Management', path: '/user', icon: '👤', category: 'Admin' },
-  { name: 'Schemes & Offers', path: '/schemes', icon: '🎁', category: 'Admin' },
-  { name: 'Notifications', path: '/notifications', icon: '🔔', category: 'Admin' },
-  { name: 'Settings', path: '/settings', icon: '⚙️', category: 'Admin' },
+  { name: 'GST Compliance', path: '/gst', icon: '', category: 'Admin' },
+  { name: 'Finance', path: '/finance', icon: '', category: 'Admin' },
+  { name: 'HR Management', path: '/hr', icon: '', category: 'Admin' },
+  { name: 'User Management', path: '/user', icon: '', category: 'Admin' },
+  { name: 'Schemes & Offers', path: '/schemes', icon: '', category: 'Admin' },
+  { name: 'Notifications', path: '/notifications', icon: '', category: 'Admin' },
+  { name: 'Settings', path: '/settings', icon: '', category: 'Admin' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -73,13 +73,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Logo */}
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           {sidebarOpen && (
-            <h1 className="text-xl font-bold text-blue-600">🏥 Yeelo</h1>
+            <h1 className="text-xl font-bold text-blue-600"> Yeelo</h1>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded hover:bg-gray-100"
           >
-            {sidebarOpen ? '◀' : '▶'}
+            {sidebarOpen ? '' : ''}
           </button>
         </div>
 

@@ -7,10 +7,10 @@ import { Activity, ShoppingCart, Package, Users, DollarSign, TrendingUp, AlertCi
 
 export default function ActivityLogPage() {
   const activities = [
-    { id: 1, type: 'sale', icon: ShoppingCart, title: 'New Sale', description: 'Invoice #INV-2025-001 created', amount: '₹2,500', time: '2 mins ago', color: 'text-green-600' },
-    { id: 2, type: 'purchase', icon: Package, title: 'Purchase Order', description: 'PO #PO-2025-045 approved', amount: '₹15,000', time: '15 mins ago', color: 'text-blue-600' },
+    { id: 1, type: 'sale', icon: ShoppingCart, title: 'New Sale', description: 'Invoice #INV-2025-001 created', amount: '2,500', time: '2 mins ago', color: 'text-green-600' },
+    { id: 2, type: 'purchase', icon: Package, title: 'Purchase Order', description: 'PO #PO-2025-045 approved', amount: '15,000', time: '15 mins ago', color: 'text-blue-600' },
     { id: 3, type: 'customer', icon: Users, title: 'New Customer', description: 'Rajesh Kumar added', time: '1 hour ago', color: 'text-purple-600' },
-    { id: 4, type: 'payment', icon: DollarSign, title: 'Payment Received', description: 'Payment for INV-2025-998', amount: '₹8,500', time: '2 hours ago', color: 'text-green-600' },
+    { id: 4, type: 'payment', icon: DollarSign, title: 'Payment Received', description: 'Payment for INV-2025-998', amount: '8,500', time: '2 hours ago', color: 'text-green-600' },
     { id: 5, type: 'stock', icon: TrendingUp, title: 'Stock Updated', description: 'Batch #B2025-123 added', time: '3 hours ago', color: 'text-orange-600' },
     { id: 6, type: 'alert', icon: AlertCircle, title: 'Low Stock Alert', description: 'Arnica 30C running low', time: '4 hours ago', color: 'text-red-600' },
   ];

@@ -45,7 +45,7 @@ export default function SalesPaymentsPage() {
                 <TableRow key={payment.id}>
                   <TableCell className="font-mono">{payment.receiptNumber}</TableCell>
                   <TableCell>{payment.customerName}</TableCell>
-                  <TableCell className="font-semibold">₹{payment.amount?.toLocaleString()}</TableCell>
+                  <TableCell className="font-semibold">{payment.amount?.toLocaleString()}</TableCell>
                   <TableCell><Badge variant="outline">{payment.method}</Badge></TableCell>
                   <TableCell>{new Date(payment.date).toLocaleDateString()}</TableCell>
                   <TableCell><Badge>{payment.status}</Badge></TableCell>

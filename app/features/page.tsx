@@ -142,7 +142,7 @@ export default function FeaturesPage() {
             </h1>
           </div>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            All-in-One Pharmacy Management Suite – Smart, Scalable, and Made for Growth
+            All-in-One Pharmacy Management Suite  Smart, Scalable, and Made for Growth
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Badge variant="secondary" className="px-4 py-2">
@@ -167,7 +167,7 @@ export default function FeaturesPage() {
             </Badge>
           </div>
           <p className="text-2xl font-semibold text-primary mb-8">
-            🚀 Designed for Efficiency. Built for Growth.
+             Designed for Efficiency. Built for Growth.
           </p>
           <div className="flex gap-4 justify-center">
             <Button asChild size="lg" className="px-8">

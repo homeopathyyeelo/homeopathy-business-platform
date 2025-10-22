@@ -68,7 +68,7 @@ const ProductBrandFields = ({ formData, handleChange, brands }: ProductBrandFiel
             </p>
             {formData.brandId && (
               <p className="text-xs text-green-600">
-                ✓ Brand selected: {selectedBrand?.name || 'Unknown'}
+                 Brand selected: {selectedBrand?.name || 'Unknown'}
               </p>
             )}
           </div>

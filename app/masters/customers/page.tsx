@@ -13,7 +13,7 @@ const customerConfig = {
     { key: 'email', label: 'Email', render: (value) => value || 'N/A' },
     { key: 'city', label: 'City', sortable: true },
     { key: 'customer_group_name', label: 'Group', render: (value: any) => value || 'No Group' },
-    { key: 'credit_limit', label: 'Credit Limit', render: (value: any) => value ? `₹${value}` : 'No Limit' },
+    { key: 'credit_limit', label: 'Credit Limit', render: (value: any) => value ? `${value}` : 'No Limit' },
     { key: 'is_active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
   ],
   searchFields: ['name', 'code', 'phone', 'email', 'city'],

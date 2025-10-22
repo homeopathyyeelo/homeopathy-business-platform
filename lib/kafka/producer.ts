@@ -25,7 +25,7 @@ class KafkaProducerService {
     if (!this.isConnected) {
       await this.producer.connect();
       this.isConnected = true;
-      console.log('✅ Kafka Producer connected');
+      console.log(' Kafka Producer connected');
     }
   }
 
@@ -33,7 +33,7 @@ class KafkaProducerService {
     if (this.isConnected) {
       await this.producer.disconnect();
       this.isConnected = false;
-      console.log('❌ Kafka Producer disconnected');
+      console.log(' Kafka Producer disconnected');
     }
   }
 
@@ -47,9 +47,9 @@ class KafkaProducerService {
       };
 
       await this.producer.send(record);
-      console.log(`📤 Message sent to topic: ${topic}`);
+      console.log(` Message sent to topic: ${topic}`);
     } catch (error) {
-      console.error('❌ Error sending message to Kafka:', error);
+      console.error(' Error sending message to Kafka:', error);
       throw error;
     }
   }

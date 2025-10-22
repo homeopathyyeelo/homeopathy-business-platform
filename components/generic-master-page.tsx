@@ -302,7 +302,7 @@ export default function GenericMasterPage({ config, breadcrumbs = [] }: GenericM
                         <span>{column.label}</span>
                         {column.sortable !== false && sortField === column.key && (
                           <span className="text-xs">
-                            {sortDirection === 'asc' ? '↑' : '↓'}
+                            {sortDirection === 'asc' ? '' : ''}
                           </span>
                         )}
                       </div>

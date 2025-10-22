@@ -22,7 +22,7 @@ export default function SalesOrdersPage() {
   const columns = [
     { key: 'order_number', title: 'Order #', sortable: true, render: (val: any) => <span className="font-mono">{val}</span> },
     { key: 'customer_name', title: 'Customer', sortable: true },
-    { key: 'total_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold">₹{val?.toLocaleString()}</span> },
+    { key: 'total_amount', title: 'Amount', sortable: true, render: (val: any) => <span className="font-semibold">{val?.toLocaleString()}</span> },
     { key: 'status', title: 'Status', sortable: true, render: (val: any) => <Badge>{val}</Badge> },
     { key: 'created_at', title: 'Date', sortable: true, render: (val: any) => new Date(val).toLocaleDateString() },
   ];
@@ -71,7 +71,7 @@ export default function SalesOrdersPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">₹{stats.totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.totalValue.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>

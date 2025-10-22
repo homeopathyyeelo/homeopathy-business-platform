@@ -202,7 +202,7 @@ export const usePurchaseForm = (onSave: () => void, initialData?: any) => {
       
       toast({
         title: "Purchase Created",
-        description: `Purchase created successfully with ₹${totalDiscountApplied.toFixed(2)} total discount applied`
+        description: `Purchase created successfully with ${totalDiscountApplied.toFixed(2)} total discount applied`
       });
       
       onSave();

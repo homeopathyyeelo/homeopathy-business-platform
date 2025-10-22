@@ -46,10 +46,10 @@ export default function PaymentIntegrationsPage() {
   }
 
   const gatewayOptions = [
-    { provider: 'razorpay', name: 'Razorpay', icon: '💳', color: 'bg-blue-500' },
-    { provider: 'stripe', name: 'Stripe', icon: '💙', color: 'bg-purple-500' },
-    { provider: 'paypal', name: 'PayPal', icon: '🅿️', color: 'bg-blue-600' },
-    { provider: 'paytm', name: 'Paytm', icon: '📱', color: 'bg-indigo-500' },
+    { provider: 'razorpay', name: 'Razorpay', icon: '', color: 'bg-blue-500' },
+    { provider: 'stripe', name: 'Stripe', icon: '', color: 'bg-purple-500' },
+    { provider: 'paypal', name: 'PayPal', icon: '', color: 'bg-blue-600' },
+    { provider: 'paytm', name: 'Paytm', icon: '', color: 'bg-indigo-500' },
   ]
 
   return (

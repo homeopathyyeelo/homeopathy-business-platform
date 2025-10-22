@@ -81,7 +81,7 @@ export default function DashboardPage() {
     {
       id: '1',
       type: 'sale',
-      description: 'Sale to Customer ABC - ₹8,500',
+      description: 'Sale to Customer ABC - 8,500',
       amount: 8500,
       timestamp: '2024-01-15T14:30:00Z',
       status: 'success'
@@ -96,7 +96,7 @@ export default function DashboardPage() {
     {
       id: '3',
       type: 'purchase',
-      description: 'Purchase from SBL - ₹45,000',
+      description: 'Purchase from SBL - 45,000',
       amount: 45000,
       timestamp: '2024-01-15T11:45:00Z',
       status: 'success'

@@ -34,7 +34,7 @@ export default function HoldBillsPage() {
               <TableRow>
                 <TableCell className="font-mono">HOLD-001</TableCell>
                 <TableCell>Walk-in Customer</TableCell>
-                <TableCell className="font-semibold">₹2,500</TableCell>
+                <TableCell className="font-semibold">2,500</TableCell>
                 <TableCell>15 mins ago</TableCell>
                 <TableCell>
                   <div className="flex gap-2">

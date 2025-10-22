@@ -127,7 +127,7 @@ export default function PurchaseOrdersPage() {
                       <div className="flex gap-4 text-sm">
                         <span>Items: {order.items?.length || 0}</span>
                         <span className="font-semibold text-blue-600">
-                          Total: ₹{order.totalAmount?.toLocaleString()}
+                          Total: {order.totalAmount?.toLocaleString()}
                         </span>
                       </div>
                       <p className="text-xs text-gray-500">
