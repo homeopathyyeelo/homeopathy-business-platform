@@ -18,7 +18,7 @@ class EventProducer {
     if (!this.isConnected) {
       await this.producer.connect()
       this.isConnected = true
-      console.log('✅ Kafka Producer connected')
+      console.log(' Kafka Producer connected')
     }
   }
 
@@ -26,7 +26,7 @@ class EventProducer {
     if (this.isConnected) {
       await this.producer.disconnect()
       this.isConnected = false
-      console.log('🔌 Kafka Producer disconnected')
+      console.log(' Kafka Producer disconnected')
     }
   }
 
@@ -59,9 +59,9 @@ class EventProducer {
       }
 
       await this.producer.send(message)
-      console.log(`📤 Event published to ${topic}:`, fullEvent.eventType)
+      console.log(` Event published to ${topic}:`, fullEvent.eventType)
     } catch (error) {
-      console.error('❌ Error publishing event:', error)
+      console.error(' Error publishing event:', error)
       throw error
     }
   }

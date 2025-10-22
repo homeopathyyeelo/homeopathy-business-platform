@@ -4,139 +4,139 @@ export declare class FinanceController {
     private readonly financeService;
     constructor(financeService: FinanceService);
     createInvoice(createInvoiceDto: CreateInvoiceDto): Promise<{
-        items: ({
-            product: {
-                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                shopId: string;
-                id: string;
-                createdAt: Date;
-                name: string;
-                updatedAt: Date;
-                isActive: boolean;
-                description: string | null;
-                imageUrl: string | null;
-                category: string | null;
-            };
-        } & {
-            productId: string | null;
-            quantity: number;
-            id: string;
-            createdAt: Date;
-            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            description: string;
-            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            invoiceId: string;
-        })[];
         shop: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
-            isActive: boolean;
+            name: string;
+            email: string | null;
             address: string;
+            isActive: boolean;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
+            name: string;
+            email: string | null;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;
             marketingConsent: boolean;
             loyaltyPoints: number;
         };
+        items: ({
+            product: {
+                description: string | null;
+                id: string;
+                shopId: string;
+                createdAt: Date;
+                updatedAt: Date;
+                name: string;
+                isActive: boolean;
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                imageUrl: string | null;
+                category: string | null;
+            };
+        } & {
+            description: string;
+            id: string;
+            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            createdAt: Date;
+            quantity: number;
+            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            productId: string | null;
+            invoiceId: string;
+        })[];
     } & {
         type: import("@yeelo/shared-db").$Enums.InvoiceType;
+        id: string;
+        invoiceNumber: string;
         customerId: string;
         shopId: string;
-        notes: string | null;
-        id: string;
-        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
-        createdAt: Date;
-        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-        updatedAt: Date;
         orderId: string | null;
-        paymentTerms: string | null;
-        createdBy: string | null;
-        dueDate: Date | null;
-        invoiceNumber: string;
+        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
         subtotal: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
         taxAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        notes: string | null;
+        paymentTerms: string | null;
+        dueDate: Date | null;
+        createdBy: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     getInvoices(shopId?: string, customerId?: string, status?: string, page?: number, limit?: number): Promise<{
         invoices: ({
-            items: ({
-                product: {
-                    price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                    shopId: string;
-                    id: string;
-                    createdAt: Date;
-                    name: string;
-                    updatedAt: Date;
-                    isActive: boolean;
-                    description: string | null;
-                    imageUrl: string | null;
-                    category: string | null;
-                };
-            } & {
-                productId: string | null;
-                quantity: number;
-                id: string;
-                createdAt: Date;
-                totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                description: string;
-                unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                invoiceId: string;
-            })[];
             shop: {
                 id: string;
                 createdAt: Date;
-                name: string;
                 updatedAt: Date;
-                email: string | null;
                 phone: string;
-                isActive: boolean;
+                name: string;
+                email: string | null;
                 address: string;
+                isActive: boolean;
                 workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
             };
             customer: {
                 id: string;
                 createdAt: Date;
-                name: string;
                 updatedAt: Date;
-                email: string | null;
                 phone: string;
+                name: string;
+                email: string | null;
                 address: string | null;
                 dateOfBirth: Date | null;
                 gender: string | null;
                 marketingConsent: boolean;
                 loyaltyPoints: number;
             };
+            items: ({
+                product: {
+                    description: string | null;
+                    id: string;
+                    shopId: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    name: string;
+                    isActive: boolean;
+                    price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                    imageUrl: string | null;
+                    category: string | null;
+                };
+            } & {
+                description: string;
+                id: string;
+                totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                createdAt: Date;
+                quantity: number;
+                unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                productId: string | null;
+                invoiceId: string;
+            })[];
         } & {
             type: import("@yeelo/shared-db").$Enums.InvoiceType;
+            id: string;
+            invoiceNumber: string;
             customerId: string;
             shopId: string;
-            notes: string | null;
-            id: string;
-            status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
-            createdAt: Date;
-            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            updatedAt: Date;
             orderId: string | null;
-            paymentTerms: string | null;
-            createdBy: string | null;
-            dueDate: Date | null;
-            invoiceNumber: string;
+            status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
             subtotal: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
             taxAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            notes: string | null;
+            paymentTerms: string | null;
+            dueDate: Date | null;
+            createdBy: string | null;
+            createdAt: Date;
+            updatedAt: Date;
         })[];
         pagination: {
             page: number;
@@ -146,151 +146,151 @@ export declare class FinanceController {
         };
     }>;
     getInvoice(id: string): Promise<{
-        items: ({
-            product: {
-                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                shopId: string;
-                id: string;
-                createdAt: Date;
-                name: string;
-                updatedAt: Date;
-                isActive: boolean;
-                description: string | null;
-                imageUrl: string | null;
-                category: string | null;
-            };
-        } & {
-            productId: string | null;
-            quantity: number;
-            id: string;
-            createdAt: Date;
-            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            description: string;
-            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            invoiceId: string;
-        })[];
         shop: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
-            isActive: boolean;
+            name: string;
+            email: string | null;
             address: string;
+            isActive: boolean;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
+            name: string;
+            email: string | null;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;
             marketingConsent: boolean;
             loyaltyPoints: number;
         };
+        items: ({
+            product: {
+                description: string | null;
+                id: string;
+                shopId: string;
+                createdAt: Date;
+                updatedAt: Date;
+                name: string;
+                isActive: boolean;
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                imageUrl: string | null;
+                category: string | null;
+            };
+        } & {
+            description: string;
+            id: string;
+            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            createdAt: Date;
+            quantity: number;
+            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            productId: string | null;
+            invoiceId: string;
+        })[];
         payments: {
             id: string;
             status: import("@yeelo/shared-db").$Enums.PaymentState;
             createdAt: Date;
-            processedAt: Date;
             invoiceId: string;
             amount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
             paymentMethod: import("@yeelo/shared-db").$Enums.PaymentMethod;
             reference: string | null;
             processedBy: string | null;
+            processedAt: Date;
         }[];
     } & {
         type: import("@yeelo/shared-db").$Enums.InvoiceType;
+        id: string;
+        invoiceNumber: string;
         customerId: string;
         shopId: string;
-        notes: string | null;
-        id: string;
-        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
-        createdAt: Date;
-        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-        updatedAt: Date;
         orderId: string | null;
-        paymentTerms: string | null;
-        createdBy: string | null;
-        dueDate: Date | null;
-        invoiceNumber: string;
+        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
         subtotal: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
         taxAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        notes: string | null;
+        paymentTerms: string | null;
+        dueDate: Date | null;
+        createdBy: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     updateInvoiceStatus(id: string, body: {
         status: string;
     }): Promise<{
-        items: ({
-            product: {
-                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-                shopId: string;
-                id: string;
-                createdAt: Date;
-                name: string;
-                updatedAt: Date;
-                isActive: boolean;
-                description: string | null;
-                imageUrl: string | null;
-                category: string | null;
-            };
-        } & {
-            productId: string | null;
-            quantity: number;
-            id: string;
-            createdAt: Date;
-            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            description: string;
-            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-            invoiceId: string;
-        })[];
         shop: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
-            isActive: boolean;
+            name: string;
+            email: string | null;
             address: string;
+            isActive: boolean;
             workingHours: import("@yeelo/shared-db/generated/client/runtime/library").JsonValue | null;
         };
         customer: {
             id: string;
             createdAt: Date;
-            name: string;
             updatedAt: Date;
-            email: string | null;
             phone: string;
+            name: string;
+            email: string | null;
             address: string | null;
             dateOfBirth: Date | null;
             gender: string | null;
             marketingConsent: boolean;
             loyaltyPoints: number;
         };
+        items: ({
+            product: {
+                description: string | null;
+                id: string;
+                shopId: string;
+                createdAt: Date;
+                updatedAt: Date;
+                name: string;
+                isActive: boolean;
+                price: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+                imageUrl: string | null;
+                category: string | null;
+            };
+        } & {
+            description: string;
+            id: string;
+            totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            createdAt: Date;
+            quantity: number;
+            unitPrice: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            taxRate: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+            productId: string | null;
+            invoiceId: string;
+        })[];
     } & {
         type: import("@yeelo/shared-db").$Enums.InvoiceType;
+        id: string;
+        invoiceNumber: string;
         customerId: string;
         shopId: string;
-        notes: string | null;
-        id: string;
-        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
-        createdAt: Date;
-        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
-        updatedAt: Date;
         orderId: string | null;
-        paymentTerms: string | null;
-        createdBy: string | null;
-        dueDate: Date | null;
-        invoiceNumber: string;
+        status: import("@yeelo/shared-db").$Enums.InvoiceStatus;
         subtotal: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
         taxAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        totalAmount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
+        notes: string | null;
+        paymentTerms: string | null;
+        dueDate: Date | null;
+        createdBy: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     recordPayment(body: {
         invoiceId: string;
@@ -301,12 +301,12 @@ export declare class FinanceController {
         id: string;
         status: import("@yeelo/shared-db").$Enums.PaymentState;
         createdAt: Date;
-        processedAt: Date;
         invoiceId: string;
         amount: import("@yeelo/shared-db/generated/client/runtime/library").Decimal;
         paymentMethod: import("@yeelo/shared-db").$Enums.PaymentMethod;
         reference: string | null;
         processedBy: string | null;
+        processedAt: Date;
     }>;
     getProfitLossReport(shopId?: string, dateFrom?: string, dateTo?: string): Promise<{
         revenue: number;

@@ -69,7 +69,7 @@ export class AIService {
   async calculateDynamicPricing(request: any) {
     // TODO: Implement dynamic pricing algorithm
     const basePrice = request.current_price
-    const adjustment = (Math.random() - 0.5) * 0.2 // ±10% adjustment
+    const adjustment = (Math.random() - 0.5) * 0.2 // 10% adjustment
     return {
       recommendedPrice: basePrice * (1 + adjustment),
       confidence: 0.85,

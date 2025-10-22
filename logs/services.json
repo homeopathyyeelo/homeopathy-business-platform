@@ -1,5 +1,5 @@
 {
-  "started_at": "2025-10-22T23:41:19+05:30",
+  "started_at": "2025-10-22T23:52:08+05:30",
   "docker": {
     "postgres": { "port": 5432, "status": "running" },
     "redis": { "port": 6379, "status": "running" },
@@ -8,28 +8,28 @@
   },
   "microservices": {
     "product_service": {
-      "pid": 152369,
+      "pid": 164299,
       "port": 8001
     },
     "inventory_service": {
-      "pid": 152377,
+      "pid": 164306,
       "port": 8002
     },
     "sales_service": {
-      "pid": 152384,
+      "pid": 164314,
       "port": 8003
     },
     "api_gateway": {
-      "pid": 152395,
+      "pid": 164329,
       "port": 4000
     },
     "ai_service": {
-      "pid": 152408,
+      "pid": 164335,
       "port": 8010
     }
   },
   "frontend": {
-    "pid": 152733,
+    "pid": 164669,
     "port": 3000,
     "url": "http://localhost:3000"
   }

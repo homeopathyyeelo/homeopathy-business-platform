@@ -119,3 +119,46 @@ turbo 2.5.8
 @yeelo/api-nest:dev: {"level":"WARN","timestamp":"2025-10-22T17:18:27.667Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
 @yeelo/api-nest:dev: {"level":"WARN","timestamp":"2025-10-22T17:18:27.669Z","logger":"kafkajs","message":"[Producer] Limiting retries for the idempotent producer may invalidate EoS guarantees"}
 @yeelo/api-nest:dev: [31m[Nest] 116661  - [39m10/22/2025, 10:48:28 PM [31m  ERROR[39m [38;5;3m[PackageLoader] [39m[31mNo driver (HTTP) has been selected. In order to take advantage of the default driver, please, ensure to install the "@nestjs/platform-express" package ($ npm install @nestjs/platform-express).[39m
+@yeelo/api-express:dev: [32m[nodemon] restarting due to changes...[39m
+@yeelo/api-express:dev: [32m[nodemon] restarting due to changes...[39m
+@yeelo/api-express:dev: [32m[nodemon] starting `node src/index.js`[39m
+@yeelo/api-fastify:dev: [INFO] 23:42:35 Restarting: /var/www/homeopathy-business-platform/services/api-fastify/src/index.ts has been modified
+@yeelo/kafka-events:dev: [INFO] 23:42:35 Restarting: /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts has been modified
+@yeelo/api-nest:dev: [2J[3J[H[[90m11:42:35 PM[0m] File change detected. Starting incremental compilation...
+@yeelo/api-nest:dev: 
+@yeelo/kafka-events:dev: Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-events/src/consumer' imported from /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts
+@yeelo/kafka-events:dev:     at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+@yeelo/kafka-events:dev:     at moduleResolve (node:internal/modules/esm/resolve:859:10)
+@yeelo/kafka-events:dev:     at defaultResolve (node:internal/modules/esm/resolve:983:11)
+@yeelo/kafka-events:dev:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:783:12)
+@yeelo/kafka-events:dev:     at ModuleLoader.#cachedDefaultResolve (node:internal/modules/esm/loader:707:25)
+@yeelo/kafka-events:dev:     at ModuleLoader.#resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:742:38)
+@yeelo/kafka-events:dev:     at ModuleLoader.resolveSync (node:internal/modules/esm/loader:765:52)
+@yeelo/kafka-events:dev:     at ModuleLoader.#cachedResolveSync (node:internal/modules/esm/loader:726:25)
+@yeelo/kafka-events:dev:     at ModuleLoader.getModuleJobForRequire (node:internal/modules/esm/loader:453:50)
+@yeelo/kafka-events:dev:     at new ModuleJobSync (node:internal/modules/esm/module_job:393:34)
+@yeelo/kafka-events:dev: [ERROR] 23:42:35 Error: Cannot find module '/var/www/homeopathy-business-platform/services/kafka-events/src/consumer' imported from /var/www/homeopathy-business-platform/services/kafka-events/src/index.ts
+@yeelo/api-nest:dev: [[90m11:42:36 PM[0m] Found 0 errors. Watching for file changes.
+@yeelo/api-nest:dev: 
+@yeelo/api-express:dev:  Express API running on port 3013
+@yeelo/api-express:dev:  Swagger docs available at http://localhost:3013/api-docs
+@yeelo/api-fastify:dev: prisma:info Starting a postgresql pool with 9 connections.
+@yeelo/api-fastify:dev: [23:42:37.285] [31mERROR[39m (154488): [36mCan't reach database server at `localhost:5433`
+@yeelo/api-fastify:dev: 
+@yeelo/api-fastify:dev: Please make sure your database server is running at `localhost:5433`.[39m
+@yeelo/api-fastify:dev:     err: {
+@yeelo/api-fastify:dev:       "type": "PrismaClientInitializationError",
+@yeelo/api-fastify:dev:       "message": "Can't reach database server at `localhost:5433`\n\nPlease make sure your database server is running at `localhost:5433`.",
+@yeelo/api-fastify:dev:       "stack":
+@yeelo/api-fastify:dev:           PrismaClientInitializationError: Can't reach database server at `localhost:5433`
+@yeelo/api-fastify:dev:           
+@yeelo/api-fastify:dev:           Please make sure your database server is running at `localhost:5433`.
+@yeelo/api-fastify:dev:               at t (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:112:2488)
+@yeelo/api-fastify:dev:               at registerPrisma (/var/www/homeopathy-business-platform/services/api-fastify/src/plugins/prisma.ts:17:3)
+@yeelo/api-fastify:dev:       "name": "PrismaClientInitializationError",
+@yeelo/api-fastify:dev:       "clientVersion": "5.22.0",
+@yeelo/api-fastify:dev:       "errorCode": "P1001"
+@yeelo/api-fastify:dev:     }
+@yeelo/api-nest:dev: {"level":"WARN","timestamp":"2025-10-22T18:12:38.162Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
+@yeelo/api-nest:dev: {"level":"WARN","timestamp":"2025-10-22T18:12:38.164Z","logger":"kafkajs","message":"[Producer] Limiting retries for the idempotent producer may invalidate EoS guarantees"}
+@yeelo/api-nest:dev: [31m[Nest] 154544  - [39m10/22/2025, 11:42:39 PM [31m  ERROR[39m [38;5;3m[PackageLoader] [39m[31mNo driver (HTTP) has been selected. In order to take advantage of the default driver, please, ensure to install the "@nestjs/platform-express" package ($ npm install @nestjs/platform-express).[39m

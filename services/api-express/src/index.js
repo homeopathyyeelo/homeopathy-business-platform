@@ -184,8 +184,8 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Express API running on port ${PORT}`);
-  console.log(`📚 Swagger docs available at http://localhost:${PORT}/api-docs`);
+  console.log(` Express API running on port ${PORT}`);
+  console.log(` Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
 
 module.exports = app;

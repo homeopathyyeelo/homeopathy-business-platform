@@ -78,8 +78,8 @@ const start = async () => {
     const host = process.env.HOST || "0.0.0.0"
 
     await fastify.listen({ port, host })
-    fastify.log.info(`🚀 Fastify API server listening on ${host}:${port}`)
-    fastify.log.info(`📚 Swagger docs available at http://${host}:${port}/documentation`)
+    fastify.log.info(` Fastify API server listening on ${host}:${port}`)
+    fastify.log.info(` Swagger docs available at http://${host}:${port}/documentation`)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)

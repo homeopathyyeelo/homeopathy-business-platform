@@ -81,7 +81,7 @@ export class CouponService {
     if (orderAmount && coupon.minAmount && orderAmount < Number(coupon.minAmount)) {
       return {
         valid: false,
-        error: `Minimum order amount of ₹${Number(coupon.minAmount)} required`,
+        error: `Minimum order amount of ${Number(coupon.minAmount)} required`,
       }
     }
 
