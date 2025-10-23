@@ -1,7 +1,7 @@
 import { Calculator } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const gstreturn-periodsConfig = {
+const gstReturnPeriodsConfig = {
   endpoint: 'gst-return-periods',
   title: 'GST Return Periods',
   description: 'Manage gst return periods for your ERP system',
@@ -27,5 +27,5 @@ const gstreturn-periodsConfig = {
 }
 
 export default function GSTReturnPeriodsPage() {
-  return <GenericMasterPage config={gstreturn-periodsConfig} />
+  return <GenericMasterPage config={gstReturnPeriodsConfig} />
 }

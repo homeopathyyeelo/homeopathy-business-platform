@@ -1,7 +1,7 @@
 import { Shield } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const twofactor-settingsConfig = {
+const twofactorSETTINGSConfig = {
   endpoint: 'two-factor-settings',
   title: '2FA Settings',
   description: 'Manage 2fa settings for your ERP system',

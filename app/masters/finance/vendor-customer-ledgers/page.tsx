@@ -1,7 +1,7 @@
 import { Calculator } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const vendorcustomer-ledgersConfig = {
+const vendorcustomerLEDGERSConfig = {
   endpoint: 'vendor-customer-ledgers',
   title: 'Vendor Customer Ledgers',
   description: 'Manage vendor customer ledgers for your ERP system',

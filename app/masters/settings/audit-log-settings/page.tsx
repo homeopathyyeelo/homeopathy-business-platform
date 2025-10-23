@@ -1,7 +1,7 @@
 import { Settings } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const auditlog-settingsConfig = {
+const auditlogSETTINGSConfig = {
   endpoint: 'audit-log-settings',
   title: 'Audit Log Settings',
   description: 'Manage audit log settings for your ERP system',

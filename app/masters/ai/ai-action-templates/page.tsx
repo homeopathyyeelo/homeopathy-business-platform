@@ -1,7 +1,7 @@
 import { Bot } from "lucide-react"
 import GenericMasterPage from "@/components/generic-master-page"
 
-const aiaction-templatesConfig = {
+const aiactionTEMPLATESConfig = {
   endpoint: 'ai-action-templates',
   title: 'AI Action Templates',
   description: 'Manage ai action templates for your ERP system',

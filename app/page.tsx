@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ShoppingCart, 
@@ -20,6 +22,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 export default function Home() {
+  const router = useRouter();
+  
+  // Auto-redirect to dashboard after 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/dashboard');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [router]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
