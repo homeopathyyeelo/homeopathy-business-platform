@@ -17,3 +17,25 @@
  ○ Compiling /api/auth/me ...
  ✓ Compiled /api/auth/me in 1024ms (1423 modules)
  GET /api/auth/me 200 in 1380ms
+ GET /sales/pos 200 in 688ms
+ GET /api/auth/me 200 in 130ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 867ms (1450 modules)
+ GET /products 200 in 1286ms
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 652ms (1452 modules)
+ GET /api/products 200 in 842ms
+ ✓ Compiled / in 466ms (1473 modules)
+ GET / 200 in 846ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 1461ms (1512 modules)
+ GET /products/1 200 in 2335ms
+ GET /products/1 200 in 484ms
+ ✓ Compiled in 1420ms (1563 modules)
+ GET /products/1 200 in 491ms
+ GET /products/1 200 in 685ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 575ms (915 modules)
+ GET /api/auth/me 200 in 864ms
+ GET /products/1 200 in 670ms
+ GET /api/auth/me 200 in 93ms
