@@ -2,5 +2,10 @@
 > @yeelo/api-nest@1.0.0 dev
 > nest start --watch
 
-[1G[0K[2J[3J[H[[90m6:53:44 PM[0m] Starting compilation in watch mode...
+[1G[0K[2J[3J[H[[90m5:06:59 PM[0m] Starting compilation in watch mode...
 
+[[90m5:07:06 PM[0m] Found 0 errors. Watching for file changes.
+
+{"level":"WARN","timestamp":"2025-10-23T11:37:07.688Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
+{"level":"WARN","timestamp":"2025-10-23T11:37:07.689Z","logger":"kafkajs","message":"[Producer] Limiting retries for the idempotent producer may invalidate EoS guarantees"}
+[31m[Nest] 196858  - [39m10/23/2025, 5:07:08 PM [31m  ERROR[39m [38;5;3m[PackageLoader] [39m[31mNo driver (HTTP) has been selected. In order to take advantage of the default driver, please, ensure to install the "@nestjs/platform-express" package ($ npm install @nestjs/platform-express).[39m

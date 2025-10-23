@@ -83,12 +83,16 @@ app.get('/health', (req, res) => {
  */
 app.get('/api/products', async (req, res) => {
   try {
-    // TODO: Implement database query
+    const { Pool } = require('pg');
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy' });
+    const result = await pool.query('SELECT * FROM products WHERE is_active = true ORDER BY created_at DESC LIMIT 50');
     res.json({
       success: true,
-      data: [],
-      message: 'Products endpoint - Express API',
+      data: result.rows,
+      count: result.rows.length,
+      message: 'Products fetched successfully',
     });
+    await pool.end();
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -111,12 +115,16 @@ app.get('/api/products', async (req, res) => {
  */
 app.get('/api/orders', async (req, res) => {
   try {
-    // TODO: Implement database query
+    const { Pool } = require('pg');
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy' });
+    const result = await pool.query('SELECT * FROM sales_orders ORDER BY order_date DESC LIMIT 50');
     res.json({
       success: true,
-      data: [],
-      message: 'Orders endpoint - Express API',
+      data: result.rows,
+      count: result.rows.length,
+      message: 'Orders fetched successfully',
     });
+    await pool.end();
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -139,12 +147,16 @@ app.get('/api/orders', async (req, res) => {
  */
 app.get('/api/customers', async (req, res) => {
   try {
-    // TODO: Implement database query
+    const { Pool } = require('pg');
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy' });
+    const result = await pool.query('SELECT * FROM customers WHERE is_active = true ORDER BY created_at DESC LIMIT 50');
     res.json({
       success: true,
-      data: [],
-      message: 'Customers endpoint - Express API',
+      data: result.rows,
+      count: result.rows.length,
+      message: 'Customers fetched successfully',
     });
+    await pool.end();
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -172,8 +184,8 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Express API running on port ${PORT}`);
-  console.log(`📚 Swagger docs available at http://localhost:${PORT}/api-docs`);
+  console.log(` Express API running on port ${PORT}`);
+  console.log(` Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
 
 module.exports = app;

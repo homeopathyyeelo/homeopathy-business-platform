@@ -46,13 +46,9 @@ fastify.register(authPlugin)
 fastify.register(swaggerPlugin)
 
 // Register API routes
-// fastify.register(authRoutes, { prefix: "/api/auth" })
 fastify.register(productsRoutes, { prefix: "/api/products" })
-// fastify.register(customersRoutes, { prefix: "/api/customers" })
-// fastify.register(ordersRoutes, { prefix: "/api/orders" })
-// fastify.register(analyticsRoutes, { prefix: "/api/analytics" })
 
-// Register existing campaign routes
+// Register marketing routes (Fastify's specialty)
 fastify.register(campaignsRoutes, { prefix: "/api/campaigns" })
 fastify.register(templatesRoutes, { prefix: "/api/templates" })
 fastify.register(couponsRoutes, { prefix: "/api/coupons" })
@@ -82,8 +78,8 @@ const start = async () => {
     const host = process.env.HOST || "0.0.0.0"
 
     await fastify.listen({ port, host })
-    fastify.log.info(`🚀 Fastify API server listening on ${host}:${port}`)
-    fastify.log.info(`📚 Swagger docs available at http://${host}:${port}/documentation`)
+    fastify.log.info(` Fastify API server listening on ${host}:${port}`)
+    fastify.log.info(` Swagger docs available at http://${host}:${port}/documentation`)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)

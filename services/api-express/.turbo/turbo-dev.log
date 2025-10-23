@@ -7,5 +7,5 @@
 [33m[nodemon] watching path(s): *.*[39m
 [33m[nodemon] watching extensions: js,mjs,cjs,json[39m
 [32m[nodemon] starting `node src/index.js`[39m
-🚀 Express API running on port 3013
-📚 Swagger docs available at http://localhost:3013/api-docs
+ Express API running on port 3013
+ Swagger docs available at http://localhost:3013/api-docs

@@ -84,7 +84,7 @@ interface AuthenticatedRequest extends Request {
   user?: any
 }
 
-const authServiceBase = process.env.AUTH_SERVICE_URL || "http://auth-service:3001"
+const authServiceBase = process.env.AUTH_SERVICE_URL || "http://api-nest:3001"
 const jwks = createRemoteJWKSet(new URL(`${authServiceBase}/.well-known/jwks.json`))
 
 async function verifyTokenRS256(token: string) {
@@ -123,10 +123,10 @@ const authenticateToken = async (req: AuthenticatedRequest, res: Response, next:
 
 const services = {
   auth: authServiceBase,
-  orders: process.env.ORDERS_SERVICE_URL || "http://orders-service:3002",
-  campaigns: process.env.CAMPAIGNS_SERVICE_URL || "http://campaigns-service:3003",
-  ai: process.env.AI_SERVICE_URL || "http://ai-service:3004",
-  analytics: process.env.ANALYTICS_SERVICE_URL || "http://analytics-service:3005",
+  orders: process.env.ORDERS_SERVICE_URL || "http://api-fastify:3002",
+  campaigns: process.env.CAMPAIGNS_SERVICE_URL || "http://api-express:3003",
+  ai: process.env.AI_SERVICE_URL || "http://ai-service:8001",
+  analytics: process.env.ANALYTICS_SERVICE_URL || "http://api-golang:3004",
 }
 
 app.get("/health", (req: Request, res: Response) => {
@@ -138,10 +138,14 @@ app.use(
   createProxyMiddleware({
     target: services.auth,
     changeOrigin: true,
-    pathRewrite: { "^/api/auth": "" },
-    onError: (err, req, res) => {
-      console.error("[API Gateway] Auth service error:", err)
-      ;(res as Response).status(503).json({ error: "Auth service unavailable" })
+    pathRewrite: {
+      "^/api/auth": "",
+    },
+    on: {
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Auth service error:", err)
+        ;(res as Response).status(503).json({ error: "Auth service unavailable" })
+      },
     },
   })
 )
@@ -153,15 +157,17 @@ app.use(
     target: services.orders,
     changeOrigin: true,
     pathRewrite: { "^/api/orders": "" },
-    onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
-      if (req.user) {
-        proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
-        proxyReq.setHeader("X-User-Role", req.user.role || "")
-      }
-    },
-    onError: (err, req, res) => {
-      console.error("[API Gateway] Orders service error:", err)
-      ;(res as Response).status(503).json({ error: "Orders service unavailable" })
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Orders service error:", err)
+        ;(res as Response).status(503).json({ error: "Orders service unavailable" })
+      },
     },
   })
 )
@@ -173,15 +179,17 @@ app.use(
     target: services.campaigns,
     changeOrigin: true,
     pathRewrite: { "^/api/campaigns": "" },
-    onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
-      if (req.user) {
-        proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
-        proxyReq.setHeader("X-User-Role", req.user.role || "")
-      }
-    },
-    onError: (err, req, res) => {
-      console.error("[API Gateway] Campaigns service error:", err)
-      ;(res as Response).status(503).json({ error: "Campaigns service unavailable" })
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Campaigns service error:", err)
+        ;(res as Response).status(503).json({ error: "Campaigns service unavailable" })
+      },
     },
   })
 )
@@ -193,15 +201,17 @@ app.use(
     target: services.ai,
     changeOrigin: true,
     pathRewrite: { "^/api/ai": "" },
-    onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
-      if (req.user) {
-        proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
-        proxyReq.setHeader("X-User-Role", req.user.role || "")
-      }
-    },
-    onError: (err, req, res) => {
-      console.error("[API Gateway] AI service error:", err)
-      ;(res as Response).status(503).json({ error: "AI service unavailable" })
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] AI service error:", err)
+        ;(res as Response).status(503).json({ error: "AI service unavailable" })
+      },
     },
   })
 )
@@ -213,15 +223,17 @@ app.use(
     target: services.analytics,
     changeOrigin: true,
     pathRewrite: { "^/api/analytics": "" },
-    onProxyReq: (proxyReq, req: AuthenticatedRequest) => {
-      if (req.user) {
-        proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
-        proxyReq.setHeader("X-User-Role", req.user.role || "")
-      }
-    },
-    onError: (err, req, res) => {
-      console.error("[API Gateway] Analytics service error:", err)
-      ;(res as Response).status(503).json({ error: "Analytics service unavailable" })
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Analytics service error:", err)
+        ;(res as Response).status(503).json({ error: "Analytics service unavailable" })
+      },
     },
   })
 )

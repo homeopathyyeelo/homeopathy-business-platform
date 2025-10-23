@@ -2,16 +2,21 @@
 > @yeelo/api-fastify@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[1G[0K[[36mINFO[0m] [30;1m18:53:43[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-Error: unable to determine transport target for "pino-pretty"
-    at fixTarget (/var/www/homeopathy-business-platform/node_modules/pino/lib/transport.js:160:13)
-    at transport (/var/www/homeopathy-business-platform/node_modules/pino/lib/transport.js:130:22)
-    at normalizeArgs (/var/www/homeopathy-business-platform/node_modules/pino/lib/tools.js:358:16)
-    at pino (/var/www/homeopathy-business-platform/node_modules/pino/pino.js:91:28)
-    at createPinoLogger (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/lib/logger.js:42:14)
-    at createLogger (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/lib/logger.js:101:18)
-    at fastify (/var/www/homeopathy-business-platform/services/api-fastify/node_modules/fastify/fastify.js:135:33)
-    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-fastify/src/index.ts:16:24)
-    at Module.<anonymous> (node:internal/modules/cjs/loader:1688:14)
-    at Module._compile (/var/www/homeopathy-business-platform/node_modules/source-map-support/source-map-support.js:568:25)
-[[31;1mERROR[0m] [30;1m18:53:45[0m Error: unable to determine transport target for "pino-pretty"
+[1G[0K[[36mINFO[0m] [30;1m17:06:58[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[36mprisma:info[39m Starting a postgresql pool with 9 connections.
+[17:07:01.742] [31mERROR[39m (196557): [36mCan't reach database server at `localhost:5433`
+
+Please make sure your database server is running at `localhost:5433`.[39m
+    err: {
+      "type": "PrismaClientInitializationError",
+      "message": "Can't reach database server at `localhost:5433`\n\nPlease make sure your database server is running at `localhost:5433`.",
+      "stack":
+          PrismaClientInitializationError: Can't reach database server at `localhost:5433`
+          
+          Please make sure your database server is running at `localhost:5433`.
+              at t (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:112:2488)
+              at registerPrisma (/var/www/homeopathy-business-platform/services/api-fastify/src/plugins/prisma.ts:17:3)
+      "name": "PrismaClientInitializationError",
+      "clientVersion": "5.22.0",
+      "errorCode": "P1001"
+    }

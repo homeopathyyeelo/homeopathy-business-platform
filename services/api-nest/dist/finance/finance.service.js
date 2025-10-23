@@ -299,8 +299,8 @@ let FinanceService = class FinanceService {
     }
     async getCurrencyRates() {
         return {
-            INR: { rate: 1, symbol: "₹" },
-            EUR: { rate: 0.011, symbol: "€" },
+            INR: { rate: 1, symbol: "" },
+            EUR: { rate: 0.011, symbol: "" },
             USD: { rate: 0.012, symbol: "$" },
         };
     }

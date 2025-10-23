@@ -26,3 +26,7 @@ func Init(databaseURL string) *gorm.DB {
 	log.Println("✅ Database connected and migrated successfully")
 	return db
 }
+
+func GetDB() *gorm.DB {
+	return DB
+}

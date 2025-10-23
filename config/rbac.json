@@ -1,0 +1,310 @@
+{
+  "version": "1.0",
+  "description": "Role-Based Access Control configuration for ERP",
+  "roles": [
+    {
+      "id": "SUPER_ADMIN",
+      "name": "Super Administrator",
+      "description": "Full system access - all modules, all actions",
+      "level": 1,
+      "permissions": ["*"]
+    },
+    {
+      "id": "ACCOUNTANT",
+      "name": "Accountant",
+      "description": "Finance, GST, reports access",
+      "level": 3,
+      "permissions": [
+        "finance.*",
+        "reports.sales:read",
+        "reports.purchases:read",
+        "reports.inventory:read",
+        "customers.ledger:read",
+        "vendors.ledger:read",
+        "sales.invoices:read",
+        "purchases.invoices:read"
+      ]
+    },
+    {
+      "id": "INVENTORY_MANAGER",
+      "name": "Inventory Manager",
+      "description": "Full inventory control",
+      "level": 3,
+      "permissions": [
+        "inventory.*",
+        "products.*",
+        "purchases.orders:*",
+        "purchases.grn:*",
+        "reports.inventory:*",
+        "reports.dead-stock:*"
+      ]
+    },
+    {
+      "id": "SALES_REP",
+      "name": "Sales Representative",
+      "description": "POS, sales orders, customer management",
+      "level": 4,
+      "permissions": [
+        "sales.pos:*",
+        "sales.orders:create",
+        "sales.orders:read",
+        "sales.invoices:create",
+        "sales.invoices:read",
+        "customers:read",
+        "customers:create",
+        "customers:update",
+        "products:read",
+        "inventory.stock:read"
+      ]
+    },
+    {
+      "id": "PURCHASE_MANAGER",
+      "name": "Purchase Manager",
+      "description": "Purchase orders, vendor management",
+      "level": 3,
+      "permissions": [
+        "purchases.*",
+        "vendors.*",
+        "inventory.stock:read",
+        "products:read",
+        "reports.purchases:*"
+      ]
+    },
+    {
+      "id": "WAREHOUSE_STAFF",
+      "name": "Warehouse Staff",
+      "description": "Stock movements, transfers, adjustments",
+      "level": 5,
+      "permissions": [
+        "inventory.stock:read",
+        "inventory.adjustments:create",
+        "inventory.transfers:*",
+        "inventory.batches:read",
+        "purchases.grn:create",
+        "purchases.grn:read",
+        "products:read"
+      ]
+    },
+    {
+      "id": "HR_MANAGER",
+      "name": "HR Manager",
+      "description": "Employee, attendance, payroll management",
+      "level": 3,
+      "permissions": [
+        "hr.*",
+        "reports.payroll:*",
+        "reports.attendance:*"
+      ]
+    },
+    {
+      "id": "MARKETING",
+      "name": "Marketing Manager",
+      "description": "Campaigns, social media, analytics",
+      "level": 3,
+      "permissions": [
+        "marketing.*",
+        "ai.campaigns:*",
+        "customers:read",
+        "customers.segments:*",
+        "analytics.campaigns:*",
+        "reports.customers:read"
+      ]
+    },
+    {
+      "id": "ANALYST",
+      "name": "Business Analyst",
+      "description": "Read-only access to all reports and analytics",
+      "level": 4,
+      "permissions": [
+        "reports.*:read",
+        "analytics.*:read",
+        "dashboard:read"
+      ]
+    },
+    {
+      "id": "CASHIER",
+      "name": "Cashier",
+      "description": "POS billing only",
+      "level": 5,
+      "permissions": [
+        "sales.pos:create",
+        "sales.pos:read",
+        "customers:read",
+        "products:read",
+        "inventory.stock:read"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "resource": "dashboard",
+      "actions": ["read"]
+    },
+    {
+      "resource": "products",
+      "actions": ["create", "read", "update", "delete", "import", "export"]
+    },
+    {
+      "resource": "products.categories",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "products.brands",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "inventory",
+      "actions": ["read"]
+    },
+    {
+      "resource": "inventory.stock",
+      "actions": ["read", "adjust"]
+    },
+    {
+      "resource": "inventory.adjustments",
+      "actions": ["create", "read", "approve"]
+    },
+    {
+      "resource": "inventory.transfers",
+      "actions": ["create", "read", "approve"]
+    },
+    {
+      "resource": "inventory.batches",
+      "actions": ["create", "read", "update"]
+    },
+    {
+      "resource": "sales",
+      "actions": ["read"]
+    },
+    {
+      "resource": "sales.pos",
+      "actions": ["create", "read", "hold", "resume"]
+    },
+    {
+      "resource": "sales.orders",
+      "actions": ["create", "read", "update", "cancel"]
+    },
+    {
+      "resource": "sales.invoices",
+      "actions": ["create", "read", "update", "cancel", "print"]
+    },
+    {
+      "resource": "sales.returns",
+      "actions": ["create", "read", "approve"]
+    },
+    {
+      "resource": "purchases",
+      "actions": ["read"]
+    },
+    {
+      "resource": "purchases.orders",
+      "actions": ["create", "read", "update", "approve", "cancel"]
+    },
+    {
+      "resource": "purchases.grn",
+      "actions": ["create", "read", "approve"]
+    },
+    {
+      "resource": "purchases.invoices",
+      "actions": ["create", "read", "update"]
+    },
+    {
+      "resource": "customers",
+      "actions": ["create", "read", "update", "delete", "import", "export"]
+    },
+    {
+      "resource": "customers.ledger",
+      "actions": ["read"]
+    },
+    {
+      "resource": "customers.segments",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "vendors",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "vendors.ledger",
+      "actions": ["read"]
+    },
+    {
+      "resource": "finance",
+      "actions": ["read"]
+    },
+    {
+      "resource": "finance.ledgers",
+      "actions": ["create", "read", "update"]
+    },
+    {
+      "resource": "finance.gst",
+      "actions": ["read", "file"]
+    },
+    {
+      "resource": "hr",
+      "actions": ["read"]
+    },
+    {
+      "resource": "hr.employees",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "hr.attendance",
+      "actions": ["create", "read", "update"]
+    },
+    {
+      "resource": "hr.payroll",
+      "actions": ["create", "read", "process"]
+    },
+    {
+      "resource": "marketing",
+      "actions": ["read"]
+    },
+    {
+      "resource": "marketing.campaigns",
+      "actions": ["create", "read", "update", "send"]
+    },
+    {
+      "resource": "ai",
+      "actions": ["read"]
+    },
+    {
+      "resource": "ai.campaigns",
+      "actions": ["generate"]
+    },
+    {
+      "resource": "ai.chat",
+      "actions": ["use"]
+    },
+    {
+      "resource": "analytics",
+      "actions": ["read"]
+    },
+    {
+      "resource": "reports",
+      "actions": ["read", "export"]
+    },
+    {
+      "resource": "settings",
+      "actions": ["read", "update"]
+    },
+    {
+      "resource": "settings.users",
+      "actions": ["create", "read", "update", "delete"]
+    },
+    {
+      "resource": "settings.roles",
+      "actions": ["create", "read", "update", "delete"]
+    }
+  ],
+  "permission_wildcards": {
+    "*": "All permissions on all resources",
+    "products.*": "All actions on products module",
+    "inventory.*": "All actions on inventory module",
+    "sales.*": "All actions on sales module",
+    "purchases.*": "All actions on purchases module",
+    "finance.*": "All actions on finance module",
+    "hr.*": "All actions on HR module",
+    "marketing.*": "All actions on marketing module"
+  }
+}

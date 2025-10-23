@@ -4,9 +4,9 @@
   "description": "AI Service for Yeelo Homeopathy Platform - Handles content generation, forecasting, and automation",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "python3 main.py",
+    "dev": "./venv/bin/python main.py",
     "build": "echo 'Python service - no build needed'",
-    "start": "python3 main.py",
+    "start": "./venv/bin/python main.py",
     "test": "python3 -m pytest",
     "lint": "python3 -m flake8 src/",
     "docker:build": "docker build -t yeelo-ai-service .",

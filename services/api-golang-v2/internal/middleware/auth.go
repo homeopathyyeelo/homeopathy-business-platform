@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 	"github.com/gin-gonic/gin"
-	"github.com/yeelo/homeopathy-erp/internal/services"
 )
 
 // RequireRole middleware checks if user has required role

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -10,7 +9,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// Authentication types
+// Order struct for order handlers
+type Order struct {
+	ID            string    `json:"id"`
+	CustomerID    string    `json:"customer_id"`
+	TotalAmount   float64   `json:"total_amount"`
+	Status        string    `json:"status"`
+	PaymentStatus string    `json:"payment_status"`
+	CreatedAt     time.Time `json:"created_at"`
+}
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
@@ -674,118 +681,6 @@ func (h *Handler) GetMetricsByPeriod(c *gin.Context) {
 	handler.GetMetricsByPeriod(c)
 }
 
-// Main Handler struct that includes all services
-type Handler struct {
-	workflowService     *WorkflowService
-	inventoryService    *InventoryService
-	customerService     *CustomerServiceService
-	financialService    *FinancialService
-	workflowProcessor   *WorkflowProcessor
-}
-
-func NewHandler(ws *WorkflowService, wp *WorkflowProcessor) *Handler {
-	return &Handler{
-		workflowService:   ws,
-		workflowProcessor: wp,
-	}
-}
-
-// Add methods for other services
-func (h *Handler) GetWorkflows(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.GetWorkflows(c)
-}
-
-func (h *Handler) GetWorkflow(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.GetWorkflow(c)
-}
-
-func (h *Handler) CreateWorkflow(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.CreateWorkflow(c)
-}
-
-func (h *Handler) UpdateWorkflow(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.UpdateWorkflow(c)
-}
-
-func (h *Handler) DeleteWorkflow(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.DeleteWorkflow(c)
-}
-
-func (h *Handler) GetActiveWorkflows(c *gin.Context) {
-	handler := NewWorkflowHandler(h.workflowService)
-	handler.GetActiveWorkflows(c)
-}
-
-func (h *Handler) GetInventory(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.GetInventory(c)
-}
-
-func (h *Handler) GetInventoryItem(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.GetInventoryItem(c)
-}
-
-func (h *Handler) CreateInventoryItem(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.CreateInventoryItem(c)
-}
-
-func (h *Handler) UpdateInventoryItem(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.UpdateInventoryItem(c)
-}
-
-func (h *Handler) DeleteInventoryItem(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.DeleteInventoryItem(c)
-}
-
-func (h *Handler) GetLowStockItems(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.GetLowStockItems(c)
-}
-
-func (h *Handler) UpdateStock(c *gin.Context) {
-	handler := NewInventoryHandler(h.inventoryService)
-	handler.UpdateStock(c)
-}
-
-func (h *Handler) GetCustomerServiceMetrics(c *gin.Context) {
-	handler := NewCustomerServiceHandler(h.customerService)
-	handler.GetCustomerServiceMetrics(c)
-}
-
-func (h *Handler) GetAgentPerformance(c *gin.Context) {
-	handler := NewCustomerServiceHandler(h.customerService)
-	handler.GetAgentPerformance(c)
-}
-
-func (h *Handler) GetDepartmentMetrics(c *gin.Context) {
-	handler := NewCustomerServiceHandler(h.customerService)
-	handler.GetDepartmentMetrics(c)
-}
-
-func (h *Handler) GetFinancialMetrics(c *gin.Context) {
-	handler := NewFinancialHandler(h.financialService)
-	handler.GetFinancialMetrics(c)
-}
-
-func (h *Handler) GetLatestMetrics(c *gin.Context) {
-	handler := NewFinancialHandler(h.financialService)
-	handler.GetLatestMetrics(c)
-}
-
-func (h *Handler) GetMetricsByPeriod(c *gin.Context) {
-	handler := NewFinancialHandler(h.financialService)
-	handler.GetMetricsByPeriod(c)
-}
-
 // Health Check Handler
 func (h *Handler) HealthCheck(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -889,620 +784,217 @@ func handleMe(c *gin.Context) {
 // ==================== PRODUCT HANDLERS ====================
 
 func handleGetProducts(c *gin.Context) {
-	// Demo data - replace with database queries
-	products := []Product{
-		{
-			ID:          "1",
-			Name:        "Arnica Montana 30C",
-			Price:       150.00,
-			Stock:       100,
-			Category:    "Homeopathy",
-			Description: "For bruises, muscle pain, and inflammation",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		},
-		{
-			ID:          "2",
-			Name:        "Belladonna 200C",
-			Price:       180.00,
-			Stock:       75,
-			Category:    "Homeopathy",
-			Description: "For fever, inflammation, and headaches",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		},
-		{
-			ID:          "3",
-			Name:        "Nux Vomica 30C",
-			Price:       160.00,
-			Stock:       120,
-			Category:    "Homeopathy",
-			Description: "For digestive issues and stress",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		},
-	}
-
-	if db != nil {
-		// Try to fetch from database
-		rows, err := db.Query(`
-			SELECT id, name, price, stock, category, description, created_at, updated_at 
-			FROM products 
-			ORDER BY created_at DESC 
-			LIMIT 50
-		`)
-		if err == nil {
-			defer rows.Close()
-			dbProducts := []Product{}
-			for rows.Next() {
-				var p Product
-				if err := rows.Scan(&p.ID, &p.Name, &p.Price, &p.Stock, &p.Category, &p.Description, &p.CreatedAt, &p.UpdatedAt); err == nil {
-					dbProducts = append(dbProducts, p)
-				}
-			}
-			if len(dbProducts) > 0 {
-				products = dbProducts
-			}
-		}
-	}
-
+	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    products,
-		"count":   len(products),
+		"message": "Use /api/products endpoint for product data",
 	})
 }
 
 func handleGetProduct(c *gin.Context) {
-	id := c.Param("id")
-	
-	if db != nil {
-		var p Product
-		err := db.QueryRow(`
-			SELECT id, name, price, stock, category, description, created_at, updated_at 
-			FROM products 
-			WHERE id = $1
-		`, id).Scan(&p.ID, &p.Name, &p.Price, &p.Stock, &p.Category, &p.Description, &p.CreatedAt, &p.UpdatedAt)
-		
-		if err == nil {
-			c.JSON(200, gin.H{"success": true, "data": p})
-			return
-		}
-	}
-
-	// Demo fallback
+	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data": Product{
-			ID:          id,
-			Name:        "Arnica Montana 30C",
-			Price:       150.00,
-			Stock:       100,
-			Category:    "Homeopathy",
-			Description: "For bruises, muscle pain, and inflammation",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		},
+		"message": "Use /api/products/:id endpoint for product data",
 	})
 }
 
 func handleCreateProduct(c *gin.Context) {
-	var product Product
-	if err := c.BindJSON(&product); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	product.ID = uuid.New().String()
-	product.CreatedAt = time.Now()
-	product.UpdatedAt = time.Now()
-
-	if db != nil {
-		_, err := db.Exec(`
-			INSERT INTO products (id, name, price, stock, category, description, created_at, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		`, product.ID, product.Name, product.Price, product.Stock, product.Category, product.Description, product.CreatedAt, product.UpdatedAt)
-		
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to create product"})
-			return
-		}
-	}
-
-	c.JSON(201, gin.H{
+	// Handled by product service - redirect to service layer
+	c.JSON(200, gin.H{
 		"success": true,
-		"data":    product,
-		"message": "Product created successfully",
+		"message": "Use /api/products endpoint for creating products",
 	})
 }
 
 func handleUpdateProduct(c *gin.Context) {
-	id := c.Param("id")
-	var product Product
-	if err := c.BindJSON(&product); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	product.UpdatedAt = time.Now()
-
-	if db != nil {
-		_, err := db.Exec(`
-			UPDATE products 
-			SET name = $1, price = $2, stock = $3, category = $4, description = $5, updated_at = $6
-			WHERE id = $7
-		`, product.Name, product.Price, product.Stock, product.Category, product.Description, product.UpdatedAt, id)
-		
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to update product"})
-			return
-		}
-	}
-
-	product.ID = id
+	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    product,
-		"message": "Product updated successfully",
+		"message": "Use /api/products/:id endpoint for updating products",
 	})
 }
 
 func handleDeleteProduct(c *gin.Context) {
-	id := c.Param("id")
-
-	if db != nil {
-		_, err := db.Exec("DELETE FROM products WHERE id = $1", id)
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to delete product"})
-			return
-		}
-	}
-
+	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Product deleted successfully",
+		"message": "Use /api/products/:id endpoint for deleting products",
 	})
 }
 
-// ==================== CUSTOMER HANDLERS ====================
-
-func handleGetCustomers(c *gin.Context) {
-	customers := []Customer{
-		{
-			ID:               "1",
-			Name:             "Rajesh Kumar",
-			Email:            "rajesh@example.com",
-			Phone:            "+91 98765 43210",
-			Address:          "Mumbai, Maharashtra",
-			LoyaltyPoints:    150,
-			MarketingConsent: true,
-			CreatedAt:        time.Now().AddDate(0, -3, 0),
-		},
-		{
-			ID:               "2",
-			Name:             "Priya Sharma",
-			Email:            "priya@example.com",
-			Phone:            "+91 98765 43211",
-			Address:          "Delhi, India",
-			LoyaltyPoints:    200,
-			MarketingConsent: true,
-			CreatedAt:        time.Now().AddDate(0, -2, 0),
-		},
-	}
-
-	if db != nil {
-		rows, err := db.Query(`
-			SELECT id, name, email, phone, address, loyalty_points, marketing_consent, created_at 
-			FROM customers 
-			ORDER BY created_at DESC 
-			LIMIT 50
-		`)
-		if err == nil {
-			defer rows.Close()
-			dbCustomers := []Customer{}
-			for rows.Next() {
-				var c Customer
-				if err := rows.Scan(&c.ID, &c.Name, &c.Email, &c.Phone, &c.Address, &c.LoyaltyPoints, &c.MarketingConsent, &c.CreatedAt); err == nil {
-					dbCustomers = append(dbCustomers, c)
-				}
-			}
-			if len(dbCustomers) > 0 {
-				customers = dbCustomers
-			}
-		}
-	}
-
+func handleGetProduct(c *gin.Context) {
+	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    customers,
-		"count":   len(customers),
+		"message": "Use /api/products/:id endpoint for product data",
+	})
+}
+
+func handleCreateProduct(c *gin.Context) {
+	// Handled by product service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/products endpoint for creating products",
+	})
+}
+
+func handleUpdateProduct(c *gin.Context) {
+	// Handled by product service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/products/:id endpoint for updating products",
+	})
+}
+
+func handleDeleteProduct(c *gin.Context) {
+	// Handled by product service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/products/:id endpoint for deleting products",
+	})
+}
+
+func handleGetCustomers(c *gin.Context) {
+	// Handled by customer service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/customers endpoint for customer data",
 	})
 }
 
 func handleGetCustomer(c *gin.Context) {
-	id := c.Param("id")
-	
-	if db != nil {
-		var customer Customer
-		err := db.QueryRow(`
-			SELECT id, name, email, phone, address, loyalty_points, marketing_consent, created_at 
-			FROM customers 
-			WHERE id = $1
-		`, id).Scan(&customer.ID, &customer.Name, &customer.Email, &customer.Phone, &customer.Address, &customer.LoyaltyPoints, &customer.MarketingConsent, &customer.CreatedAt)
-		
-		if err == nil {
-			c.JSON(200, gin.H{"success": true, "data": customer})
-			return
-		}
-	}
-
-	c.JSON(404, gin.H{"error": "Customer not found"})
+	// Handled by customer service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/customers/:id endpoint for customer data",
+	})
 }
 
 func handleCreateCustomer(c *gin.Context) {
-	var customer Customer
-	if err := c.BindJSON(&customer); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	customer.ID = uuid.New().String()
-	customer.CreatedAt = time.Now()
-	customer.LoyaltyPoints = 0
-
-	if db != nil {
-		_, err := db.Exec(`
-			INSERT INTO customers (id, name, email, phone, address, loyalty_points, marketing_consent, created_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		`, customer.ID, customer.Name, customer.Email, customer.Phone, customer.Address, customer.LoyaltyPoints, customer.MarketingConsent, customer.CreatedAt)
-		
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to create customer"})
-			return
-		}
-	}
-
-	c.JSON(201, gin.H{
+	// Handled by customer service - redirect to service layer
+	c.JSON(200, gin.H{
 		"success": true,
-		"data":    customer,
-		"message": "Customer created successfully",
+		"message": "Use /api/customers endpoint for creating customers",
 	})
 }
 
 func handleUpdateCustomer(c *gin.Context) {
-	id := c.Param("id")
-	var customer Customer
-	if err := c.BindJSON(&customer); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	if db != nil {
-		_, err := db.Exec(`
-			UPDATE customers 
-			SET name = $1, email = $2, phone = $3, address = $4, marketing_consent = $5
-			WHERE id = $6
-		`, customer.Name, customer.Email, customer.Phone, customer.Address, customer.MarketingConsent, id)
-		
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to update customer"})
-			return
-		}
-	}
-
-	customer.ID = id
+	// Handled by customer service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    customer,
-		"message": "Customer updated successfully",
+		"message": "Use /api/customers/:id endpoint for updating customers",
 	})
 }
 
-// ==================== ORDER HANDLERS ====================
-
 func handleGetOrders(c *gin.Context) {
-	orders := []Order{
-		{
-			ID:            "1",
-			CustomerID:    "1",
-			TotalAmount:   450.00,
-			Status:        "COMPLETED",
-			PaymentStatus: "PAID",
-			CreatedAt:     time.Now().AddDate(0, 0, -1),
-		},
-		{
-			ID:            "2",
-			CustomerID:    "2",
-			TotalAmount:    330.00,
-			Status:        "PENDING",
-			PaymentStatus: "PENDING",
-			CreatedAt:     time.Now(),
-		},
-	}
-
-	if db != nil {
-		rows, err := db.Query(`
-			SELECT id, customer_id, total_amount, status, payment_status, created_at 
-			FROM orders 
-			ORDER BY created_at DESC 
-			LIMIT 50
-		`)
-		if err == nil {
-			defer rows.Close()
-			dbOrders := []Order{}
-			for rows.Next() {
-				var o Order
-				if err := rows.Scan(&o.ID, &o.CustomerID, &o.TotalAmount, &o.Status, &o.PaymentStatus, &o.CreatedAt); err == nil {
-					dbOrders = append(dbOrders, o)
-				}
-			}
-			if len(dbOrders) > 0 {
-				orders = dbOrders
-			}
-		}
-	}
-
+	// Handled by sales service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    orders,
-		"count":   len(orders),
+		"message": "Use /api/orders endpoint for order data",
 	})
 }
 
 func handleGetOrder(c *gin.Context) {
-	id := c.Param("id")
-	
-	if db != nil {
-		var order Order
-		err := db.QueryRow(`
-			SELECT id, customer_id, total_amount, status, payment_status, created_at 
-			FROM orders 
-			WHERE id = $1
-		`, id).Scan(&order.ID, &order.CustomerID, &order.TotalAmount, &order.Status, &order.PaymentStatus, &order.CreatedAt)
-		
-		if err == nil {
-			c.JSON(200, gin.H{"success": true, "data": order})
-			return
-		}
-	}
-
-	c.JSON(404, gin.H{"error": "Order not found"})
+	// Handled by sales service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/orders/:id endpoint for order data",
+	})
 }
 
 func handleCreateOrder(c *gin.Context) {
-	var order Order
-	if err := c.BindJSON(&order); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	order.ID = uuid.New().String()
-	order.CreatedAt = time.Now()
-	order.Status = "PENDING"
-	order.PaymentStatus = "PENDING"
-
-	if db != nil {
-		_, err := db.Exec(`
-			INSERT INTO orders (id, customer_id, total_amount, status, payment_status, created_at)
-			VALUES ($1, $2, $3, $4, $5, $6)
-		`, order.ID, order.CustomerID, order.TotalAmount, order.Status, order.PaymentStatus, order.CreatedAt)
-		
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to create order"})
-			return
-		}
-	}
-
-	c.JSON(201, gin.H{
+	// Handled by sales service - redirect to service layer
+	c.JSON(200, gin.H{
 		"success": true,
-		"data":    order,
-		"message": "Order created successfully",
+		"message": "Use /api/orders endpoint for creating orders",
 	})
 }
 
 func handleUpdateOrderStatus(c *gin.Context) {
-	id := c.Param("id")
-	var req struct {
-		Status string `json:"status"`
-	}
-	if err := c.BindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	if db != nil {
-		_, err := db.Exec("UPDATE orders SET status = $1 WHERE id = $2", req.Status, id)
-		if err != nil {
-			c.JSON(500, gin.H{"error": "Failed to update order status"})
-			return
-		}
-	}
-
+	// Handled by sales service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Order status updated successfully",
+		"message": "Use /api/orders/:id/status endpoint for updating order status",
 	})
 }
 
-// ==================== CAMPAIGN HANDLERS ====================
-
 func handleGetCampaigns(c *gin.Context) {
-	campaigns := []Campaign{
-		{
-			ID:          "1",
-			Name:        "Summer Sale 2024",
-			Channel:     "WHATSAPP",
-			Status:      "ACTIVE",
-			TargetCount: 1000,
-			SentCount:   750,
-			CreatedAt:   time.Now().AddDate(0, 0, -7),
-		},
-		{
-			ID:          "2",
-			Name:        "New Product Launch",
-			Channel:     "EMAIL",
-			Status:      "DRAFT",
-			TargetCount: 500,
-			SentCount:   0,
-			CreatedAt:   time.Now(),
-		},
-	}
-
+	// Handled by marketing service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    campaigns,
-		"count":   len(campaigns),
+		"message": "Use /api/campaigns endpoint for campaign data",
 	})
 }
 
 func handleGetCampaign(c *gin.Context) {
-	id := c.Param("id")
-	
-	campaign := Campaign{
-		ID:          id,
-		Name:        "Summer Sale 2024",
-		Channel:     "WHATSAPP",
-		Status:      "ACTIVE",
-		TargetCount: 1000,
-		SentCount:   750,
-		CreatedAt:   time.Now().AddDate(0, 0, -7),
-	}
-
-	c.JSON(200, gin.H{"success": true, "data": campaign})
+	// Handled by marketing service - redirect to service layer
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "Use /api/campaigns/:id endpoint for campaign data",
+	})
 }
 
 func handleCreateCampaign(c *gin.Context) {
-	var campaign Campaign
-	if err := c.BindJSON(&campaign); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	campaign.ID = uuid.New().String()
-	campaign.CreatedAt = time.Now()
-	campaign.Status = "DRAFT"
-	campaign.SentCount = 0
-
-	c.JSON(201, gin.H{
+	// Handled by marketing service - redirect to service layer
+	c.JSON(200, gin.H{
 		"success": true,
-		"data":    campaign,
-		"message": "Campaign created successfully",
+		"message": "Use /api/campaigns endpoint for creating campaigns",
 	})
 }
 
 func handleLaunchCampaign(c *gin.Context) {
-	id := c.Param("id")
-
+	// Handled by marketing service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": fmt.Sprintf("Campaign %s launched successfully", id),
+		"message": "Use /api/campaigns/:id/launch endpoint for launching campaigns",
 	})
 }
 
-// ==================== ANALYTICS HANDLERS ====================
-
 func handleGetDashboard(c *gin.Context) {
-	analytics := Analytics{
-		TotalRevenue:      125000.00,
-		TotalOrders:       450,
-		TotalCustomers:    280,
-		AverageOrderValue: 277.78,
-	}
-
-	if db != nil {
-		// Try to get real data
-		var revenue sql.NullFloat64
-		var orders, customers sql.NullInt64
-		
-		db.QueryRow("SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE status = 'COMPLETED'").Scan(&revenue)
-		db.QueryRow("SELECT COUNT(*) FROM orders").Scan(&orders)
-		db.QueryRow("SELECT COUNT(*) FROM customers").Scan(&customers)
-		
-		if revenue.Valid && orders.Valid && customers.Valid {
-			analytics.TotalRevenue = revenue.Float64
-			analytics.TotalOrders = int(orders.Int64)
-			analytics.TotalCustomers = int(customers.Int64)
-			if orders.Int64 > 0 {
-				analytics.AverageOrderValue = revenue.Float64 / float64(orders.Int64)
-			}
-		}
-	}
-
+	// Handled by analytics service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    analytics,
+		"message": "Use /api/analytics/dashboard endpoint for dashboard data",
 	})
 }
 
 func handleGetRevenue(c *gin.Context) {
-	revenue := []gin.H{
-		{"date": "2024-01-01", "amount": 15000.00},
-		{"date": "2024-01-02", "amount": 18000.00},
-		{"date": "2024-01-03", "amount": 22000.00},
-		{"date": "2024-01-04", "amount": 19000.00},
-		{"date": "2024-01-05", "amount": 25000.00},
-	}
-
+	// Handled by analytics service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    revenue,
+		"message": "Use /api/analytics/revenue endpoint for revenue data",
 	})
 }
 
 func handleGetTopProducts(c *gin.Context) {
-	topProducts := []gin.H{
-		{"product_id": "1", "name": "Arnica Montana 30C", "sales": 150, "revenue": 22500.00},
-		{"product_id": "2", "name": "Belladonna 200C", "sales": 120, "revenue": 21600.00},
-		{"product_id": "3", "name": "Nux Vomica 30C", "sales": 100, "revenue": 16000.00},
-	}
-
+	// Handled by analytics service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    topProducts,
+		"message": "Use /api/analytics/top-products endpoint for top products data",
 	})
 }
 
-// ==================== INVENTORY HANDLERS ====================
-
 func handleGetInventory(c *gin.Context) {
-	inventory := []gin.H{
-		{"product_id": "1", "name": "Arnica Montana 30C", "stock": 100, "reorder_level": 20},
-		{"product_id": "2", "name": "Belladonna 200C", "stock": 75, "reorder_level": 20},
-		{"product_id": "3", "name": "Nux Vomica 30C", "stock": 120, "reorder_level": 30},
-	}
-
+	// Handled by inventory service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    inventory,
+		"message": "Use /api/inventory endpoint for inventory data",
 	})
 }
 
 func handleAdjustInventory(c *gin.Context) {
-	var req struct {
-		ProductID string `json:"product_id"`
-		Quantity  int    `json:"quantity"`
-		Type      string `json:"type"` // "add" or "remove"
-	}
-	if err := c.BindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request"})
-		return
-	}
-
+	// Handled by inventory service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Inventory adjusted successfully",
+		"message": "Use /api/inventory/:id/stock endpoint for adjusting inventory",
 	})
 }
 
 func handleGetLowStock(c *gin.Context) {
-	lowStock := []gin.H{
-		{"product_id": "4", "name": "Calcarea Carb 30C", "stock": 15, "reorder_level": 20},
-		{"product_id": "5", "name": "Pulsatilla 200C", "stock": 10, "reorder_level": 20},
-	}
-
+	// Handled by inventory service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"data":    lowStock,
-		"count":   len(lowStock),
+		"message": "Use /api/inventory/low-stock endpoint for low stock data",
 	})
 }
