@@ -78,7 +78,7 @@ const PaymentReminderSystem = () => {
           invoice_id: invoice.id,
           reminder_type: 'overdue',
           reminder_date: today,
-          message: `Dear ${customer.first_name}, your invoice ${invoice.invoice_number} of ₹${invoice.total} is overdue. Please make payment to avoid late charges.`,
+          message: `Dear ${customer.first_name}, your invoice ${invoice.invoice_number} of ${invoice.total} is overdue. Please make payment to avoid late charges.`,
           status: 'pending'
         });
 
@@ -104,7 +104,7 @@ const PaymentReminderSystem = () => {
           invoice_id: invoice.id,
           reminder_type: 'upcoming_due',
           reminder_date: dueDate,
-          message: `Dear ${customer.first_name}, your invoice ${invoice.invoice_number} of ₹${invoice.total} is due on ${format(dueDate, 'dd/MM/yyyy')}. Please arrange payment.`,
+          message: `Dear ${customer.first_name}, your invoice ${invoice.invoice_number} of ${invoice.total} is due on ${format(dueDate, 'dd/MM/yyyy')}. Please arrange payment.`,
           status: 'pending'
         });
 
@@ -187,7 +187,7 @@ const PaymentReminderSystem = () => {
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{overdueInvoices.length}</div>
             <p className="text-xs text-muted-foreground">
-              ₹{overdueInvoices.reduce((sum, inv) => sum + (inv.balance_due || inv.total), 0).toLocaleString('en-IN')} total
+              {overdueInvoices.reduce((sum, inv) => sum + (inv.balance_due || inv.total), 0).toLocaleString('en-IN')} total
             </p>
           </CardContent>
         </Card>
@@ -200,7 +200,7 @@ const PaymentReminderSystem = () => {
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">{upcomingDueInvoices.length}</div>
             <p className="text-xs text-muted-foreground">
-              ₹{upcomingDueInvoices.reduce((sum, inv) => sum + (inv.balance_due || inv.total), 0).toLocaleString('en-IN')} total
+              {upcomingDueInvoices.reduce((sum, inv) => sum + (inv.balance_due || inv.total), 0).toLocaleString('en-IN')} total
             </p>
           </CardContent>
         </Card>
@@ -280,7 +280,7 @@ const PaymentReminderSystem = () => {
                         <TableCell>
                           {customer ? `${customer.first_name} ${customer.last_name}` : 'Unknown'}
                         </TableCell>
-                        <TableCell>₹{(invoice.balance_due || invoice.total).toLocaleString('en-IN')}</TableCell>
+                        <TableCell>{(invoice.balance_due || invoice.total).toLocaleString('en-IN')}</TableCell>
                         <TableCell>{format(dueDate, 'dd/MM/yyyy')}</TableCell>
                         <TableCell>
                           <Badge variant="destructive">{daysOverdue} days</Badge>
@@ -345,7 +345,7 @@ const PaymentReminderSystem = () => {
                         <TableCell>
                           {customer ? `${customer.first_name} ${customer.last_name}` : 'Unknown'}
                         </TableCell>
-                        <TableCell>₹{(invoice.balance_due || invoice.total).toLocaleString('en-IN')}</TableCell>
+                        <TableCell>{(invoice.balance_due || invoice.total).toLocaleString('en-IN')}</TableCell>
                         <TableCell>{format(dueDate, 'dd/MM/yyyy')}</TableCell>
                         <TableCell>
                           <Badge className="bg-orange-100 text-orange-800">{daysUntilDue} days</Badge>

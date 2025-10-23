@@ -364,7 +364,7 @@ export default function AddProductPage() {
                       {formData.variants.map((variant, index) => (
                         <div key={index} className="flex items-center gap-2 p-2 border rounded">
                           <Badge>{variant.potency}</Badge>
-                          <span>₹{variant.price}</span>
+                          <span>{variant.price}</span>
                           <span>{variant.stock} units</span>
                           <Button
                             type="button"
@@ -415,7 +415,7 @@ export default function AddProductPage() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {formData.tags.map((tag, index) => (
                       <Badge key={index} variant="secondary" className="cursor-pointer" onClick={() => removeTag(tag)}>
-                        {tag} ×
+                        {tag} 
                       </Badge>
                     ))}
                   </div>

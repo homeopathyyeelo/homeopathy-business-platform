@@ -352,7 +352,7 @@ const QuickBilling = () => {
                           className="w-16"
                         />
                       </TableCell>
-                      <TableCell>₹{item.unitPrice.toFixed(2)}</TableCell>
+                      <TableCell>{item.unitPrice.toFixed(2)}</TableCell>
                       <TableCell>
                         <Input
                           type="number"
@@ -363,7 +363,7 @@ const QuickBilling = () => {
                           className="w-16"
                         />
                       </TableCell>
-                      <TableCell>₹{item.total.toFixed(2)}</TableCell>
+                      <TableCell>{item.total.toFixed(2)}</TableCell>
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -392,24 +392,24 @@ const QuickBilling = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span>₹{totals.subtotal}</span>
+                <span>{totals.subtotal}</span>
               </div>
               <div className="flex justify-between">
                 <span>Discount:</span>
-                <span>-₹{totals.totalDiscount}</span>
+                <span>-{totals.totalDiscount}</span>
               </div>
               <div className="flex justify-between">
                 <span>Taxable Amount:</span>
-                <span>₹{totals.taxableAmount}</span>
+                <span>{totals.taxableAmount}</span>
               </div>
               <div className="flex justify-between">
                 <span>GST:</span>
-                <span>₹{totals.gstAmount}</span>
+                <span>{totals.gstAmount}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total:</span>
-                <span>₹{totals.total}</span>
+                <span>{totals.total}</span>
               </div>
             </div>
 

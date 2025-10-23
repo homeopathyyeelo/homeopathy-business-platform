@@ -48,7 +48,7 @@ const EnhancedInventoryDashboard = () => {
     return sum + (item.purchasePrice * item.quantityInStock);
   }, 0);
 
-  const formatCurrency = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+  const formatCurrency = (amount: number) => `${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 
   return (
     <div className="space-y-6">

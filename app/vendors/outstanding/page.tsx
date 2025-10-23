@@ -124,7 +124,7 @@ export default function VendorOutstandingPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalOutstanding.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalOutstanding.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -221,10 +221,10 @@ export default function VendorOutstandingPage() {
                   <TableCell>{record.invoice_number}</TableCell>
                   <TableCell>{new Date(record.invoice_date).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(record.due_date).toLocaleDateString()}</TableCell>
-                  <TableCell>₹{record.amount.toLocaleString()}</TableCell>
-                  <TableCell>₹{record.paid_amount.toLocaleString()}</TableCell>
+                  <TableCell>{record.amount.toLocaleString()}</TableCell>
+                  <TableCell>{record.paid_amount.toLocaleString()}</TableCell>
                   <TableCell className="font-semibold">
-                    ₹{record.outstanding_amount.toLocaleString()}
+                    {record.outstanding_amount.toLocaleString()}
                   </TableCell>
                   <TableCell>
                     {record.days_overdue > 0 ? (

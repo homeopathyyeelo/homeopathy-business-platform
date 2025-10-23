@@ -4,65 +4,16 @@
 
    ▲ Next.js 15.5.6
    - Local:        http://localhost:3000
-   - Network:      http://192.168.1.7:3000
+   - Network:      http://192.168.1.6:3000
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2s
+ ✓ Ready in 2.2s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 799ms (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 7.2s (1161 modules)
- GET / 200 in 7888ms
+ ✓ Compiled /middleware in 914ms (159 modules)
+ ○ Compiling /sales/pos ...
+ ✓ Compiled /sales/pos in 9.3s (1360 modules)
+ GET /sales/pos 200 in 10233ms
  ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 1047ms (1224 modules)
- GET /api/auth/me 401 in 1321ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 5.1s (2834 modules)
- GET /dashboard 200 in 5358ms
- GET /dashboard 200 in 100ms
- GET /dashboard 200 in 683ms
- GET /api/auth/me 401 in 126ms
- ○ Compiling /products ...
- ✓ Compiled /products in 716ms (2855 modules)
- GET /products 200 in 908ms
- ○ Compiling /products/add ...
- ✓ Compiled /products/add in 730ms (2890 modules)
- GET /products/add 200 in 876ms
- GET / 200 in 386ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 688ms (2891 modules)
- GET /manufacturing/orders 404 in 777ms
- GET /manufacturing/orders 404 in 363ms
- GET /api/auth/me 401 in 267ms
- ○ Compiling /settings/company ...
- ✓ Compiled /settings/company in 582ms (2898 modules)
- GET /settings/company 200 in 732ms
- GET /api/settings/company 404 in 230ms
- GET /api/settings/company 404 in 125ms
- GET /settings/whatsapp-gateway 404 in 33ms
- GET /settings/whatsapp-gateway 404 in 93ms
- GET /api/auth/me 401 in 187ms
- ○ Compiling /inventory/stock ...
- ✓ Compiled /inventory/stock in 520ms (2905 modules)
- GET /inventory/stock 200 in 663ms
- ○ Compiling /inventory/adjustments ...
- ✓ Compiled /inventory/adjustments in 818ms (2912 modules)
- GET /inventory/adjustments 200 in 970ms
- ○ Compiling /inventory/reconciliation ...
- ✓ Compiled /inventory/reconciliation in 586ms (2919 modules)
- GET /inventory/reconciliation 200 in 725ms
- GET /api/inventory/reconciliation 404 in 236ms
- GET /api/inventory/reconciliation 404 in 133ms
- ○ Compiling /sales/invoices ...
- ✓ Compiled /sales/invoices in 584ms (2926 modules)
- GET /sales/invoices 200 in 745ms
- ○ Compiling /api/sales/invoices ...
- ✓ Compiled /api/sales/invoices in 857ms (2932 modules)
- GET /api/sales/invoices 500 in 1108ms
- GET /api/sales/invoices 500 in 82ms
- ○ Compiling /hr/employees ...
- ✓ Compiled /hr/employees in 666ms (2939 modules)
- GET /hr/employees 200 in 813ms
- GET /api/hr/employees 404 in 243ms
- GET /api/hr/employees 404 in 133ms
+ ✓ Compiled /api/auth/me in 1024ms (1423 modules)
+ GET /api/auth/me 200 in 1380ms

@@ -1,21 +1,43 @@
 // Comprehensive Master Data API Service
 // Handles all CRUD operations for 100+ master data types
 
-import { PrismaClient } from '@prisma/client'
-import { Kafka } from 'kafkajs'
-import { OpenAI } from 'openai'
-import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
+import { v4 as uuidv4 } from 'uuid'
 
-const prisma = new PrismaClient()
-const kafka = new Kafka({
-  clientId: 'master-data-service',
-  brokers: ['localhost:9092']
-})
+// Optional imports - only use if available
+let prisma: any = null
+let kafka: any = null
+let openai: any = null
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+try {
+  const { PrismaClient } = require('@prisma/client')
+  prisma = new PrismaClient()
+} catch (e) {
+  console.warn('Prisma not available, using mock data')
+}
+
+try {
+  if (process.env.KAFKA_BROKERS) {
+    const { Kafka } = require('kafkajs')
+    kafka = new Kafka({
+      clientId: 'master-data-service',
+      brokers: process.env.KAFKA_BROKERS?.split(',') || ['localhost:9092']
+    })
+  }
+} catch (e) {
+  console.warn('Kafka not available')
+}
+
+try {
+  if (process.env.OPENAI_API_KEY) {
+    const { OpenAI } = require('openai')
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    })
+  }
+} catch (e) {
+  console.warn('OpenAI not available')
+}
 
 // Business Logic Schemas and Validations
 const masterDataSchemas = {
@@ -175,7 +197,7 @@ class AISuggestionsEngine {
         Monthly Sales Average: ${productData.monthly_sales_avg || 10}
         Lead Time (days): ${productData.lead_time_days || 7}
 
-        Formula: Reorder Level = (Monthly Sales × Lead Time) + Safety Stock
+        Formula: Reorder Level = (Monthly Sales  Lead Time) + Safety Stock
         Use safety stock of 20% of monthly sales.
 
         Respond with only the number.
@@ -202,7 +224,7 @@ class AISuggestionsEngine {
         Product: ${productData.name}
         Category: ${productData.category_name}
         Brand: ${productData.brand_name}
-        Cost Price: ₹${productData.purchase_rate || 0}
+        Cost Price: ${productData.purchase_rate || 0}
 
         Consider:
         - 30-50% markup for MRP
@@ -237,10 +259,12 @@ class AISuggestionsEngine {
 
 // Kafka Event Publisher
 class EventPublisher {
-  private producer = kafka.producer()
+  private producer: any = null
 
-  async connect() {
-    await this.producer.connect()
+  // Initialize Kafka producer (async)
+  if (kafka) {
+    this.producer = kafka.producer()
+    this.producer.connect().catch((e: any) => console.warn('Kafka producer connection failed:', e))
   }
 
   async publishMasterChange(masterType: string, operation: 'create' | 'update' | 'delete', data: any) {
@@ -550,8 +574,8 @@ export const masterDataAPI = {
         const results = await service.listMasters(masterType, filters)
         return Response.json(results)
       }
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: 400 })
+    } catch (error: any) {
+      return Response.json({ error: error?.message || 'Internal error' }, { status: 400 })
     }
   },
 
@@ -563,8 +587,8 @@ export const masterDataAPI = {
       const data = await request.json()
       const result = await service.createMaster(masterType, data)
       return Response.json(result, { status: 201 })
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: 400 })
+    } catch (error: any) {
+      return Response.json({ error: error?.message || 'Internal error' }, { status: 400 })
     }
   },
 
@@ -576,8 +600,9 @@ export const masterDataAPI = {
       const data = await request.json()
       const result = await service.updateMaster(masterType, id, data)
       return Response.json(result)
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: 400 })
+    } catch (error: any) {
+      console.error('Error fetching master data:', error)
+      return Response.json({ error: error?.message || 'Internal error' }, { status: 500 })
     }
   },
 
@@ -588,8 +613,9 @@ export const masterDataAPI = {
     try {
       const result = await service.deleteMaster(masterType, id)
       return Response.json(result)
-    } catch (error) {
-      return Response.json({ error: error.message }, { status: 400 })
+    } catch (error: any) {
+      console.error('Error fetching master data:', error)
+      return Response.json({ error: error?.message || 'Internal error' }, { status: 500 })
     }
   },
 

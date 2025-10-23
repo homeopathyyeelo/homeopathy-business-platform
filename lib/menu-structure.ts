@@ -5,14 +5,14 @@ export const MENU_STRUCTURE = {
     {
       id: 'dashboard',
       title: 'Dashboard',
-      icon: '📊',
+      icon: '',
       path: '/dashboard',
       hasSubmenu: false,
     },
     {
       id: 'products',
       title: 'Products',
-      icon: '📦',
+      icon: '',
       path: '/products',
       hasSubmenu: true,
       submenu: [
@@ -31,7 +31,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'inventory',
       title: 'Inventory',
-      icon: '📦',
+      icon: '',
       path: '/inventory',
       hasSubmenu: true,
       submenu: [
@@ -50,7 +50,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'sales',
       title: 'Sales',
-      icon: '💰',
+      icon: '',
       path: '/sales',
       hasSubmenu: true,
       submenu: [
@@ -70,7 +70,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'purchases',
       title: 'Purchases',
-      icon: '🛒',
+      icon: '',
       path: '/purchases',
       hasSubmenu: true,
       submenu: [
@@ -88,7 +88,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'customers',
       title: 'Customers',
-      icon: '👥',
+      icon: '',
       path: '/customers',
       hasSubmenu: true,
       submenu: [
@@ -107,7 +107,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'vendors',
       title: 'Vendors',
-      icon: '🏭',
+      icon: '',
       path: '/vendors',
       hasSubmenu: true,
       submenu: [
@@ -125,7 +125,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'hr',
       title: 'HR & Staff',
-      icon: '👔',
+      icon: '',
       path: '/hr',
       hasSubmenu: true,
       submenu: [
@@ -143,7 +143,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'finance',
       title: 'Finance',
-      icon: '💵',
+      icon: '',
       path: '/finance',
       hasSubmenu: true,
       submenu: [
@@ -165,7 +165,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'reports',
       title: 'Reports',
-      icon: '📊',
+      icon: '',
       path: '/reports',
       hasSubmenu: true,
       submenu: [
@@ -185,7 +185,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'marketing',
       title: 'Marketing',
-      icon: '📢',
+      icon: '',
       path: '/marketing',
       hasSubmenu: true,
       submenu: [
@@ -204,7 +204,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'social',
       title: 'Social Media',
-      icon: '📱',
+      icon: '',
       path: '/social',
       hasSubmenu: true,
       submenu: [
@@ -220,7 +220,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'crm',
       title: 'CRM',
-      icon: '🎯',
+      icon: '',
       path: '/crm',
       hasSubmenu: true,
       submenu: [
@@ -236,7 +236,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'ai',
       title: 'AI Tools',
-      icon: '🤖',
+      icon: '',
       path: '/ai',
       hasSubmenu: true,
       submenu: [
@@ -255,7 +255,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'analytics',
       title: 'Analytics',
-      icon: '📈',
+      icon: '',
       path: '/analytics',
       hasSubmenu: true,
       submenu: [
@@ -273,7 +273,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'ai-campaigns',
       title: 'AI Campaigns',
-      icon: '🎨',
+      icon: '',
       path: '/ai-campaigns',
       hasSubmenu: true,
       submenu: [
@@ -287,7 +287,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'ai-insights',
       title: 'AI Insights',
-      icon: '💡',
+      icon: '',
       path: '/ai-insights',
       hasSubmenu: true,
       submenu: [
@@ -302,7 +302,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'ai-lab',
       title: 'AI Lab',
-      icon: '🔬',
+      icon: '',
       path: '/ai-lab',
       hasSubmenu: true,
       submenu: [
@@ -317,7 +317,7 @@ export const MENU_STRUCTURE = {
     {
       id: 'settings',
       title: 'Settings',
-      icon: '⚙️',
+      icon: '',
       path: '/settings',
       hasSubmenu: true,
       submenu: [
@@ -338,27 +338,27 @@ export const MENU_STRUCTURE = {
 
   // LEFT SIDEBAR - Quick Access (Most Used)
   leftSidebar: [
-    { title: 'Dashboard', path: '/dashboard', icon: '📊', badge: null },
-    { title: 'POS', path: '/pos', icon: '💳', badge: 'HOT' },
-    { title: 'Products', path: '/products', icon: '📦', badge: null },
-    { title: 'Stock', path: '/inventory/stock', icon: '📦', badge: null },
-    { title: 'Sales', path: '/sales/invoices', icon: '💰', badge: null },
-    { title: 'Purchases', path: '/purchases', icon: '🛒', badge: null },
-    { title: 'Customers', path: '/customers', icon: '👥', badge: null },
-    { title: 'Vendors', path: '/vendors', icon: '🏭', badge: null },
-    { title: 'Reports', path: '/reports', icon: '📊', badge: null },
-    { title: 'AI Assistant', path: '/ai/chat', icon: '🤖', badge: 'NEW' },
+    { title: 'Dashboard', path: '/dashboard', icon: '', badge: null },
+    { title: 'POS', path: '/pos', icon: '', badge: 'HOT' },
+    { title: 'Products', path: '/products', icon: '', badge: null },
+    { title: 'Stock', path: '/inventory/stock', icon: '', badge: null },
+    { title: 'Sales', path: '/sales/invoices', icon: '', badge: null },
+    { title: 'Purchases', path: '/purchases', icon: '', badge: null },
+    { title: 'Customers', path: '/customers', icon: '', badge: null },
+    { title: 'Vendors', path: '/vendors', icon: '', badge: null },
+    { title: 'Reports', path: '/reports', icon: '', badge: null },
+    { title: 'AI Assistant', path: '/ai/chat', icon: '', badge: 'NEW' },
   ],
 
   // RIGHT SIDEBAR - Quick Actions
   rightSidebar: {
     quickActions: [
-      { title: 'New Sale', path: '/pos', icon: '💰' },
-      { title: 'Add Product', path: '/products/add', icon: '📦' },
-      { title: 'Purchase Order', path: '/purchases/create', icon: '🛒' },
-      { title: 'Stock Transfer', path: '/inventory/transfers', icon: '🔄' },
-      { title: 'Create Campaign', path: '/marketing/create', icon: '📢' },
-      { title: 'AI Insights', path: '/ai-insights', icon: '💡' },
+      { title: 'New Sale', path: '/pos', icon: '' },
+      { title: 'Add Product', path: '/products/add', icon: '' },
+      { title: 'Purchase Order', path: '/purchases/create', icon: '' },
+      { title: 'Stock Transfer', path: '/inventory/transfers', icon: '' },
+      { title: 'Create Campaign', path: '/marketing/create', icon: '' },
+      { title: 'AI Insights', path: '/ai-insights', icon: '' },
     ],
   },
 };

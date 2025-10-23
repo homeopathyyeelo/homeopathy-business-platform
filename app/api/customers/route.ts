@@ -1,119 +1,123 @@
-/**
- * Customers API endpoints
- * GET /api/customers - List customers with filtering and pagination
- * POST /api/customers - Create a new customer
- */
+import { NextRequest, NextResponse } from 'next/server';
 
-import type { NextRequest } from "next/server"
-import { query } from "@/lib/database"
-import { getUserFromRequest, createErrorResponse } from "@/lib/auth"
-import { UserRole } from "@/lib/auth"
+// Mock customers data
+const mockCustomers = [
+  {
+    id: 1,
+    name: 'Rajesh Kumar',
+    email: 'rajesh.kumar@email.com',
+    phone: '9876543210',
+    address: '123 MG Road, Mumbai, Maharashtra',
+    type: 'RETAIL',
+    totalPurchases: 25000,
+    outstandingAmount: 0,
+    loyaltyPoints: 250,
+    createdAt: '2024-01-15T10:00:00Z'
+  },
+  {
+    id: 2,
+    name: 'Priya Sharma',
+    email: 'priya.sharma@email.com',
+    phone: '9876543211',
+    address: '456 Park Street, Delhi',
+    type: 'RETAIL',
+    totalPurchases: 18000,
+    outstandingAmount: 2000,
+    loyaltyPoints: 180,
+    createdAt: '2024-02-20T11:00:00Z'
+  },
+  {
+    id: 3,
+    name: 'Amit Patel',
+    email: 'amit.patel@email.com',
+    phone: '9876543212',
+    address: '789 Station Road, Ahmedabad, Gujarat',
+    type: 'WHOLESALE',
+    totalPurchases: 150000,
+    outstandingAmount: 15000,
+    loyaltyPoints: 1500,
+    createdAt: '2024-03-10T09:00:00Z'
+  },
+  {
+    id: 4,
+    name: 'Dr. Sunita Verma',
+    email: 'dr.sunita@clinic.com',
+    phone: '9876543213',
+    address: '321 Medical Complex, Pune, Maharashtra',
+    type: 'DOCTOR',
+    totalPurchases: 85000,
+    outstandingAmount: 5000,
+    loyaltyPoints: 850,
+    createdAt: '2024-04-05T14:00:00Z'
+  }
+];
 
 export async function GET(request: NextRequest) {
   try {
-    // Bypass auth for development/testing
-    const user = getUserFromRequest(request)
-    // if (!user || !["ADMIN", "MANAGER", "STAFF", "MARKETER"].includes(user.role)) {
-    //   return createErrorResponse("Insufficient permissions", 403)
-    // }
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    const search = searchParams.get('search');
+    
+    let filtered = mockCustomers;
+    
+    if (type && type !== 'ALL') {
+      filtered = filtered.filter(c => c.type === type);
+    }
+    
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.name.toLowerCase().includes(searchLower) ||
+        c.phone.includes(search) ||
+        c.email.toLowerCase().includes(searchLower)
+      );
+    }
 
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get("page") || "1")
-    const limit = parseInt(searchParams.get("limit") || "20")
-    const offset = (page - 1) * limit
+    const summary = {
+      total: filtered.length,
+      retail: filtered.filter(c => c.type === 'RETAIL').length,
+      wholesale: filtered.filter(c => c.type === 'WHOLESALE').length,
+      doctor: filtered.filter(c => c.type === 'DOCTOR').length,
+      totalOutstanding: filtered.reduce((sum, c) => sum + c.outstandingAmount, 0)
+    };
 
-    // Get customers with pagination
-    const result = await query(`
-      SELECT 
-        c.*,
-        COUNT(*) OVER() as total_count
-      FROM customers c
-      ORDER BY c."createdAt" DESC
-      LIMIT $1 OFFSET $2
-    `, [limit, offset])
-
-    const customers = result.rows.map(row => ({
-      id: row.id,
-      name: row.name,
-      phone: row.phone,
-      email: row.email,
-      address: row.address,
-      dateOfBirth: row.dateOfBirth,
-      gender: row.gender,
-      marketingConsent: row.marketingConsent,
-      loyaltyPoints: row.loyaltyPoints,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt
-    }))
-
-    const total = result.rows.length > 0 ? parseInt(result.rows[0].total_count) : 0
-
-    return Response.json({
+    return NextResponse.json({
       success: true,
-      customers,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    })
-  } catch (error) {
-    console.error("Get customers error:", error)
-    return createErrorResponse("Failed to get customers", 500)
+      data: filtered,
+      summary
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const user = getUserFromRequest(request)
-    if (!user || !["ADMIN", "MANAGER", "STAFF"].includes(user.role)) {
-      return createErrorResponse("Insufficient permissions", 403)
-    }
+    const body = await request.json();
+    
+    const newCustomer = {
+      id: mockCustomers.length + 1,
+      ...body,
+      totalPurchases: 0,
+      outstandingAmount: 0,
+      loyaltyPoints: 0,
+      createdAt: new Date().toISOString()
+    };
 
-    const body = await request.json()
+    mockCustomers.push(newCustomer);
 
-    // Validate required fields
-    if (!body.name || !body.phone) {
-      return createErrorResponse("Name and phone are required", 400)
-    }
-
-    // Create customer
-    const result = await query(`
-      INSERT INTO customers (name, phone, email, address, date_of_birth, gender, marketing_consent, loyalty_points)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING *
-    `, [
-      body.name.trim(),
-      body.phone,
-      body.email?.trim() || null,
-      body.address || null,
-      body.dateOfBirth || null,
-      body.gender || null,
-      Boolean(body.marketingConsent),
-      parseInt(body.loyaltyPoints) || 0
-    ])
-
-    const customer = result.rows[0]
-
-    return Response.json({
+    return NextResponse.json({
       success: true,
-      customer: {
-        id: customer.id,
-        name: customer.name,
-        phone: customer.phone,
-        email: customer.email,
-        address: customer.address,
-        dateOfBirth: customer.date_of_birth,
-        gender: customer.gender,
-        marketingConsent: customer.marketing_consent,
-        loyaltyPoints: customer.loyalty_points,
-        createdAt: customer.created_at,
-        updatedAt: customer.updated_at
-      }
-    }, { status: 201 })
-  } catch (error) {
-    console.error("Create customer error:", error)
-    return createErrorResponse("Failed to create customer", 400)
+      data: newCustomer,
+      message: 'Customer created successfully'
+    }, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }

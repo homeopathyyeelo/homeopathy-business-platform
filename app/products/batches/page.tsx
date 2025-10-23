@@ -194,7 +194,7 @@ export default function BatchesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{totalValue.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -275,8 +275,8 @@ export default function BatchesPage() {
                     <TableCell>{new Date(batch.expiry_date).toLocaleDateString()}</TableCell>
                     <TableCell>{batch.quantity}</TableCell>
                     <TableCell>{batch.remaining_quantity}</TableCell>
-                    <TableCell>₹{batch.cost_price}</TableCell>
-                    <TableCell>₹{batch.selling_price}</TableCell>
+                    <TableCell>{batch.cost_price}</TableCell>
+                    <TableCell>{batch.selling_price}</TableCell>
                     <TableCell>
                       <Badge variant={
                         batch.status === 'active' ? 'default' :

@@ -35,7 +35,7 @@ const initialTiers: LoyaltyTier[] = [
     bonusMultiplier: 1.0,
     description: "Entry level tier for all customers",
     benefits: ["Earn 1x points on all purchases"],
-    icon: "🥉",
+    icon: "",
     isActive: true
   },
   {
@@ -44,8 +44,8 @@ const initialTiers: LoyaltyTier[] = [
     minimumPoints: 500,
     bonusMultiplier: 1.2,
     description: "Silver members earn extra points",
-    benefits: ["Earn 1.2x points on all purchases", "Free shipping on orders above ₹500"],
-    icon: "🥈",
+    benefits: ["Earn 1.2x points on all purchases", "Free shipping on orders above 500"],
+    icon: "",
     isActive: true
   },
   {
@@ -55,7 +55,7 @@ const initialTiers: LoyaltyTier[] = [
     bonusMultiplier: 1.5,
     description: "VIP treatment for gold members",
     benefits: ["Earn 1.5x points on all purchases", "Free shipping on all orders", "Priority customer service"],
-    icon: "🥇",
+    icon: "",
     isActive: true
   },
   {
@@ -65,7 +65,7 @@ const initialTiers: LoyaltyTier[] = [
     bonusMultiplier: 2.0,
     description: "Exclusive benefits for our most loyal customers",
     benefits: ["Earn 2x points on all purchases", "Free shipping on all orders", "Priority customer service", "Exclusive early access to new products"],
-    icon: "💎",
+    icon: "",
     isActive: true
   }
 ];
@@ -145,7 +145,7 @@ const LoyaltyTiers = () => {
       bonusMultiplier: 1.0,
       description: "",
       benefits: [],
-      icon: "⭐",
+      icon: "",
       isActive: true
     });
     setDialogOpen(true);

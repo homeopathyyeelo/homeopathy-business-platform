@@ -1,36 +1,4 @@
 {
-  "started_at": "2025-10-23T19:15:54+05:30",
-  "docker": {
-    "postgres": { "port": 5432, "status": "running" },
-    "redis": { "port": 6379, "status": "running" },
-    "kafka": { "port": 9092, "status": "running" },
-    "minio": { "port": 9000, "status": "running" }
-  },
-  "microservices": {
-    "product_service": {
-      "pid": 24004,
-      "port": 8001
-    },
-    "inventory_service": {
-      "pid": 24011,
-      "port": 8002
-    },
-    "sales_service": {
-      "pid": 24018,
-      "port": 8003
-    },
-    "api_gateway": {
-      "pid": 24029,
-      "port": 4000
-    },
-    "ai_service": {
-      "pid": 24048,
-      "port": 8010
-    }
-  },
-  "frontend": {
-    "pid": 24380,
-    "port": 3000,
-    "url": "http://localhost:3000"
-  }
+  "stopped_at": "2025-10-23T20:23:14+05:30",
+  "status": "stopped"
 }

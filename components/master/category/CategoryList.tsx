@@ -70,7 +70,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
     return (
       <TableRow key={category.id}>
         <TableCell className="font-medium">
-          {isSubcategory && <span className="ml-6">↳ </span>}
+          {isSubcategory && <span className="ml-6"> </span>}
           {category.name}
         </TableCell>
         <TableCell>{category.description || 'N/A'}</TableCell>

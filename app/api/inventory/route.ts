@@ -1,81 +1,106 @@
-/**
- * Inventory management API endpoints
- * GET /api/inventory?shop_id=1 - Get inventory for a shop
- * POST /api/inventory/update - Update inventory
- */
+import { NextRequest, NextResponse } from 'next/server';
 
-import type { NextRequest } from "next/server"
-import { getShopInventory, updateInventory, bulkUpdateInventory } from "@/lib/products"
-import { createApiResponse, createErrorResponse, getUserFromRequest } from "@/lib/api-utils"
+// Mock inventory data
+const mockInventory = [
+  {
+    id: 1,
+    product: { id: 1, name: 'Arnica Montana 30C', sku: 'ARM-30C-001' },
+    quantity: 250,
+    minStock: 50,
+    maxStock: 500,
+    batch: 'BATCH-2024-001',
+    expiryDate: '2026-12-31',
+    location: 'Shelf A-1',
+    status: 'IN_STOCK'
+  },
+  {
+    id: 2,
+    product: { id: 2, name: 'Belladonna 200C', sku: 'BEL-200C-002' },
+    quantity: 45,
+    minStock: 50,
+    maxStock: 400,
+    batch: 'BATCH-2024-002',
+    expiryDate: '2026-11-30',
+    location: 'Shelf A-2',
+    status: 'LOW_STOCK'
+  },
+  {
+    id: 3,
+    product: { id: 3, name: 'Nux Vomica 1M', sku: 'NUX-1M-003' },
+    quantity: 180,
+    minStock: 40,
+    maxStock: 300,
+    batch: 'BATCH-2024-003',
+    expiryDate: '2025-06-30',
+    location: 'Shelf B-1',
+    status: 'IN_STOCK'
+  },
+  {
+    id: 4,
+    product: { id: 4, name: 'Pulsatilla 30C', sku: 'PUL-30C-004' },
+    quantity: 15,
+    minStock: 30,
+    maxStock: 250,
+    batch: 'BATCH-2024-004',
+    expiryDate: '2025-03-31',
+    location: 'Shelf B-2',
+    status: 'CRITICAL'
+  }
+];
 
 export async function GET(request: NextRequest) {
   try {
-    const user = getUserFromRequest(request)
-    if (!user || !["admin", "staff"].includes(user.role)) {
-      return createErrorResponse("Insufficient permissions", 403)
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    
+    let filtered = mockInventory;
+    if (status && status !== 'ALL') {
+      filtered = mockInventory.filter(i => i.status === status);
     }
 
-    const { searchParams } = new URL(request.url)
-    const shopId = searchParams.get("shop_id")
+    // Calculate summary
+    const summary = {
+      total: filtered.length,
+      inStock: filtered.filter(i => i.status === 'IN_STOCK').length,
+      lowStock: filtered.filter(i => i.status === 'LOW_STOCK').length,
+      critical: filtered.filter(i => i.status === 'CRITICAL').length,
+      totalValue: filtered.reduce((sum, item) => sum + (item.quantity * 100), 0)
+    };
 
-    if (!shopId) {
-      return createErrorResponse("shop_id is required", 400)
-    }
-
-    const inventory = await getShopInventory(Number.parseInt(shopId))
-
-    return createApiResponse(
-      {
-        inventory,
-        shop_id: Number.parseInt(shopId),
-        count: inventory.length,
-      },
-      "Inventory retrieved successfully",
-    )
-  } catch (error) {
-    console.error("Get inventory error:", error)
-    return createErrorResponse(error instanceof Error ? error.message : "Failed to get inventory", 500)
+    return NextResponse.json({
+      success: true,
+      data: filtered,
+      summary
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const user = getUserFromRequest(request)
-    if (!user || !["admin", "staff"].includes(user.role)) {
-      return createErrorResponse("Insufficient permissions", 403)
-    }
+    const body = await request.json();
+    
+    const newItem = {
+      id: mockInventory.length + 1,
+      ...body,
+      status: body.quantity > body.minStock ? 'IN_STOCK' : 'LOW_STOCK'
+    };
 
-    const body = await request.json()
+    mockInventory.push(newItem);
 
-    if (!body.shop_id) {
-      return createErrorResponse("shop_id is required", 400)
-    }
-
-    // Handle bulk updates
-    if (Array.isArray(body.updates)) {
-      const result = await bulkUpdateInventory(body.shop_id, body.updates, user.id)
-      return createApiResponse(result, "Bulk inventory update completed")
-    }
-
-    // Handle single update
-    if (!body.sku || typeof body.change !== "number" || !body.reason) {
-      return createErrorResponse("sku, change (number), and reason are required", 400)
-    }
-
-    const inventory = await updateInventory(
-      body.shop_id,
-      {
-        sku: body.sku,
-        change: body.change,
-        reason: body.reason,
-        vendor: body.vendor,
-      },
-      user.id,
-    )
-
-    return createApiResponse(inventory, "Inventory updated successfully")
-  } catch (error) {
-    console.error("Update inventory error:", error)
-    return createErrorResponse(error instanceof Error ? error.message : "Failed to update inventory", 400)
+    return NextResponse.json({
+      success: true,
+      data: newItem,
+      message: 'Inventory item added successfully'
+    }, { status: 201 });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }

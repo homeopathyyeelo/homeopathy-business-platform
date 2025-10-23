@@ -300,7 +300,7 @@ const WhatsAppTemplates = () => {
               name="content"
               value={currentTemplate.content || ""}
               onChange={handleInputChange}
-              placeholder="Hello {{customerName}}, your invoice #{{invoiceNumber}} for ₹{{amount}} is ready."
+              placeholder="Hello {{customerName}}, your invoice #{{invoiceNumber}} for {{amount}} is ready."
               className="min-h-[120px]"
             />
             <p className="text-sm text-gray-500">

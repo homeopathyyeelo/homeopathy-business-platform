@@ -108,7 +108,7 @@ const InvoiceItemForm = ({
       
       <td className="p-2 text-right">
         <div className="flex items-center justify-end space-x-1">
-          <span>₹</span>
+          <span></span>
           <Input
             type="number"
             value={item.unitPrice || 0}
@@ -132,7 +132,7 @@ const InvoiceItemForm = ({
               <SelectContent>
                 <SelectItem value="none">None</SelectItem>
                 <SelectItem value="percentage">%</SelectItem>
-                <SelectItem value="amount">₹</SelectItem>
+                <SelectItem value="amount"></SelectItem>
               </SelectContent>
             </Select>
             

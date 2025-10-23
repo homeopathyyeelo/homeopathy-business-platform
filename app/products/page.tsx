@@ -51,7 +51,7 @@ export default function ProductListPage() {
       key: 'unit_price', 
       title: 'Price', 
       sortable: true,
-      render: (val: any, row: any) => <span className="font-semibold">₹{(val ?? row.sellingPrice)?.toLocaleString()}</span>
+      render: (val: any, row: any) => <span className="font-semibold">{(val ?? row.sellingPrice)?.toLocaleString()}</span>
     },
     { 
       key: 'is_active', 
@@ -102,7 +102,7 @@ export default function ProductListPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Stock Value</p>
-              <div className="text-2xl font-bold text-purple-600">₹{stats.totalValue.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-purple-600">{stats.totalValue.toLocaleString()}</div>
             </div>
             <TrendingUp className="w-10 h-10 text-purple-500" />
           </div>

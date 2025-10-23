@@ -92,7 +92,7 @@ const BatchTrackingSystem = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+  const formatCurrency = (amount: number) => `${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 
   return (
     <div className="space-y-6">

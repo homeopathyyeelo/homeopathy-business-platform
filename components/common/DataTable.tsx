@@ -142,7 +142,7 @@ export default function DataTable({
                   <div className="flex items-center gap-2">
                     {col.title}
                     {sortKey === col.key && (
-                      <span>{sortDir === 'asc' ? '↑' : '↓'}</span>
+                      <span>{sortDir === 'asc' ? '' : ''}</span>
                     )}
                   </div>
                 </th>

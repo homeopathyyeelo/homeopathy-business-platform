@@ -5,8 +5,10 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products', 'list'],
     queryFn: async () => {
-      const res = await golangAPI.get('/api/products')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+      // Use Next.js API route instead of external service
+      const res = await fetch('/api/products')
+      const json = await res.json()
+      const data = Array.isArray(json.data) ? json.data : []
       return data as any[]
     },
     staleTime: 60_000,

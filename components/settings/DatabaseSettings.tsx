@@ -392,9 +392,9 @@ export function DatabaseSettings() {
                   <AlertDescription>
                     <strong>Note:</strong> Complete schema and master data files are located in:
                     <br />
-                    • <code>database/postgresql/schema.sql</code> - Full database structure
+                     <code>database/postgresql/schema.sql</code> - Full database structure
                     <br />
-                    • <code>database/postgresql/master_data.sql</code> - Initial data for YEELO HOMEOPATHY
+                     <code>database/postgresql/master_data.sql</code> - Initial data for YEELO HOMEOPATHY
                   </AlertDescription>
                 </Alert>
               </div>

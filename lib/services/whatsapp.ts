@@ -1,239 +1,150 @@
-/**
- * WhatsApp Service
- * Handles WhatsApp messaging integration for HomeoERP
- */
+// WhatsApp service for sending messages and managing campaigns
 
 export interface WhatsAppMessage {
   to: string;
   message: string;
-  template?: string;
-  variables?: Record<string, string>;
+  type?: 'text' | 'template' | 'media';
+  templateName?: string;
+  templateParams?: string[];
 }
 
-export interface WhatsAppConfig {
-  apiKey?: string;
-  apiUrl?: string;
-  enabled: boolean;
+export interface WhatsAppCampaign {
+  id: string;
+  name: string;
+  message: string;
+  recipients: string[];
+  scheduledAt?: Date;
+  status: 'draft' | 'scheduled' | 'sent' | 'failed';
 }
 
-export class WhatsApp {
-  private config: WhatsAppConfig;
+export class WhatsAppService {
+  private apiKey: string;
+  private baseUrl: string;
 
-  constructor(config?: Partial<WhatsAppConfig>) {
-    this.config = {
-      apiKey: config?.apiKey || process.env.NEXT_PUBLIC_WHATSAPP_API_KEY || '',
-      apiUrl: config?.apiUrl || process.env.NEXT_PUBLIC_WHATSAPP_API_URL || 'https://api.whatsapp.com',
-      enabled: config?.enabled !== undefined ? config.enabled : false,
-    };
+  constructor() {
+    this.apiKey = process.env.WHATSAPP_API_KEY || '';
+    this.baseUrl = process.env.WHATSAPP_API_URL || 'https://api.whatsapp.com';
   }
 
-  /**
-   * Send a WhatsApp message
-   */
   async sendMessage(message: WhatsAppMessage): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    if (!this.config.enabled) {
-      console.log('[WhatsApp] Service disabled, skipping message:', message);
-      return { success: true, messageId: 'disabled' };
-    }
-
     try {
-      // TODO: Implement actual WhatsApp API integration
-      console.log('[WhatsApp] Sending message:', message);
+      // Mock implementation - replace with actual WhatsApp API integration
+      console.log('Sending WhatsApp message:', message);
       
       // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       return {
         success: true,
-        messageId: `wa_${Date.now()}`,
+        messageId: `msg_${Date.now()}`
       };
     } catch (error) {
-      console.error('[WhatsApp] Error sending message:', error);
+      console.error('Failed to send WhatsApp message:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
 
-  /**
-   * Send order confirmation via WhatsApp
-   */
-  async sendOrderConfirmation(
-    phoneNumber: string,
-    orderDetails: {
-      orderNumber: string;
-      customerName: string;
-      totalAmount: number;
-      items: string[];
+  async sendBulkMessages(messages: WhatsAppMessage[]): Promise<{ success: boolean; results: any[]; error?: string }> {
+    try {
+      const results = await Promise.all(
+        messages.map(message => this.sendMessage(message))
+      );
+
+      return {
+        success: true,
+        results
+      };
+    } catch (error) {
+      console.error('Failed to send bulk WhatsApp messages:', error);
+      return {
+        success: false,
+        results: [],
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
-  ): Promise<boolean> {
-    const message = `
-Hello ${orderDetails.customerName}! 
-
-Your order #${orderDetails.orderNumber} has been confirmed.
-
-Items:
-${orderDetails.items.join('\n')}
-
-Total: ₹${orderDetails.totalAmount.toFixed(2)}
-
-Thank you for shopping with us!
-    `.trim();
-
-    const result = await this.sendMessage({
-      to: phoneNumber,
-      message,
-    });
-
-    return result.success;
   }
 
-  /**
-   * Send payment reminder via WhatsApp
-   */
-  async sendPaymentReminder(
-    phoneNumber: string,
-    reminderDetails: {
-      customerName: string;
-      invoiceNumber: string;
-      dueAmount: number;
-      dueDate: string;
+  async createCampaign(campaign: Omit<WhatsAppCampaign, 'id' | 'status'>): Promise<{ success: boolean; campaignId?: string; error?: string }> {
+    try {
+      // Mock implementation
+      const campaignId = `campaign_${Date.now()}`;
+      
+      console.log('Creating WhatsApp campaign:', { ...campaign, id: campaignId });
+      
+      return {
+        success: true,
+        campaignId
+      };
+    } catch (error) {
+      console.error('Failed to create WhatsApp campaign:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
-  ): Promise<boolean> {
-    const message = `
-Dear ${reminderDetails.customerName},
-
-This is a friendly reminder that payment for Invoice #${reminderDetails.invoiceNumber} is due.
-
-Amount Due: ₹${reminderDetails.dueAmount.toFixed(2)}
-Due Date: ${reminderDetails.dueDate}
-
-Please make the payment at your earliest convenience.
-
-Thank you!
-    `.trim();
-
-    const result = await this.sendMessage({
-      to: phoneNumber,
-      message,
-    });
-
-    return result.success;
   }
 
-  /**
-   * Send delivery update via WhatsApp
-   */
-  async sendDeliveryUpdate(
-    phoneNumber: string,
-    deliveryDetails: {
-      customerName: string;
-      orderNumber: string;
-      status: string;
-      trackingUrl?: string;
+  async getCampaignStatus(campaignId: string): Promise<{ success: boolean; status?: string; error?: string }> {
+    try {
+      // Mock implementation
+      const statuses = ['draft', 'scheduled', 'sent', 'failed'];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      return {
+        success: true,
+        status: randomStatus
+      };
+    } catch (error) {
+      console.error('Failed to get campaign status:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
-  ): Promise<boolean> {
-    let message = `
-Hello ${deliveryDetails.customerName}!
-
-Your order #${deliveryDetails.orderNumber} status: ${deliveryDetails.status}
-    `.trim();
-
-    if (deliveryDetails.trackingUrl) {
-      message += `\n\nTrack your order: ${deliveryDetails.trackingUrl}`;
-    }
-
-    const result = await this.sendMessage({
-      to: phoneNumber,
-      message,
-    });
-
-    return result.success;
   }
 
-  /**
-   * Send prescription reminder via WhatsApp
-   */
-  async sendPrescriptionReminder(
-    phoneNumber: string,
-    prescriptionDetails: {
-      patientName: string;
-      medicineName: string;
-      refillDate: string;
+  async getTemplates(): Promise<{ success: boolean; templates?: any[]; error?: string }> {
+    try {
+      // Mock templates
+      const templates = [
+        {
+          id: 'welcome_template',
+          name: 'Welcome Message',
+          content: 'Welcome to our homeopathy clinic! How can we help you today?',
+          params: []
+        },
+        {
+          id: 'appointment_reminder',
+          name: 'Appointment Reminder',
+          content: 'Hi {{name}}, this is a reminder for your appointment on {{date}} at {{time}}.',
+          params: ['name', 'date', 'time']
+        },
+        {
+          id: 'prescription_ready',
+          name: 'Prescription Ready',
+          content: 'Hi {{name}}, your prescription is ready for pickup. Order ID: {{orderId}}',
+          params: ['name', 'orderId']
+        }
+      ];
+
+      return {
+        success: true,
+        templates
+      };
+    } catch (error) {
+      console.error('Failed to get WhatsApp templates:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
-  ): Promise<boolean> {
-    const message = `
-Dear ${prescriptionDetails.patientName},
-
-This is a reminder to refill your prescription for ${prescriptionDetails.medicineName}.
-
-Refill Date: ${prescriptionDetails.refillDate}
-
-Please visit us or order online.
-
-Stay healthy!
-    `.trim();
-
-    const result = await this.sendMessage({
-      to: phoneNumber,
-      message,
-    });
-
-    return result.success;
-  }
-
-  /**
-   * Send promotional message via WhatsApp
-   */
-  async sendPromotion(
-    phoneNumber: string,
-    promotionDetails: {
-      customerName: string;
-      offerTitle: string;
-      offerDescription: string;
-      validUntil: string;
-      couponCode?: string;
-    }
-  ): Promise<boolean> {
-    let message = `
-Hello ${promotionDetails.customerName}! 🎉
-
-${promotionDetails.offerTitle}
-
-${promotionDetails.offerDescription}
-
-Valid until: ${promotionDetails.validUntil}
-    `.trim();
-
-    if (promotionDetails.couponCode) {
-      message += `\n\nUse code: ${promotionDetails.couponCode}`;
-    }
-
-    const result = await this.sendMessage({
-      to: phoneNumber,
-      message,
-    });
-
-    return result.success;
-  }
-
-  /**
-   * Check if WhatsApp service is enabled
-   */
-  isEnabled(): boolean {
-    return this.config.enabled;
-  }
-
-  /**
-   * Update configuration
-   */
-  updateConfig(config: Partial<WhatsAppConfig>): void {
-    this.config = { ...this.config, ...config };
   }
 }
 
-// Export singleton instance
-export const whatsappService = new WhatsApp({
-  enabled: process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === 'true',
-});
+export const whatsappService = new WhatsAppService();
 
-export default WhatsApp;
+// Export WhatsApp class for backward compatibility
+export const WhatsApp = WhatsAppService;

@@ -97,7 +97,7 @@ export const useDiscountCalculation = ({ supplierId, items }: UseDiscountCalcula
           type: 'Volume Discount',
           percentage: discount.discount_percentage,
           amount: discountAmount + (discount.discount_amount || 0),
-          reason: `Volume discount for qty: ${item.quantity}, amount: ₹${originalAmount}`
+          reason: `Volume discount for qty: ${item.quantity}, amount: ${originalAmount}`
         });
       });
       totalDiscount += volumeDiscountAmount;

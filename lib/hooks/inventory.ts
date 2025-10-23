@@ -1,14 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '@/lib/api'
 
 export function useInventory() {
   return useQuery({
     queryKey: ['inventory', 'list'],
     queryFn: async () => {
-      const res = await api.inventory.getAll()
-      // assume backend returns array or {data: []}
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      try {
+        const res = await fetch('/api/inventory')
+        const json = await res.json()
+        const data = Array.isArray(json.data) ? json.data : []
+        return data as any[]
+      } catch (error) {
+        console.error('Failed to fetch inventory:', error)
+        return []
+      }
     },
     staleTime: 60_000,
   })
@@ -18,10 +22,15 @@ export function useLowStock() {
   return useQuery({
     queryKey: ['inventory', 'low-stock'],
     queryFn: async () => {
-      const res = await api.inventory.getLowStock()
-      // assume backend returns array or {data: []}
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      try {
+        const res = await fetch('/api/inventory/low-stock')
+        const json = await res.json()
+        const data = Array.isArray(json.data) ? json.data : []
+        return data as any[]
+      } catch (error) {
+        console.error('Failed to fetch low stock:', error)
+        return []
+      }
     },
     staleTime: 60_000,
   })

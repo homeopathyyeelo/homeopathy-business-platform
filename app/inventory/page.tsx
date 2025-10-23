@@ -25,7 +25,7 @@ export default function InventoryDashboardPage() {
       render: (val: any, row: any) => (
         <div>
           <div className="font-medium">{val}</div>
-          <div className="text-xs text-gray-500">{row.product_sku} • {row.product_category}</div>
+          <div className="text-xs text-gray-500">{row.product_sku}  {row.product_category}</div>
         </div>
       )
     },
@@ -51,7 +51,7 @@ export default function InventoryDashboardPage() {
       title: 'Unit Price',
       sortable: true,
       render: (val: any, row: any) => (
-        <span className="font-semibold">₹{(val ?? row.price)?.toLocaleString()}</span>
+        <span className="font-semibold">{(val ?? row.price)?.toLocaleString()}</span>
       )
     },
     {
@@ -61,7 +61,7 @@ export default function InventoryDashboardPage() {
       render: (val: any, row: any) => {
         const stock = row.stock_qty ?? row.stock ?? 0;
         const price = row.unit_price ?? row.price ?? 0;
-        return <span className="font-semibold">₹{(stock * price).toLocaleString()}</span>;
+        return <span className="font-semibold">{(stock * price).toLocaleString()}</span>;
       }
     },
     {
@@ -104,7 +104,7 @@ export default function InventoryDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{stats.totalStockValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats.totalStockValue.toLocaleString()}</div>
           </CardContent>
         </Card>
 

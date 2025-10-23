@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3004'
+const BASE_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || '/api'
 
 const golangAPI = axios.create({
   baseURL: BASE_URL,

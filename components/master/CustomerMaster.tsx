@@ -110,7 +110,7 @@ const CustomerMaster = () => {
                   <TableCell>{customer.default_discount_percentage || 0}%</TableCell>
                   <TableCell>{customer.credit_days || 0} days</TableCell>
                   <TableCell>
-                    {customer.opening_balance ? `₹${customer.opening_balance}` : '₹0'}
+                    {customer.opening_balance ? `${customer.opening_balance}` : '0'}
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="sm" onClick={() => handleEditCustomer(customer)}>

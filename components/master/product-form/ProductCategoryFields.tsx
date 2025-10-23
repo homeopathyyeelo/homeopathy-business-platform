@@ -78,7 +78,7 @@ const ProductCategoryFields = ({ formData, handleChange, categories }: ProductCa
             </p>
             {formData.categoryId && (
               <p className="text-xs text-green-600">
-                ✓ Category selected: {selectedCategory?.name || 'Unknown'}
+                 Category selected: {selectedCategory?.name || 'Unknown'}
               </p>
             )}
           </div>
