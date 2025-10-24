@@ -42,7 +42,7 @@ const createAPIClient = (baseURL: string): AxiosInstance => {
 // Next.js API routes (fallback when microservices unavailable)
 const nextAPI = createAPIClient('/api')
 
-export const golangAPI = createAPIClient(process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3004')
+export const golangAPI = createAPIClient(process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005')
 export const expressAPI = createAPIClient(process.env.NEXT_PUBLIC_EXPRESS_API_URL || 'http://localhost:3003')
 export const nestjsAPI = createAPIClient(process.env.NEXT_PUBLIC_NESTJS_API_URL || 'http://localhost:3001')
 export const fastifyAPI = createAPIClient(process.env.NEXT_PUBLIC_FASTIFY_API_URL || 'http://localhost:3002')
@@ -65,11 +65,11 @@ export const api = {
   },
 
   products: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/products', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/products/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/products', data),
-    update: (id: string, data: any) => golangAPI.put(`/api/erp/products/${id}`, data),
-    delete: (id: string) => golangAPI.delete(`/api/erp/products/${id}`),
+    getAll: (params?: any) => golangAPI.get('/api/erp/products', { params }).catch(() => nextAPI.get('/products', { params })),
+    getById: (id: string) => golangAPI.get(`/api/erp/products/${id}`).catch(() => nextAPI.get(`/products?id=${id}`)),
+    create: (data: any) => golangAPI.post('/api/erp/products', data).catch(() => nextAPI.post('/products', data)),
+    update: (id: string, data: any) => golangAPI.put(`/api/erp/products/${id}`, data).catch(() => nextAPI.put('/products', { id, ...data })),
+    delete: (id: string) => golangAPI.delete(`/api/erp/products/${id}`).catch(() => nextAPI.delete(`/products?id=${id}`)),
     getStock: (id: string) => golangAPI.get(`/api/erp/products/${id}/stock`),
     updateStock: (id: string, data: any) => golangAPI.post(`/api/erp/products/${id}/stock`, data),
     getLowStock: () => golangAPI.get('/api/erp/products/low-stock'),
@@ -88,28 +88,35 @@ export const api = {
   },
 
   purchases: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/purchases', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/purchases/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/purchases', data),
-    updateStatus: (id: string, status: string) => golangAPI.put(`/api/erp/purchases/${id}/status`, { status }),
-    receive: (id: string, data: any) => golangAPI.post(`/api/erp/purchases/${id}/receive`, data),
+    getAll: (params?: any) => golangAPI.get('/api/erp/purchases', { params }).catch(() => nextAPI.get('/purchases', { params })),
+    getById: (id: string) => golangAPI.get(`/api/erp/purchases/${id}`).catch(() => nextAPI.get(`/purchases?id=${id}`)),
+    create: (data: any) => golangAPI.post('/api/erp/purchases', data).catch(() => nextAPI.post('/purchases', data)),
+    updateStatus: (id: string, status: string) => golangAPI.put(`/api/erp/purchases/${id}/status`, { status }).catch(() => nextAPI.put('/purchases', { id, status })),
+    receive: (id: string, data: any) => golangAPI.post(`/api/erp/purchases/${id}/receive`, data).catch(() => nextAPI.post('/purchases', { id, action: 'receive', ...data })),
   },
 
   inventory: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/inventory', { params }),
-    getHistory: (params?: any) => golangAPI.get('/api/erp/inventory/history', { params }),
-    adjust: (data: any) => golangAPI.post('/api/erp/inventory/adjust', data),
-    transfer: (data: any) => golangAPI.post('/api/erp/inventory/transfer', data),
-    getAlerts: () => golangAPI.get('/api/erp/inventory/alerts'),
-    getValuation: (warehouseId?: string) => golangAPI.get('/api/erp/inventory/valuation', { params: { warehouse_id: warehouseId } }),
+    getAll: (params?: any) => golangAPI.get('/api/erp/inventory', { params }).catch(() => nextAPI.get('/inventory', { params })),
+    getHistory: (params?: any) => golangAPI.get('/api/erp/inventory/history', { params }).catch(() => nextAPI.get('/inventory?history=1', { params })),
+    adjust: (data: any) => golangAPI.post('/api/erp/inventory/adjust', data).catch(() => nextAPI.post('/inventory', { action: 'adjust', ...data })),
+    transfer: (data: any) => golangAPI.post('/api/erp/inventory/transfer', data).catch(() => nextAPI.post('/inventory', { action: 'transfer', ...data })),
+    getAlerts: () => golangAPI.get('/api/erp/inventory/alerts').catch(() => nextAPI.get('/inventory?alerts=1')),
+    getValuation: (warehouseId?: string) => golangAPI.get('/api/erp/inventory/valuation', { params: { warehouse_id: warehouseId } }).catch(() => nextAPI.get('/inventory?valuation=1', { params: { warehouse_id: warehouseId } })),
+  },
+
+  invoices: {
+    getAll: (params?: any) => golangAPI.get('/api/erp/invoices', { params }).catch(() => nextAPI.get('/receipts', { params })),
+    getById: (id: string) => golangAPI.get(`/api/erp/invoices/${id}`).catch(() => nextAPI.get(`/receipts?id=${id}`)),
+    upload: (data: any) => golangAPI.post('/api/v1/purchases/invoices/upload', data).catch(() => nextAPI.post('/receipts', data)),
+    confirm: (id: string) => golangAPI.post(`/api/v1/purchases/invoices/${id}/confirm`, {}),
   },
 
   customers: {
-    getAll: (params?: any) => golangAPI.get('/api/erp/customers', { params }),
-    getById: (id: string) => golangAPI.get(`/api/erp/customers/${id}`),
-    create: (data: any) => golangAPI.post('/api/erp/customers', data),
-    update: (id: string, data: any) => golangAPI.put(`/api/erp/customers/${id}`, data),
-    delete: (id: string) => golangAPI.delete(`/api/erp/customers/${id}`),
+    getAll: (params?: any) => golangAPI.get('/api/erp/customers', { params }).catch(() => nextAPI.get('/erp/customers', { params })),
+    getById: (id: string) => golangAPI.get(`/api/erp/customers/${id}`).catch(() => nextAPI.get(`/erp/customers?id=${id}`)),
+    create: (data: any) => golangAPI.post('/api/erp/customers', data).catch(() => nextAPI.post('/erp/customers', data)),
+    update: (id: string, data: any) => golangAPI.put(`/api/erp/customers/${id}`, data).catch(() => nextAPI.put('/erp/customers', { id, ...data })),
+    delete: (id: string) => golangAPI.delete(`/api/erp/customers/${id}`).catch(() => nextAPI.delete(`/erp/customers?id=${id}`)),
   },
 
   vendors: {
@@ -152,9 +159,9 @@ export const api = {
   },
 
   reports: {
-    sales: (params?: any) => golangAPI.get('/api/erp/reports/sales', { params }),
-    inventory: (params?: any) => golangAPI.get('/api/erp/reports/inventory', { params }),
-    financial: (params?: any) => golangAPI.get('/api/erp/reports/financial', { params }),
+    sales: (params?: any) => golangAPI.get('/api/erp/reports/sales', { params }).catch(() => nextAPI.get('/reports', { params: { type: 'sales', ...params } })),
+    inventory: (params?: any) => golangAPI.get('/api/erp/reports/inventory', { params }).catch(() => nextAPI.get('/reports', { params: { type: 'inventory', ...params } })),
+    financial: (params?: any) => golangAPI.get('/api/erp/reports/financial', { params }).catch(() => nextAPI.get('/reports', { params: { type: 'financial', ...params } })),
   },
 
   dashboard: {

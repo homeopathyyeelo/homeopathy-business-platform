@@ -12,8 +12,8 @@ export default function StockTransfersPage() {
   const { data: transfers = [], isLoading: loading } = useQuery({
     queryKey: ['inventory', 'transfers'],
     queryFn: async () => {
-      const res = await golangAPI.get('/api/inventory/transfers')
-      return res.data?.transfers || res.data || []
+      const res = await golangAPI.get('/api/erp/inventory/transfers')
+      return res.data?.data || []
     },
     staleTime: 30000,
   });

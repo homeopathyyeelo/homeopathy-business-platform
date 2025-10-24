@@ -127,6 +127,8 @@ const services = {
   campaigns: process.env.CAMPAIGNS_SERVICE_URL || "http://api-express:3003",
   ai: process.env.AI_SERVICE_URL || "http://ai-service:8001",
   analytics: process.env.ANALYTICS_SERVICE_URL || "http://api-golang:3004",
+  invoiceParser: process.env.INVOICE_PARSER_URL || "http://invoice-parser:8005",
+  purchaseService: process.env.PURCHASE_SERVICE_URL || "http://purchase-service:8006",
 }
 
 app.get("/health", (req: Request, res: Response) => {
@@ -233,6 +235,72 @@ app.use(
       error: (err: any, req: any, res: any) => {
         console.error("[API Gateway] Analytics service error:", err)
         ;(res as Response).status(503).json({ error: "Analytics service unavailable" })
+      },
+    },
+  })
+)
+
+app.use(
+  "/api/invoices",
+  authenticateToken,
+  createProxyMiddleware({
+    target: services.invoiceParser,
+    changeOrigin: true,
+    pathRewrite: { "^/api/invoices": "/api/v1/invoices" },
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Invoice parser service error:", err)
+        ;(res as Response).status(503).json({ error: "Invoice parser service unavailable" })
+      },
+    },
+  })
+)
+
+app.use(
+  "/api/purchases",
+  authenticateToken,
+  createProxyMiddleware({
+    target: services.purchaseService,
+    changeOrigin: true,
+    pathRewrite: { "^/api/purchases": "/api/v1" },
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Purchase service error:", err)
+        ;(res as Response).status(503).json({ error: "Purchase service unavailable" })
+      },
+    },
+  })
+)
+
+app.use(
+  "/api/sales",
+  authenticateToken,
+  createProxyMiddleware({
+    target: services.invoiceParser,
+    changeOrigin: true,
+    pathRewrite: { "^/api/sales": "/api/v1/sales" },
+    on: {
+      proxyReq: (proxyReq: any, req: AuthenticatedRequest) => {
+        if (req.user) {
+          proxyReq.setHeader("X-User-ID", req.user.id || req.user.sub || "")
+          proxyReq.setHeader("X-User-Role", req.user.role || "")
+        }
+      },
+      error: (err: any, req: any, res: any) => {
+        console.error("[API Gateway] Sales service error:", err)
+        ;(res as Response).status(503).json({ error: "Sales service unavailable" })
       },
     },
   })

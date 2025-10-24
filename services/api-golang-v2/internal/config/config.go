@@ -13,6 +13,7 @@ type Config struct {
 	JWTSecret   string
 	Environment string
 	KafkaBrokers string
+	InvoiceParserURL string
 }
 
 func Load() *Config {
@@ -23,6 +24,7 @@ func Load() *Config {
 		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
 		Environment: getEnv("ENVIRONMENT", "development"),
 		KafkaBrokers: getEnv("KAFKA_BROKERS", "localhost:9092"),
+		InvoiceParserURL: getEnv("INVOICE_PARSER_URL", "http://localhost:8005"),
 	}
 
 	log.Printf("📋 Configuration loaded for %s environment", cfg.Environment)

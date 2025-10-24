@@ -12,8 +12,8 @@ export default function StockAdjustmentsPage() {
   const { data: adjustments = [], isLoading: loading } = useQuery({
     queryKey: ['inventory', 'adjustments'],
     queryFn: async () => {
-      const res = await golangAPI.get('/api/inventory/adjustments')
-      return res.data?.adjustments || res.data || []
+      const res = await golangAPI.get('/api/erp/inventory/adjustments')
+      return res.data?.data || []
     },
     staleTime: 30000,
   });

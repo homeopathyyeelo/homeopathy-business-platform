@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+  <!-- Top Bar -->
+  <rect x="0" y="0" width="1600" height="56" fill="#0f172a"/>
+  <text x="16" y="36" font-family="Arial" font-size="16" fill="#fff">TopBar</text>
+  <!-- Left Sidebar (expanded) -->
+  <rect x="0" y="56" width="280" height="916" fill="#0ea5e9" opacity="0.25"/>
+  <text x="16" y="84" font-family="Arial" font-size="14" fill="#0b2433">Left Sidebar (expanded)</text>
+  <!-- Left Sidebar (collapsed indicator) -->
+  <rect x="0" y="56" width="72" height="916" fill="#0ea5e9" opacity="0.35"/>
+  <text x="8" y="84" font-family="Arial" font-size="10" fill="#0b2433">collapsed</text>
+  <!-- Right Panel -->
+  <rect x="1260" y="56" width="340" height="916" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text x="1272" y="80" font-family="Arial" font-size="14" fill="#0b2433">Right Panel</text>
+  <text x="1272" y="104" font-family="Arial" font-size="12" fill="#334155">Expiry Filters (7d/1m/3m/6m/1y)</text>
+  <text x="1272" y="124" font-family="Arial" font-size="12" fill="#334155">AI Chat</text>
+
+  <!-- Bottom Bar -->
+  <rect x="0" y="972" width="1600" height="28" fill="#0f172a"/>
+  <text x="16" y="990" font-family="Arial" font-size="12" fill="#fff">BottomBar: status, shortcuts, UTC clock</text>
+
+  <!-- Main Content Area -->
+  <rect x="280" y="56" width="980" height="916" fill="#ffffff"/>
+
+  <!-- KPI Row -->
+  <g>
+    <rect x="300" y="76" width="220" height="80" fill="#f8fafc" stroke="#94a3b8"/>
+    <rect x="530" y="76" width="220" height="80" fill="#f8fafc" stroke="#94a3b8"/>
+    <rect x="760" y="76" width="220" height="80" fill="#f8fafc" stroke="#94a3b8"/>
+    <rect x="990" y="76" width="220" height="80" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="310" y="100" font-size="12" font-family="Arial">KPI Cards</text>
+  </g>
+
+  <!-- Left Widgets Column (300px) -->
+  <g>
+    <rect x="300" y="176" width="300" height="220" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="312" y="196" font-family="Arial" font-size="14">Expiry Summary</text>
+    <text x="312" y="214" font-family="Arial" font-size="12">7d / 1m / 3m / 6m / 1y</text>
+
+    <rect x="300" y="406" width="300" height="160" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="312" y="426" font-family="Arial" font-size="14">Quick Upload (Invoice PDF)</text>
+  </g>
+
+  <!-- Center Fluid Column -->
+  <g>
+    <rect x="620" y="176" width="640" height="280" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="632" y="196" font-family="Arial" font-size="14">Bug Tracker Panel</text>
+
+    <rect x="620" y="466" width="640" height="240" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="632" y="486" font-family="Arial" font-size="14">AI-Fix Panel</text>
+  </g>
+
+  <!-- File name annotations for components/pages -->
+  <text x="300" y="600" font-family="Courier New" font-size="12">/app/dashboard/page.tsx</text>
+  <text x="300" y="620" font-family="Courier New" font-size="12">/app/inventory/expiry/page.tsx</text>
+  <text x="300" y="640" font-family="Courier New" font-size="12">/app/system/bugs/page.tsx</text>
+  <text x="300" y="660" font-family="Courier New" font-size="12">/components/ExpiryCard.tsx</text>
+  <text x="300" y="680" font-family="Courier New" font-size="12">/components/BugList.tsx</text>
+  <text x="300" y="700" font-family="Courier New" font-size="12">/components/AIFixPanel.tsx</text>
+</svg>

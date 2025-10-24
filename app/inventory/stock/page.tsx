@@ -2,21 +2,41 @@
 
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { toast } from '@/components/ui/use-toast';
 
 export default function StockListPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch from API
-    setLoading(false);
+    fetchStock();
   }, []);
 
+  const fetchStock = async () => {
+    try {
+      const response = await api.inventory.getAll();
+      setData(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching stock:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load stock data',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const columns = [
-    { key: 'id', title: 'ID', sortable: true },
-    { key: 'name', title: 'Name', sortable: true },
-    { key: 'status', title: 'Status', sortable: true },
-    { key: 'created', title: 'Created', sortable: true },
+    { key: 'product_name', title: 'Product', sortable: true },
+    { key: 'batch_no', title: 'Batch No', sortable: true },
+    { key: 'quantity', title: 'Quantity', sortable: true },
+    { key: 'available', title: 'Available', sortable: true },
+    { key: 'shop_name', title: 'Shop', sortable: true },
+    { key: 'expiry_date', title: 'Expiry', sortable: true },
+    { key: 'mrp', title: 'MRP', sortable: true },
   ];
 
   return (

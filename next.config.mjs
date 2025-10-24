@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/products/edit/:id',
+        destination: '/products/:id/edit',
+      },
+    ];
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

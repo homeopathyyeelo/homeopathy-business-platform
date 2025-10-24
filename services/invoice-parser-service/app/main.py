@@ -50,7 +50,7 @@ async def add_request_id(request: Request, call_next):
 app.include_router(upload.router, prefix="/api/v1/invoices", tags=["Upload"])
 app.include_router(parse.router, prefix="/api/v1/invoices", tags=["Parse"])
 app.include_router(match.router, prefix="/api/v1/invoices", tags=["Match"])
-app.include_router(reconcile.router, prefix="/api/v1/reconciliations", tags=["Reconcile"])
+app.include_router(reconcile.router, prefix="/api/v1/invoices", tags=["Reconcile"])
 
 # Prometheus metrics
 metrics_app = make_asgi_app()

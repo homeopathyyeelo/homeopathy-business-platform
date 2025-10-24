@@ -1,0 +1,113 @@
+<mxfile host="app.diagrams.net" modified="2025-10-24T07:30:00Z" agent="Cascade-HomeoERP" version="22.0.8">
+  <diagram id="homeoerp-erd" name="HomeoERP ERD">
+    <mxGraphModel dx="1540" dy="880" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Entities -->
+        <mxCell id="users" value="users\n- id (PK)\n- email (UQ)\n- password_hash\n- created_at\n- updated_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="60" width="220" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="roles" value="roles\n- id (PK)\n- code (UQ)\n- name" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="60" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="permissions" value="permissions\n- id (PK)\n- code (UQ)\n- name" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="shops" value="shops\n- id (PK)\n- name (UQ)\n- address\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="60" width="220" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="products" value="products\n- id (PK)\n- name\n- brand\n- potency\n- form\n- sku (UQ)\n- track_batches (bool)" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="inventory_batches" value="inventory_batches\n- id (PK)\n- shop_id (FK)\n- product_id (FK)\n- batch_no\n- expiry_date\n- qty\n- landed_unit_cost" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="240" width="280" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="orders" value="orders (PARTITIONED)\n- id (PK)\n- shop_id (FK)\n- customer_id (FK)\n- order_type\n- total\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="240" width="280" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="order_items" value="order_items\n- id (PK)\n- order_id (FK)\n- product_id (FK)\n- batch_id (FK)\n- qty\n- unit_price" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="240" width="260" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="purchase_orders" value="purchase_orders\n- id (PK)\n- vendor_id (FK)\n- shop_id (FK)\n- status\n- total\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="460" width="260" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="purchase_items" value="purchase_items\n- id (PK)\n- purchase_order_id (FK)\n- product_id (FK)\n- qty\n- unit_cost\n- discount_amount" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="460" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="vendor_receipts" value="vendor_receipts (GRN)\n- id (PK)\n- vendor_id (FK)\n- shop_id (FK)\n- purchase_order_id (FK)\n- received_at\n- total\n- created_by (FK user)" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="460" width="300" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="invoices" value="invoices\n- id (PK)\n- order_id (FK)\n- total\n- status\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="460" width="240" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="payments" value="payments\n- id (PK)\n- invoice_id (FK)\n- amount\n- method\n- received_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="460" width="220" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="outbox" value="outbox (PARTITIONED)\n- id (PK)\n- topic\n- payload JSONB (GIN)\n- published bool (idx)\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="240" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="audit_logs" value="audit_logs\n- id (PK)\n- user_id (FK)\n- entity\n- entity_id\n- action\n- meta JSONB (GIN)\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="240" width="260" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="campaigns" value="campaigns\n- id (PK)\n- name\n- status\n- payload JSONB (GIN)\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="60" width="240" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="ai_requests" value="ai_requests (PARTITIONED)\n- id (PK)\n- request_type\n- status\n- input JSONB (GIN)\n- output JSONB (GIN)\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="460" width="260" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="embeddings" value="embeddings\n- id (PK)\n- ref_table\n- ref_id\n- vector (pgvector idx)\n- metadata JSONB (GIN)" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="690" width="260" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="vendor_product_mappings" value="vendor_product_mappings\n- id (PK)\n- vendor_id (FK)\n- vendor_name\n- product_id (FK)\n- confidence" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="660" width="280" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="parsed_invoices" value="parsed_invoices\n- id (PK)\n- vendor_id (FK)\n- shop_id (FK)\n- invoice_number\n- status\n- raw_pdf_path\n- ocr_text (trgm)" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="660" width="300" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="parsed_invoice_lines" value="parsed_invoice_lines\n- id (PK)\n- parsed_invoice_id (FK)\n- raw_text (trgm)\n- description\n- qty\n- unit_price\n- batch_no\n- expiry_date\n- matched_product_id (FK)\n- match_confidence" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="660" width="330" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="system_bugs" value="system_bugs\n- id (PK)\n- service\n- severity\n- status\n- title\n- details JSONB (GIN)\n- ai_analysis JSONB (GIN)\n- created_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="660" width="280" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="reconciliation_tasks" value="reconciliation_tasks\n- id (PK)\n- parsed_invoice_line_id (FK)\n- status\n- assigned_to (FK user)\n- created_at\n- resolved_at" style="shape=swimlane;horizontal=0;rounded=1;whiteSpace=wrap;container=1;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="660" width="280" height="180" as="geometry"/>
+        </mxCell>
+        <!-- Relationships -->
+        <mxCell id="edge1" edge="1" parent="1" source="users" target="audit_logs" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="roles" target="users" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="permissions" target="roles" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="products" target="inventory_batches" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="shops" target="inventory_batches" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge6" edge="1" parent="1" source="orders" target="order_items" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge7" edge="1" parent="1" source="order_items" target="inventory_batches" style="endArrow=block;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge8" edge="1" parent="1" source="purchase_orders" target="purchase_items" style="endArrow=block;"/>
+        <mxCell id="edge9" edge="1" parent="1" source="vendor_receipts" target="inventory_batches" style="endArrow=block;"/>
+        <mxCell id="edge10" edge="1" parent="1" source="orders" target="invoices" style="endArrow=block;"/>
+        <mxCell id="edge11" edge="1" parent="1" source="invoices" target="payments" style="endArrow=block;"/>
+        <mxCell id="edge12" edge="1" parent="1" source="parsed_invoices" target="parsed_invoice_lines" style="endArrow=block;"/>
+        <mxCell id="edge13" edge="1" parent="1" source="parsed_invoice_lines" target="reconciliation_tasks" style="endArrow=block;"/>
+        <mxCell id="edge14" edge="1" parent="1" source="vendor_product_mappings" target="products" style="endArrow=block;"/>
+        <!-- Notes -->
+        <mxCell id="notes" value="Notes:\n- Partition: orders, outbox, ai_requests\n- Index: GIN on JSONB fields; pg_trgm on raw_text/ocr_text; ivfflat on embeddings.vector" style="shape=note;whiteSpace=wrap;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="60" width="260" height="140" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

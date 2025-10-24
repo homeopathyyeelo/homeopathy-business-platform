@@ -1,0 +1,126 @@
+[
+  {
+    "name": "orders.events",
+    "partitions": 6,
+    "replication": 1,
+    "retention": "7d",
+    "schema": {
+      "type": "object",
+      "required": ["event_type", "aggregate_type", "aggregate_id", "payload", "metadata"],
+      "properties": {
+        "event_type": {"type": "string"},
+        "aggregate_type": {"type": "string", "enum": ["order"]},
+        "aggregate_id": {"type": "string", "format": "uuid"},
+        "payload": {"type": "object"},
+        "metadata": {"type": "object", "properties": {"source": {"type": "string"}, "trace_id": {"type": "string"}}}
+      }
+    }
+  },
+  {
+    "name": "inventory.events",
+    "partitions": 6,
+    "replication": 1,
+    "retention": "14d",
+    "schema": {
+      "oneOf": [
+        {
+          "title": "inventory.restocked.v1",
+          "type": "object",
+          "properties": {
+            "event_type": {"const": "inventory.restocked.v1"},
+            "aggregate_type": {"const": "vendor_receipt"},
+            "aggregate_id": {"type": "string", "format": "uuid"},
+            "payload": {
+              "type": "object",
+              "required": ["shop_id", "receipt_id", "lines", "received_at"],
+              "properties": {
+                "shop_id": {"type": "string", "format": "uuid"},
+                "receipt_id": {"type": "string", "format": "uuid"},
+                "lines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["product_id", "batch_no", "expiry_date", "qty", "landed_unit_cost"],
+                    "properties": {
+                      "product_id": {"type": "string", "format": "uuid"},
+                      "batch_no": {"type": "string"},
+                      "expiry_date": {"type": "string", "format": "date"},
+                      "qty": {"type": "number"},
+                      "landed_unit_cost": {"type": "number"}
+                    }
+                  }
+                },
+                "received_at": {"type": "string", "format": "date-time"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {"source": {"type": "string"}, "trace_id": {"type": "string"}}
+            }
+          },
+          "required": ["event_type", "aggregate_type", "aggregate_id", "payload", "metadata"]
+        }
+      ]
+    },
+    "sample": {
+      "event_type":"inventory.restocked.v1",
+      "aggregate_type":"vendor_receipt",
+      "aggregate_id":"6f8e2b3a-0000-0000-0000-00000000abcd",
+      "payload":{"shop_id":"00000000-0000-0000-0000-000000000001","receipt_id":"00000000-0000-0000-0000-0000000000bb","lines":[{"product_id":"00000000-0000-0000-0000-00000000abcd","batch_no":"B20251001","expiry_date":"2027-10-01","qty":100,"landed_unit_cost":12.5}],"received_at":"2025-10-23T09:00:00Z"},
+      "metadata":{"source":"api-core","trace_id":"trace-12345"}
+    }
+  },
+  {
+    "name": "purchase.events",
+    "partitions": 4,
+    "replication": 1,
+    "retention": "14d",
+    "schema": {"type": "object"}
+  },
+  {
+    "name": "campaigns.events",
+    "partitions": 3,
+    "replication": 1,
+    "retention": "30d",
+    "schema": {"type": "object"}
+  },
+  {
+    "name": "ai.events",
+    "partitions": 3,
+    "replication": 1,
+    "retention": "30d",
+    "schema": {"type": "object"}
+  },
+  {
+    "name": "audit.events",
+    "partitions": 3,
+    "replication": 1,
+    "retention": "30d",
+    "schema": {"type": "object"}
+  },
+  {
+    "name": "system.logs",
+    "partitions": 6,
+    "replication": 1,
+    "retention": "7d",
+    "schema": {
+      "type": "object",
+      "required": ["service", "level", "message", "timestamp"],
+      "properties": {
+        "service": {"type": "string"},
+        "level": {"type": "string", "enum": ["debug","info","warn","error","fatal"]},
+        "message": {"type": "string"},
+        "context": {"type": "object"},
+        "trace_id": {"type": "string"},
+        "timestamp": {"type": "string", "format": "date-time"}
+      }
+    }
+  },
+  {
+    "name": "dlq.events",
+    "partitions": 3,
+    "replication": 1,
+    "retention": "30d",
+    "schema": {"type": "object"}
+  }
+]

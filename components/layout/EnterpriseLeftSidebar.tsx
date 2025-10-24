@@ -112,6 +112,7 @@ const menuItems: MenuItem[] = [
       { label: 'Payments', path: '/purchases/payments' },
       { label: 'Price Comparison', path: '/purchases/price-comparison' },
       { label: 'AI Reorder', path: '/purchases/ai-reorder' },
+      { label: 'Purchase History', path: '/purchases/history' },
     ]
   },
   {
@@ -129,6 +130,7 @@ const menuItems: MenuItem[] = [
       { label: 'Credit Limit', path: '/customers/credit-limit' },
       { label: 'Feedback', path: '/customers/feedback' },
       { label: 'Communication', path: '/customers/communication' },
+      { label: 'Appointments', path: '/customers/appointments' },
     ]
   },
   {
@@ -145,6 +147,7 @@ const menuItems: MenuItem[] = [
       { label: 'Credit Ledger', path: '/vendors/ledger' },
       { label: 'Performance', path: '/vendors/performance' },
       { label: 'Contracts', path: '/vendors/contracts' },
+      { label: 'Supplier Portal', path: '/vendors/portal' },
     ]
   },
   {
@@ -181,6 +184,7 @@ const menuItems: MenuItem[] = [
       { label: 'Profit Loss', path: '/finance/pl' },
       { label: 'Balance Sheet', path: '/finance/balance-sheet' },
       { label: 'Bank Reconciliation', path: '/finance/bank-reconciliation' },
+      { label: 'Payment/Receipt Vouchers', path: '/finance/vouchers' },
     ]
   },
   {
@@ -251,6 +255,7 @@ const menuItems: MenuItem[] = [
       { label: 'Festival Campaigns', path: '/marketing/festivals' },
       { label: 'Templates', path: '/marketing/templates' },
       { label: 'AI Campaign Generator', path: '/marketing/ai-generator' },
+      { label: 'Dealer Announcements', path: '/marketing/announcements' },
     ]
   },
   {
@@ -265,6 +270,8 @@ const menuItems: MenuItem[] = [
       { label: 'Instagram', path: '/social/instagram' },
       { label: 'Facebook', path: '/social/facebook' },
       { label: 'AI Content', path: '/social/ai-content' },
+      { label: 'YouTube', path: '/social/youtube' },
+      { label: 'Blog/WordPress', path: '/social/blog' },
       { label: 'Multi-Account', path: '/social/accounts' },
     ]
   },

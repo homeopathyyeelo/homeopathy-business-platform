@@ -1,0 +1,198 @@
+# HomeoERP Microservices Map (v2.1.0)
+# Generated: 2025-10-24T07:40:00ZZ
+
+services:
+  - name: api-gateway
+    language: nodejs
+    framework: nestjs
+    responsibilities:
+      - GraphQL aggregation and BFF
+      - AuthN proxy and RBAC enforcement
+      - Route to downstream services
+    database:
+      primary: none
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /graphql
+        desc: Aggregated queries and mutations
+      - method: GET
+        path: /auth/me
+        desc: Current user session
+    kafka:
+      publishes: []
+      subscribes: [audit.events]
+
+  - name: auth-service
+    language: go
+    framework: gin
+    responsibilities:
+      - JWT issue/verify
+      - RBAC roles/permissions, menus
+      - Session and token revocation
+    database:
+      primary: core (roles, permissions, users)
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /api/v1/auth/login
+        desc: Login and return JWT
+      - method: GET
+        path: /api/v1/auth/permissions
+        desc: Return permission codes
+      - method: GET
+        path: /api/v1/menus
+        desc: Return menu tree by role
+    kafka:
+      publishes: [audit.events]
+      subscribes: []
+
+  - name: api-core
+    language: go
+    framework: gin
+    responsibilities:
+      - Products, Inventory, Sales, Purchases, Vendors, Customers, Finance
+      - Transactional outbox writing
+    database:
+      primary: core (all core tables)
+      system: sys (outbox, audit)
+    health_endpoint: GET /health
+    apis:
+      - method: GET
+        path: /api/v2/products
+        desc: List products
+      - method: GET
+        path: /api/v2/inventory/expiries
+        desc: Expiry summary by window
+      - method: POST
+        path: /api/v2/purchases/invoices/upload
+        desc: Upload vendor invoice PDF
+      - method: POST
+        path: /api/v2/purchases/invoices/:id/confirm
+        desc: Confirm parsed invoice -> GRN
+      - method: GET
+        path: /api/v2/system/bugs
+        desc: List system bugs
+    kafka:
+      publishes: [orders.events, inventory.events, purchase.events, audit.events]
+      subscribes: []
+
+  - name: outbox-worker
+    language: go
+    framework: none
+    responsibilities:
+      - Poll sys.outbox where published=false
+      - Publish to Kafka
+      - Mark as published
+    database:
+      primary: sys (outbox)
+    health_endpoint: GET /health
+    apis: []
+    kafka:
+      publishes: [orders.events, inventory.events, purchase.events, ai.events, campaigns.events, audit.events, system.logs]
+      subscribes: []
+
+  - name: ai-service
+    language: python
+    framework: fastapi
+    responsibilities:
+      - Parsed invoice AI matching fallback
+      - Reorder forecasting, price suggestions
+      - AI content generation
+    database:
+      primary: ai (ai_requests, embeddings)
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /api/v1/ai/match-product
+        desc: Suggest product for parsed line
+      - method: POST
+        path: /api/v1/ai/reorder
+        desc: Forecast reorder quantities
+    kafka:
+      publishes: [ai.events]
+      subscribes: [inventory.events, purchase.events]
+
+  - name: campaign-service
+    language: nodejs
+    framework: nestjs
+    responsibilities:
+      - Campaign scheduling and delivery (WhatsApp/SMS/Email)
+      - Offer & expiry promotions
+    database:
+      primary: core (campaigns)
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /api/v1/campaigns
+        desc: Create campaign
+    kafka:
+      publishes: [campaigns.events]
+      subscribes: [inventory.events, ai.events]
+
+  - name: analytics-service
+    language: nodejs
+    framework: nestjs
+    responsibilities:
+      - KPI aggregation, dashboards
+      - Expiry and sales analytics
+    database:
+      primary: none
+    health_endpoint: GET /health
+    apis:
+      - method: GET
+        path: /api/v1/analytics/dashboard
+        desc: Return dashboard KPIs
+    kafka:
+      publishes: []
+      subscribes: [orders.events, inventory.events, purchase.events, audit.events]
+
+  - name: file-service
+    language: go
+    framework: gin
+    responsibilities:
+      - MinIO adapter for file uploads
+      - Signed URLs for retrieval
+    database:
+      primary: none
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /api/v1/files/upload
+        desc: Upload & store in MinIO
+    kafka:
+      publishes: [audit.events]
+      subscribes: []
+
+  - name: bug-collector
+    language: go
+    framework: gin
+    responsibilities:
+      - Receive logs and errors
+      - Insert into sys.system_bugs
+      - DLQ scanning
+    database:
+      primary: sys (system_bugs)
+    health_endpoint: GET /health
+    apis:
+      - method: POST
+        path: /api/v1/system/bugs/ingest
+        desc: Ingest bug report (internal)
+    kafka:
+      publishes: [system.logs]
+      subscribes: [dlq.events]
+
+  - name: auto-fix-worker
+    language: python
+    framework: none
+    responsibilities:
+      - Generate patch suggestions from system_bugs
+      - Create PR via Git provider
+      - Update bug status on CI pass
+    database:
+      primary: sys (system_bugs)
+    health_endpoint: GET /health
+    apis: []
+    kafka:
+      publishes: [audit.events]
+      subscribes: [system.logs, ai.events]

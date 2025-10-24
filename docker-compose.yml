@@ -118,31 +118,123 @@ services:
       - erp-network
 
   # ============================================
-  # SERVICES (Stubs - build as you develop)
+  # MICROSERVICES
   # ============================================
 
-  # Uncomment and build services as needed:
-  
-  # api-gateway:
-  #   build: ./services/api-gateway
-  #   container_name: erp-api-gateway
-  #   ports:
-  #     - "4000:4000"
-  #   environment:
-  #     DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
-  #     REDIS_URL: redis://:redis_password@redis:6379
-  #   networks:
-  #     - erp-network
-  #   depends_on:
-  #     - postgres
-  #     - redis
+  # API Gateway (Node.js/Express)
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: erp-api-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      JWT_SECRET: your-secret-key-change-in-production
+      JWT_ISSUER: urn:yeelo:auth
+      AUTH_SERVICE_URL: http://api-nest:3001
+      ORDERS_SERVICE_URL: http://api-fastify:3002
+      CAMPAIGNS_SERVICE_URL: http://api-express:3003
+      ANALYTICS_SERVICE_URL: http://api-golang:3004
+      INVOICE_PARSER_URL: http://invoice-parser:8005
+      PURCHASE_SERVICE_URL: http://purchase-service:8006
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # product-service:
-  #   build: ./services/product-service
-  #   container_name: erp-product-service
-  #   ports:
-  #     - "8001:8001"
-  #   environment:
-  #     DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
-  #   networks:
-  #     - erp-network
+  # Invoice Parser Service (Python/FastAPI)
+  invoice-parser:
+    build:
+      context: ./services/invoice-parser-service
+      dockerfile: Dockerfile
+    container_name: erp-invoice-parser
+    ports:
+      - "8005:8005"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379/0
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MINIO_BUCKET: invoices
+      MINIO_SECURE: "false"
+      LOG_LEVEL: INFO
+      PYTHONUNBUFFERED: 1
+    volumes:
+      - ./services/invoice-parser-service:/app
+      - ./uploads:/app/uploads
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+      - minio
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Purchase Service (Golang/Gin)
+  purchase-service:
+    build:
+      context: ./services/purchase-service
+      dockerfile: Dockerfile
+    container_name: erp-purchase-service
+    ports:
+      - "8006:8006"
+    environment:
+      PORT: 8006
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: your-secret-key-change-in-production
+      LOG_LEVEL: info
+    volumes:
+      - ./services/purchase-service:/app
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Main API Service (Golang)
+  api-golang:
+    build:
+      context: ./services/api-golang
+      dockerfile: Dockerfile
+    container_name: erp-api-golang
+    ports:
+      - "3004:3004"
+    environment:
+      PORT: 3004
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      JWT_SECRET: your-secret-key-change-in-production
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
