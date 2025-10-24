@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line } from 'recharts';
 import {
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useExpiryNotifications } from '@/lib/expiry-notifications';
 import { useProducts, useProductStats } from '@/lib/hooks/products';
 import { useCustomers } from '@/lib/hooks/customers';
 import { useInventory, useLowStock } from '@/lib/hooks/inventory';
@@ -44,18 +46,26 @@ interface ActivityItem {
   status: 'success' | 'warning' | 'error';
 }
 
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
 export default function DashboardPage() {
   const router = useRouter();
   const [selectedBranch, setSelectedBranch] = useState("all");
   const [selectedPeriod, setSelectedPeriod] = useState("today");
+  
+  const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+  const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR(`${API_URL}/api/erp/dashboard/summary`, fetcher);
+
+  // Use expiry notifications
+  const { alerts: expiryAlerts, summary: expirySummary, refresh: refreshExpiry } = useExpiryNotifications();
 
   // Use React Query hooks
   const { data: products = [] } = useProducts();
   const productStats = useProductStats(products);
-  const { data: customers = [] } = useCustomers();
+  const { customers = [] } = useCustomers();
   const { data: inventory = [] } = useInventory();
   const { data: lowStock = [] } = useLowStock();
-  const { data: vendors = [] } = useVendors();
+  const { vendors = [] } = useVendors();
 
   const [stats, setStats] = useState<DashboardStats>({
     totalSales: 0,

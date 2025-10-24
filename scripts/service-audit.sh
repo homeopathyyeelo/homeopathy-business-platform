@@ -1,4 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
+echo "🔍 Service Port Audit — $(date)"
+declare -A PORTS=(
+  ["api-golang"]=3004
+  ["api-golang-v2"]=3005
+  ["purchase-service"]=8006
+  ["invoice-parser"]=8005
+  ["api-gateway"]=4000
+)
+
+for svc in "${!PORTS[@]}"; do
+  port=${PORTS[$svc]}
+  url="http://localhost:$port/health"
+  echo -n "Checking $svc ($port)... "
+  code=$(curl -s -o /dev/null -w "%{http_code}" $url)
+  if [[ "$code" == "200" ]]; then
+    echo "✅ Healthy"
+  else
+    echo "❌ Not Responding"
+  fi
+done
 
 # HomeoERP Service Audit Script
 # Checks health of all microservices and reports mismatches

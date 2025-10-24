@@ -1,0 +1,26 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /health                   --> main.main.func1 (3 handlers)
+[GIN-debug] GET    /api/erp/dashboard/summary --> main.main.func2 (3 handlers)
+[GIN-debug] GET    /api/erp/dashboard/stats  --> main.main.func3 (3 handlers)
+[GIN-debug] GET    /api/erp/dashboard/activity --> main.main.func4 (3 handlers)
+[GIN-debug] GET    /api/erp/system/health    --> main.main.func5 (3 handlers)
+[GIN-debug] GET    /api/erp/analytics/sales  --> main.main.func6 (3 handlers)
+[GIN-debug] GET    /api/erp/analytics/purchases --> main.main.func7 (3 handlers)
+[GIN-debug] GET    /api/erp/analytics/sales-summary --> main.main.func8 (3 handlers)
+[GIN-debug] GET    /api/erp/analytics/purchase-summary --> main.main.func9 (3 handlers)
+2025/10/24 20:54:03 Golang v2 Server starting on port 3005
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3005
+[GIN] 2025/10/24 - 20:54:06 | 200 |      89.389µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/10/24 - 20:54:11 | 200 |      54.811µs |       127.0.0.1 | GET      "/health"
+[GIN] 2025/10/24 - 20:54:11 | 200 |     1.62705ms |             ::1 | GET      "/api/erp/system/health"
+[GIN] 2025/10/24 - 20:54:26 | 200 |      69.499µs |             ::1 | GET      "/api/erp/dashboard/stats"
+[GIN] 2025/10/24 - 20:54:26 | 200 |      79.168µs |             ::1 | GET      "/api/erp/dashboard/activity"
+[GIN] 2025/10/24 - 20:54:27 | 200 |      52.291µs |             ::1 | GET      "/api/erp/analytics/sales-summary"
+[GIN] 2025/10/24 - 21:01:43 | 200 |      5.4636ms |             ::1 | GET      "/health"

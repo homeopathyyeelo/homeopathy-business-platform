@@ -10,7 +10,7 @@ node_modules/
 venv/
 .venv/
 env/
-.env/
+# .env/
 
 # Python
 __pycache__/
@@ -39,9 +39,9 @@ yarn-error.log*
 
 # env files
 # Intentionally commit *.example for templates; do not commit real secrets
-!.env*
+#!.env*
 
-.env*
+#.env*
 
 # vercel
 .vercel

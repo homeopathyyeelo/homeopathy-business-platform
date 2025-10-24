@@ -1,0 +1,92 @@
+{
+  "frontend_pages": {
+    "commission": "/finance/commission",
+    "whatsapp": "/crm/whatsapp",
+    "catalogue": "/marketing/catalogue",
+    "damage": "/inventory/damage",
+    "hold_bills": "/sales/hold",
+    "ai_insights": "/ai/insights"
+  },
+  "api_endpoints": {
+    "commission": {
+      "create_rule": "POST /api/erp/commissions/rules",
+      "calculate": "GET /api/erp/commissions/calculate",
+      "report": "GET /api/erp/commissions/report",
+      "pay": "POST /api/erp/commissions/pay"
+    },
+    "bulk_operations": {
+      "products": "PUT /api/erp/products/bulk-update",
+      "customers": "PUT /api/erp/customers/bulk-update",
+      "import": "POST /api/erp/customers/bulk-import",
+      "vendors": "PUT /api/erp/vendors/bulk-update",
+      "delete": "DELETE /api/erp/bulk-delete"
+    },
+    "damage": {
+      "create": "POST /api/erp/inventory/damages",
+      "list": "GET /api/erp/inventory/damages",
+      "summary": "GET /api/erp/inventory/damages/summary",
+      "delete": "DELETE /api/erp/inventory/damages/:id"
+    },
+    "bundles": {
+      "create": "POST /api/erp/bundles",
+      "list": "GET /api/erp/bundles",
+      "get": "GET /api/erp/bundles/:id",
+      "update": "PUT /api/erp/bundles/:id",
+      "delete": "DELETE /api/erp/bundles/:id",
+      "sell": "POST /api/erp/bundles/:id/sell"
+    },
+    "loyalty": {
+      "create_card": "POST /api/erp/loyalty/cards",
+      "get_card": "GET /api/erp/loyalty/cards/:customer_id",
+      "earn": "POST /api/erp/loyalty/earn",
+      "redeem": "POST /api/erp/loyalty/redeem",
+      "transactions": "GET /api/erp/loyalty/transactions/:card_id"
+    },
+    "whatsapp": {
+      "bulk_send": "POST /api/erp/whatsapp/bulk-send",
+      "credit_reminder": "POST /api/erp/whatsapp/credit-reminder"
+    },
+    "payment_gateway": {
+      "create_order": "POST /api/erp/payments/create-order",
+      "verify": "POST /api/erp/payments/verify"
+    },
+    "pos": {
+      "hold": "POST /api/erp/pos/hold",
+      "get_held": "GET /api/erp/pos/held-bills",
+      "resume": "POST /api/erp/pos/resume/:id",
+      "delete_held": "DELETE /api/erp/pos/held-bills/:id",
+      "counters": "GET /api/erp/pos/counters",
+      "register": "POST /api/erp/pos/counters/register",
+      "sync": "POST /api/erp/counters/sync",
+      "state": "GET /api/erp/counters/:id/state"
+    },
+    "estimates": {
+      "create": "POST /api/erp/estimates",
+      "list": "GET /api/erp/estimates",
+      "convert": "POST /api/erp/estimates/:id/convert",
+      "update_status": "PUT /api/erp/estimates/:id/status"
+    }
+  },
+  "database_tables": [
+    "commission_rules",
+    "commission_payments",
+    "inventory_damages",
+    "product_bundles",
+    "product_bundle_items",
+    "loyalty_cards",
+    "loyalty_transactions",
+    "pos_held_bills",
+    "pos_counters",
+    "sales_estimates",
+    "whatsapp_campaigns",
+    "payment_gateway_transactions"
+  ],
+  "cron_jobs": [
+    "loyalty_cron - Daily rewards, expiry, tier upgrades",
+    "expiry_cron - Product expiry alerts"
+  ],
+  "ai_services": [
+    "auto_image_updater - Daily product image scraping",
+    "bug_fix_agent - AI-powered bug fixing & PR creation"
+  ]
+}

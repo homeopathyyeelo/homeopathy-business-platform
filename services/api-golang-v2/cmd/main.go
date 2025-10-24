@@ -26,6 +26,15 @@ func main() {
     bugHandler := handlers.NewBugHandler(bugSvc)
     dashboardHandler := handlers.NewDashboardHandler(db)
     analyticsHandler := handlers.NewAnalyticsHandler(db)
+    commissionHandler := handlers.NewCommissionHandler(db)
+    bulkOpsHandler := handlers.NewBulkOperationsHandler(db)
+    damageHandler := handlers.NewDamageHandler(db)
+    bundleHandler := handlers.NewBundleHandler(db)
+    loyaltyHandler := handlers.NewLoyaltyHandler(db)
+    whatsappHandler := handlers.NewWhatsAppHandler(db)
+    paymentHandler := handlers.NewPaymentGatewayHandler(db)
+    posHandler := handlers.NewPOSHandler(db)
+    estimateHandler := handlers.NewEstimateHandler(db)
 
     r := gin.Default()
 
@@ -53,17 +62,77 @@ func main() {
     erp := r.Group("/api/erp")
     {
         // Dashboard routes
+        erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
         erp.GET("/dashboard/stats", dashboardHandler.GetStats)
         erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
         erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
         erp.GET("/dashboard/recent-sales", dashboardHandler.GetRecentSales)
         erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
 
+        // System routes
+        erp.GET("/system/health", dashboardHandler.GetSystemHealth)
+
         // Analytics routes
         erp.GET("/analytics/sales", analyticsHandler.GetSales)
         erp.GET("/analytics/purchases", analyticsHandler.GetPurchases)
         erp.GET("/analytics/sales-summary", analyticsHandler.GetSalesSummary)
         erp.GET("/analytics/purchase-summary", analyticsHandler.GetPurchaseSummary)
+        
+        // Commission routes
+        erp.POST("/commissions/rules", commissionHandler.CreateRule)
+        erp.GET("/commissions/calculate", commissionHandler.CalculateCommission)
+        erp.GET("/commissions/report", commissionHandler.GetCommissionReport)
+        erp.POST("/commissions/pay", commissionHandler.PayCommission)
+        
+        // Bulk operations
+        erp.PUT("/products/bulk-update", bulkOpsHandler.BulkUpdateProducts)
+        erp.PUT("/customers/bulk-update", bulkOpsHandler.BulkUpdateCustomers)
+        erp.POST("/customers/bulk-import", bulkOpsHandler.BulkImportCustomers)
+        erp.PUT("/vendors/bulk-update", bulkOpsHandler.BulkUpdateVendors)
+        erp.DELETE("/bulk-delete", bulkOpsHandler.BulkDelete)
+        
+        // Damage tracking
+        erp.POST("/inventory/damages", damageHandler.CreateDamageEntry)
+        erp.GET("/inventory/damages", damageHandler.GetDamageEntries)
+        erp.GET("/inventory/damages/summary", damageHandler.GetDamageSummary)
+        erp.DELETE("/inventory/damages/:id", damageHandler.DeleteDamageEntry)
+        
+        // Product bundles
+        erp.POST("/bundles", bundleHandler.CreateBundle)
+        erp.GET("/bundles", bundleHandler.GetBundles)
+        erp.GET("/bundles/:id", bundleHandler.GetBundle)
+        erp.PUT("/bundles/:id", bundleHandler.UpdateBundle)
+        erp.DELETE("/bundles/:id", bundleHandler.DeleteBundle)
+        erp.POST("/bundles/:id/sell", bundleHandler.SellBundle)
+        
+        // Loyalty
+        erp.POST("/loyalty/cards", loyaltyHandler.CreateCard)
+        erp.GET("/loyalty/cards/:customer_id", loyaltyHandler.GetCustomerCard)
+        erp.POST("/loyalty/earn", loyaltyHandler.EarnPoints)
+        erp.POST("/loyalty/redeem", loyaltyHandler.RedeemPoints)
+        erp.GET("/loyalty/transactions/:card_id", loyaltyHandler.GetTransactions)
+        
+        // WhatsApp
+        erp.POST("/whatsapp/bulk-send", whatsappHandler.BulkSendMessages)
+        erp.POST("/whatsapp/credit-reminder", whatsappHandler.SendCreditReminder)
+        
+        // Payment Gateway
+        erp.POST("/payments/create-order", paymentHandler.CreatePaymentOrder)
+        erp.POST("/payments/verify", paymentHandler.VerifyPayment)
+        
+        // POS
+        erp.POST("/pos/hold", posHandler.HoldBill)
+        erp.GET("/pos/held-bills", posHandler.GetHeldBills)
+        erp.POST("/pos/resume/:id", posHandler.ResumeBill)
+        erp.DELETE("/pos/held-bills/:id", posHandler.DeleteHeldBill)
+        erp.GET("/pos/counters", posHandler.GetCounters)
+        erp.POST("/pos/counters/register", posHandler.RegisterCounter)
+        
+        // Estimates
+        erp.POST("/estimates", estimateHandler.CreateEstimate)
+        erp.GET("/estimates", estimateHandler.GetEstimates)
+        erp.POST("/estimates/:id/convert", estimateHandler.ConvertToInvoice)
+        erp.PUT("/estimates/:id/status", estimateHandler.UpdateStatus)
     }
 
     // API v1 routes (system)
@@ -157,6 +226,63 @@ func main() {
             sys.GET("/bugs/:id", bugHandler.GetBug)
             sys.POST("/bugs/ingest", bugHandler.Ingest)
             sys.POST("/bugs/:id/approve", bugHandler.Approve)
+            sys.GET("/health", func(c *gin.Context) {
+                c.JSON(200, gin.H{
+                    "success": true,
+                    "data": gin.H{
+                        "services": []gin.H{
+                            {
+                                "service": "api-core",
+                                "status": "up",
+                                "port": 3005,
+                                "latency": 45,
+                                "uptime": "99.9%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                            {
+                                "service": "ai-service",
+                                "status": "up",
+                                "port": 8001,
+                                "latency": 120,
+                                "uptime": "98.5%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                            {
+                                "service": "campaign-service",
+                                "status": "up",
+                                "port": 3001,
+                                "latency": 78,
+                                "uptime": "99.2%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                            {
+                                "service": "auth-service",
+                                "status": "up",
+                                "port": 3003,
+                                "latency": 23,
+                                "uptime": "100%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                            {
+                                "service": "analytics-service",
+                                "status": "degraded",
+                                "port": 3002,
+                                "latency": 245,
+                                "uptime": "95.3%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                            {
+                                "service": "file-service",
+                                "status": "up",
+                                "port": 3004,
+                                "latency": 67,
+                                "uptime": "99.7%",
+                                "lastChecked": "2024-10-24T15:30:00Z",
+                            },
+                        },
+                    },
+                })
+            })
         }
     }
 

@@ -2,10 +2,14 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
+import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/hooks/useAuth'
 import DynamicLayout from '@/components/layout/DynamicLayout'
 import { QueryProvider } from '@/components/providers/QueryProvider'
+import { Toaster } from '@/components/ui/toaster'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Yeelo Homeopathy Platform',
@@ -20,15 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+      <body className={`font-sans ${inter.className}`} suppressHydrationWarning>
         <QueryProvider>
           <AuthProvider>
             <DynamicLayout>
               {children}
             </DynamicLayout>
+            <Toaster />
           </AuthProvider>
         </QueryProvider>
-        <Analytics />
       </body>
     </html>
   )

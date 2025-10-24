@@ -67,6 +67,64 @@ func NewDashboardHandler(db interface{}) *DashboardHandler {
 	return &DashboardHandler{db: db}
 }
 
+// GET /api/erp/dashboard/summary
+func (h *DashboardHandler) GetSummary(c *gin.Context) {
+	kpis := []gin.H{
+		{"label": "Total Sales Today", "value": 54000},
+		{"label": "Purchases Today", "value": 32000},
+		{"label": "Active Customers", "value": 210},
+		{"label": "Pending Orders", "value": 7},
+	}
+
+	expirySummary := []gin.H{
+		{"window_label": "7d", "count_items": 23},
+		{"window_label": "1m", "count_items": 58},
+		{"window_label": "3m", "count_items": 142},
+	}
+
+	salesSummary := gin.H{
+		"today":     54000,
+		"yesterday": 50000,
+		"month":     1200000,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"kpis":           kpis,
+		"expiry_summary": expirySummary,
+		"sales_summary":  salesSummary,
+	})
+}
+
+// GET /api/erp/system/health
+func (h *DashboardHandler) GetSystemHealth(c *gin.Context) {
+	services := []struct {
+		Name string
+		URL  string
+	}{
+		{"api-golang", "http://localhost:3004/health"},
+		{"api-golang-v2", "http://localhost:3005/health"},
+		{"purchase-service", "http://localhost:8006/health"},
+		{"invoice-parser", "http://localhost:8005/health"},
+		{"api-gateway", "http://localhost:4000/health"},
+	}
+
+	results := []gin.H{}
+	for _, s := range services {
+		start := time.Now()
+		resp, err := http.Get(s.URL)
+		latency := time.Since(start).Milliseconds()
+		status := "healthy"
+		if err != nil || resp.StatusCode != 200 {
+			status = "down"
+		}
+		if resp != nil {
+			resp.Body.Close()
+		}
+		results = append(results, gin.H{"name": s.Name, "status": status, "latency": latency})
+	}
+	c.JSON(http.StatusOK, gin.H{"services": results})
+}
+
 // GET /api/erp/dashboard/stats
 func (h *DashboardHandler) GetStats(c *gin.Context) {
 	_ = c.Query("shop_id") // TODO: use for filtering

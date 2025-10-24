@@ -69,8 +69,8 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         
-        // Store auth token
-        localStorage.setItem('auth_token', data.token);
+        // The API sets the cookie, so we don't need to store in localStorage
+        // localStorage.setItem('auth_token', data.token);
         
         // Remember email if checked
         if (rememberMe) {
@@ -79,17 +79,18 @@ export default function LoginPage() {
           localStorage.removeItem("rememberedEmail");
         }
         
+        // Show success toast
         toast({
           title: "Login Successful",
           description: "Welcome back!",
         });
         
         // Redirect to dashboard or intended page
-        const redirectTo = searchParams.get('from') || '/dashboard';
+        const redirectTo = searchParams.get('redirect') || '/dashboard';
         router.push(redirectTo);
       } else {
         const errorData = await response.json();
-        setError(errorData.message || "Invalid email or password");
+        setError(errorData.error || "Invalid email or password");
       }
     } catch (error) {
       console.error("Login error:", error);

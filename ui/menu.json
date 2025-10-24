@@ -1,92 +1,811 @@
 [
-  {"id":"dashboard","label":"Dashboard","path":"/dashboard","permission_code":"PERM_DASHBOARD_VIEW","icon":"LayoutDashboard"},
-  {"id":"products","label":"Products","path":"/products","permission_code":"PERM_PRODUCTS_READ","icon":"Boxes"},
-  {"id":"products.add","label":"Add Product","path":"/products/add","permission_code":"PERM_PRODUCTS_CREATE","icon":"Plus"},
-  {"id":"products.list","label":"All Products","path":"/products/list","permission_code":"PERM_PRODUCTS_READ","icon":"List"},
-  {"id":"products.brands","label":"Brands","path":"/products/brands","permission_code":"PERM_PRODUCTS_BRANDS","icon":"Tag"},
-  {"id":"products.categories","label":"Categories","path":"/products/categories","permission_code":"PERM_PRODUCTS_CATEGORIES","icon":"Folders"},
-  {"id":"products.batches","label":"Batches","path":"/products/batches","permission_code":"PERM_PRODUCTS_READ","icon":"Layers"},
-  {"id":"products.pricelists","label":"Price Lists","path":"/products/price-lists","permission_code":"PERM_PRODUCTS_PRICING","icon":"IndianRupee"},
-  {"id":"products.import","label":"Import","path":"/products/import","permission_code":"PERM_PRODUCTS_CREATE","icon":"Upload"},
-  {"id":"inventory","label":"Inventory","path":"/inventory","permission_code":"PERM_INVENTORY_READ","icon":"Boxes"},
-  {"id":"inventory.stock","label":"Stock","path":"/inventory/stock","permission_code":"PERM_INVENTORY_READ","icon":"Warehouse"},
-  {"id":"inventory.adjustments","label":"Adjustments","path":"/inventory/adjustments","permission_code":"PERM_INVENTORY_ADJUST","icon":"Adjustments"},
-  {"id":"inventory.transfers","label":"Transfers","path":"/inventory/transfers","permission_code":"PERM_INVENTORY_TRANSFER","icon":"ArrowRightLeft"},
-  {"id":"inventory.batches","label":"Batches","path":"/inventory/batches","permission_code":"PERM_INVENTORY_READ","icon":"Layers"},
-  {"id":"inventory.expiry","label":"Expiry Alerts","path":"/inventory/expiry","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"inventory.lowstock","label":"Low Stock","path":"/inventory/low-stock","permission_code":"PERM_INVENTORY_READ","icon":"BatteryWarning"},
-  {"id":"inventory.reports","label":"Inventory Reports","path":"/inventory/reports","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"sales","label":"Sales","path":"/sales","permission_code":"PERM_SALES_READ","icon":"Receipt"},
-  {"id":"sales.pos","label":"POS","path":"/sales/pos","permission_code":"PERM_SALES_CREATE","icon":"Monitor"},
-  {"id":"sales.posDual","label":"POS Dual","path":"/sales/pos-dual","permission_code":"PERM_SALES_CREATE","icon":"MonitorSmartphone"},
-  {"id":"sales.orders","label":"Sales Orders","path":"/sales/orders","permission_code":"PERM_SALES_READ","icon":"ClipboardList"},
-  {"id":"sales.invoices","label":"Invoices","path":"/sales/invoices","permission_code":"PERM_SALES_READ","icon":"FileText"},
-  {"id":"sales.returns","label":"Returns","path":"/sales/returns","permission_code":"PERM_SALES_RETURN","icon":"RotateCcw"},
-  {"id":"sales.receipts","label":"Receipts","path":"/sales/receipts","permission_code":"PERM_SALES_READ","icon":"ReceiptText"},
-  {"id":"sales.reports","label":"Sales Reports","path":"/sales/reports","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"purchases","label":"Purchases","path":"/purchases","permission_code":"PERM_PURCHASE_READ","icon":"ShoppingCart"},
-  {"id":"purchases.orders","label":"Purchase Orders","path":"/purchases/orders","permission_code":"PERM_PURCHASE_CREATE","icon":"ClipboardList"},
-  {"id":"purchases.grn","label":"GRN / Receipts","path":"/purchases/grn","permission_code":"PERM_PURCHASE_RECEIVE","icon":"PackageCheck"},
-  {"id":"purchases.invoiceUpload","label":"Invoice Upload","path":"/purchases/invoice-upload","permission_code":"PERM_PURCHASE_CREATE","icon":"Upload"},
-  {"id":"purchases.reconciliation","label":"Reconciliation","path":"/purchases/reconciliation","permission_code":"PERM_PURCHASE_RECON","icon":"Search"},
-  {"id":"purchases.bills","label":"Vendor Bills","path":"/purchases/bills","permission_code":"PERM_PURCHASE_READ","icon":"FileText"},
-  {"id":"purchases.returns","label":"Purchase Returns","path":"/purchases/returns","permission_code":"PERM_PURCHASE_RETURN","icon":"RotateCcw"},
-  {"id":"purchases.priceComparison","label":"Price Comparison","path":"/purchases/price-comparison","permission_code":"PERM_PURCHASE_READ","icon":"Scale"},
-  {"id":"purchases.reports","label":"Purchase Reports","path":"/purchases/reports","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"customers","label":"Customers","path":"/customers","permission_code":"PERM_CUSTOMERS_READ","icon":"Users"},
-  {"id":"customers.add","label":"Add Customer","path":"/customers/add","permission_code":"PERM_CUSTOMERS_CREATE","icon":"UserPlus"},
-  {"id":"customers.groups","label":"Groups","path":"/customers/groups","permission_code":"PERM_CUSTOMERS_READ","icon":"UsersRound"},
-  {"id":"customers.loyalty","label":"Loyalty","path":"/customers/loyalty","permission_code":"PERM_CUSTOMERS_READ","icon":"Medal"},
-  {"id":"customers.ledger","label":"Ledger","path":"/customers/ledger","permission_code":"PERM_FINANCE_READ","icon":"Book"},
-  {"id":"vendors","label":"Vendors","path":"/vendors","permission_code":"PERM_VENDORS_READ","icon":"Factory"},
-  {"id":"vendors.add","label":"Add Vendor","path":"/vendors/add","permission_code":"PERM_VENDORS_CREATE","icon":"UserPlus"},
-  {"id":"vendors.ledger","label":"Vendor Ledger","path":"/vendors/ledger","permission_code":"PERM_FINANCE_READ","icon":"Book"},
-  {"id":"vendors.performance","label":"Performance","path":"/vendors/performance","permission_code":"PERM_VENDORS_READ","icon":"TrendingUp"},
-  {"id":"finance","label":"Finance","path":"/finance","permission_code":"PERM_FINANCE_READ","icon":"Banknote"},
-  {"id":"finance.ledgers","label":"Ledgers","path":"/finance/ledgers","permission_code":"PERM_FINANCE_READ","icon":"Book"},
-  {"id":"finance.accounts","label":"Accounts","path":"/finance/accounts","permission_code":"PERM_FINANCE_READ","icon":"Wallet"},
-  {"id":"finance.journal","label":"Journal","path":"/finance/journal","permission_code":"PERM_FINANCE_WRITE","icon":"NotebookPen"},
-  {"id":"finance.gst","label":"GST","path":"/finance/gst","permission_code":"PERM_FINANCE_READ","icon":"FileCurrency"},
-  {"id":"finance.payments","label":"Payments","path":"/finance/payments","permission_code":"PERM_FINANCE_WRITE","icon":"CreditCard"},
-  {"id":"finance.receipts","label":"Receipts","path":"/finance/receipts","permission_code":"PERM_FINANCE_WRITE","icon":"ReceiptText"},
-  {"id":"finance.bankReconciliation","label":"Bank Reconciliation","path":"/finance/bank-reconciliation","permission_code":"PERM_FINANCE_READ","icon":"Banknote"},
-  {"id":"reports","label":"Reports","path":"/reports","permission_code":"PERM_REPORTS_VIEW","icon":"BarChart4"},
-  {"id":"reports.sales","label":"Sales Reports","path":"/reports/sales","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"reports.purchase","label":"Purchase Reports","path":"/reports/purchase","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"reports.inventory","label":"Inventory Reports","path":"/reports/inventory","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"reports.finance","label":"Finance Reports","path":"/reports/finance","permission_code":"PERM_REPORTS_VIEW","icon":"FileChartColumn"},
-  {"id":"analytics","label":"Analytics","path":"/analytics","permission_code":"PERM_ANALYTICS_VIEW","icon":"ChartSpline"},
-  {"id":"analytics.dashboard","label":"Analytics Dashboard","path":"/analytics/dashboard","permission_code":"PERM_ANALYTICS_VIEW","icon":"Presentation"},
-  {"id":"analytics.kpis","label":"KPIs","path":"/analytics/kpis","permission_code":"PERM_ANALYTICS_VIEW","icon":"Gauge"},
-  {"id":"marketing","label":"Marketing","path":"/marketing","permission_code":"PERM_MARKETING_READ","icon":"Megaphone"},
-  {"id":"marketing.campaigns","label":"Campaigns","path":"/marketing/campaigns","permission_code":"PERM_MARKETING_WRITE","icon":"Send"},
-  {"id":"marketing.offers","label":"Offers","path":"/marketing/offers","permission_code":"PERM_MARKETING_WRITE","icon":"Gift"},
-  {"id":"crm","label":"CRM","path":"/crm","permission_code":"PERM_CRM_READ","icon":"Handshake"},
-  {"id":"crm.leads","label":"Leads","path":"/crm/leads","permission_code":"PERM_CRM_WRITE","icon":"UserSearch"},
-  {"id":"crm.followups","label":"Follow-ups","path":"/crm/follow-ups","permission_code":"PERM_CRM_WRITE","icon":"CalendarClock"},
-  {"id":"hr","label":"HR","path":"/hr","permission_code":"PERM_HR_READ","icon":"Users"},
-  {"id":"hr.employees","label":"Employees","path":"/hr/employees","permission_code":"PERM_HR_READ","icon":"UserCircle"},
-  {"id":"hr.attendance","label":"Attendance","path":"/hr/attendance","permission_code":"PERM_HR_WRITE","icon":"CalendarCheck"},
-  {"id":"hr.payroll","label":"Payroll","path":"/hr/payroll","permission_code":"PERM_HR_WRITE","icon":"BadgeIndianRupee"},
-  {"id":"ai","label":"AI","path":"/ai","permission_code":"PERM_AI_READ","icon":"Bot"},
-  {"id":"ai.chat","label":"AI Chat","path":"/ai/chat","permission_code":"PERM_AI_READ","icon":"MessageSquare"},
-  {"id":"ai.reorder","label":"AI Reorder","path":"/ai/reorder","permission_code":"PERM_AI_WRITE","icon":"ShoppingBasket"},
-  {"id":"system","label":"System","path":"/system","permission_code":"PERM_SYS_READ","icon":"Settings"},
-  {"id":"system.bugs","label":"Bug Tracker","path":"/system/bugs","permission_code":"PERM_SYS_BUGS_READ","icon":"Bug"},
-  {"id":"system.audit","label":"Audit Logs","path":"/system/audit","permission_code":"PERM_AUDIT_READ","icon":"ScrollText"},
-  {"id":"settings","label":"Settings","path":"/settings","permission_code":"PERM_SETTINGS_READ","icon":"Settings2"},
-  {"id":"settings.users","label":"Users","path":"/settings/users","permission_code":"PERM_USERS_ADMIN","icon":"UserCog"},
-  {"id":"settings.roles","label":"Roles","path":"/settings/roles","permission_code":"PERM_ROLES_ADMIN","icon":"Shield"},
-  {"id":"settings.permissions","label":"Permissions","path":"/settings/permissions","permission_code":"PERM_PERMISSIONS_ADMIN","icon":"LockKeyhole"},
-  {"id":"settings.company","label":"Company","path":"/settings/company","permission_code":"PERM_SETTINGS_WRITE","icon":"Building2"},
-  {"id":"settings.branches","label":"Branches","path":"/settings/branches","permission_code":"PERM_SETTINGS_WRITE","icon":"GitBranch"},
-  {"id":"settings.integrations","label":"Integrations","path":"/settings/integrations","permission_code":"PERM_SETTINGS_WRITE","icon":"PlugZap"},
-  {"id":"reports.gst","label":"GST Reports","path":"/reports/gst","permission_code":"PERM_REPORTS_VIEW","icon":"FileCurrency"},
-  {"id":"inventory.expiry.7d","label":"Expiry 7 Days","path":"/inventory/expiry?range=7d","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"inventory.expiry.1m","label":"Expiry 1 Month","path":"/inventory/expiry?range=1m","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"inventory.expiry.3m","label":"Expiry 3 Months","path":"/inventory/expiry?range=3m","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"inventory.expiry.6m","label":"Expiry 6 Months","path":"/inventory/expiry?range=6m","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"inventory.expiry.1y","label":"Expiry 1 Year","path":"/inventory/expiry?range=1y","permission_code":"PERM_INVENTORY_EXPIRE_VIEW","icon":"AlarmClock"},
-  {"id":"admin.bugs","label":"Bug Admin","path":"/admin/bugs","permission_code":"PERM_SYS_BUGS_APPROVE","icon":"Wrench"},
-  {"id":"admin.bugs.details","label":"Bug Details","path":"/admin/bugs/[id]","permission_code":"PERM_SYS_BUGS_APPROVE","icon":"FileSearch"}
+  {
+    "id": "dashboard",
+    "label": "Dashboard",
+    "path": "/dashboard",
+    "permission_code": "PERM_DASHBOARD",
+    "icon": "LayoutDashboard"
+  },
+  {
+    "id": "products",
+    "label": "Products",
+    "icon": "Package",
+    "children": [
+      {
+        "id": "products-list",
+        "label": "All Products",
+        "path": "/products",
+        "permission_code": "PERM_PRODUCTS_READ"
+      },
+      {
+        "id": "products-create",
+        "label": "Add Product",
+        "path": "/products/create",
+        "permission_code": "PERM_PRODUCTS_CREATE"
+      },
+      {
+        "id": "products-categories",
+        "label": "Categories",
+        "path": "/products/categories",
+        "permission_code": "PERM_PRODUCTS_CATEGORIES"
+      },
+      {
+        "id": "products-brands",
+        "label": "Brands",
+        "path": "/products/brands",
+        "permission_code": "PERM_PRODUCTS_BRANDS"
+      },
+      {
+        "id": "products-batches",
+        "label": "Batches",
+        "path": "/products/batches",
+        "permission_code": "PERM_PRODUCTS_BATCHES"
+      },
+      {
+        "id": "products-price-lists",
+        "label": "Price Lists",
+        "path": "/products/price-lists",
+        "permission_code": "PERM_PRODUCTS_PRICING"
+      }
+    ]
+  },
+  {
+    "id": "inventory",
+    "label": "Inventory",
+    "icon": "Boxes",
+    "children": [
+      {
+        "id": "inventory-dashboard",
+        "label": "Inventory Dashboard",
+        "path": "/inventory",
+        "permission_code": "PERM_INVENTORY_VIEW"
+      },
+      {
+        "id": "inventory-stock",
+        "label": "Stock Management",
+        "path": "/inventory/stock",
+        "permission_code": "PERM_INVENTORY_STOCK"
+      },
+      {
+        "id": "inventory-expiry",
+        "label": "Expiry Tracking",
+        "path": "/inventory/expiry",
+        "permission_code": "PERM_INVENTORY_EXPIRE_VIEW"
+      },
+      {
+        "id": "inventory-bulk-update",
+        "label": "Bulk Product Update",
+        "path": "/inventory/bulk-update",
+        "permission_code": "PERM_INVENTORY_BULK"
+      },
+      {
+        "id": "inventory-combo",
+        "label": "Combo / Kit Builder",
+        "path": "/inventory/combo",
+        "permission_code": "PERM_INVENTORY_COMBO"
+      },
+      {
+        "id": "inventory-barcode",
+        "label": "Barcode Designer",
+        "path": "/inventory/barcode",
+        "permission_code": "PERM_BARCODE_DESIGN"
+      },
+      {
+        "id": "inventory-direct-entry",
+        "label": "Direct Stock Entry",
+        "path": "/inventory/direct-entry",
+        "permission_code": "PERM_STOCK_DIRECT"
+      },
+      {
+        "id": "inventory-damage",
+        "label": "Damage Report",
+        "path": "/inventory/damage",
+        "permission_code": "PERM_INVENTORY_DAMAGE"
+      },
+      {
+        "id": "inventory-adjustments",
+        "label": "Stock Adjustments",
+        "path": "/inventory/adjustments",
+        "permission_code": "PERM_INVENTORY_ADJUST"
+      },
+      {
+        "id": "inventory-transfers",
+        "label": "Stock Transfers",
+        "path": "/inventory/transfers",
+        "permission_code": "PERM_INVENTORY_TRANSFER"
+      }
+    ]
+  },
+  {
+    "id": "sales",
+    "label": "Sales",
+    "icon": "ShoppingCart",
+    "children": [
+      {
+        "id": "sales-dashboard",
+        "label": "Sales Dashboard",
+        "path": "/sales",
+        "permission_code": "PERM_SALES_VIEW"
+      },
+      {
+        "id": "sales-pos",
+        "label": "POS Terminal",
+        "path": "/sales/pos",
+        "permission_code": "PERM_POS_USE"
+      },
+      {
+        "id": "sales-dual-screen",
+        "label": "Dual Screen POS",
+        "path": "/sales/pos-dual",
+        "permission_code": "PERM_POS_DUAL"
+      },
+      {
+        "id": "sales-hold",
+        "label": "Hold Bills",
+        "path": "/sales/hold",
+        "permission_code": "PERM_POS_HOLD"
+      },
+      {
+        "id": "sales-estimate-convert",
+        "label": "Estimate → Invoice",
+        "path": "/sales/estimate-convert",
+        "permission_code": "PERM_SALES_CONVERT"
+      },
+      {
+        "id": "sales-bill-template",
+        "label": "Bill Template Editor",
+        "path": "/sales/bill-template",
+        "permission_code": "PERM_SALES_TEMPLATE"
+      },
+      {
+        "id": "sales-giftcards",
+        "label": "Gift Cards & Vouchers",
+        "path": "/sales/giftcards",
+        "permission_code": "PERM_SALES_GIFTCARD"
+      },
+      {
+        "id": "sales-orders",
+        "label": "Sales Orders",
+        "path": "/sales/orders",
+        "permission_code": "PERM_SALES_ORDERS"
+      },
+      {
+        "id": "sales-invoices",
+        "label": "Invoices",
+        "path": "/sales/invoices",
+        "permission_code": "PERM_SALES_INVOICES"
+      },
+      {
+        "id": "sales-returns",
+        "label": "Returns & Credits",
+        "path": "/sales/returns",
+        "permission_code": "PERM_SALES_RETURNS"
+      },
+      {
+        "id": "sales-receipts",
+        "label": "Receipts",
+        "path": "/sales/receipts",
+        "permission_code": "PERM_SALES_RECEIPTS"
+      }
+    ]
+  },
+  {
+    "id": "purchases",
+    "label": "Purchases",
+    "icon": "Package",
+    "children": [
+      {
+        "id": "purchases-dashboard",
+        "label": "Purchase Dashboard",
+        "path": "/purchases",
+        "permission_code": "PERM_PURCHASES_VIEW"
+      },
+      {
+        "id": "purchases-orders",
+        "label": "Purchase Orders",
+        "path": "/purchases/orders",
+        "permission_code": "PERM_PURCHASES_ORDERS"
+      },
+      {
+        "id": "purchases-create",
+        "label": "Create PO",
+        "path": "/purchases/create",
+        "permission_code": "PERM_PURCHASES_CREATE"
+      },
+      {
+        "id": "purchases-grn",
+        "label": "Goods Receipt Notes",
+        "path": "/purchases/grn",
+        "permission_code": "PERM_PURCHASES_GRN"
+      },
+      {
+        "id": "purchases-vendors",
+        "label": "Vendor Management",
+        "path": "/purchases/vendors",
+        "permission_code": "PERM_PURCHASES_VENDORS"
+      },
+      {
+        "id": "purchases-payments",
+        "label": "Vendor Payments",
+        "path": "/purchases/payments",
+        "permission_code": "PERM_PURCHASES_PAYMENTS"
+      },
+      {
+        "id": "purchases-comparison",
+        "label": "Price Comparison",
+        "path": "/purchases/price-comparison",
+        "permission_code": "PERM_PURCHASES_COMPARISON"
+      },
+      {
+        "id": "purchases-history",
+        "label": "Purchase History",
+        "path": "/purchases/history",
+        "permission_code": "PERM_PURCHASES_HISTORY"
+      },
+      {
+        "id": "purchases-ai-reorder",
+        "label": "AI Reorder",
+        "path": "/purchases/ai-reorder",
+        "permission_code": "PERM_PURCHASES_AI"
+      }
+    ]
+  },
+  {
+    "id": "customers",
+    "label": "Customers & CRM",
+    "icon": "Users",
+    "children": [
+      {
+        "id": "customers-dashboard",
+        "label": "Customer Dashboard",
+        "path": "/customers",
+        "permission_code": "PERM_CUSTOMERS_VIEW"
+      },
+      {
+        "id": "customers-list",
+        "label": "All Customers",
+        "path": "/customers/list",
+        "permission_code": "PERM_CUSTOMERS_READ"
+      },
+      {
+        "id": "customers-create",
+        "label": "Add Customer",
+        "path": "/customers/create",
+        "permission_code": "PERM_CUSTOMERS_CREATE"
+      },
+      {
+        "id": "customers-groups",
+        "label": "Customer Groups",
+        "path": "/customers/groups",
+        "permission_code": "PERM_CUSTOMERS_GROUPS"
+      },
+      {
+        "id": "customers-loyalty",
+        "label": "Loyalty Program",
+        "path": "/customers/loyalty",
+        "permission_code": "PERM_CUSTOMERS_LOYALTY"
+      },
+      {
+        "id": "customers-bulk-edit",
+        "label": "Bulk Customer Editor",
+        "path": "/customers/bulk-edit",
+        "permission_code": "PERM_CUSTOMERS_BULK_EDIT"
+      },
+      {
+        "id": "customers-ledger",
+        "label": "Customer Ledger",
+        "path": "/customers/ledger",
+        "permission_code": "PERM_CUSTOMERS_LEDGER"
+      }
+    ]
+  },
+  {
+    "id": "vendors",
+    "label": "Vendors",
+    "icon": "Truck",
+    "children": [
+      {
+        "id": "vendors-dashboard",
+        "label": "Vendor Dashboard",
+        "path": "/vendors",
+        "permission_code": "PERM_VENDORS_VIEW"
+      },
+      {
+        "id": "vendors-list",
+        "label": "All Vendors",
+        "path": "/vendors/list",
+        "permission_code": "PERM_VENDORS_READ"
+      },
+      {
+        "id": "vendors-create",
+        "label": "Add Vendor",
+        "path": "/vendors/create",
+        "permission_code": "PERM_VENDORS_CREATE"
+      },
+      {
+        "id": "vendors-ledger",
+        "label": "Vendor Ledger",
+        "path": "/vendors/ledger",
+        "permission_code": "PERM_VENDORS_LEDGER"
+      },
+      {
+        "id": "vendors-performance",
+        "label": "Performance",
+        "path": "/vendors/performance",
+        "permission_code": "PERM_VENDORS_PERFORMANCE"
+      },
+      {
+        "id": "vendors-bulk-update",
+        "label": "Bulk Vendor Update",
+        "path": "/vendors/bulk-update",
+        "permission_code": "PERM_VENDORS_BULK_UPDATE"
+      }
+    ]
+  },
+  {
+    "id": "finance",
+    "label": "Finance & Accounting",
+    "icon": "DollarSign",
+    "children": [
+      {
+        "id": "finance-dashboard",
+        "label": "Finance Dashboard",
+        "path": "/finance",
+        "permission_code": "PERM_FINANCE_VIEW"
+      },
+      {
+        "id": "finance-ledgers",
+        "label": "General Ledger",
+        "path": "/finance/ledgers",
+        "permission_code": "PERM_FINANCE_LEDGERS"
+      },
+      {
+        "id": "finance-expenses",
+        "label": "Expenses",
+        "path": "/finance/expenses",
+        "permission_code": "PERM_FINANCE_EXPENSES"
+      },
+      {
+        "id": "finance-commission",
+        "label": "Salesman Commission",
+        "path": "/finance/commission",
+        "permission_code": "PERM_FINANCE_COMMISSION"
+      },
+      {
+        "id": "finance-supplier-pay",
+        "label": "Supplier Payments",
+        "path": "/finance/suppliers/pay",
+        "permission_code": "PERM_SUPPLIER_PAY"
+      },
+      {
+        "id": "finance-credit",
+        "label": "Credit Management",
+        "path": "/finance/credit",
+        "permission_code": "PERM_FINANCE_CREDIT"
+      },
+      {
+        "id": "finance-gateway",
+        "label": "Payment Gateway",
+        "path": "/finance/gateway",
+        "permission_code": "PERM_FINANCE_GATEWAY"
+      },
+      {
+        "id": "finance-bank-reconciliation",
+        "label": "Bank Reconciliation",
+        "path": "/finance/bank-reconciliation",
+        "permission_code": "PERM_FINANCE_BANK_RECON"
+      },
+      {
+        "id": "finance-gst",
+        "label": "GST Returns",
+        "path": "/finance/gst",
+        "permission_code": "PERM_FINANCE_GST"
+      },
+      {
+        "id": "finance-reports",
+        "label": "Financial Reports",
+        "path": "/finance/reports",
+        "permission_code": "PERM_FINANCE_REPORTS"
+      }
+    ]
+  },
+  {
+    "id": "hr",
+    "label": "HR & Payroll",
+    "icon": "UserCheck",
+    "children": [
+      {
+        "id": "hr-dashboard",
+        "label": "HR Dashboard",
+        "path": "/hr",
+        "permission_code": "PERM_HR_VIEW"
+      },
+      {
+        "id": "hr-employees",
+        "label": "Employees",
+        "path": "/hr/employees",
+        "permission_code": "PERM_HR_EMPLOYEES"
+      },
+      {
+        "id": "hr-attendance",
+        "label": "Attendance",
+        "path": "/hr/attendance",
+        "permission_code": "PERM_HR_ATTENDANCE"
+      },
+      {
+        "id": "hr-payroll",
+        "label": "Payroll",
+        "path": "/hr/payroll",
+        "permission_code": "PERM_HR_PAYROLL"
+      },
+      {
+        "id": "hr-leaves",
+        "label": "Leaves",
+        "path": "/hr/leaves",
+        "permission_code": "PERM_HR_LEAVES"
+      },
+      {
+        "id": "hr-performance",
+        "label": "Performance",
+        "path": "/hr/performance",
+        "permission_code": "PERM_HR_PERFORMANCE"
+      }
+    ]
+  },
+  {
+    "id": "reports",
+    "label": "Reports & Analytics",
+    "icon": "BarChart3",
+    "children": [
+      {
+        "id": "reports-dashboard",
+        "label": "Reports Dashboard",
+        "path": "/reports",
+        "permission_code": "PERM_REPORTS_VIEW"
+      },
+      {
+        "id": "reports-sales",
+        "label": "Sales Reports",
+        "path": "/reports/sales",
+        "permission_code": "PERM_REPORTS_SALES"
+      },
+      {
+        "id": "reports-purchase",
+        "label": "Purchase Reports",
+        "path": "/reports/purchase",
+        "permission_code": "PERM_REPORTS_PURCHASE"
+      },
+      {
+        "id": "reports-inventory",
+        "label": "Inventory Reports",
+        "path": "/reports/inventory",
+        "permission_code": "PERM_REPORTS_INVENTORY"
+      },
+      {
+        "id": "reports-finance",
+        "label": "Financial Reports",
+        "path": "/reports/finance",
+        "permission_code": "PERM_REPORTS_FINANCE"
+      },
+      {
+        "id": "reports-gst",
+        "label": "GST Reports",
+        "path": "/reports/gst",
+        "permission_code": "PERM_REPORTS_GST"
+      },
+      {
+        "id": "reports-profit-loss",
+        "label": "Profit & Loss",
+        "path": "/reports/profit-loss",
+        "permission_code": "PERM_REPORTS_PROFIT_LOSS"
+      },
+      {
+        "id": "reports-balance-sheet",
+        "label": "Balance Sheet",
+        "path": "/reports/balance-sheet",
+        "permission_code": "PERM_REPORTS_BALANCE_SHEET"
+      },
+      {
+        "id": "reports-custom",
+        "label": "Custom Reports",
+        "path": "/reports/custom",
+        "permission_code": "PERM_REPORTS_CUSTOM"
+      }
+    ]
+  },
+  {
+    "id": "analytics",
+    "label": "Business Intelligence",
+    "icon": "TrendingUp",
+    "children": [
+      {
+        "id": "analytics-dashboard",
+        "label": "Analytics Dashboard",
+        "path": "/analytics",
+        "permission_code": "PERM_ANALYTICS_VIEW"
+      },
+      {
+        "id": "analytics-sales",
+        "label": "Sales Analytics",
+        "path": "/analytics/sales",
+        "permission_code": "PERM_ANALYTICS_SALES"
+      },
+      {
+        "id": "analytics-inventory",
+        "label": "Inventory Analytics",
+        "path": "/analytics/inventory",
+        "permission_code": "PERM_ANALYTICS_INVENTORY"
+      },
+      {
+        "id": "analytics-customer",
+        "label": "Customer Analytics",
+        "path": "/analytics/customer",
+        "permission_code": "PERM_ANALYTICS_CUSTOMER"
+      },
+      {
+        "id": "analytics-forecasting",
+        "label": "Demand Forecasting",
+        "path": "/analytics/forecasting",
+        "permission_code": "PERM_ANALYTICS_FORECASTING"
+      },
+      {
+        "id": "analytics-kpis",
+        "label": "KPI Dashboard",
+        "path": "/analytics/kpis",
+        "permission_code": "PERM_ANALYTICS_KPIS"
+      }
+    ]
+  },
+  {
+    "id": "marketing",
+    "label": "Marketing & Campaigns",
+    "icon": "Megaphone",
+    "children": [
+      {
+        "id": "marketing-dashboard",
+        "label": "Marketing Dashboard",
+        "path": "/marketing",
+        "permission_code": "PERM_MARKETING_VIEW"
+      },
+      {
+        "id": "marketing-campaigns",
+        "label": "Campaigns",
+        "path": "/marketing/campaigns",
+        "permission_code": "PERM_MARKETING_CAMPAIGNS"
+      },
+      {
+        "id": "marketing-catalogue",
+        "label": "Digital Catalogue",
+        "path": "/marketing/catalogue",
+        "permission_code": "PERM_MARKETING_CATALOGUE"
+      },
+      {
+        "id": "marketing-whatsapp",
+        "label": "WhatsApp Marketing",
+        "path": "/marketing/whatsapp",
+        "permission_code": "PERM_MARKETING_WHATSAPP"
+      },
+      {
+        "id": "marketing-whatsapp-schedule",
+        "label": "WhatsApp Scheduler",
+        "path": "/marketing/whatsapp-schedule",
+        "permission_code": "PERM_MARKETING_WHATSAPP_SCHEDULE"
+      },
+      {
+        "id": "marketing-sms",
+        "label": "SMS Campaigns",
+        "path": "/marketing/sms",
+        "permission_code": "PERM_MARKETING_SMS"
+      },
+      {
+        "id": "marketing-email",
+        "label": "Email Campaigns",
+        "path": "/marketing/email",
+        "permission_code": "PERM_MARKETING_EMAIL"
+      },
+      {
+        "id": "marketing-templates",
+        "label": "Templates",
+        "path": "/marketing/templates",
+        "permission_code": "PERM_MARKETING_TEMPLATES"
+      }
+    ]
+  },
+  {
+    "id": "crm",
+    "label": "CRM Enhancements",
+    "icon": "UserCog",
+    "children": [
+      {
+        "id": "crm-whatsapp",
+        "label": "Bulk WhatsApp",
+        "path": "/crm/whatsapp",
+        "permission_code": "PERM_CRM_WHATSAPP"
+      },
+      {
+        "id": "crm-loyalty",
+        "label": "Loyalty Cards",
+        "path": "/crm/loyalty",
+        "permission_code": "PERM_CRM_LOYALTY"
+      },
+      {
+        "id": "crm-bulk-edit",
+        "label": "Bulk Customer Editor",
+        "path": "/crm/bulk-edit",
+        "permission_code": "PERM_CRM_BULK_EDIT"
+      }
+    ]
+  },
+  {
+    "id": "ai",
+    "label": "AI & Automation",
+    "icon": "Bot",
+    "children": [
+      {
+        "id": "ai-dashboard",
+        "label": "AI Dashboard",
+        "path": "/ai",
+        "permission_code": "PERM_AI_VIEW"
+      },
+      {
+        "id": "ai-insights",
+        "label": "AI Insights",
+        "path": "/ai/insights",
+        "permission_code": "PERM_AI_INSIGHTS"
+      },
+      {
+        "id": "ai-auto-fix",
+        "label": "Auto Bug Fix",
+        "path": "/ai/auto-fix",
+        "permission_code": "PERM_AI_AUTO_FIX"
+      },
+      {
+        "id": "ai-image-update",
+        "label": "Product Images",
+        "path": "/ai/image-update",
+        "permission_code": "PERM_AI_IMAGE_UPDATE"
+      },
+      {
+        "id": "ai-expiry-predict",
+        "label": "Expiry Forecast",
+        "path": "/ai/expiry-predict",
+        "permission_code": "PERM_AI_EXPIRY_PREDICT"
+      },
+      {
+        "id": "ai-chat",
+        "label": "AI Assistant",
+        "path": "/ai/chat",
+        "permission_code": "PERM_AI_CHAT"
+      }
+    ]
+  },
+  {
+    "id": "prescriptions",
+    "label": "Doctor & Prescriptions",
+    "icon": "FileText",
+    "children": [
+      {
+        "id": "prescriptions-dashboard",
+        "label": "Prescription Dashboard",
+        "path": "/prescriptions",
+        "permission_code": "PERM_PRESCRIPTIONS_VIEW"
+      },
+      {
+        "id": "prescriptions-create",
+        "label": "New Prescription",
+        "path": "/prescriptions/create",
+        "permission_code": "PERM_PRESCRIPTIONS_CREATE"
+      },
+      {
+        "id": "prescriptions-history",
+        "label": "Prescription History",
+        "path": "/prescriptions/history",
+        "permission_code": "PERM_PRESCRIPTIONS_HISTORY"
+      },
+      {
+        "id": "prescriptions-ai-suggest",
+        "label": "AI Remedy Suggestions",
+        "path": "/prescriptions/ai-suggest",
+        "permission_code": "PERM_PRESCRIPTIONS_AI"
+      }
+    ]
+  },
+  {
+    "id": "system",
+    "label": "System & Utilities",
+    "icon": "Settings",
+    "children": [
+      {
+        "id": "system-health",
+        "label": "System Health",
+        "path": "/system/health",
+        "permission_code": "PERM_SYSTEM_HEALTH"
+      },
+      {
+        "id": "system-multi-pc",
+        "label": "Multi-PC Sync",
+        "path": "/system/multi-pc",
+        "permission_code": "PERM_SYSTEM_MULTIPC"
+      },
+      {
+        "id": "system-offline",
+        "label": "Offline Sync",
+        "path": "/system/offline",
+        "permission_code": "PERM_SYSTEM_OFFLINE"
+      },
+      {
+        "id": "system-bugs",
+        "label": "Bug Tracker",
+        "path": "/system/bugs",
+        "permission_code": "PERM_SYSTEM_BUGS"
+      },
+      {
+        "id": "system-audit",
+        "label": "Audit Logs",
+        "path": "/system/audit",
+        "permission_code": "PERM_SYSTEM_AUDIT"
+      },
+      {
+        "id": "system-backup",
+        "label": "Backup & Restore",
+        "path": "/system/backup",
+        "permission_code": "PERM_SYSTEM_BACKUP"
+      }
+    ]
+  },
+  {
+    "id": "settings",
+    "label": "Settings & Admin",
+    "icon": "Cog",
+    "children": [
+      {
+        "id": "settings-company",
+        "label": "Company Settings",
+        "path": "/settings/company",
+        "permission_code": "PERM_SETTINGS_COMPANY"
+      },
+      {
+        "id": "settings-branches",
+        "label": "Branch Management",
+        "path": "/settings/branches",
+        "permission_code": "PERM_SETTINGS_BRANCHES"
+      },
+      {
+        "id": "settings-users",
+        "label": "User Management",
+        "path": "/settings/users",
+        "permission_code": "PERM_SETTINGS_USERS"
+      },
+      {
+        "id": "settings-roles",
+        "label": "Roles & Permissions",
+        "path": "/settings/roles",
+        "permission_code": "PERM_SETTINGS_ROLES"
+      },
+      {
+        "id": "settings-tax",
+        "label": "Tax Configuration",
+        "path": "/settings/tax",
+        "permission_code": "PERM_SETTINGS_TAX"
+      },
+      {
+        "id": "settings-integrations",
+        "label": "Integrations",
+        "path": "/settings/integrations",
+        "permission_code": "PERM_SETTINGS_INTEGRATIONS"
+      },
+      {
+        "id": "settings-notifications",
+        "label": "Notifications",
+        "path": "/settings/notifications",
+        "permission_code": "PERM_SETTINGS_NOTIFICATIONS"
+      },
+      {
+        "id": "settings-security",
+        "label": "Security",
+        "path": "/settings/security",
+        "permission_code": "PERM_SETTINGS_SECURITY"
+      }
+    ]
+  }
 ]
