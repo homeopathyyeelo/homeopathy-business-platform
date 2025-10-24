@@ -8,219 +8,50 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 1990ms
+ ✓ Ready in 1895ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 828ms (159 modules)
- ○ Compiling /inventory/transfers ...
- ✓ Compiled /inventory/transfers in 7.7s (1344 modules)
- GET /inventory/transfers 200 in 8390ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 771ms (1407 modules)
- GET /api/auth/me 200 in 1034ms
- ✓ Compiled / in 427ms (1430 modules)
- GET / 200 in 965ms
- GET /inventory/transfers 200 in 318ms
- GET /api/auth/me 200 in 139ms
- ○ Compiling /products ...
- ✓ Compiled /products in 949ms (1337 modules)
- GET /products 200 in 1318ms
- ✓ Compiled /api/products in 370ms (1355 modules)
- GET /api/products 200 in 636ms
- ✓ Compiled /_not-found in 351ms (1356 modules)
- GET /products/edit/1 404 in 491ms
- GET /products/edit/1 404 in 380ms
- ✓ Compiled /api/auth/me in 439ms (883 modules)
- GET /api/auth/me 200 in 723ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 6s (2765 modules)
- GET /dashboard 200 in 6335ms
- ✓ Compiled /api/vendors in 420ms (1520 modules)
- ✓ Compiled in 407ms (1263 modules)
- GET /api/customers 200 in 1300ms
- GET /api/inventory 200 in 1260ms
- GET /api/inventory/low-stock 200 in 1274ms
- GET /api/vendors 200 in 1289ms
- GET /api/products 200 in 1365ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 676ms (1505 modules)
- GET /dashboard/stats 404 in 909ms
- GET /dashboard/stats 404 in 415ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 839ms (1597 modules)
- GET /api/auth/me 200 in 1111ms
- GET /dashboard/activity 404 in 329ms
- GET /dashboard/activity 404 in 379ms
- GET /api/auth/me 200 in 207ms
- GET /dashboard/activity 404 in 167ms
- GET /api/auth/me 200 in 128ms
- GET /dashboard/stats 404 in 45ms
- GET /dashboard/stats 404 in 206ms
- GET /api/auth/me 200 in 110ms
- GET /dashboard 200 in 261ms
- ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 802ms (1599 modules)
- ✓ Compiled (1607 modules)
- GET /api/customers 200 in 1364ms
- GET /api/inventory 200 in 1378ms
- GET /api/inventory/low-stock 200 in 1339ms
- GET /api/vendors 200 in 1356ms
- GET /api/products 200 in 1478ms
-   Reload env: .env.local
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 11s (2956 modules)
- GET /dashboard 200 in 7597ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 971ms (1520 modules)
- ✓ Compiled (1606 modules)
- GET /api/customers 200 in 1969ms
- GET /api/inventory 200 in 1979ms
- GET /api/inventory/low-stock 200 in 1992ms
- GET /api/vendors 200 in 2002ms
- GET /api/auth/me 200 in 1981ms
- GET /api/products 200 in 2135ms
-   Reload env: .env.local
- ✓ Compiled in 878ms (3028 modules)
- GET /dashboard 200 in 394ms
- GET /dashboard 200 in 540ms
- ✓ Compiled in 1982ms (2924 modules)
- GET /dashboard 200 in 500ms
- ○ Compiling /products/batches ...
- ✓ Compiled /products/batches in 1673ms (2792 modules)
- GET /products/batches 200 in 2015ms
- ✓ Compiled /api/products in 479ms (1535 modules)
- GET /api/products 200 in 780ms
- ○ Compiling /products/add ...
- ✓ Compiled /products/add in 913ms (2833 modules)
- GET /products/add 200 in 1194ms
- GET /products 200 in 155ms
- ○ Compiling /inventory/expiry ...
- ✓ Compiled /inventory/expiry in 1286ms (2858 modules)
- GET /inventory/expiry 200 in 1521ms
- GET /inventory/expiry 200 in 241ms
- ✓ Compiled in 1840ms (2992 modules)
- GET /inventory/expiry 200 in 496ms
- GET /inventory/expiry 200 in 329ms
- ✓ Compiled in 1334ms (2992 modules)
- GET /inventory/expiry 200 in 173ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 1608ms (2842 modules)
- GET /dashboard/activity 200 in 1843ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 816ms (2841 modules)
- GET /dashboard/stats 200 in 1024ms
- GET /dashboard 200 in 152ms
- ○ Compiling /api/inventory ...
- ✓ Compiled /api/vendors in 1406ms (1557 modules)
- ✓ Compiled (1565 modules)
- GET /api/customers 200 in 3216ms
- GET /api/inventory 200 in 3232ms
- GET /api/inventory/low-stock 200 in 3175ms
- GET /api/vendors 200 in 3189ms
- GET /api/products 200 in 3328ms
- GET /dashboard/stats 200 in 215ms
- GET /dashboard/activity 200 in 192ms
- GET /dashboard/stats 200 in 119ms
- GET /dashboard 200 in 220ms
- GET /dashboard 200 in 779ms
- GET /api/products 200 in 346ms
- GET /api/customers 200 in 384ms
- GET /api/inventory 200 in 392ms
- GET /api/inventory/low-stock 200 in 450ms
- GET /api/vendors 200 in 457ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 1051ms (1634 modules)
- GET /api/auth/me 200 in 1741ms
- GET /dashboard 200 in 857ms
- GET /api/products 200 in 374ms
- GET /api/customers 200 in 417ms
- GET /api/inventory 200 in 429ms
- GET /api/inventory/low-stock 200 in 542ms
- GET /api/vendors 200 in 480ms
- GET /api/auth/me 200 in 488ms
- GET /dashboard 200 in 359ms
- GET /api/products 200 in 406ms
- GET /api/customers 200 in 435ms
- GET /api/inventory 200 in 379ms
- GET /api/inventory/low-stock 200 in 385ms
- GET /api/vendors 200 in 442ms
- GET /api/auth/me 200 in 449ms
- ✓ Compiled in 2.5s (2936 modules)
- GET /dashboard/stats 200 in 306ms
- GET /dashboard/activity 200 in 141ms
- GET /dashboard/stats 200 in 131ms
- GET /dashboard 200 in 193ms
- GET /api/products 200 in 426ms
- GET /api/customers 200 in 434ms
- GET /api/inventory 200 in 527ms
- GET /api/inventory/low-stock 200 in 474ms
- GET /api/vendors 200 in 489ms
- ✓ Compiled in 329ms (1302 modules)
- ○ Compiling /inventory/valuation ...
- ✓ Compiled /inventory/valuation in 2.4s (2869 modules)
- GET /inventory/valuation 200 in 2720ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1113ms (1566 modules)
- GET /api/inventory/valuation 404 in 1589ms
- GET /api/inventory/valuation 404 in 188ms
- GET /inventory/expiry 200 in 170ms
- ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
-   ▲ Next.js 15.5.6
-   - Local:        http://localhost:3000
-   - Network:      http://192.168.1.7:3000
-   - Environments: .env.local, .env
-
- ✓ Starting...
- ✓ Ready in 2.9s
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 852ms (159 modules)
+ ✓ Compiled /middleware in 1111ms (159 modules)
  ○ Compiling / ...
- ✓ Compiled / in 8.7s (1161 modules)
- ✓ Compiled in 422ms (641 modules)
- ○ Compiling /inventory/expiry ...
- ✓ Compiled /inventory/expiry in 1066ms (1162 modules)
- GET /inventory/expiry 200 in 1865ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 1234ms (1257 modules)
- GET /api/auth/me 200 in 1616ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 1455ms (1404 modules)
- GET /dashboard/activity 200 in 1750ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 1339ms (1413 modules)
- GET /dashboard/stats 200 in 1619ms
- ○ Compiling /analytics/sales-purchase ...
- ✓ Compiled /analytics/sales-purchase in 941ms (1430 modules)
- GET /analytics/sales-purchase 200 in 1361ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 648ms (1431 modules)
- GET /api/analytics/sales-purchase 404 in 1684ms
- GET /api/analytics/sales-purchase 404 in 275ms
- GET /analytics/sales-purchase 200 in 560ms
- ✓ Compiled in 1198ms (1423 modules)
- GET /analytics/sales-purchase 200 in 506ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 619ms (750 modules)
- GET /dashboard/activity 200 in 861ms
- GET /dashboard/stats 200 in 142ms
+ ✓ Compiled / in 7.1s (1161 modules)
+ GET / 200 in 1605ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 6.6s (2803 modules)
- GET /dashboard 200 in 6859ms
- GET /dashboard 200 in 153ms
- ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 1621ms (2829 modules)
- GET /api/customers 200 in 1918ms
- GET /api/inventory 200 in 1860ms
- GET /api/inventory/low-stock 200 in 1872ms
- GET /api/vendors 200 in 1823ms
- GET /api/products 200 in 2035ms
- ✓ Compiled in 2.2s (2796 modules)
- ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 1093ms (1535 modules)
- ✓ Compiled (1543 modules)
- GET /api/customers 200 in 2169ms
- GET /api/inventory 200 in 2071ms
- GET /api/vendors 200 in 1968ms
- GET /api/inventory/low-stock 200 in 1987ms
- GET /api/products 200 in 2347ms
- ✓ Compiled in 1132ms (2822 modules)
- ✓ Compiled in 2.9s (2822 modules)
+ ✓ Compiled /dashboard in 6.9s (2728 modules)
+ GET /dashboard 200 in 7963ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 2s (2833 modules)
+ GET /api/customers 200 in 2373ms
+ GET /api/inventory 200 in 2387ms
+ GET /api/inventory/low-stock 200 in 2343ms
+ GET /api/vendors 200 in 2368ms
+ GET /api/auth/me 200 in 2341ms
+ GET /api/products 200 in 2502ms
+ GET /dashboard 200 in 806ms
+ GET /api/products 200 in 469ms
+ GET /api/customers 200 in 856ms
+ GET /api/inventory 200 in 1170ms
+ GET /api/inventory/low-stock 200 in 1177ms
+ GET /api/vendors 200 in 1185ms
+ GET /api/auth/me 200 in 1072ms
+ GET /dashboard 200 in 318ms
+ GET /api/products 200 in 353ms
+ GET /api/customers 200 in 628ms
+ GET /api/inventory 200 in 879ms
+ GET /api/inventory/low-stock 200 in 888ms
+ GET /api/vendors 200 in 853ms
+ GET /api/auth/me 200 in 861ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 843ms (2850 modules)
+ GET /dashboard/stats 200 in 1128ms
+ ○ Compiling /dashboard/activity ...
+ ✓ Compiled /dashboard/activity in 2.1s (2861 modules)
+ GET /dashboard/activity 200 in 2542ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1749ms (2882 modules)
+ GET /products 200 in 2005ms
+ ○ Compiling /sales/e-invoice ...
+ ✓ Compiled /sales/e-invoice in 1993ms (2785 modules)
+ GET /sales/e-invoice 200 in 2507ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 861ms (2788 modules)
+ GET /api/sales/e-invoice 404 in 1416ms
+ GET /api/sales/e-invoice 404 in 216ms

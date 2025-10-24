@@ -63,9 +63,13 @@ type AlertItem struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
+func NewDashboardHandler(db interface{}) *DashboardHandler {
+	return &DashboardHandler{db: db}
+}
+
 // GET /api/erp/dashboard/stats
 func (h *DashboardHandler) GetStats(c *gin.Context) {
-	shopID := c.Query("shop_id")
+	_ = c.Query("shop_id") // TODO: use for filtering
 
 	// TODO: Query real data from database
 	stats := DashboardStats{
@@ -91,9 +95,9 @@ func (h *DashboardHandler) GetStats(c *gin.Context) {
 
 // GET /api/erp/dashboard/activity
 func (h *DashboardHandler) GetActivity(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "20")
-	module := c.Query("module")
-	userID := c.Query("user_id")
+	_ = c.DefaultQuery("limit", "20") // TODO: implement pagination
+	_ = c.Query("module") // TODO: filter by module
+	_ = c.Query("user_id") // TODO: filter by user
 
 	// TODO: Query real data from audit_logs table
 	now := time.Now()
@@ -158,17 +162,14 @@ func (h *DashboardHandler) GetActivity(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    activities,
-		"pagination": gin.H{
-			"limit": limit,
-			"total": len(activities),
-		},
+		"total":   len(activities),
 	})
 }
 
 // GET /api/erp/dashboard/recent-sales
 func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "10")
-	shopID := c.Query("shop_id")
+	_ = c.DefaultQuery("limit", "10") // TODO: implement pagination
+	_ = c.Query("shop_id") // TODO: filter by shop
 
 	// TODO: Query real data from sales_invoices table
 	now := time.Now()
@@ -207,8 +208,9 @@ func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
 
 // GET /api/erp/dashboard/top-products
 func (h *DashboardHandler) GetTopProducts(c *gin.Context) {
-	limit := c.DefaultQuery("limit", "10")
-	period := c.DefaultQuery("period", "month") // today, week, month, year
+	_ = c.DefaultQuery("limit", "10") // TODO: implement pagination
+	_ = c.Query("shop_id") // TODO: filter by shop
+	_ = c.DefaultQuery("period", "month") // today, week, month, year
 
 	// TODO: Query real data with GROUP BY
 	products := []TopProduct{
@@ -240,7 +242,7 @@ func (h *DashboardHandler) GetTopProducts(c *gin.Context) {
 
 // GET /api/erp/dashboard/alerts
 func (h *DashboardHandler) GetAlerts(c *gin.Context) {
-	shopID := c.Query("shop_id")
+	_ = c.Query("shop_id") // TODO: filter by shop
 
 	// TODO: Query from multiple sources (inventory, expiry, orders)
 	now := time.Now()
@@ -279,7 +281,7 @@ func (h *DashboardHandler) GetAlerts(c *gin.Context) {
 
 // GET /api/erp/dashboard/revenue-chart
 func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
-	period := c.DefaultQuery("period", "7days") // 7days, 30days, 12months
+	_ = c.DefaultQuery("period", "7days") // TODO: implement period filtering
 
 	// TODO: Query real data with date grouping
 	chartData := []gin.H{
@@ -296,8 +298,4 @@ func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
 		"success": true,
 		"data":    chartData,
 	})
-}
-
-func NewDashboardHandler(db interface{}) *DashboardHandler {
-	return &DashboardHandler{db: db}
 }

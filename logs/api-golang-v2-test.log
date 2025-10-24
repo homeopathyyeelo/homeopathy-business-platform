@@ -1,0 +1,12 @@
+# github.com/yeelo/homeopathy-erp/internal/handlers
+../internal/handlers/crm_finance_hr_reports.go:202:26: undefined: services.VendorService
+../internal/handlers/crm_finance_hr_reports.go:283:22: undefined: services.HRService
+../internal/handlers/crm_finance_hr_reports.go:363:27: undefined: services.FinanceService
+../internal/handlers/crm_finance_hr_reports.go:443:27: undefined: services.ReportsService
+../internal/handlers/inventory.go:15:29: undefined: services.InventoryService
+../internal/handlers/inventory.go:238:28: method InventoryHandler.GetInventoryHistory already declared at ../internal/handlers/inventory.go:48:28
+../internal/handlers/inventory.go:264:28: method InventoryHandler.TransferStock already declared at ../internal/handlers/inventory.go:143:28
+../internal/handlers/inventory.go:329:28: method InventoryHandler.GetStockAlerts already declared at ../internal/handlers/inventory.go:208:28
+../internal/handlers/inventory.go:343:28: method InventoryHandler.GetInventoryValuation already declared at ../internal/handlers/inventory.go:222:28
+../internal/handlers/products.go:18:29: undefined: services.InventoryService
+../internal/handlers/products.go:18:29: too many errors

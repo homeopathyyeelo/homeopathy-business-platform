@@ -24,8 +24,8 @@ func main() {
     expiryHandler := handlers.NewExpiryHandler(expirySvc)
     bugSvc := services.NewBugService(db)
     bugHandler := handlers.NewBugHandler(bugSvc)
-    customerSvc := services.NewCustomerService(db)
-    customerHandler := handlers.NewCustomerHandler(customerSvc)
+    dashboardHandler := handlers.NewDashboardHandler(db)
+    analyticsHandler := handlers.NewAnalyticsHandler(db)
 
     r := gin.Default()
 
@@ -52,8 +52,18 @@ func main() {
     // ERP routes (shared prefix)
     erp := r.Group("/api/erp")
     {
-        erp.GET("/customers", customerHandler.List)
-        erp.POST("/customers", customerHandler.Create)
+        // Dashboard routes
+        erp.GET("/dashboard/stats", dashboardHandler.GetStats)
+        erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
+        erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
+        erp.GET("/dashboard/recent-sales", dashboardHandler.GetRecentSales)
+        erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+
+        // Analytics routes
+        erp.GET("/analytics/sales", analyticsHandler.GetSales)
+        erp.GET("/analytics/purchases", analyticsHandler.GetPurchases)
+        erp.GET("/analytics/sales-summary", analyticsHandler.GetSalesSummary)
+        erp.GET("/analytics/purchase-summary", analyticsHandler.GetPurchaseSummary)
     }
 
     // API v1 routes (system)

@@ -1,0 +1,17 @@
+nohup: ignoring input
+# github.com/yeelo/homeopathy-erp/internal/handlers
+../internal/handlers/auth_enhanced.go:18:6: AuthHandler redeclared in this block
+	../internal/handlers/auth.go:14:6: other declaration of AuthHandler
+../internal/handlers/auth_enhanced.go:27:6: NewAuthHandler redeclared in this block
+	../internal/handlers/auth.go:18:6: other declaration of NewAuthHandler
+../internal/handlers/auth_enhanced.go:39:6: RegisterRequest redeclared in this block
+	../internal/handlers/auth.go:24:6: other declaration of RegisterRequest
+../internal/handlers/auth_enhanced.go:48:6: LoginRequest redeclared in this block
+	../internal/handlers/auth.go:31:6: other declaration of LoginRequest
+../internal/handlers/auth_enhanced.go:67:23: method AuthHandler.Register already declared at ../internal/handlers/auth.go:38:23
+../internal/handlers/auth_enhanced.go:128:23: method AuthHandler.Login already declared at ../internal/handlers/auth.go:70:23
+../internal/handlers/auth_enhanced.go:271:23: method AuthHandler.ForgotPassword already declared at ../internal/handlers/auth.go:131:23
+../internal/handlers/auth_enhanced.go:302:23: method AuthHandler.ResetPassword already declared at ../internal/handlers/auth.go:137:23
+../internal/handlers/auth_enhanced.go:374:23: method AuthHandler.RefreshToken already declared at ../internal/handlers/auth.go:125:23
+../internal/handlers/auth_enhanced.go:414:23: method AuthHandler.Logout already declared at ../internal/handlers/auth.go:161:23
+../internal/handlers/auth_enhanced.go:414:23: too many errors
