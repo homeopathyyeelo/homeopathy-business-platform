@@ -30,6 +30,11 @@ interface BarcodeData {
   product_id: string;
   product_name: string;
   sku: string;
+  potency: string;
+  form: string;
+  brand: string;
+  category: string;
+  batch_id: string;
   batch_no: string;
   barcode: string;
   barcode_type: string;
@@ -39,6 +44,8 @@ interface BarcodeData {
   warehouse: string;
   generated_at: string;
   status: string;
+  expiry_status: string;
+  created_by: string;
 }
 
 export default function BarcodesPage() {
@@ -119,14 +126,22 @@ export default function BarcodesPage() {
   const filteredBarcodes = barcodes.filter((barcode: BarcodeData) =>
     barcode.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     barcode.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.potency?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.form?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     barcode.batch_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    barcode.barcode?.toLowerCase().includes(searchTerm.toLowerCase())
+    barcode.barcode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.warehouse?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    barcode.created_by?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Stats
   const stats = {
     total: barcodes.length,
     active: barcodes.filter((b: BarcodeData) => b.status === 'active').length,
+    expiring: barcodes.filter((b: BarcodeData) => b.expiry_status === 'expiring_soon').length,
+    expired: barcodes.filter((b: BarcodeData) => b.expiry_status === 'expired').length,
     batches: new Set(barcodes.map((b: BarcodeData) => b.batch_no)).size,
     products: new Set(barcodes.map((b: BarcodeData) => b.product_id)).size,
   };
@@ -234,7 +249,7 @@ export default function BarcodesPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Barcodes</CardTitle>
@@ -252,6 +267,26 @@ export default function BarcodesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
+            <Calendar className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-yellow-600">{stats.expiring}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Expired</CardTitle>
+            <Calendar className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">{stats.expired}</div>
           </CardContent>
         </Card>
 
@@ -282,7 +317,7 @@ export default function BarcodesPage() {
           <div className="flex items-center space-x-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by product, SKU, batch, or barcode..."
+              placeholder="Search by product, SKU, potency, form, brand, category, batch, barcode, warehouse, creator..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-sm"
@@ -315,6 +350,10 @@ export default function BarcodesPage() {
                   </TableHead>
                   <TableHead>Product</TableHead>
                   <TableHead>SKU</TableHead>
+                  <TableHead>Potency</TableHead>
+                  <TableHead>Form</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Batch No</TableHead>
                   <TableHead>Barcode</TableHead>
                   <TableHead>Type</TableHead>
@@ -339,13 +378,32 @@ export default function BarcodesPage() {
                     <TableCell>
                       <Badge variant="outline" className="font-mono">{barcode.sku}</Badge>
                     </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="font-mono">{barcode.potency || 'N/A'}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{barcode.form || 'N/A'}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{barcode.brand || 'N/A'}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{barcode.category || 'N/A'}</Badge>
+                    </TableCell>
                     <TableCell className="font-mono text-sm">{barcode.batch_no}</TableCell>
                     <TableCell className="font-mono text-sm font-bold">{barcode.barcode}</TableCell>
                     <TableCell>
                       <Badge variant="secondary">{barcode.barcode_type}</Badge>
                     </TableCell>
                     <TableCell>₹{barcode.mrp?.toFixed(2)}</TableCell>
-                    <TableCell>{barcode.exp_date ? new Date(barcode.exp_date).toLocaleDateString() : '-'}</TableCell>
+                    <TableCell>
+                      <span className={barcode.expiry_status === 'expired' ? 'text-red-600 font-bold' :
+                                     barcode.expiry_status === 'expiring_soon' ? 'text-yellow-600 font-bold' : ''}>
+                        {barcode.exp_date ? new Date(barcode.exp_date).toLocaleDateString() : '-'}
+                        {barcode.expiry_status === 'expired' && <span className="ml-1">⚠️</span>}
+                        {barcode.expiry_status === 'expiring_soon' && <span className="ml-1">🔔</span>}
+                      </span>
+                    </TableCell>
                     <TableCell>{barcode.quantity}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{barcode.warehouse}</Badge>
@@ -380,10 +438,19 @@ export default function BarcodesPage() {
           Array.from({ length: copies }).map((_, copyIndex) => (
             <div key={`${barcode.id}-${copyIndex}`} className={`label label-${labelSize}`}>
               <div className="product-name">{barcode.product_name}</div>
-              <div className="batch-info">Batch: {barcode.batch_no}</div>
+              <div className="batch-info">
+                Potency: {barcode.potency || 'N/A'} | Form: {barcode.form || 'N/A'}
+              </div>
+              <div className="batch-info">Brand: {barcode.brand || 'N/A'} | Category: {barcode.category || 'N/A'}</div>
+              <div className="batch-info">Batch: {barcode.batch_no} | Created by: {barcode.created_by || 'system'}</div>
               <Barcode value={barcode.barcode} width={1.5} height={40} fontSize={10} />
               <div className="mrp">MRP: ₹{barcode.mrp?.toFixed(2)}</div>
-              <div className="batch-info">Exp: {barcode.exp_date ? new Date(barcode.exp_date).toLocaleDateString() : '-'}</div>
+              <div className="batch-info">
+                Exp: {barcode.exp_date ? new Date(barcode.exp_date).toLocaleDateString() : '-'}
+                {barcode.expiry_status === 'expired' && <span className="ml-1">⚠️ EXPIRED</span>}
+                {barcode.expiry_status === 'expiring_soon' && <span className="ml-1">🔔 EXPIRING</span>}
+              </div>
+              <div className="batch-info">Qty: {barcode.quantity} | {barcode.warehouse}</div>
             </div>
           ))
         ))}

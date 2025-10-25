@@ -1,5 +1,5 @@
 {
-  "started_at": "2025-10-25T15:01:46+05:30",
+  "started_at": "2025-10-25T23:58:16+05:30",
   "docker": {
     "postgres": { "port": 5432, "status": "running" },
     "redis": { "port": 6379, "status": "running" },
@@ -8,24 +8,24 @@
   },
   "microservices": {
     "api_golang_v2": {
-      "pid": 67927,
+      "pid": 205878,
       "port": 3005,
       "description": "Import/Export API"
     },
     "product_service": {
-      "pid": 67931,
+      "pid": 205887,
       "port": 8001
     },
     "inventory_service": {
-      "pid": 67938,
+      "pid": 205897,
       "port": 8002
     },
     "sales_service": {
-      "pid": 67946,
+      "pid": 205902,
       "port": 8003
     },
     "api_gateway": {
-      "pid": 67958,
+      "pid": 205927,
       "port": 4000
     },
     "ai_service": {
@@ -34,7 +34,7 @@
     }
   },
   "frontend": {
-    "pid": 68369,
+    "pid": 206295,
     "port": 3000,
     "url": "http://localhost:3000"
   }

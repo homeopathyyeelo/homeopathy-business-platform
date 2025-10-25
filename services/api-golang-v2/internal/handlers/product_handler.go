@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"time"
 )
 
 type ProductHandler struct {
@@ -18,34 +19,33 @@ func NewProductHandler(db *gorm.DB) *ProductHandler {
 	return &ProductHandler{db: db}
 }
 
-// Product model matching database table
+// Product model matching database table (core schema)
 type Product struct {
-	ID            string    `json:"id" gorm:"primaryKey;type:uuid"`
-	SKU           string    `json:"sku" gorm:"uniqueIndex"`
-	Name          string    `json:"name"`
-	Category      string    `json:"category"`
-	Type          string    `json:"type"`
-	Brand         string    `json:"brand"`
-	Potency       string    `json:"potency"`
-	Form          string    `json:"form"`
-	PackSize      string    `json:"packSize" gorm:"column:pack_size"`
-	UOM           string    `json:"uom"`
-	CostPrice     float64   `json:"costPrice" gorm:"column:cost_price"`
-	SellingPrice  float64   `json:"sellingPrice" gorm:"column:selling_price"`
-	MRP           float64   `json:"mrp"`
-	TaxPercent    float64   `json:"taxPercent" gorm:"column:tax_percent"`
-	HSNCode       string    `json:"hsnCode" gorm:"column:hsn_code"`
-	Manufacturer  string    `json:"manufacturer"`
-	Description   string    `json:"description"`
-	Barcode       string    `json:"barcode"`
-	ReorderLevel  int       `json:"reorderLevel" gorm:"column:reorder_level"`
-	MinStock      int       `json:"minStock" gorm:"column:min_stock"`
-	MaxStock      int       `json:"maxStock" gorm:"column:max_stock"`
-	CurrentStock  int       `json:"currentStock" gorm:"column:current_stock"`
-	IsActive      bool      `json:"isActive" gorm:"column:is_active"`
-	Tags          string    `json:"tags"`
-	CreatedAt     time.Time `json:"createdAt" gorm:"column:created_at"`
-	UpdatedAt     time.Time `json:"updatedAt" gorm:"column:updated_at"`
+	ID           string    `json:"id" gorm:"primaryKey;type:uuid"`
+	SKU          string    `json:"sku" gorm:"uniqueIndex"`
+	Name         string    `json:"name"`
+	Category     string    `json:"category"`
+	Brand        string    `json:"brand"`
+	Potency      string    `json:"potency"`
+	Form         string    `json:"form"`
+	PackSize     string    `json:"packSize" gorm:"column:pack_size"`
+	UOM          string    `json:"uom"`
+	CostPrice    float64   `json:"costPrice" gorm:"column:cost_price"`
+	SellingPrice float64   `json:"sellingPrice" gorm:"column:selling_price"`
+	MRP          float64   `json:"mrp"`
+	TaxPercent   float64   `json:"taxPercent" gorm:"column:tax_percent"`
+	HSNCode      string    `json:"hsnCode" gorm:"column:hsn_code"`
+	Manufacturer string    `json:"manufacturer"`
+	Description  string    `json:"description"`
+	Barcode      string    `json:"barcode"`
+	ReorderLevel int       `json:"reorderLevel" gorm:"column:reorder_level"`
+	MinStock     int       `json:"minStock" gorm:"column:min_stock"`
+	MaxStock     int       `json:"maxStock" gorm:"column:max_stock"`
+	CurrentStock int       `json:"currentStock" gorm:"column:current_stock"`
+	IsActive     bool      `json:"isActive" gorm:"column:is_active"`
+	Tags         string    `json:"tags"`
+	CreatedAt    time.Time `json:"createdAt" gorm:"column:created_at"`
+	UpdatedAt    time.Time `json:"updatedAt" gorm:"column:updated_at"`
 }
 
 func (Product) TableName() string {
@@ -62,10 +62,17 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
+
+	// If limit is very high (like 10000), return all products without pagination
+	if limit >= 1000 {
+		limit = 100000 // Set to very high number to get all
+		page = 1
+	}
+
 	offset := (page - 1) * limit
 
-	// Build query
-	query := h.db.Model(&Product{})
+	// Build query from public schema (where products were actually imported)
+	query := h.db.Table("products")
 
 	// Apply filters
 	if search != "" {
@@ -95,10 +102,13 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		return
 	}
 
-	// Calculate total pages
-	totalPages := int(total) / limit
-	if int(total)%limit > 0 {
-		totalPages++
+	// Calculate total pages (only if using pagination)
+	totalPages := 1
+	if limit < 1000 {
+		totalPages = int(total) / limit
+		if int(total)%limit > 0 {
+			totalPages++
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -116,10 +126,10 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 // GET /api/erp/products/:id - Get single product
 func (h *ProductHandler) GetProduct(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	var product Product
-	result := h.db.Where("id = ? OR sku = ?", id, id).First(&product)
-	
+	result := h.db.Table("products").Where("id = ? OR sku = ?", id, id).First(&product)
+
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -134,7 +144,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    product,
@@ -148,11 +158,11 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	req["id"] = uuid.New().String()
 	req["createdAt"] = time.Now().Format(time.RFC3339)
 	req["updatedAt"] = time.Now().Format(time.RFC3339)
-	
+
 	c.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"data":    req,
@@ -164,15 +174,15 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 	id := c.Param("id")
 	var req map[string]interface{}
-	
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	req["id"] = id
 	req["updatedAt"] = time.Now().Format(time.RFC3339)
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    req,
@@ -183,7 +193,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 // DELETE /api/erp/products/:id - Delete product
 func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "Product deleted successfully",
@@ -197,6 +207,7 @@ type MasterData struct {
 	Name        string    `json:"name"`
 	Code        string    `json:"code"`
 	Description string    `json:"description"`
+	ParentID    *string   `json:"parent_id" gorm:"column:parent_id;type:uuid"`
 	IsActive    bool      `json:"isActive" gorm:"column:is_active"`
 	CreatedAt   time.Time `json:"createdAt" gorm:"column:created_at"`
 	UpdatedAt   time.Time `json:"updatedAt" gorm:"column:updated_at"`
@@ -206,7 +217,7 @@ type MasterData struct {
 func (h *ProductHandler) GetCategories(c *gin.Context) {
 	var categories []MasterData
 	result := h.db.Table("categories").Order("name ASC").Find(&categories)
-	
+
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -214,10 +225,38 @@ func (h *ProductHandler) GetCategories(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    categories,
+	})
+}
+
+// GET /api/erp/categories/:id - Get single category
+func (h *ProductHandler) GetCategory(c *gin.Context) {
+	id := c.Param("id")
+
+	var category MasterData
+	result := h.db.Table("categories").Where("id = ?", id).First(&category)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Category not found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch category: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    category,
 	})
 }
 
@@ -256,7 +295,7 @@ func (h *ProductHandler) CreateCategory(c *gin.Context) {
 func (h *ProductHandler) UpdateCategory(c *gin.Context) {
 	id := c.Param("id")
 	var req MasterData
-	
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -303,7 +342,7 @@ func (h *ProductHandler) DeleteCategory(c *gin.Context) {
 func (h *ProductHandler) GetBrands(c *gin.Context) {
 	var brands []MasterData
 	result := h.db.Table("brands").Order("name ASC").Find(&brands)
-	
+
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -311,7 +350,7 @@ func (h *ProductHandler) GetBrands(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    brands,
@@ -366,7 +405,7 @@ func (h *ProductHandler) DeleteBrand(c *gin.Context) {
 func (h *ProductHandler) GetPotencies(c *gin.Context) {
 	var potencies []MasterData
 	result := h.db.Table("potencies").Order("name ASC").Find(&potencies)
-	
+
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -374,7 +413,7 @@ func (h *ProductHandler) GetPotencies(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    potencies,
@@ -429,7 +468,7 @@ func (h *ProductHandler) DeletePotency(c *gin.Context) {
 func (h *ProductHandler) GetForms(c *gin.Context) {
 	var forms []MasterData
 	result := h.db.Table("forms").Order("name ASC").Find(&forms)
-	
+
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -437,7 +476,7 @@ func (h *ProductHandler) GetForms(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    forms,
@@ -604,52 +643,86 @@ func (h *ProductHandler) DeleteUnit(c *gin.Context) {
 
 // GET /api/erp/products/barcode - Get all products with barcodes (batch-level)
 func (h *ProductHandler) GetBarcodes(c *gin.Context) {
-	barcodes := []gin.H{
-		{
-			"id":           uuid.New().String(),
-			"product_id":   uuid.New().String(),
-			"product_name": "Arnica Montana 30C 30ml",
-			"sku":          "ARM-30C-30ML",
-			"batch_no":     "BATCH-2025-001",
-			"barcode":      "8901234567890",
-			"barcode_type": "EAN-13",
-			"mrp":          120.00,
-			"exp_date":     "2027-10-25",
-			"quantity":     150,
-			"warehouse":    "Main Warehouse",
-			"generated_at": time.Now().Format(time.RFC3339),
-			"status":       "active",
-		},
-		{
-			"id":           uuid.New().String(),
-			"product_id":   uuid.New().String(),
-			"product_name": "Belladonna 200C 10ml",
-			"sku":          "BEL-200C-10ML",
-			"batch_no":     "BATCH-2025-002",
-			"barcode":      "8901234567891",
-			"barcode_type": "EAN-13",
-			"mrp":          95.00,
-			"exp_date":     "2027-11-15",
-			"quantity":     200,
-			"warehouse":    "Main Warehouse",
-			"generated_at": time.Now().Format(time.RFC3339),
-			"status":       "active",
-		},
-		{
-			"id":           uuid.New().String(),
-			"product_id":   uuid.New().String(),
-			"product_name": "Calendula MT 30ml",
-			"sku":          "CAL-MT-30ML",
-			"batch_no":     "BATCH-2025-003",
-			"barcode":      "8901234567892",
-			"barcode_type": "EAN-13",
-			"mrp":          150.00,
-			"exp_date":     "2026-12-31",
-			"quantity":     80,
-			"warehouse":    "Branch Warehouse",
-			"generated_at": time.Now().Format(time.RFC3339),
-			"status":       "active",
-		},
+	// Build query with joins to get all necessary fields
+	query := `
+		SELECT
+			b.id,
+			b.product_id,
+			p.name as product_name,
+			p.sku,
+			p.potency,
+			p.form,
+			p.brand,
+			p.category,
+			b.batch_id,
+			b.batch_no,
+			b.barcode,
+			b.barcode_type,
+			b.mrp,
+			b.exp_date,
+			b.quantity,
+			COALESCE(w.name, 'Main Warehouse') as warehouse,
+			b.generated_at,
+			b.status,
+			b.created_by,
+			-- Calculate expiry status
+			CASE
+				WHEN b.exp_date < CURRENT_DATE THEN 'expired'
+				WHEN b.exp_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_soon'
+				ELSE 'active'
+			END as expiry_status
+		FROM public.barcodes b
+		LEFT JOIN public.products p ON p.id = b.product_id
+		LEFT JOIN public.warehouses w ON w.id = b.warehouse_id
+		ORDER BY b.generated_at DESC
+	`
+
+	rows, err := h.db.Raw(query).Rows()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch barcodes: " + err.Error(),
+		})
+		return
+	}
+	defer rows.Close()
+
+	var barcodes []gin.H
+	for rows.Next() {
+		var id, productId, productName, sku, potency, form, brand, category, batchId, batchNo, barcode, barcodeType, warehouse, generatedAt, status, createdBy, expiryStatus string
+		var mrp float64
+		var expDate *string
+		var quantity int
+
+		err := rows.Scan(&id, &productId, &productName, &sku, &potency, &form, &brand, &category, &batchId, &batchNo, &barcode, &barcodeType, &mrp, &expDate, &quantity, &warehouse, &generatedAt, &status, &createdBy, &expiryStatus)
+		if err != nil {
+			continue
+		}
+
+		barcodeData := gin.H{
+			"id":            id,
+			"product_id":    productId,
+			"product_name":  productName,
+			"sku":           sku,
+			"potency":       potency,
+			"form":          form,
+			"brand":         brand,
+			"category":      category,
+			"batch_id":      batchId,
+			"batch_no":      batchNo,
+			"barcode":       barcode,
+			"barcode_type":  barcodeType,
+			"mrp":           mrp,
+			"exp_date":      expDate,
+			"quantity":      quantity,
+			"warehouse":     warehouse,
+			"generated_at":  generatedAt,
+			"status":        status,
+			"created_by":    createdBy,
+			"expiry_status": expiryStatus,
+		}
+
+		barcodes = append(barcodes, barcodeData)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -674,51 +747,104 @@ func (h *ProductHandler) GenerateBarcode(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "product_id is required"})
 		return
 	}
-	// Try to enrich from DB if batch_id provided
-	var productName, sku, warehouseName string
-	var mrp float64
-	var expDate *time.Time
-	var qty int
-	var batchNo string = req.BatchNo
 
-	// Get product basic
-	_ = h.db.Raw("SELECT name, sku FROM products WHERE id = ?", req.ProductID).Row().Scan(&productName, &sku)
+	// Get product details including homeopathy-specific fields
+	var productName, sku, potency, form, brand, category string
+	var productMRP float64
+	err := h.db.Table("products").Where("id = ?", req.ProductID).Select("name, sku, potency, form, brand, category, mrp").Row().Scan(&productName, &sku, &potency, &form, &brand, &category, &productMRP)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "product not found"})
+		return
+	}
+
+	// Get batch details if batch_id provided
+	var batchNo string = req.BatchNo
+	var batchMRP float64 = productMRP
+	var expDate *time.Time
+	var qty int = 0
+	var warehouseID *string
 
 	if req.BatchID != "" {
-		// Join batches + warehouses to enrich
-		_ = h.db.Raw(`
-            SELECT b.batch_no, b.mrp, b.exp_date, COALESCE(b.quantity,0) AS qty, COALESCE(w.name,'') AS warehouse
-            FROM batches b
-            LEFT JOIN warehouses w ON w.id = b.warehouse_id
-            WHERE b.id = ?`, req.BatchID).Row().Scan(&batchNo, &mrp, &expDate, &qty, &warehouseName)
+		err = h.db.Raw(`
+			SELECT b.batch_no, b.mrp, b.exp_date, COALESCE(b.quantity,0) AS qty, b.warehouse_id
+			FROM batches b
+			WHERE b.id = ?`, req.BatchID).Row().Scan(&batchNo, &batchMRP, &expDate, &qty, &warehouseID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "batch not found"})
+			return
+		}
 	}
 
-	// Generate EAN-13-like barcode (placeholder)
+	// Generate unique EAN-13 barcode
 	barcode := "89012345" + strconv.Itoa(int(time.Now().UnixNano()%10000))
-
-	result := gin.H{
-		"id":            uuid.New().String(),
-		"product_id":    req.ProductID,
-		"product_name":  productName,
-		"sku":           sku,
-		"batch_id":      req.BatchID,
-		"batch_no":      batchNo,
-		"barcode":       barcode,
-		"barcode_type":  "EAN-13",
-		"mrp":           mrp,
-		"exp_date":      nil,
-		"quantity":      qty,
-		"warehouse":     warehouseName,
-		"generated_at":  time.Now().Format(time.RFC3339),
-		"status":        "active",
+	// Ensure uniqueness
+	for i := 0; i < 10; i++ {
+		var count int
+		h.db.Raw("SELECT COUNT(*) FROM public.barcodes WHERE barcode = ?", barcode).Row().Scan(&count)
+		if count == 0 {
+			break
+		}
+		barcode = "89012345" + strconv.Itoa(int(time.Now().UnixNano()%10000)+i)
 	}
+
+	// Create barcode record
+	barcodeRecord := gin.H{
+		"id":           uuid.New().String(),
+		"product_id":   req.ProductID,
+		"batch_id":     req.BatchID,
+		"batch_no":     batchNo,
+		"barcode":      barcode,
+		"barcode_type": "EAN-13",
+		"mrp":          batchMRP,
+		"exp_date":     nil,
+		"quantity":     qty,
+		"warehouse_id": warehouseID,
+		"potency":      potency,
+		"form":         form,
+		"brand":        brand,
+		"category":     category,
+		"created_by":   "system",
+		"status":       "active",
+	}
+
 	if expDate != nil {
-		result["exp_date"] = expDate.Format("2006-01-02")
+		barcodeRecord["exp_date"] = expDate.Format("2006-01-02")
+	}
+
+	// Insert into database
+	insertQuery := `
+		INSERT INTO public.barcodes (id, product_id, batch_id, batch_no, barcode, barcode_type, mrp, exp_date, quantity, warehouse_id, potency, form, brand, category, created_by, status, generated_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`
+
+	err = h.db.Exec(insertQuery,
+		barcodeRecord["id"],
+		barcodeRecord["product_id"],
+		barcodeRecord["batch_id"],
+		barcodeRecord["batch_no"],
+		barcodeRecord["barcode"],
+		barcodeRecord["barcode_type"],
+		barcodeRecord["mrp"],
+		barcodeRecord["exp_date"],
+		barcodeRecord["quantity"],
+		barcodeRecord["warehouse_id"],
+		barcodeRecord["potency"],
+		barcodeRecord["form"],
+		barcodeRecord["brand"],
+		barcodeRecord["category"],
+		barcodeRecord["created_by"],
+		barcodeRecord["status"],
+		time.Now(),
+	).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "failed to save barcode"})
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"success": true,
-		"data":    result,
+		"data":    barcodeRecord,
 		"message": "Barcode generated successfully",
 	})
 }
@@ -727,7 +853,7 @@ func (h *ProductHandler) GenerateBarcode(c *gin.Context) {
 func (h *ProductHandler) PrintBarcodes(c *gin.Context) {
 	var req struct {
 		BarcodeIDs []string `json:"barcode_ids"`
-		LabelSize  string   `json:"label_size"`  // "small", "medium", "large"
+		LabelSize  string   `json:"label_size"` // "small", "medium", "large"
 		Copies     int      `json:"copies"`
 	}
 

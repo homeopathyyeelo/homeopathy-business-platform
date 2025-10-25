@@ -1,6 +1,6 @@
  Container erp-minio  Stopping
- Container erp-redis  Stopping
  Container erp-kafka  Stopping
+ Container erp-redis  Stopping
  Container erp-postgres  Stopping
  Container erp-kafka  Stopped
  Container erp-zookeeper  Stopping

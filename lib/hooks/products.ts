@@ -5,8 +5,8 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products', 'list'],
     queryFn: async () => {
-      // Call Golang API directly
-      const res = await golangAPI.get('/api/erp/products')
+      // Call Golang API directly with high limit to get all products
+      const res = await golangAPI.get('/api/erp/products?limit=10000&page=1')
       const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
       return data as any[]
     },

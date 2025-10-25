@@ -8,9 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 
-	"your-module/cron"
-	"your-module/handlers"
-	"your-module/middleware"
+	"github.com/yeelo/homeopathy-erp/internal/cron"
+	"github.com/yeelo/homeopathy-erp/internal/handlers"
+	"github.com/yeelo/homeopathy-erp/internal/middleware"
 )
 
 func main() {
@@ -81,6 +81,16 @@ func main() {
 		erp.POST("/inventory/transfer", inventoryHandler.TransferStock)
 		erp.GET("/inventory/transfers", inventoryHandler.GetTransfers)
 		erp.GET("/inventory/alerts", inventoryHandler.GetAlerts)
+
+		// Categories
+		categoryHandler := handlers.NewCategoryHandler(db)
+		erp.GET("/categories", categoryHandler.GetCategories)
+		erp.GET("/categories/root", categoryHandler.GetRootCategories)
+		erp.GET("/categories/:id", categoryHandler.GetCategory)
+		erp.POST("/categories", categoryHandler.CreateCategory)
+		erp.PUT("/categories/:id", categoryHandler.UpdateCategory)
+		erp.DELETE("/categories/:id", categoryHandler.DeleteCategory)
+		erp.GET("/categories/:id/subcategories", categoryHandler.GetSubcategories)
 	}
 
 	// Start cron scheduler
