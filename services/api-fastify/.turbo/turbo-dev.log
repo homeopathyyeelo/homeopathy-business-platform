@@ -2,21 +2,3 @@
 > @yeelo/api-fastify@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[1G[0K[[36mINFO[0m] [30;1m17:06:58[0m ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-[36mprisma:info[39m Starting a postgresql pool with 9 connections.
-[17:07:01.742] [31mERROR[39m (196557): [36mCan't reach database server at `localhost:5433`
-
-Please make sure your database server is running at `localhost:5433`.[39m
-    err: {
-      "type": "PrismaClientInitializationError",
-      "message": "Can't reach database server at `localhost:5433`\n\nPlease make sure your database server is running at `localhost:5433`.",
-      "stack":
-          PrismaClientInitializationError: Can't reach database server at `localhost:5433`
-          
-          Please make sure your database server is running at `localhost:5433`.
-              at t (/var/www/homeopathy-business-platform/packages/shared-db/generated/client/runtime/library.js:112:2488)
-              at registerPrisma (/var/www/homeopathy-business-platform/services/api-fastify/src/plugins/prisma.ts:17:3)
-      "name": "PrismaClientInitializationError",
-      "clientVersion": "5.22.0",
-      "errorCode": "P1001"
-    }

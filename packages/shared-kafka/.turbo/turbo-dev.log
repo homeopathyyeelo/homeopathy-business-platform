@@ -2,7 +2,4 @@
 > @yeelo/shared-kafka@1.0.0 dev
 > tsc --watch
 
-[1G[0K[2J[3J[H[[90m5:06:57 PM[0m] Starting compilation in watch mode...
-
-[[90m5:07:05 PM[0m] Found 0 errors. Watching for file changes.
-
+[2J[3J[H

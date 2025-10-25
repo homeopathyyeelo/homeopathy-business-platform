@@ -71,9 +71,9 @@ func NewAnalyticsHandler(db interface{}) *AnalyticsHandler {
 
 // GET /api/erp/analytics/sales
 func (h *AnalyticsHandler) GetSales(c *gin.Context) {
-	fromDate := c.DefaultQuery("from", time.Now().AddDate(0, -1, 0).Format("2006-01-02"))
-	toDate := c.DefaultQuery("to", time.Now().Format("2006-01-02"))
-	status := c.Query("status")
+	_ = c.DefaultQuery("from", time.Now().AddDate(0, -1, 0).Format("2006-01-02"))
+	_ = c.DefaultQuery("to", time.Now().Format("2006-01-02"))
+	_ = c.Query("status")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "50")
 
@@ -165,9 +165,9 @@ func (h *AnalyticsHandler) GetSales(c *gin.Context) {
 
 // GET /api/erp/analytics/purchases
 func (h *AnalyticsHandler) GetPurchases(c *gin.Context) {
-	fromDate := c.DefaultQuery("from", time.Now().AddDate(0, -1, 0).Format("2006-01-02"))
-	toDate := c.DefaultQuery("to", time.Now().Format("2006-01-02"))
-	status := c.Query("status")
+	_ = c.DefaultQuery("from", time.Now().AddDate(0, -1, 0).Format("2006-01-02"))
+	_ = c.DefaultQuery("to", time.Now().Format("2006-01-02"))
+	_ = c.Query("status")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "50")
 

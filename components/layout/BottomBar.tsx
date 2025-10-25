@@ -118,7 +118,7 @@ export default function BottomBar({ onClose }: BottomBarProps) {
         {/* Last Sync */}
         <div className="flex items-center gap-2">
           <Clock className="h-3.5 w-3.5 text-orange-400" />
-          <span>Sync: <span className="text-orange-400">{lastSync.toLocaleTimeString()}</span></span>
+          <span>Sync: <span className="text-orange-400" suppressHydrationWarning>{lastSync.toLocaleTimeString()}</span></span>
         </div>
       </div>
 

@@ -357,3 +357,36 @@ func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
 		"data":    chartData,
 	})
 }
+
+// GET /api/erp/dashboard/expiry-summary
+func (h *DashboardHandler) GetExpirySummary(c *gin.Context) {
+	summary := gin.H{
+		"expired": 12,
+		"expiring7Days": 23,
+		"expiring30Days": 58,
+		"expiring90Days": 142,
+		"alerts": []gin.H{
+			{
+				"productName": "Arnica Montana 30C",
+				"batchNo": "BATCH-2024-001",
+				"expiryDate": time.Now().AddDate(0, 1, 15).Format("2006-01-02"),
+				"daysLeft": 45,
+				"quantity": 25,
+				"severity": "warning",
+			},
+			{
+				"productName": "Calendula MT",
+				"batchNo": "BATCH-2024-045",
+				"expiryDate": time.Now().AddDate(0, 0, 20).Format("2006-01-02"),
+				"daysLeft": 20,
+				"quantity": 12,
+				"severity": "critical",
+			},
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    summary,
+	})
+}

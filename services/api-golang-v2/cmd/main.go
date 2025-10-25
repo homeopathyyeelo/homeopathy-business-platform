@@ -3,8 +3,10 @@ package main
 import (
     "log"
     "os"
+    "time"
 
     "github.com/gin-gonic/gin"
+    "github.com/gin-contrib/cors"
 
     cfgpkg "github.com/yeelo/homeopathy-erp/internal/config"
     dbpkg "github.com/yeelo/homeopathy-erp/internal/database"
@@ -35,8 +37,23 @@ func main() {
     paymentHandler := handlers.NewPaymentGatewayHandler(db)
     posHandler := handlers.NewPOSHandler(db)
     estimateHandler := handlers.NewEstimateHandler(db)
+    productHandler := handlers.NewProductHandler(db)
+    salesHandler := handlers.NewSalesHandler(db)
+    inventoryHandler := handlers.NewInventoryHandler(db)
+    productImportHandler := handlers.NewProductImportHandler(db)
+    streamingImportHandler := handlers.NewStreamingImportHandler(db)
 
     r := gin.Default()
+
+    // CORS middleware - Allow frontend on port 3000
+    r.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:3000"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    }))
 
     // Health endpoint
     r.GET("/health", func(c *gin.Context) {
@@ -68,9 +85,49 @@ func main() {
         erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
         erp.GET("/dashboard/recent-sales", dashboardHandler.GetRecentSales)
         erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+        erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
 
         // System routes
         erp.GET("/system/health", dashboardHandler.GetSystemHealth)
+
+        // Product routes
+        erp.GET("/products", productHandler.GetProducts)
+        erp.GET("/products/:id", productHandler.GetProduct)
+        erp.POST("/products", productHandler.CreateProduct)
+        erp.PUT("/products/:id", productHandler.UpdateProduct)
+        erp.DELETE("/products/:id", productHandler.DeleteProduct)
+        erp.GET("/categories", productHandler.GetCategories)
+        erp.GET("/brands", productHandler.GetBrands)
+        erp.GET("/potencies", productHandler.GetPotencies)
+        erp.GET("/forms", productHandler.GetForms)
+
+        // Product Import/Export routes
+        erp.POST("/products/import", productImportHandler.BulkImport)
+        erp.POST("/products/import/stream", streamingImportHandler.StreamingImport)
+        erp.GET("/products/export", productImportHandler.ExportProducts)
+        erp.GET("/products/template", productImportHandler.DownloadTemplate)
+
+        // Inventory routes
+        erp.GET("/inventory/stock", inventoryHandler.GetStock)
+        erp.GET("/inventory/batches", inventoryHandler.GetBatches)
+        erp.GET("/inventory/expiries/alerts", inventoryHandler.GetExpiryAlerts)
+        erp.GET("/inventory/low-stock", inventoryHandler.GetLowStock)
+        erp.GET("/inventory/adjustments", inventoryHandler.GetAdjustments)
+        erp.POST("/inventory/adjustments", inventoryHandler.CreateAdjustment)
+        erp.GET("/inventory/transfers", inventoryHandler.GetTransfers)
+        erp.POST("/inventory/transfers", inventoryHandler.CreateTransfer)
+
+        // Sales routes
+        erp.GET("/sales/orders", salesHandler.GetOrders)
+        erp.GET("/sales/invoices", salesHandler.GetInvoices)
+        erp.POST("/sales/pos/create", salesHandler.CreatePOSSale)
+        erp.GET("/sales/returns", salesHandler.GetReturns)
+        erp.GET("/sales/receipts", salesHandler.GetReceipts)
+        erp.GET("/sales/b2b", salesHandler.GetB2BSales)
+        erp.GET("/sales/b2c", salesHandler.GetB2CSales)
+        erp.GET("/sales/d2d", salesHandler.GetD2DSales)
+        erp.GET("/sales/credit", salesHandler.GetCreditSales)
+        erp.GET("/sales/hold-bills", salesHandler.GetHoldBills)
 
         // Analytics routes
         erp.GET("/analytics/sales", analyticsHandler.GetSales)
@@ -284,6 +341,28 @@ func main() {
                 })
             })
         }
+    }
+
+    // API routes (for backward compatibility with Next.js API routes calling /api/sales/*)
+    api := r.Group("/api")
+    {
+        // Product routes (for frontend compatibility)
+        api.GET("/products/categories", productHandler.GetCategories)
+        api.GET("/products/brands", productHandler.GetBrands)
+        api.GET("/products/potencies", productHandler.GetPotencies)
+        api.GET("/products/forms", productHandler.GetForms)
+        
+        // Sales routes
+        api.GET("/sales/b2b", salesHandler.GetB2BSales)
+        api.GET("/sales/orders", salesHandler.GetOrders)
+        api.GET("/sales/invoices", salesHandler.GetInvoices)
+        api.GET("/sales/b2c", salesHandler.GetB2CSales)
+        api.GET("/sales/d2d", salesHandler.GetD2DSales)
+        api.GET("/sales/returns", salesHandler.GetReturns)
+        api.GET("/sales/receipts", salesHandler.GetReceipts)
+        api.GET("/sales/credit", salesHandler.GetCreditSales)
+        api.GET("/sales/hold-bills", salesHandler.GetHoldBills)
+        api.POST("/sales/pos/create", salesHandler.CreatePOSSale)
     }
 
     port := os.Getenv("PORT")

@@ -90,21 +90,25 @@ export const productsService = {
     categoryId?: string;
     brandId?: string;
     isActive?: boolean;
-  }): Promise<PaginatedResponse<Product>> => {
+  }): Promise<any> => {
     const queryParams = new URLSearchParams(params as any).toString();
-    return api.get<PaginatedResponse<Product>>(`/products?${queryParams}`);
+    const response = await api.get<any>(`/products?${queryParams}`);
+    return response.data || response;
   },
 
   getProduct: async (id: string): Promise<Product> => {
-    return api.get<Product>(`/products/${id}`);
+    const response = await api.get<any>(`/products/${id}`);
+    return response.data || response;
   },
 
   createProduct: async (data: Partial<Product>): Promise<Product> => {
-    return api.post<Product>('/products', data);
+    const response = await api.post<any>('/products', data);
+    return response.data || response;
   },
 
   updateProduct: async (id: string, data: Partial<Product>): Promise<Product> => {
-    return api.put<Product>(`/products/${id}`, data);
+    const response = await api.put<any>(`/products/${id}`, data);
+    return response.data || response;
   },
 
   deleteProduct: async (id: string): Promise<void> => {
@@ -124,50 +128,59 @@ export const productsService = {
 
   // Categories
   getCategories: async (): Promise<Category[]> => {
-    return api.get<Category[]>('/master/categories');
+    const response = await api.get<any>('/categories');
+    return response.data || response;
   },
 
   createCategory: async (data: Partial<Category>): Promise<Category> => {
-    return api.post<Category>('/master/categories', data);
+    const response = await api.post<any>('/categories', data);
+    return response.data || response;
   },
 
   updateCategory: async (id: string, data: Partial<Category>): Promise<Category> => {
-    return api.put<Category>(`/master/categories/${id}`, data);
+    const response = await api.put<any>(`/categories/${id}`, data);
+    return response.data || response;
   },
 
   deleteCategory: async (id: string): Promise<void> => {
-    return api.delete(`/master/categories/${id}`);
+    return api.delete(`/categories/${id}`);
   },
 
   // Brands
   getBrands: async (): Promise<Brand[]> => {
-    return api.get<Brand[]>('/master/brands');
+    const response = await api.get<any>('/brands');
+    return response.data || response;
   },
 
   createBrand: async (data: Partial<Brand>): Promise<Brand> => {
-    return api.post<Brand>('/master/brands', data);
+    const response = await api.post<any>('/brands', data);
+    return response.data || response;
   },
 
   updateBrand: async (id: string, data: Partial<Brand>): Promise<Brand> => {
-    return api.put<Brand>(`/master/brands/${id}`, data);
+    const response = await api.put<any>(`/brands/${id}`, data);
+    return response.data || response;
   },
 
   deleteBrand: async (id: string): Promise<void> => {
-    return api.delete(`/master/brands/${id}`);
+    return api.delete(`/brands/${id}`);
   },
 
   // Potencies
   getPotencies: async (): Promise<Potency[]> => {
-    return api.get<Potency[]>('/master/potencies');
+    const response = await api.get<any>('/potencies');
+    return response.data || response;
   },
 
   createPotency: async (data: Partial<Potency>): Promise<Potency> => {
-    return api.post<Potency>('/master/potencies', data);
+    const response = await api.post<any>('/potencies', data);
+    return response.data || response;
   },
 
   // Forms
   getForms: async (): Promise<ProductForm[]> => {
-    return api.get<ProductForm[]>('/master/forms');
+    const response = await api.get<any>('/forms');
+    return response.data || response;
   },
 
   // Batches

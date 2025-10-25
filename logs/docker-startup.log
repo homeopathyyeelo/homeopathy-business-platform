@@ -1,33 +1,23 @@
  Network homeopathy-business-platform_erp-network  Creating
  Network homeopathy-business-platform_erp-network  Created
- Volume "homeopathy-business-platform_postgres_data"  Creating
- Volume "homeopathy-business-platform_postgres_data"  Created
- Volume "homeopathy-business-platform_redis_data"  Creating
- Volume "homeopathy-business-platform_redis_data"  Created
- Volume "homeopathy-business-platform_minio_data"  Creating
- Volume "homeopathy-business-platform_minio_data"  Created
- Volume "homeopathy-business-platform_kafka_data"  Creating
- Volume "homeopathy-business-platform_kafka_data"  Created
- Volume "homeopathy-business-platform_zookeeper_data"  Creating
- Volume "homeopathy-business-platform_zookeeper_data"  Created
-time="2025-10-24T19:32:12+05:30" level=warning msg="Found orphan containers ([homeopathy-business-platform-ai-service-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
- Container erp-minio  Creating
- Container erp-redis  Creating
- Container erp-postgres  Creating
+time="2025-10-25T15:00:18+05:30" level=warning msg="Found orphan containers ([homeopathy-business-platform-ai-service-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
  Container erp-zookeeper  Creating
- Container erp-postgres  Created
+ Container erp-postgres  Creating
+ Container erp-redis  Creating
+ Container erp-minio  Creating
  Container erp-redis  Created
+ Container erp-postgres  Created
  Container erp-minio  Created
  Container erp-zookeeper  Created
  Container erp-kafka  Creating
  Container erp-kafka  Created
- Container erp-minio  Starting
- Container erp-zookeeper  Starting
  Container erp-redis  Starting
+ Container erp-minio  Starting
  Container erp-postgres  Starting
+ Container erp-zookeeper  Starting
+ Container erp-minio  Started
  Container erp-postgres  Started
+ Container erp-redis  Started
  Container erp-zookeeper  Started
  Container erp-kafka  Starting
- Container erp-redis  Started
- Container erp-minio  Started
  Container erp-kafka  Started

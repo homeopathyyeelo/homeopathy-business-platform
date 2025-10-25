@@ -2,10 +2,44 @@
 > @yeelo/api-nest@1.0.0 dev
 > nest start --watch
 
-[1G[0K[2J[3J[H[[90m5:06:59 PM[0m] Starting compilation in watch mode...
+node:internal/modules/cjs/loader:1368
+  throw err;
+  ^
 
-[[90m5:07:06 PM[0m] Found 0 errors. Watching for file changes.
+Error: Cannot find module 'inquirer'
+Require stack:
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/utils/project-utils.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/generate.action.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js
+- /var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)
+    at Function._load (node:internal/modules/cjs/loader:1175:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1445:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/utils/project-utils.js:10:18)
+    at Module._compile (node:internal/modules/cjs/loader:1688:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/lib/utils/project-utils.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/generate.action.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/actions/index.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/command.loader.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/commands/index.js',
+    '/var/www/homeopathy-business-platform/services/api-nest/node_modules/@nestjs/cli/bin/nest.js'
+  ]
+}
 
-{"level":"WARN","timestamp":"2025-10-23T11:37:07.688Z","logger":"kafkajs","message":"KafkaJS v2.0.0 switched default partitioner. To retain the same partitioning behavior as in previous versions, create the producer with the option \"createPartitioner: Partitioners.LegacyPartitioner\". See the migration guide at https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner for details. Silence this warning by setting the environment variable \"KAFKAJS_NO_PARTITIONER_WARNING=1\""}
-{"level":"WARN","timestamp":"2025-10-23T11:37:07.689Z","logger":"kafkajs","message":"[Producer] Limiting retries for the idempotent producer may invalidate EoS guarantees"}
-[31m[Nest] 196858  - [39m10/23/2025, 5:07:08 PM [31m  ERROR[39m [38;5;3m[PackageLoader] [39m[31mNo driver (HTTP) has been selected. In order to take advantage of the default driver, please, ensure to install the "@nestjs/platform-express" package ($ npm install @nestjs/platform-express).[39m
+Node.js v22.18.0
+npm error Lifecycle script `dev` failed with error:
+npm error code 1
+npm error path /var/www/homeopathy-business-platform/services/api-nest
+npm error workspace @yeelo/api-nest@1.0.0
+npm error location /var/www/homeopathy-business-platform/services/api-nest
+npm error command failed
+npm error command sh -c nest start --watch

@@ -1,5 +1,0 @@
-# command-line-arguments
-./main.go:1391:6: syntax error: unexpected loadConfig, expected (
-./main.go:1392:2: syntax error: unexpected return at end of statement
-./main.go:1427:6: syntax error: unexpected getEnv, expected (
-./main.go:1434:6: syntax error: unexpected getEnvAsInt, expected (

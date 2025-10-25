@@ -18,8 +18,8 @@ type Config struct {
 
 func Load() *Config {
 	cfg := &Config{
-		Port:        getEnv("PORT", "3004"),
-		DatabaseURL: getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"),
+		Port:        getEnv("PORT", "3005"),
+		DatabaseURL: getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy"),
 		RedisURL:    getEnv("REDIS_URL", "redis://localhost:6380"),
 		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
 		Environment: getEnv("ENVIRONMENT", "development"),

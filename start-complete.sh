@@ -271,6 +271,23 @@ start_service() {
 
 # Start Go services
 if [ "$GO_AVAILABLE" = true ]; then
+    # Start api-golang-v2 (Import/Export API - Port 3005)
+    if [ -d "services/api-golang-v2" ]; then
+        info "Starting api-golang-v2 (Import/Export API)..."
+        cd services/api-golang-v2
+        
+        # Build if binary doesn't exist or source is newer
+        if [ ! -f "bin/api" ] || [ "cmd/main.go" -nt "bin/api" ]; then
+            info "Building api-golang-v2..."
+            go build -o bin/api cmd/main.go
+        fi
+        
+        ./bin/api > ../../logs/api-golang-v2.log 2>&1 &
+        echo $! > ../../logs/api-golang-v2.pid
+        cd - > /dev/null
+        log "✅ api-golang-v2 started (PID: $(cat logs/api-golang-v2.pid), Port: 3005)"
+    fi
+    
     start_service "product-service" "services/product-service" "go run main.go" "8001"
     start_service "inventory-service" "services/inventory-service" "go run main.go" "8002"
     start_service "sales-service" "services/sales-service" "go run main.go" "8003"
@@ -395,6 +412,7 @@ echo ""
 
 echo -e "${CYAN}🔧 MICROSERVICES:${NC}"
 if [ "$GO_AVAILABLE" = true ]; then
+    log "🚀 Import/Export API: http://localhost:3005"
     log "📦 Product Service:  http://localhost:8001"
     log "📦 Inventory Service: http://localhost:8002"
     log "🛒 Sales Service:    http://localhost:8003"
@@ -435,6 +453,11 @@ cat > logs/services.json << EOF
     "minio": { "port": 9000, "status": "running" }
   },
   "microservices": {
+    "api_golang_v2": {
+      "pid": $(cat logs/api-golang-v2.pid 2>/dev/null || echo "null"),
+      "port": 3005,
+      "description": "Import/Export API"
+    },
     "product_service": {
       "pid": $(cat logs/product-service.pid 2>/dev/null || echo "null"),
       "port": 8001
@@ -452,7 +475,7 @@ cat > logs/services.json << EOF
       "port": 4000
     },
     "ai_service": {
-      "pid": $(cat logs/ai-service.pid 2>/dev/null || echo "null"),
+      "pid": $(cat logs/api-service.pid 2>/dev/null || echo "null"),
       "port": 8010
     }
   },
