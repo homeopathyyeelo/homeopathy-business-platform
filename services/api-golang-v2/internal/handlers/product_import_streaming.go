@@ -268,6 +268,12 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 			"success_rate": successRate,
 		},
 	})
+	
+	// Send final "done" event to signal completion
+	fmt.Fprintf(c.Writer, "event: done\ndata: {\"status\":\"complete\"}\n\n")
+	if flusher, ok := c.Writer.(http.Flusher); ok {
+		flusher.Flush()
+	}
 }
 
 // MasterRecord represents a master data record
@@ -547,5 +553,9 @@ func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bo
 func (h *StreamingImportHandler) sendProgress(c *gin.Context, msg ProgressMessage) {
 	data, _ := json.Marshal(msg)
 	fmt.Fprintf(c.Writer, "data: %s\n\n", data)
-	c.Writer.Flush()
+	
+	// Flush if the writer supports it
+	if flusher, ok := c.Writer.(http.Flusher); ok {
+		flusher.Flush()
+	}
 }

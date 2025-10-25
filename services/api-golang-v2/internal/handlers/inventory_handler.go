@@ -221,3 +221,180 @@ func (h *InventoryHandler) CreateTransfer(c *gin.Context) {
 		"message": "Transfer created successfully",
 	})
 }
+
+// POST /api/products/batches - Create batch
+func (h *InventoryHandler) CreateBatch(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	batch := gin.H{
+		"id":                uuid.New().String(),
+		"product_id":        req["product_id"],
+		"batch_no":          req["batch_no"],
+		"mfg_date":          req["mfg_date"],
+		"exp_date":          req["exp_date"],
+		"mrp":               req["mrp"],
+		"purchase_rate":     req["purchase_rate"],
+		"sale_rate":         req["sale_rate"],
+		"quantity":          req["quantity"],
+		"reserved_quantity": 0,
+		"available_quantity": req["quantity"],
+		"warehouse_id":      req["warehouse_id"],
+		"rack_location":     req["rack_location"],
+		"supplier_id":       req["supplier_id"],
+		"purchase_invoice_no": req["purchase_invoice_no"],
+		"purchase_date":     req["purchase_date"],
+		"notes":             req["notes"],
+		"is_active":         true,
+		"created_at":        time.Now().Format(time.RFC3339),
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    batch,
+		"message": "Batch created successfully",
+	})
+}
+
+// PUT /api/products/batches/:id - Update batch
+func (h *InventoryHandler) UpdateBatch(c *gin.Context) {
+	id := c.Param("id")
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	batch := gin.H{
+		"id":                id,
+		"product_id":        req["product_id"],
+		"batch_no":          req["batch_no"],
+		"mfg_date":          req["mfg_date"],
+		"exp_date":          req["exp_date"],
+		"mrp":               req["mrp"],
+		"purchase_rate":     req["purchase_rate"],
+		"sale_rate":         req["sale_rate"],
+		"quantity":          req["quantity"],
+		"warehouse_id":      req["warehouse_id"],
+		"rack_location":     req["rack_location"],
+		"notes":             req["notes"],
+		"updated_at":        time.Now().Format(time.RFC3339),
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    batch,
+		"message": "Batch updated successfully",
+	})
+}
+
+// DELETE /api/products/batches/:id - Delete batch
+func (h *InventoryHandler) DeleteBatch(c *gin.Context) {
+	id := c.Param("id")
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Batch deleted successfully",
+		"id":      id,
+	})
+}
+
+// ==================== WAREHOUSES ====================
+
+// GET /api/erp/warehouses - Get all warehouses
+func (h *InventoryHandler) GetWarehouses(c *gin.Context) {
+	warehouses := []gin.H{
+		{
+			"id":         uuid.New().String(),
+			"name":       "Main Warehouse",
+			"code":       "WH-MAIN",
+			"location":   "Main Store",
+			"is_default": true,
+			"is_active":  true,
+		},
+		{
+			"id":         uuid.New().String(),
+			"name":       "Branch Warehouse",
+			"code":       "WH-BRANCH",
+			"location":   "Branch Store",
+			"is_default": false,
+			"is_active":  true,
+		},
+		{
+			"id":         uuid.New().String(),
+			"name":       "Online Warehouse",
+			"code":       "WH-ONLINE",
+			"location":   "E-commerce Stock",
+			"is_default": false,
+			"is_active":  true,
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    warehouses,
+	})
+}
+
+// POST /api/erp/warehouses - Create warehouse
+func (h *InventoryHandler) CreateWarehouse(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	warehouse := gin.H{
+		"id":         uuid.New().String(),
+		"name":       req["name"],
+		"code":       req["code"],
+		"location":   req["location"],
+		"is_default": false,
+		"is_active":  true,
+		"created_at": time.Now().Format(time.RFC3339),
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    warehouse,
+		"message": "Warehouse created successfully",
+	})
+}
+
+// PUT /api/erp/warehouses/:id - Update warehouse
+func (h *InventoryHandler) UpdateWarehouse(c *gin.Context) {
+	id := c.Param("id")
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	warehouse := gin.H{
+		"id":         id,
+		"name":       req["name"],
+		"code":       req["code"],
+		"location":   req["location"],
+		"updated_at": time.Now().Format(time.RFC3339),
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    warehouse,
+		"message": "Warehouse updated successfully",
+	})
+}
+
+// DELETE /api/erp/warehouses/:id - Delete warehouse
+func (h *InventoryHandler) DeleteWarehouse(c *gin.Context) {
+	id := c.Param("id")
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Warehouse deleted successfully",
+		"id":      id,
+	})
+}

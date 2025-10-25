@@ -5,12 +5,23 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products', 'list'],
     queryFn: async () => {
-      // Use Next.js API route instead of external service
-      const res = await fetch('/api/products')
-      const json = await res.json()
-      const data = Array.isArray(json.data) ? json.data : []
+      // Call Golang API directly
+      const res = await golangAPI.get('/api/erp/products')
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
       return data as any[]
     },
+    staleTime: 60_000,
+  })
+}
+
+export function useProduct(id: string) {
+  return useQuery({
+    queryKey: ['products', 'detail', id],
+    queryFn: async () => {
+      const res = await golangAPI.get(`/api/erp/products/${id}`)
+      return res.data?.data ?? res.data
+    },
+    enabled: !!id,
     staleTime: 60_000,
   })
 }
@@ -19,18 +30,9 @@ export function useProductCategories() {
   return useQuery({
     queryKey: ['products', 'categories'],
     queryFn: async () => {
-      try {
-        const res = await golangAPI.get('/api/products/categories')
-        return res.data || []
-      } catch (error) {
-        return [
-          { id: 'dilutions', name: 'Dilutions', parent_id: null },
-          { id: 'biochemic', name: 'Biochemic', parent_id: null },
-          { id: 'mother-tincture', name: 'Mother Tincture', parent_id: null },
-          { id: 'patent-medicines', name: 'Patent Medicines', parent_id: null },
-          { id: 'ointments', name: 'Ointments', parent_id: null },
-        ]
-      }
+      const res = await golangAPI.get('/api/erp/categories')
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+      return data as any[]
     },
     staleTime: 300_000, // 5 minutes
   })
@@ -40,18 +42,9 @@ export function useProductBrands() {
   return useQuery({
     queryKey: ['products', 'brands'],
     queryFn: async () => {
-      try {
-        const res = await golangAPI.get('/api/products/brands')
-        return res.data || []
-      } catch (error) {
-        return [
-          { id: 'sbl', name: 'SBL', description: 'SBL Homeopathy' },
-          { id: 'reckeweg', name: 'Dr. Reckeweg', description: 'German Homeopathy' },
-          { id: 'schwabe', name: 'Dr. Willmar Schwabe', description: 'German Homeopathy' },
-          { id: 'boiron', name: 'Boiron', description: 'French Homeopathy' },
-          { id: 'allen', name: 'Allen', description: 'Indian Homeopathy' },
-        ]
-      }
+      const res = await golangAPI.get('/api/erp/brands')
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+      return data as any[]
     },
     staleTime: 300_000,
   })
@@ -154,18 +147,18 @@ export function useCategoryMutations() {
   const qc = useQueryClient()
 
   const create = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/products/categories', payload),
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/categories', payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'categories'] }),
   })
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      golangAPI.put(`/api/products/categories/${id}`, data),
+      golangAPI.put(`/api/erp/categories/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'categories'] }),
   })
 
   const remove = useMutation({
-    mutationFn: (id: string) => golangAPI.delete(`/api/products/categories/${id}`),
+    mutationFn: (id: string) => golangAPI.delete(`/api/erp/categories/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'categories'] }),
   })
 
@@ -176,22 +169,94 @@ export function useBrandMutations() {
   const qc = useQueryClient()
 
   const create = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/products/brands', payload),
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/brands', payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'brands'] }),
   })
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      golangAPI.put(`/api/products/brands/${id}`, data),
+      golangAPI.put(`/api/erp/brands/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'brands'] }),
   })
 
   const remove = useMutation({
-    mutationFn: (id: string) => golangAPI.delete(`/api/products/brands/${id}`),
+    mutationFn: (id: string) => golangAPI.delete(`/api/erp/brands/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'brands'] }),
   })
 
   return { create, update, remove }
+}
+
+// Potency mutations
+export function usePotencyMutations() {
+  const qc = useQueryClient()
+
+  const create = useMutation({
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/potencies', payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'potencies'] }),
+  })
+
+  const update = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      golangAPI.put(`/api/erp/potencies/${id}`, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'potencies'] }),
+  })
+
+  const remove = useMutation({
+    mutationFn: (id: string) => golangAPI.delete(`/api/erp/potencies/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'potencies'] }),
+  })
+
+  return { create, update, remove }
+}
+
+// Form mutations
+export function useFormMutations() {
+  const qc = useQueryClient()
+
+  const create = useMutation({
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/forms', payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'forms'] }),
+  })
+
+  const update = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      golangAPI.put(`/api/erp/forms/${id}`, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'forms'] }),
+  })
+
+  const remove = useMutation({
+    mutationFn: (id: string) => golangAPI.delete(`/api/erp/forms/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'forms'] }),
+  })
+
+  return { create, update, remove }
+}
+
+// Potencies hook
+export function useProductPotencies() {
+  return useQuery({
+    queryKey: ['products', 'potencies'],
+    queryFn: async () => {
+      const res = await golangAPI.get('/api/erp/potencies')
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+      return data as any[]
+    },
+    staleTime: 300_000,
+  })
+}
+
+// Forms hook
+export function useProductForms() {
+  return useQuery({
+    queryKey: ['products', 'forms'],
+    queryFn: async () => {
+      const res = await golangAPI.get('/api/erp/forms')
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
+      return data as any[]
+    },
+    staleTime: 300_000,
+  })
 }
 
 export function useBatchMutations() {

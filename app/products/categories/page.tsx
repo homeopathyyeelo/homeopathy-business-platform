@@ -298,12 +298,12 @@ export default function CategoriesPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="parent_id">Parent Category (Optional)</Label>
-              <Select value={formData.parent_id} onValueChange={(value) => handleSelectChange('parent_id', value)}>
+              <Select value={formData.parent_id || "none"} onValueChange={(value) => handleSelectChange('parent_id', value === "none" ? "" : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select parent category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None (Main Category)</SelectItem>
+                  <SelectItem value="none">None (Main Category)</SelectItem>
                   {categories.filter((c: Category) => !c.parent_id).map((cat: Category) => (
                     <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                   ))}
@@ -334,12 +334,12 @@ export default function CategoriesPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-parent_id">Parent Category (Optional)</Label>
-              <Select value={formData.parent_id} onValueChange={(value) => handleSelectChange('parent_id', value)}>
+              <Select value={formData.parent_id || "none"} onValueChange={(value) => handleSelectChange('parent_id', value === "none" ? "" : value)}>
                 <SelectTrigger id="edit-parent_id">
                   <SelectValue placeholder="Select parent category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None (Main Category)</SelectItem>
+                  <SelectItem value="none">None (Main Category)</SelectItem>
                   {categories.filter((c: Category) => !c.parent_id).map((cat: Category) => (
                     <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                   ))}

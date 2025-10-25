@@ -35,3 +35,420 @@
  GET /products/import-export 200 in 594ms
  GET /api/products 200 in 267ms
  GET /api/auth/me 200 in 345ms
+ GET /products/import-export 200 in 281ms
+ GET /api/products 200 in 218ms
+ GET /api/auth/me 200 in 159ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 2.8s (1525 modules)
+ GET /products 200 in 3214ms
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 559ms (899 modules)
+ GET /api/products 200 in 839ms
+ GET /products/import-export 200 in 203ms
+ GET /api/products 200 in 158ms
+ GET /products 200 in 619ms
+ GET /api/products 200 in 156ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 894ms (977 modules)
+ GET /api/auth/me 200 in 1313ms
+ GET /products 200 in 556ms
+ GET /api/products 200 in 198ms
+ GET /api/auth/me 200 in 151ms
+ ✓ Compiled in 2.1s (1525 modules)
+ ✓ Compiled /api/products in 404ms (899 modules)
+ GET /api/products 200 in 681ms
+ GET /api/products 200 in 103ms
+ ✓ Compiled in 487ms (1543 modules)
+ ✓ Compiled in 401ms (1543 modules)
+ GET /products 200 in 735ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1141ms (977 modules)
+ GET /api/auth/me 200 in 1387ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 1498ms (1632 modules)
+ GET /products/052b80f6-115a-4fb7-8be2-0c2f3d60dec0 200 in 3135ms
+ GET /products/848e3f1b-3740-4e41-8eef-bd2af21fa2dc 200 in 144ms
+ GET /products/848e3f1b-3740-4e41-8eef-bd2af21fa2dc 200 in 687ms
+ GET /api/auth/me 200 in 181ms
+ ○ Compiling /products/categories ...
+ ✓ Compiled /products/categories in 2.9s (1650 modules)
+ GET /products/categories 200 in 3346ms
+ GET /products/subcategories 200 in 164ms
+ ○ Compiling /products/brands ...
+ ✓ Compiled /products/brands in 1060ms (1659 modules)
+ GET /products/brands 200 in 1387ms
+ ○ Compiling /products/potencies ...
+ ✓ Compiled /products/potencies in 726ms (1660 modules)
+ GET /products/potencies 200 in 1034ms
+ ○ Compiling /products/forms ...
+ ✓ Compiled /products/forms in 762ms (1667 modules)
+ GET /products/forms 200 in 1025ms
+ ✓ Compiled in 3.8s (1564 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products/hsn 200 in 4301ms
+ GET /products/forms 200 in 919ms
+ ✓ Compiled /api/auth/me in 398ms (979 modules)
+ GET /api/auth/me 200 in 761ms
+ GET /products/hsn 200 in 264ms
+ ✓ Compiled in 838ms (1643 modules)
+ GET /products/units 200 in 307ms
+ ○ Compiling /products/batches ...
+ ✓ Compiled /products/batches in 720ms (1653 modules)
+ GET /products/batches 200 in 946ms
+ GET /products/barcode 200 in 197ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 799ms (895 modules)
+ GET /products 200 in 1182ms
+ GET /products/052b80f6-115a-4fb7-8be2-0c2f3d60dec0 200 in 192ms
+ GET /products 200 in 129ms
+ GET /products/47e31397-983b-488f-9ec3-407090db1782 200 in 153ms
+ GET /products 200 in 119ms
+ GET /products/04a01fc4-1b3e-4212-bc3d-e76d45016446 200 in 157ms
+ ○ Compiling /products/[id]/edit ...
+ ✓ Compiled /products/[id]/edit in 2.9s (1565 modules)
+ GET /products/04a01fc4-1b3e-4212-bc3d-e76d45016446/edit 200 in 3777ms
+ GET /products 200 in 137ms
+ GET /products/edit/03ccd244-64d3-4367-be69-fc29f4b20c64 200 in 227ms
+ ✓ Compiled in 1357ms (1560 modules)
+ GET /products 200 in 209ms
+ GET /products/e895d3eb-e934-4925-a147-0376dc87acf6 200 in 331ms
+ ✓ Compiled in 698ms (1560 modules)
+ ○ Compiling /products/categories ...
+ ✓ Compiled /products/categories in 740ms (898 modules)
+ GET /products/categories 200 in 932ms
+ GET /products/subcategories 200 in 176ms
+ ○ Compiling /products/brands ...
+ ✓ Compiled /products/brands in 1145ms (905 modules)
+ GET /products/brands 200 in 1403ms
+ GET /products/hsn 200 in 163ms
+ GET /products/forms 200 in 213ms
+ GET /products/categories 200 in 191ms
+ GET /products/hsn 200 in 824ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 5.7s (1663 modules)
+ GET /api/auth/me 200 in 6046ms
+ GET /products/brands 200 in 1372ms
+ ✓ Compiled in 1655ms (1663 modules)
+ GET /products/brands 200 in 856ms
+ GET /api/auth/me 200 in 192ms
+ ○ Compiling /products/import-export ...
+ ✓ Compiled /products/import-export in 1696ms (998 modules)
+ GET /products/import-export 200 in 2597ms
+ GET /api/auth/me 200 in 260ms
+ ✓ Compiled in 6s (1659 modules)
+ GET /products/import-export 200 in 690ms
+ GET /api/auth/me 200 in 211ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1271ms (998 modules)
+ GET /products 200 in 1573ms
+ ✓ Compiled in 1559ms (1662 modules)
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 2.7s (999 modules)
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda 200 in 3016ms
+ ○ Compiling /products/[id]/edit ...
+ ✓ Compiled /products/[id]/edit in 979ms (1000 modules)
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 1335ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 268ms
+ ✓ Compiled in 883ms (1671 modules)
+ ⨯ ./lib/hooks/products.ts
+Module parse failed: Identifier 'useProducts' has already been declared (456:16)
+|     });
+| }
+> export function useProducts() {
+|     return useQuery({
+|         queryKey: [
+
+Import trace for requested module:
+./lib/hooks/products.ts
+./app/products/add/page.tsx
+ ⨯ ./lib/hooks/products.ts
+Module parse failed: Identifier 'useProducts' has already been declared (475:16)
+|     });
+| }
+> export function useProducts() {
+|     return useQuery({
+|         queryKey: [
+
+Import trace for requested module:
+./lib/hooks/products.ts
+./app/products/add/page.tsx
+ ○ Compiling /_error ...
+ ⨯ ./lib/hooks/products.ts
+Module parse failed: Identifier 'useProducts' has already been declared (475:16)
+|     });
+| }
+> export function useProducts() {
+|     return useQuery({
+|         queryKey: [
+
+Import trace for requested module:
+./lib/hooks/products.ts
+./app/products/add/page.tsx
+ ⨯ ./lib/hooks/products.ts
+Module parse failed: Identifier 'useProducts' has already been declared (475:16)
+|     });
+| }
+> export function useProducts() {
+|     return useQuery({
+|         queryKey: [
+
+Import trace for requested module:
+./lib/hooks/products.ts
+./app/products/add/page.tsx
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 500 in 12187ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 5253ms
+ GET /products/import-export 500 in 5703ms
+ GET /products/brands 500 in 2483ms
+ GET /products/brands 500 in 5712ms
+ GET /products/import-export 500 in 470ms
+ GET /products/import-export 500 in 212ms
+ ✓ Compiled /products/brands in 3.6s (1924 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /products/brands 200 in 1394ms
+ GET /products/import-export 200 in 1613ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 1485ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1679ms (1189 modules)
+ GET /api/auth/me 200 in 2136ms
+ GET /api/auth/me 200 in 106ms
+ GET /api/auth/me 200 in 124ms
+ GET /products/import-export 200 in 327ms
+ ✓ Compiled in 8s (1916 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 1258ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 528ms (1181 modules)
+ GET /api/auth/me 200 in 948ms
+ GET /products/brands 200 in 267ms
+ ○ Compiling /products/potencies ...
+ ✓ Compiled /products/potencies in 1475ms (1093 modules)
+ GET /products/potencies 200 in 1839ms
+ GET /products/potencies 200 in 596ms
+ ✓ Compiled /api/auth/me in 433ms (1187 modules)
+ GET /api/auth/me 200 in 692ms
+ ○ Compiling /products/forms ...
+ ✓ Compiled /products/forms in 1178ms (1184 modules)
+ GET /products/forms 200 in 1403ms
+ GET /products/hsn 200 in 183ms
+ GET /products/units 200 in 189ms
+ ○ Compiling /products/batches ...
+ ✓ Compiled /products/batches in 822ms (1191 modules)
+ GET /products/batches 200 in 1027ms
+ GET /products/forms 200 in 120ms
+ GET /products/subcategories 200 in 200ms
+ ○ Compiling /products/categories ...
+ ✓ Compiled /products/categories in 932ms (1092 modules)
+ GET /products/categories 200 in 1364ms
+ ✓ Compiled /products in 379ms (1102 modules)
+ GET /products 200 in 589ms
+ GET /products/8479e1f3-602b-467a-b424-9ef70fe3453d 200 in 177ms
+ GET /products/9319507d-6f97-4c99-9d10-beb91c63eece 200 in 156ms
+ GET /products/edit/4cb326a6-90bb-4b07-aeea-63e9dc169a29 200 in 178ms
+ GET /products/forms 200 in 138ms
+ GET /products/forms 200 in 743ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1206ms (1175 modules)
+ GET /api/auth/me 200 in 1666ms
+ GET /products 200 in 206ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/add in 1537ms (1088 modules)
+ GET /products/add 200 in 1870ms
+ GET /products 200 in 133ms
+ GET /products/edit/2ac97f67-abce-4cdb-898a-d40482a00e8d 200 in 177ms
+ GET /products/categories 200 in 129ms
+ GET /products/subcategories 200 in 205ms
+ GET /products/categories 200 in 105ms
+ GET /products/subcategories 200 in 181ms
+ GET /products/subcategories 200 in 261ms
+ ○ Compiling /products/brands ...
+ ✓ Compiled /products/brands in 2.1s (1088 modules)
+ GET /products/brands 200 in 2425ms
+ ○ Compiling /products/potencies ...
+ ✓ Compiled /products/potencies in 2.6s (1087 modules)
+ GET /products/potencies 200 in 2932ms
+ ✓ Compiled /products/forms in 429ms (1082 modules)
+ GET /products/forms 200 in 642ms
+ GET /products/hsn 200 in 217ms
+ GET /products/units 200 in 675ms
+ ○ Compiling /products/batches ...
+ ✓ Compiled /products/batches in 3.8s (1083 modules)
+ GET /products/batches 200 in 4132ms
+ GET /products/categories 200 in 848ms
+ GET /products/batches 200 in 1938ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 1817ms
+ ✓ Compiled in 4.5s (2065 modules)
+ GET /products/categories 200 in 828ms
+ GET /products/batches 200 in 702ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 644ms
+ GET /products/5876eaa1-e167-40a2-9791-9c668f81cdda/edit 200 in 840ms
+ GET /products/categories 200 in 323ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 3.8s (1171 modules)
+ GET /api/auth/me 200 in 4199ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /inventory/stock in 7.4s (2014 modules)
+ GET /inventory/stock 200 in 8366ms
+ ○ Compiling /api/inventory ...
+ ✓ Compiled /api/inventory in 789ms (2016 modules)
+ GET /api/inventory 200 in 965ms
+ GET /api/inventory 200 in 198ms
+ GET /products/batches 200 in 669ms
+ GET /inventory/stock 200 in 685ms
+ ✓ Compiled in 4.4s (2073 modules)
+ GET /products/batches 200 in 648ms
+ GET /inventory/stock 200 in 648ms
+ GET /products/batches 200 in 937ms
+ GET /inventory/stock 200 in 1026ms
+ ✓ Compiled in 2.5s (2073 modules)
+ GET /products/batches 200 in 748ms
+ GET /inventory/stock 200 in 750ms
+ ○ Compiling /products/subcategories ...
+ ✓ Compiled /products/subcategories in 4s (1925 modules)
+ GET /products/subcategories 200 in 4333ms
+ GET /products/subcategories 200 in 143ms
+ GET /products/categories 200 in 145ms
+ GET /products/categories 200 in 142ms
+ GET /products/subcategories 200 in 114ms
+ GET /products/batches 200 in 208ms
+ GET /products/batches 200 in 669ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1225ms (1173 modules)
+ GET /api/auth/me 200 in 1631ms
+ ○ Compiling /products/hsn ...
+ ✓ Compiled /products/hsn in 3.7s (2020 modules)
+ GET /products/hsn 200 in 4108ms
+ GET /products/subcategories 200 in 132ms
+ GET /products/subcategories 200 in 585ms
+ GET /api/auth/me 200 in 199ms
+ GET /products/subcategories 200 in 373ms
+ GET /products/subcategories 200 in 433ms
+ GET /api/auth/me 200 in 234ms
+ GET /products/hsn 200 in 481ms
+ GET /products/subcategories 200 in 128ms
+ ○ Compiling /products/potencies ...
+ ✓ Compiled /products/potencies in 2.4s (1177 modules)
+ GET /products/potencies 200 in 2743ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 1352ms (1189 modules)
+ GET /products/barcode 200 in 1649ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 3.1s (1094 modules)
+ GET /products 200 in 3567ms
+ GET /products 200 in 1254ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1498ms (1182 modules)
+ GET /api/auth/me 200 in 1886ms
+ GET /inventory/stock 200 in 291ms
+ ○ Compiling /api/inventory ...
+ ✓ Compiled /api/inventory in 2.1s (1177 modules)
+ GET /api/inventory 200 in 2382ms
+ GET /api/inventory 200 in 105ms
+ GET /inventory/stock 200 in 632ms
+ GET /api/auth/me 200 in 196ms
+ GET /api/inventory 200 in 110ms
+ GET /inventory/stock 200 in 242ms
+ GET /api/auth/me 200 in 158ms
+ GET /api/inventory 200 in 110ms
+ ○ Compiling /purchases/orders ...
+ ✓ Compiled /purchases/orders in 6.6s (2026 modules)
+ GET /purchases/orders 200 in 6818ms
+ GET /products/barcode 200 in 278ms
+ GET /products/barcode 200 in 344ms
+ GET /products/barcode 200 in 277ms
+ GET /products/barcode 200 in 816ms
+ GET /api/auth/me 200 in 271ms
+ ○ Compiling /products/[id]/edit ...
+ ✓ Compiled /products/[id]/edit in 3.8s (1182 modules)
+ GET /products/barcode/edit 200 in 4324ms
+ GET /products 200 in 328ms
+ GET /products 200 in 816ms
+ GET /api/auth/me 200 in 238ms
+ ○ Compiling /products/batches ...
+ ✓ Compiled /products/batches in 1454ms (1181 modules)
+ GET /products/batches 200 in 1837ms
+ GET /products/barcode 200 in 284ms
+ GET /products/batches 200 in 190ms
+ ○ Compiling /products/units ...
+ ⨯ ./app/products/units/page.tsx:4:1
+Module not found: Can't resolve '@tantml:react-query'
+  2 |
+  3 | import { useState } from "react";
+> 4 | import { useQuery, useMutation, useQueryClient } from "@tantml:react-query";
+    | ^
+  5 | import { useToast } from "@/hooks/use-toast";
+  6 | import { Button } from "@/components/ui/button";
+  7 | import { Input } from "@/components/ui/input";
+
+https://nextjs.org/docs/messages/module-not-found
+ GET /products/units 500 in 5619ms
+ GET /products/units 500 in 151ms
+ GET /products/units 500 in 170ms
+ GET /products/units 500 in 356ms
+ GET /products/units 500 in 153ms
+ GET /products/batches 500 in 165ms
+ GET /products/barcode 500 in 141ms
+ GET /products/batches 500 in 147ms
+ GET /products 500 in 170ms
+ GET /products 500 in 281ms
+ ✓ Compiled /products/units in 5.1s (1934 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /products 200 in 1009ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 534ms (1181 modules)
+ GET /api/auth/me 200 in 892ms
+ GET /products 200 in 624ms
+ GET /api/auth/me 200 in 114ms
+ ○ Compiling /sales/pos ...
+ ✓ Compiled /sales/pos in 4.2s (2058 modules)
+ GET /sales/pos 200 in 4520ms
+ GET /products/batches 200 in 131ms
+ GET /products/barcode 200 in 201ms
+ GET /products/barcode/edit 200 in 191ms
+ GET /products 200 in 167ms
+ ○ Compiling /products/hsn ...
+ ✓ Compiled /products/hsn in 1584ms (1201 modules)
+ GET /products/hsn 200 in 1818ms
+ ○ Compiling /products/forms ...
+ ✓ Compiled /products/forms in 2.5s (1202 modules)
+ GET /products/forms 200 in 2746ms
+ ✓ Compiled /products/potencies in 413ms (1208 modules)
+ GET /products/potencies 200 in 608ms
+ GET /products 200 in 565ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/subcategories in 1480ms (1121 modules)
+ ✓ Compiled /products/brands in 1ms (1135 modules)
+ ✓ Compiled in 1ms (1141 modules)
+ ✓ Compiled in 1ms (1141 modules)
+ GET /products/add 200 in 6199ms
+ ✓ Compiled in 0ms (1141 modules)
+ GET /products/categories 200 in 6593ms
+ GET /products/subcategories 200 in 6511ms
+ GET /products/potencies 200 in 5630ms
+ ✓ Compiled /products/units in 0ms (1141 modules)
+ GET /products/brands 200 in 8037ms
+ GET /products/forms 200 in 6291ms
+ ✓ Compiled /api/auth/me in 1ms (1148 modules)
+ ✓ Compiled in 2ms (1255 modules)
+ GET /products/hsn 200 in 6290ms
+ ✓ Compiled in 0ms (1255 modules)
+ GET /products/barcode 200 in 6227ms
+ GET /products/batches 200 in 6356ms
+ ✓ Compiled in 1ms (1255 modules)
+ GET /products/units 200 in 7348ms
+ GET /api/auth/me 200 in 5927ms
+ GET /products/import-export 200 in 6568ms
+ GET /api/auth/me 200 in 223ms
+ GET /api/auth/me 200 in 502ms
+ GET /api/auth/me 200 in 606ms
+ GET /api/auth/me 200 in 220ms
+ GET /api/auth/me 200 in 217ms
+ GET /api/auth/me 200 in 221ms
+ GET /api/auth/me 200 in 189ms
+ GET /api/auth/me 200 in 162ms
+ GET /api/auth/me 200 in 106ms
+ GET /api/auth/me 200 in 117ms
+ GET /api/auth/me 200 in 117ms
+ GET /products/subcategories 200 in 457ms
+ GET /api/auth/me 200 in 133ms

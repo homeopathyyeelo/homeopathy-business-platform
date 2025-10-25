@@ -96,10 +96,30 @@ func main() {
         erp.POST("/products", productHandler.CreateProduct)
         erp.PUT("/products/:id", productHandler.UpdateProduct)
         erp.DELETE("/products/:id", productHandler.DeleteProduct)
+        
+        // Categories CRUD
         erp.GET("/categories", productHandler.GetCategories)
+        erp.POST("/categories", productHandler.CreateCategory)
+        erp.PUT("/categories/:id", productHandler.UpdateCategory)
+        erp.DELETE("/categories/:id", productHandler.DeleteCategory)
+        
+        // Brands CRUD
         erp.GET("/brands", productHandler.GetBrands)
+        erp.POST("/brands", productHandler.CreateBrand)
+        erp.PUT("/brands/:id", productHandler.UpdateBrand)
+        erp.DELETE("/brands/:id", productHandler.DeleteBrand)
+        
+        // Potencies CRUD
         erp.GET("/potencies", productHandler.GetPotencies)
+        erp.POST("/potencies", productHandler.CreatePotency)
+        erp.PUT("/potencies/:id", productHandler.UpdatePotency)
+        erp.DELETE("/potencies/:id", productHandler.DeletePotency)
+        
+        // Forms CRUD
         erp.GET("/forms", productHandler.GetForms)
+        erp.POST("/forms", productHandler.CreateForm)
+        erp.PUT("/forms/:id", productHandler.UpdateForm)
+        erp.DELETE("/forms/:id", productHandler.DeleteForm)
 
         // Product Import/Export routes
         erp.POST("/products/import", productImportHandler.BulkImport)
@@ -108,6 +128,7 @@ func main() {
         erp.GET("/products/template", productImportHandler.DownloadTemplate)
 
         // Inventory routes
+        erp.GET("/inventory", inventoryHandler.GetStock)  // Main inventory listing
         erp.GET("/inventory/stock", inventoryHandler.GetStock)
         erp.GET("/inventory/batches", inventoryHandler.GetBatches)
         erp.GET("/inventory/expiries/alerts", inventoryHandler.GetExpiryAlerts)
@@ -351,6 +372,29 @@ func main() {
         api.GET("/products/brands", productHandler.GetBrands)
         api.GET("/products/potencies", productHandler.GetPotencies)
         api.GET("/products/forms", productHandler.GetForms)
+        api.GET("/products/batches", inventoryHandler.GetBatches)
+        api.POST("/products/batches", inventoryHandler.CreateBatch)
+        api.PUT("/products/batches/:id", inventoryHandler.UpdateBatch)
+        api.DELETE("/products/batches/:id", inventoryHandler.DeleteBatch)
+        
+        // Barcode routes
+        api.GET("/erp/products/barcode", productHandler.GetBarcodes)
+        api.POST("/erp/products/barcode/generate", productHandler.GenerateBarcode)
+        api.POST("/erp/products/barcode/print", productHandler.PrintBarcodes)
+        
+        // Master data routes
+        api.GET("/erp/hsn-codes", productHandler.GetHSNCodes)
+        api.POST("/erp/hsn-codes", productHandler.CreateHSNCode)
+        api.PUT("/erp/hsn-codes/:id", productHandler.UpdateHSNCode)
+        api.DELETE("/erp/hsn-codes/:id", productHandler.DeleteHSNCode)
+        api.GET("/erp/units", productHandler.GetUnits)
+        api.POST("/erp/units", productHandler.CreateUnit)
+        api.PUT("/erp/units/:id", productHandler.UpdateUnit)
+        api.DELETE("/erp/units/:id", productHandler.DeleteUnit)
+        api.GET("/erp/warehouses", inventoryHandler.GetWarehouses)
+        api.POST("/erp/warehouses", inventoryHandler.CreateWarehouse)
+        api.PUT("/erp/warehouses/:id", inventoryHandler.UpdateWarehouse)
+        api.DELETE("/erp/warehouses/:id", inventoryHandler.DeleteWarehouse)
         
         // Sales routes
         api.GET("/sales/b2b", salesHandler.GetB2BSales)

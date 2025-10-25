@@ -248,6 +248,7 @@ export default function ImportExportPage() {
   };
 
   const getLogColor = (message: string) => {
+    if (!message) return 'text-gray-700';
     if (message.includes('Created')) return 'text-green-600';
     if (message.includes('Updated')) return 'text-blue-600';
     if (message.includes('category') || message.includes('brand') || message.includes('potency')) return 'text-purple-600';
@@ -472,7 +473,7 @@ export default function ImportExportPage() {
                         </div>
                       ) : (
                         <div className="space-y-1 font-mono text-xs">
-                          {logs.map((log, index) => (
+                          {logs.filter(log => log && log.message).map((log, index) => (
                             <div 
                               key={index}
                               className={`flex items-start space-x-2 py-1 ${getLogColor(log.message)}`}
