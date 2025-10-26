@@ -23,6 +23,7 @@ func main() {
     // Initialize only the handlers we need
     productHandler := handlers.NewProductHandler(db)
     inventoryHandler := handlers.NewInventoryHandler(db)
+    systemHandler := handlers.NewSystemHandler()
 
     r := gin.Default()
 
@@ -43,6 +44,16 @@ func main() {
             "service": "golang-v2",
         })
     })
+
+    // System routes (v1 API)
+    v1 := r.Group("/api/v1")
+    {
+        system := v1.Group("/system")
+        {
+            system.GET("/health", systemHandler.GetSystemHealth)
+            system.GET("/info", systemHandler.GetSystemInfo)
+        }
+    }
 
     // ERP routes (shared prefix)
     erp := r.Group("/api/erp")
@@ -97,6 +108,32 @@ func main() {
         erp.GET("/products/barcode", productHandler.GetBarcodes)
         erp.POST("/products/barcode/generate", productHandler.GenerateBarcode)
         erp.POST("/products/barcode/print", productHandler.PrintBarcodes)
+
+        // POS routes
+        pos := erp.Group("/pos")
+        {
+            pos.GET("/counters", systemHandler.GetPOSCounters)
+        }
+    }
+
+    // Masters routes (for frontend compatibility)
+    masters := r.Group("/api/masters")
+    {
+        masters.GET("/subcategories", productHandler.GetSubcategories)
+        masters.GET("/categories", productHandler.GetCategories)
+        masters.GET("/brands", productHandler.GetBrands)
+        masters.GET("/potencies", productHandler.GetPotencies)
+        masters.GET("/forms", productHandler.GetForms)
+        masters.GET("/units", productHandler.GetUnits)
+    }
+
+    // Products routes (for frontend compatibility)
+    products := r.Group("/api/products")
+    {
+        products.GET("/batches", inventoryHandler.GetBatches)
+        products.POST("/batches", inventoryHandler.CreateBatch)
+        products.PUT("/batches/:id", inventoryHandler.UpdateBatch)
+        products.DELETE("/batches/:id", inventoryHandler.DeleteBatch)
     }
 
     port := os.Getenv("PORT")

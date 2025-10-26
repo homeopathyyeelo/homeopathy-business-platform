@@ -36,30 +36,55 @@ export default function BottomBar({ onClose }: BottomBarProps) {
   const fetchStatusData = async () => {
     setLoading(true);
     try {
-      // Fetch system health
-      const healthRes = await fetch('http://localhost:3005/api/v1/system/health');
-      if (healthRes.ok) {
-        const healthData = await healthRes.json();
-        if (healthData.success && healthData.data) {
-          setSystemHealth(healthData.data);
+      // Fetch system health with timeout
+      const healthController = new AbortController();
+      const healthTimeout = setTimeout(() => healthController.abort(), 5000);
+      
+      try {
+        const healthRes = await fetch('http://localhost:3005/api/v1/system/health', {
+          signal: healthController.signal
+        });
+        clearTimeout(healthTimeout);
+        
+        if (healthRes.ok) {
+          const healthData = await healthRes.json();
+          if (healthData.success && healthData.data) {
+            setSystemHealth(healthData.data);
+          }
         }
+      } catch (healthError) {
+        // Silently fail - service might be starting
+        console.debug('Health check failed:', healthError);
       }
 
-      // Fetch counter status
-      const countersRes = await fetch('http://localhost:3005/api/erp/pos/counters');
-      if (countersRes.ok) {
-        const countersData = await countersRes.json();
-        if (countersData.success && countersData.data) {
-          const counters = countersData.data;
-          setCounterStatus({
-            connected: counters.filter((c: any) => c.status === 'connected').length,
-            total: counters.length,
-            synced: counters.filter((c: any) => c.syncStatus === 'synced').length,
-          });
+      // Fetch counter status with timeout
+      const countersController = new AbortController();
+      const countersTimeout = setTimeout(() => countersController.abort(), 5000);
+      
+      try {
+        const countersRes = await fetch('http://localhost:3005/api/erp/pos/counters', {
+          signal: countersController.signal
+        });
+        clearTimeout(countersTimeout);
+        
+        if (countersRes.ok) {
+          const countersData = await countersRes.json();
+          if (countersData.success && countersData.data) {
+            const counters = countersData.data;
+            setCounterStatus({
+              connected: counters.filter((c: any) => c.status === 'connected').length,
+              total: counters.length,
+              synced: counters.filter((c: any) => c.syncStatus === 'synced').length,
+            });
+          }
         }
+      } catch (countersError) {
+        // Silently fail - service might be starting
+        console.debug('Counters check failed:', countersError);
       }
     } catch (error) {
-      console.error('Error fetching status data:', error);
+      // Only log unexpected errors
+      console.debug('Status data fetch error:', error);
     } finally {
       setLoading(false);
       setLastSync(new Date());

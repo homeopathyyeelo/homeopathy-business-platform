@@ -1547,7 +1547,8 @@ export function useSubcategories() {
     queryKey: ['masters', 'subcategories'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/masters/subcategories')
-      return res.data as Subcategory[]
+      // API returns { success, data, total }, extract the data array
+      return (res.data?.data || []) as Subcategory[]
     },
     staleTime: 300_000,
   })

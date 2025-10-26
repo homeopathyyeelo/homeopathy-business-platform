@@ -18,16 +18,26 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Plus, Search, Edit, Trash2, FolderTree, Layers } from "lucide-react";
-import { useProductCategories, useCategoryMutations } from "@/lib/hooks/products";
+import { useSubcategories } from "@/lib/hooks/masters";
+import { useProductCategories } from "@/lib/hooks/products";
+
+interface Subcategory {
+  id: string;
+  name: string;
+  code?: string;
+  description?: string;
+  category_id: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 interface Category {
   id: string;
   name: string;
   code?: string;
   description?: string;
-  parent_id?: string;
   isActive: boolean;
-  product_count?: number;
 }
 
 export default function SubcategoriesPage() {
@@ -39,39 +49,37 @@ export default function SubcategoriesPage() {
     name: "",
     code: "",
     description: "",
-    parent_id: "",
+    category_id: "",
   });
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingSubcategoryId, setEditingSubcategoryId] = useState<string | null>(null);
 
-  const { data: categories = [], isLoading } = useProductCategories();
-  const { create, update, remove } = useCategoryMutations();
-
-  // Filter only subcategories (those with parent_id)
-  const subcategories = categories.filter((cat: Category) => cat.parent_id);
+  // Fetch subcategories from /api/masters/subcategories
+  const { data: subcategories = [], isLoading } = useSubcategories();
   
   // Get main categories for parent dropdown
-  const mainCategories = categories.filter((cat: Category) => !cat.parent_id);
+  const { data: categoriesData = [] } = useProductCategories();
+  const mainCategories = categoriesData;
 
   // Get parent category name
-  const getParentName = (parentId: string) => {
-    const parent = categories.find((cat: Category) => cat.id === parentId);
+  const getParentName = (categoryId: string) => {
+    const parent = mainCategories.find((cat: Category) => cat.id === categoryId);
     return parent?.name || 'Unknown';
   };
 
   // Filter subcategories
-  const filteredSubcategories = subcategories.filter((cat: Category) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    cat.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getParentName(cat.parent_id || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSubcategories = subcategories.filter((sub: Subcategory) =>
+    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getParentName(sub.category_id).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Stats
   const stats = {
     total: subcategories.length,
-    active: subcategories.filter((c: Category) => c.isActive).length,
+    active: subcategories.filter((s: Subcategory) => s.is_active).length,
     byParent: mainCategories.map((parent: Category) => ({
       name: parent.name,
-      count: subcategories.filter((c: Category) => c.parent_id === parent.id).length,
+      count: subcategories.filter((s: Subcategory) => s.category_id === parent.id).length,
     })).filter(p => p.count > 0),
   };
 
@@ -85,12 +93,12 @@ export default function SubcategoriesPage() {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", code: "", description: "", parent_id: "" });
-    setEditingCategoryId(null);
+    setFormData({ name: "", code: "", description: "", category_id: "" });
+    setEditingSubcategoryId(null);
   };
 
   const handleAddSubcategory = async () => {
-    if (!formData.name || !formData.parent_id) {
+    if (!formData.name || !formData.category_id) {
       toast({
         title: "Missing Information",
         description: "Please provide subcategory name and parent category",
@@ -100,13 +108,19 @@ export default function SubcategoriesPage() {
     }
 
     try {
-      await create.mutateAsync(formData);
+      // TODO: Implement subcategory create API
       toast({
-        title: "Subcategory Created",
-        description: `${formData.name} has been created successfully`
+        title: "Not Implemented",
+        description: "Subcategory creation API not yet implemented",
+        variant: "destructive"
       });
-      setIsAddDialogOpen(false);
-      resetForm();
+      // await create.mutateAsync(formData);
+      // toast({
+      //   title: "Subcategory Created",
+      //   description: `${formData.name} has been created successfully`
+      // });
+      // setIsAddDialogOpen(false);
+      // resetForm();
     } catch (error) {
       toast({
         title: "Error",
@@ -116,19 +130,19 @@ export default function SubcategoriesPage() {
     }
   };
 
-  const handleEditSubcategory = (category: Category) => {
+  const handleEditSubcategory = (subcategory: Subcategory) => {
     setFormData({
-      name: category.name,
-      code: category.code || "",
-      description: category.description || "",
-      parent_id: category.parent_id || "",
+      name: subcategory.name,
+      code: subcategory.code || "",
+      description: subcategory.description || "",
+      category_id: subcategory.category_id,
     });
-    setEditingCategoryId(category.id);
+    setEditingSubcategoryId(subcategory.id);
     setIsEditDialogOpen(true);
   };
 
   const handleUpdateSubcategory = async () => {
-    if (!formData.name || !formData.parent_id || !editingCategoryId) {
+    if (!formData.name || !formData.category_id || !editingSubcategoryId) {
       toast({
         title: "Missing Information",
         description: "Please provide all required information",
@@ -138,16 +152,12 @@ export default function SubcategoriesPage() {
     }
 
     try {
-      await update.mutateAsync({
-        id: editingCategoryId,
-        data: formData
-      });
+      // TODO: Implement subcategory update API
       toast({
-        title: "Subcategory Updated",
-        description: `${formData.name} has been updated successfully`
+        title: "Not Implemented",
+        description: "Subcategory update API not yet implemented",
+        variant: "destructive"
       });
-      setIsEditDialogOpen(false);
-      resetForm();
     } catch (error) {
       toast({
         title: "Error",
@@ -161,10 +171,11 @@ export default function SubcategoriesPage() {
     if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 
     try {
-      await remove.mutateAsync(id);
+      // TODO: Implement subcategory delete API
       toast({
-        title: "Subcategory Deleted",
-        description: `${name} has been deleted successfully`
+        title: "Not Implemented",
+        description: "Subcategory delete API not yet implemented",
+        variant: "destructive"
       });
     } catch (error) {
       toast({
@@ -276,23 +287,23 @@ export default function SubcategoriesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredSubcategories.map((category: Category) => (
-                  <TableRow key={category.id}>
-                    <TableCell className="font-medium">{category.name}</TableCell>
+                {filteredSubcategories.map((subcategory: Subcategory) => (
+                  <TableRow key={subcategory.id}>
+                    <TableCell className="font-medium">{subcategory.name}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{category.code || 'N/A'}</Badge>
+                      <Badge variant="outline">{subcategory.code || 'N/A'}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary">
-                        {getParentName(category.parent_id || '')}
+                        {getParentName(subcategory.category_id)}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">
-                      {category.description || '-'}
+                      {subcategory.description || '-'}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={category.isActive ? "default" : "secondary"}>
-                        {category.isActive ? "Active" : "Inactive"}
+                      <Badge variant={subcategory.is_active ? "default" : "secondary"}>
+                        {subcategory.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
@@ -300,14 +311,14 @@ export default function SubcategoriesPage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleEditSubcategory(category)}
+                          onClick={() => handleEditSubcategory(subcategory)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDeleteSubcategory(category.id, category.name)}
+                          onClick={() => handleDeleteSubcategory(subcategory.id, subcategory.name)}
                         >
                           <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>
@@ -329,10 +340,10 @@ export default function SubcategoriesPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="parent_id">Parent Category *</Label>
+              <Label htmlFor="category_id">Parent Category *</Label>
               <Select
-                value={formData.parent_id || "none"}
-                onValueChange={(value) => handleSelectChange('parent_id', value === "none" ? "" : value)}
+                value={formData.category_id || "none"}
+                onValueChange={(value) => handleSelectChange('category_id', value === "none" ? "" : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select parent category" />
@@ -384,8 +395,8 @@ export default function SubcategoriesPage() {
             <Button variant="outline" onClick={() => { setIsAddDialogOpen(false); resetForm(); }}>
               Cancel
             </Button>
-            <Button onClick={handleAddSubcategory} disabled={create.isPending}>
-              {create.isPending ? "Creating..." : "Create Subcategory"}
+            <Button onClick={handleAddSubcategory}>
+              Create Subcategory
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -399,12 +410,12 @@ export default function SubcategoriesPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-parent_id">Parent Category *</Label>
+              <Label htmlFor="edit-category_id">Parent Category *</Label>
               <Select
-                value={formData.parent_id || "none"}
-                onValueChange={(value) => handleSelectChange('parent_id', value === "none" ? "" : value)}
+                value={formData.category_id || "none"}
+                onValueChange={(value) => handleSelectChange('category_id', value === "none" ? "" : value)}
               >
-                <SelectTrigger id="edit-parent_id">
+                <SelectTrigger id="edit-category_id">
                   <SelectValue placeholder="Select parent category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -454,8 +465,8 @@ export default function SubcategoriesPage() {
             <Button variant="outline" onClick={() => { setIsEditDialogOpen(false); resetForm(); }}>
               Cancel
             </Button>
-            <Button onClick={handleUpdateSubcategory} disabled={update.isPending}>
-              {update.isPending ? "Updating..." : "Update Subcategory"}
+            <Button onClick={handleUpdateSubcategory}>
+              Update Subcategory
             </Button>
           </DialogFooter>
         </DialogContent>

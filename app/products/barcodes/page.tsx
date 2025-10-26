@@ -230,7 +230,7 @@ export default function BarcodesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Barcode Management</h1>
-          <p className="text-muted-foreground">Generate and print batch-level barcodes</p>
+          <p className="text-muted-foreground">Generate and print batch-level barcodes for your homeopathy products</p>
         </div>
         <div className="flex space-x-2">
           <Button 
@@ -247,6 +247,53 @@ export default function BarcodesPage() {
           </Button>
         </div>
       </div>
+
+      {/* Help Section */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="text-blue-900 flex items-center">
+            <BarcodeIcon className="h-5 w-5 mr-2" />
+            How to Use Barcode Features
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <h3 className="font-semibold text-blue-900 flex items-center">
+                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">1</span>
+                Generate Barcodes
+              </h3>
+              <p className="text-sm text-blue-800">
+                Click <strong>"Generate Barcode"</strong> button → Select product → Choose batch (or enter manually) → Click Generate.
+                Each batch gets a unique barcode for tracking.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-semibold text-blue-900 flex items-center">
+                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">2</span>
+                Select & Print
+              </h3>
+              <p className="text-sm text-blue-800">
+                Check boxes next to barcodes you want to print → Click <strong>"Print Selected"</strong> → Choose label size (Small/Medium/Large) → Set copies → Print.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-semibold text-blue-900 flex items-center">
+                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">3</span>
+                Scan & Track
+              </h3>
+              <p className="text-sm text-blue-800">
+                Use barcode scanner during billing to quickly add products. Track batch-wise inventory, expiry dates, and MRP automatically.
+              </p>
+            </div>
+          </div>
+          <div className="bg-white p-3 rounded border border-blue-200">
+            <p className="text-sm text-blue-900">
+              <strong>💡 Tip:</strong> Generate barcodes when you receive new stock batches. Print labels and stick them on bottles/boxes for easy scanning during sales.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-6">

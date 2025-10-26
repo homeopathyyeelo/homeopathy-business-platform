@@ -338,6 +338,46 @@ func (h *ProductHandler) DeleteCategory(c *gin.Context) {
 	})
 }
 
+// Subcategory model
+type Subcategory struct {
+	ID                 string    `json:"id" gorm:"primaryKey;type:uuid"`
+	Name               string    `json:"name"`
+	Code               string    `json:"code"`
+	CategoryID         string    `json:"category_id" gorm:"column:category_id;type:uuid"`
+	Description        string    `json:"description"`
+	IsActive           bool      `json:"is_active" gorm:"column:is_active"`
+	CreatedAt          time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt          time.Time `json:"updated_at" gorm:"column:updated_at"`
+}
+
+// GET /api/masters/subcategories - List subcategories
+func (h *ProductHandler) GetSubcategories(c *gin.Context) {
+	categoryID := c.Query("category_id")
+	
+	query := h.db.Table("subcategories").Order("name ASC")
+	
+	if categoryID != "" {
+		query = query.Where("category_id = ?", categoryID)
+	}
+	
+	var subcategories []Subcategory
+	result := query.Find(&subcategories)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch subcategories: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    subcategories,
+		"total":   len(subcategories),
+	})
+}
+
 // GET /api/erp/brands - List brands
 func (h *ProductHandler) GetBrands(c *gin.Context) {
 	var brands []MasterData
@@ -650,21 +690,20 @@ func (h *ProductHandler) GetBarcodes(c *gin.Context) {
 			b.product_id,
 			p.name as product_name,
 			p.sku,
-			p.potency,
-			p.form,
-			p.brand,
-			p.category,
-			b.batch_id,
-			b.batch_no,
+			COALESCE(p.potency, '') as potency,
+			COALESCE(p.brand, '') as brand,
+			COALESCE(p.category, '') as category,
+			COALESCE(b.batch_id::text, '') as batch_id,
+			COALESCE(b.batch_no, '') as batch_no,
 			b.barcode,
-			b.barcode_type,
-			b.mrp,
+			COALESCE(b.barcode_type, 'EAN13') as barcode_type,
+			COALESCE(b.mrp, 0) as mrp,
 			b.exp_date,
-			b.quantity,
+			COALESCE(b.quantity, 0) as quantity,
 			COALESCE(w.name, 'Main Warehouse') as warehouse,
 			b.generated_at,
-			b.status,
-			b.created_by,
+			COALESCE(b.status, 'active') as status,
+			COALESCE(b.created_by::text, '') as created_by,
 			-- Calculate expiry status
 			CASE
 				WHEN b.exp_date < CURRENT_DATE THEN 'expired'
@@ -689,12 +728,12 @@ func (h *ProductHandler) GetBarcodes(c *gin.Context) {
 
 	var barcodes []gin.H
 	for rows.Next() {
-		var id, productId, productName, sku, potency, form, brand, category, batchId, batchNo, barcode, barcodeType, warehouse, generatedAt, status, createdBy, expiryStatus string
+		var id, productId, productName, sku, potency, brand, category, batchId, batchNo, barcode, barcodeType, warehouse, generatedAt, status, createdBy, expiryStatus string
 		var mrp float64
 		var expDate *string
 		var quantity int
 
-		err := rows.Scan(&id, &productId, &productName, &sku, &potency, &form, &brand, &category, &batchId, &batchNo, &barcode, &barcodeType, &mrp, &expDate, &quantity, &warehouse, &generatedAt, &status, &createdBy, &expiryStatus)
+		err := rows.Scan(&id, &productId, &productName, &sku, &potency, &brand, &category, &batchId, &batchNo, &barcode, &barcodeType, &mrp, &expDate, &quantity, &warehouse, &generatedAt, &status, &createdBy, &expiryStatus)
 		if err != nil {
 			continue
 		}
@@ -705,7 +744,6 @@ func (h *ProductHandler) GetBarcodes(c *gin.Context) {
 			"product_name":  productName,
 			"sku":           sku,
 			"potency":       potency,
-			"form":          form,
 			"brand":         brand,
 			"category":      category,
 			"batch_id":      batchId,
