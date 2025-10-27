@@ -1,5 +1,5 @@
-2025/10/27 14:56:45 📋 Configuration loaded for development environment
-2025/10/27 14:56:45 ✅ Database connected and migrated successfully
+2025/10/27 16:06:50 📋 Configuration loaded for development environment
+2025/10/27 16:06:50 ✅ Database connected and migrated successfully
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
@@ -70,11 +70,11 @@
 panic: handlers are already registered for path '/api/erp/products/barcode'
 
 goroutine 1 [running]:
-github.com/gin-gonic/gin.(*node).addRoute(0xf7e7e8?, {0xc0003bee60, 0x19}, {0xc00044cee0, 0x4, 0x4})
+github.com/gin-gonic/gin.(*node).addRoute(0xf7e7e8?, {0xc000040940, 0x19}, {0xc0003d0ec0, 0x4, 0x4})
 	/home/yeelo-homeopathy/go/pkg/mod/github.com/gin-gonic/gin@v1.10.1/tree.go:260 +0x6eb
-github.com/gin-gonic/gin.(*Engine).addRoute(0xc0001ca000, {0xf7e7e8, 0x3}, {0xc0003bee60, 0x19}, {0xc00044cee0, 0x4, 0x4})
+github.com/gin-gonic/gin.(*Engine).addRoute(0xc0001ca000, {0xf7e7e8, 0x3}, {0xc000040940, 0x19}, {0xc0003d0ec0, 0x4, 0x4})
 	/home/yeelo-homeopathy/go/pkg/mod/github.com/gin-gonic/gin@v1.10.1/gin.go:352 +0x252
-github.com/gin-gonic/gin.(*RouterGroup).handle(0xc00005a280, {0xf7e7e8, 0x3}, {0xf98d78?, 0x0?}, {0xc000126570, 0x1, 0x6?})
+github.com/gin-gonic/gin.(*RouterGroup).handle(0xc00005a280, {0xf7e7e8, 0x3}, {0xf98d78?, 0x0?}, {0xc0000b23a0, 0x1, 0x6?})
 	/home/yeelo-homeopathy/go/pkg/mod/github.com/gin-gonic/gin@v1.10.1/routergroup.go:89 +0x13e
 github.com/gin-gonic/gin.(*RouterGroup).GET(...)
 	/home/yeelo-homeopathy/go/pkg/mod/github.com/gin-gonic/gin@v1.10.1/routergroup.go:117

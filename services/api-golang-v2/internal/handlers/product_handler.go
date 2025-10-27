@@ -1,6 +1,8 @@
-package handlers
-
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -47,6 +49,41 @@ type Product struct {
 	Tags         string    `json:"tags"`
 	CreatedAt    time.Time `json:"createdAt" gorm:"column:created_at"`
 	UpdatedAt    time.Time `json:"updatedAt" gorm:"column:updated_at"`
+}
+
+// AI Request/Response structs
+type AIRecommendationRequest struct {
+	ProductID  string `json:"product_id" binding:"required"`
+	CustomerID string `json:"customer_id"`
+	Limit      int    `json:"limit" default:"5"`
+}
+
+type AIDemandForecastRequest struct {
+	ProductIDs []string `json:"product_ids" binding:"required"`
+	Months     int      `json:"months_ahead" default:"1"`
+}
+
+type AICustomerSegmentationRequest struct {
+	CustomerID      string `json:"customer_id" binding:"required"`
+	IncludeFeatures bool   `json:"include_features" default:"false"`
+}
+
+type AIInventoryOptimizationRequest struct {
+	ProductIDs         []string `json:"product_ids" binding:"required"`
+	OptimizationType   string   `json:"optimization_type" default:"both"`
+}
+
+type AIFraudCheckRequest struct {
+	TransactionID   string            `json:"transaction_id" binding:"required"`
+	UserID          string            `json:"user_id" binding:"required"`
+	Amount          float64           `json:"amount" binding:"required"`
+	PaymentMethod   string            `json:"payment_method" binding:"required"`
+	UserBehavior    map[string]interface{} `json:"user_behavior"`
+}
+
+type AIBatchRecommendationRequest struct {
+	CustomerIDs []string `json:"customer_ids" binding:"required"`
+	Limit       int      `json:"limit" default:"10"`
 }
 
 func (Product) TableName() string {
@@ -1451,5 +1488,207 @@ func (h *ProductHandler) GetAlerts(c *gin.Context) {
 		"success": true,
 		"data":    alerts,
 		"total":   len(alerts),
+	})
+}
+
+// AI-POWERED METHODS (Integration with Python ML Service)
+
+// GetAIProductRecommendations returns AI-powered product recommendations
+func (h *ProductHandler) GetAIProductRecommendations(c *gin.Context) {
+	var req AIRecommendationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service
+	endpoint := "/v2/recommendations/product"
+	payload := map[string]interface{}{
+		"product_id": req.ProductID,
+		"customer_id": req.CustomerID,
+		"top_n": req.Limit,
+		"recommendation_type": "hybrid",
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIProductRecommendationsByCustomer returns personalized recommendations for a customer
+func (h *ProductHandler) GetAIProductRecommendationsByCustomer(c *gin.Context) {
+	customerID := c.Param("customer_id")
+	if customerID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Customer ID is required",
+		})
+		return
+	}
+
+	// Get customer's recent purchase history
+	var recentProducts []string
+	// This would query the database for customer's recent purchases
+
+	// Call AI service with customer context
+	endpoint := "/v2/recommendations/customer"
+	payload := map[string]interface{}{
+		"customer_id": customerID,
+		"recent_products": recentProducts,
+		"limit": 10,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"recommendations": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAICustomerSegmentation returns AI-powered customer segmentation
+func (h *ProductHandler) GetAICustomerSegmentation(c *gin.Context) {
+	var req AICustomerSegmentationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service
+	endpoint := "/v2/segmentation/customer"
+	payload := map[string]interface{}{
+		"customer_id": req.CustomerID,
+		"include_features": req.IncludeFeatures,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"segment": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIBatchRecommendations returns recommendations for multiple customers
+func (h *ProductHandler) GetAIBatchRecommendations(c *gin.Context) {
+	var req AIBatchRecommendationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service for batch recommendations
+	endpoint := "/v2/recommendations/batch"
+	payload := map[string]interface{}{
+		"customer_ids": req.CustomerIDs,
+		"limit": req.Limit,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"batch_recommendations": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIFraudDetection checks transaction for fraud patterns
+func (h *ProductHandler) GetAIFraudDetection(c *gin.Context) {
+	var req AIFraudCheckRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service for fraud detection
+	endpoint := "/v2/fraud/check"
+	payload := map[string]interface{}{
+		"transaction_id": req.TransactionID,
+		"user_id": req.UserID,
+		"amount": req.Amount,
+		"payment_method": req.PaymentMethod,
+		"user_behavior": req.UserBehavior,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"fraud_analysis": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAICustomerInsights returns AI-powered customer insights
+func (h *ProductHandler) GetAICustomerInsights(c *gin.Context) {
+	// Call AI service for customer analytics
+	endpoint := "/v2/analytics/customers"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"customer_insights": aiResponse,
+		"generated_at": time.Now(),
 	})
 }

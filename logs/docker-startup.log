@@ -1,23 +1,23 @@
  Network homeopathy-business-platform_erp-network  Creating
  Network homeopathy-business-platform_erp-network  Created
-time="2025-10-27T14:56:28+05:30" level=warning msg="Found orphan containers ([homeopathy-business-platform-ai-service-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+time="2025-10-27T16:06:34+05:30" level=warning msg="Found orphan containers ([homeopathy-business-platform-ai-service-1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+ Container erp-postgres  Creating
  Container erp-minio  Creating
  Container erp-zookeeper  Creating
- Container erp-postgres  Creating
  Container erp-redis  Creating
- Container erp-minio  Created
- Container erp-postgres  Created
  Container erp-redis  Created
+ Container erp-minio  Created
  Container erp-zookeeper  Created
+ Container erp-postgres  Created
  Container erp-kafka  Creating
  Container erp-kafka  Created
- Container erp-minio  Starting
- Container erp-postgres  Starting
  Container erp-zookeeper  Starting
+ Container erp-postgres  Starting
+ Container erp-minio  Starting
  Container erp-redis  Starting
- Container erp-postgres  Started
- Container erp-minio  Started
+ Container erp-redis  Started
  Container erp-zookeeper  Started
  Container erp-kafka  Starting
- Container erp-redis  Started
+ Container erp-postgres  Started
+ Container erp-minio  Started
  Container erp-kafka  Started

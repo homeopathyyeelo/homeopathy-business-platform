@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
@@ -107,4 +109,104 @@ func (h *AIModelHandler) ToggleAIModel(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "AI model toggled successfully"})
+}
+
+// GetAIChatbotResponse returns AI-powered chatbot response
+func (h *AIModelHandler) GetAIChatbotResponse(c *gin.Context) {
+	var req struct {
+		UserID  string `json:"user_id" binding:"required"`
+		Message string `json:"message" binding:"required"`
+		Context map[string]interface{} `json:"context"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service for chatbot response
+	endpoint := "/v2/chatbot"
+	payload := map[string]interface{}{
+		"user_id": req.UserID,
+		"message": req.Message,
+		"context": req.Context,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"chat_response": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIModelStatus returns current status of AI models
+func (h *AIModelHandler) GetAIModelStatus(c *gin.Context) {
+	// Call AI service for model status
+	endpoint := "/v2/models/status"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"model_status": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// TrainAIModels triggers training of AI models
+func (h *AIModelHandler) TrainAIModels(c *gin.Context) {
+	// Call AI service to trigger model training
+	endpoint := "/v2/models/train"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"training_status": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// PrepareAIData triggers data preparation for AI training
+func (h *AIModelHandler) PrepareAIData(c *gin.Context) {
+	// Call AI service to trigger data preparation
+	endpoint := "/v2/data/prepare"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data_status": aiResponse,
+		"generated_at": time.Now(),
+	})
 }

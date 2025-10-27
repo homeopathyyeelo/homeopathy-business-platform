@@ -390,3 +390,23 @@ func (h *DashboardHandler) GetExpirySummary(c *gin.Context) {
 		"data":    summary,
 	})
 }
+
+// GetAIBusinessInsights returns AI-powered business insights
+func (h *DashboardHandler) GetAIBusinessInsights(c *gin.Context) {
+	// Call AI service for business insights
+	endpoint := "/v2/analytics/business-insights"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"insights": aiResponse,
+		"generated_at": time.Now(),
+	})
+}

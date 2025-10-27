@@ -261,18 +261,41 @@ func main() {
 			erp.POST("/roles", userHandler.CreateRole)
 			erp.GET("/permissions", userHandler.GetPermissions)
 
-			// AI & Analytics
-			erp.GET("/ai/models", aiModelHandler.GetAIModels)
-			erp.GET("/ai/models/:id", aiModelHandler.GetAIModel)
-			erp.POST("/ai/models", aiModelHandler.CreateAIModel)
-			erp.PUT("/ai/models/:id", aiModelHandler.UpdateAIModel)
-			erp.DELETE("/ai/models/:id", aiModelHandler.DeleteAIModel)
-			erp.GET("/ai/conversations", aiModelHandler.GetAIConversations)
-			erp.POST("/ai/chat", aiModelHandler.ChatWithAI)
+			// AI & ML Integration (Enhanced)
+			ai := erp.Group("/ai")
+			{
+				// Product Recommendations
+				ai.POST("/recommendations/products", productHandler.GetAIProductRecommendations)
+				ai.GET("/recommendations/customers/:customer_id", productHandler.GetAIProductRecommendationsByCustomer)
+				ai.POST("/recommendations/batch", productHandler.GetAIBatchRecommendations)
 
-			erp.GET("/analytics/dashboard", analyticsHandler.GetAnalyticsDashboard)
-			erp.GET("/analytics/sales", analyticsHandler.GetSalesAnalytics)
-			erp.GET("/analytics/inventory", analyticsHandler.GetInventoryAnalytics)
+				// Demand Forecasting
+				ai.POST("/forecast/demand", inventoryHandler.GetAIDemandForecast)
+				ai.POST("/forecast/sales", salesHandler.GetAISalesForecast)
+
+				// Customer Analytics
+				ai.POST("/segmentation/customers", productHandler.GetAICustomerSegmentation)
+				ai.GET("/segmentation/batch", productHandler.GetAIBatchRecommendations)
+
+				// Inventory Optimization
+				ai.POST("/optimization/inventory", inventoryHandler.GetAIInventoryOptimization)
+				ai.GET("/optimization/alerts", inventoryHandler.GetAIInventoryAlerts)
+
+				// Fraud Detection
+				ai.POST("/fraud/check", productHandler.GetAIFraudDetection)
+
+				// Business Insights
+				ai.GET("/insights/business", dashboardHandler.GetAIBusinessInsights)
+				ai.GET("/insights/customers", productHandler.GetAICustomerInsights)
+
+				// Chatbot Integration
+				ai.POST("/chatbot", aiModelHandler.GetAIChatbotResponse)
+
+				// Model Management
+				ai.GET("/models/status", aiModelHandler.GetAIModelStatus)
+				ai.POST("/models/train", aiModelHandler.TrainAIModels)
+				ai.POST("/data/prepare", aiModelHandler.PrepareAIData)
+			}
 
 			// Event Sourcing
 			erp.GET("/outbox/events", outboxEventHandler.GetOutboxEvents)

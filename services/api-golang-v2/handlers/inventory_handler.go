@@ -8,8 +8,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type InventoryHandler struct {
-	db interface{}
+type AIDemandForecastRequest struct {
+	ProductIDs []string `json:"product_ids" binding:"required"`
+	Months     int      `json:"months_ahead" default:"1"`
+}
+
+type AIInventoryOptimizationRequest struct {
+	ProductIDs         []string `json:"product_ids" binding:"required"`
+	OptimizationType   string   `json:"optimization_type" default:"both"`
 }
 
 type InventoryBatch struct {
@@ -58,6 +64,14 @@ type StockTransfer struct {
 	TransferredBy string    `json:"transferred_by"`
 	CreatedAt     time.Time `json:"created_at"`
 	CompletedAt   *time.Time `json:"completed_at"`
+}
+
+type InventoryHandler struct {
+	db interface{}
+}
+
+func NewInventoryHandler(db interface{}) *InventoryHandler {
+	return &InventoryHandler{db: db}
 }
 
 // GET /api/erp/inventory
@@ -352,6 +366,93 @@ func (h *InventoryHandler) GetAlerts(c *gin.Context) {
 	})
 }
 
-func NewInventoryHandler(db interface{}) *InventoryHandler {
-	return &InventoryHandler{db: db}
+// AI-POWERED METHODS (Integration with Python ML Service)
+
+// GetAIDemandForecast returns AI-powered demand forecasting
+func (h *InventoryHandler) GetAIDemandForecast(c *gin.Context) {
+	var req AIDemandForecastRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service
+	endpoint := "/v2/forecast/demand"
+	payload := map[string]interface{}{
+		"product_ids": req.ProductIDs,
+		"months_ahead": req.Months,
+		"include_confidence": true,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"forecasts": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIInventoryOptimization returns AI-powered inventory optimization
+func (h *InventoryHandler) GetAIInventoryOptimization(c *gin.Context) {
+	var req AIInventoryOptimizationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Call AI service
+	endpoint := "/v2/optimization/inventory"
+	payload := map[string]interface{}{
+		"product_ids": req.ProductIDs,
+		"optimization_type": req.OptimizationType,
+	}
+
+	aiResponse, err := callAIService(endpoint, payload)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"optimization": aiResponse,
+		"generated_at": time.Now(),
+	})
+}
+
+// GetAIInventoryAlerts returns AI-powered inventory alerts
+func (h *InventoryHandler) GetAIInventoryAlerts(c *gin.Context) {
+	// Call AI service for inventory insights
+	endpoint := "/v2/analytics/inventory"
+	aiResponse, err := callAIService(endpoint, map[string]interface{}{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "AI service unavailable: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"inventory_insights": aiResponse,
+		"generated_at": time.Now(),
+	})
 }
