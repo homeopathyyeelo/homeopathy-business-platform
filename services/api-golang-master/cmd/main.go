@@ -35,6 +35,22 @@ func main() {
 	// Initialize barcode handler
 	barcodeHandler := handlers.NewBarcodeHandler(db)
 
+	// Initialize enrichment handler (P0 orchestration scaffold)
+	enrichHandler := handlers.NewEnrichHandler(db)
+	
+	// Initialize employee handler
+	employeeHandler := handlers.NewEmployeeHandler(db)
+
+	// Initialize customer handler
+	customerHandler := handlers.NewCustomerHandler(db)
+
+	// Initialize streaming import handler
+	streamingImportHandler := handlers.NewStreamingImportHandler(db)
+
+	// Initialize notification handler (with auto-table creation)
+	sqlDB, _ := db.DB()
+	notificationHandler := handlers.NewNotificationHandler(sqlDB)
+
 	r := gin.Default()
 
 	// CORS middleware - Allow frontend on port 3000
@@ -63,6 +79,24 @@ func main() {
 			system.GET("/health", systemHandler.GetSystemHealth)
 			system.GET("/info", systemHandler.GetSystemInfo)
 		}
+
+		// Enrichment orchestrator (deterministic + AI fallback)
+		v1.POST("/enrich/invoice/:parsed_invoice_id", enrichHandler.EnrichParsedInvoice)
+
+		// Customer routes
+		customers := v1.Group("/customers")
+		{
+			customers.GET("", customerHandler.GetCustomers)
+			customers.GET("/:id", customerHandler.GetCustomer)
+			customers.POST("", customerHandler.CreateCustomer)
+			customers.PUT("/:id", customerHandler.UpdateCustomer)
+			customers.GET("/loyalty", customerHandler.GetLoyaltyPoints)
+			customers.GET("/outstanding", customerHandler.GetOutstanding)
+			customers.GET("/credit-limit", customerHandler.GetCreditLimit)
+			customers.GET("/feedback", customerHandler.GetFeedback)
+			customers.GET("/communication", customerHandler.GetCommunication)
+			customers.GET("/appointments", customerHandler.GetAppointments)
+		}
 	}
 
 	// ERP routes (shared prefix)
@@ -74,6 +108,9 @@ func main() {
 		erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
 		erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
 		erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
+		erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
+		erp.GET("/dashboard/recent-sales", dashboardHandler.GetRecentSales)
+		erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 
 		// Product routes
 		erp.GET("/products", productHandler.GetProducts)
@@ -81,6 +118,9 @@ func main() {
 		erp.POST("/products", productHandler.CreateProduct)
 		erp.PUT("/products/:id", productHandler.UpdateProduct)
 		erp.DELETE("/products/:id", productHandler.DeleteProduct)
+		
+		// Product import streaming endpoint
+		erp.POST("/products/import/stream", streamingImportHandler.StreamingImport)
 
 		// Categories CRUD
 		erp.GET("/categories", productHandler.GetCategories)
@@ -169,6 +209,26 @@ func main() {
 		erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
 		erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
 		erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)
+
+		// Notification routes (dynamic table creation)
+		erp.GET("/notifications", notificationHandler.GetNotifications)
+		erp.GET("/notifications/:id", notificationHandler.GetNotification)
+		erp.POST("/notifications", notificationHandler.CreateNotification)
+		erp.PUT("/notifications/:id/read", notificationHandler.MarkAsRead)
+		erp.PUT("/notifications/mark-all-read", notificationHandler.MarkAllAsRead)
+		erp.DELETE("/notifications/:id", notificationHandler.DeleteNotification)
+		erp.GET("/notifications/unread/count", notificationHandler.GetUnreadCount)
+		erp.POST("/notifications/cleanup", notificationHandler.CleanupExpiredNotifications)
+		
+		// HR Employee routes
+		hr := erp.Group("/hr")
+		{
+			hr.GET("/employees", employeeHandler.GetEmployees)
+			hr.GET("/employees/:id", employeeHandler.GetEmployee)
+			hr.POST("/employees", employeeHandler.CreateEmployee)
+			hr.PUT("/employees/:id", employeeHandler.UpdateEmployee)
+			hr.DELETE("/employees/:id", employeeHandler.DeleteEmployee)
+		}
 	}
 
 	// Masters routes (for frontend compatibility)

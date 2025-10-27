@@ -327,13 +327,16 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *ProductI
 	// Auto-create Category and get ID
 	if product.Category != "" {
 		var category models.Category
-		err := tx.Where("name = ?", product.Category).First(&category).Error
+		categoryCode := strings.ToUpper(strings.ReplaceAll(product.Category, " ", "_"))
+		
+		// Check by both name and code to avoid duplicates
+		err := tx.Where("name = ? OR code = ?", product.Category, categoryCode).First(&category).Error
 
 		if err == gorm.ErrRecordNotFound {
 			// Create new category
 			category.ID = uuid.New().String()
 			category.Name = product.Category
-			category.Code = strings.ToUpper(strings.ReplaceAll(product.Category, " ", "_"))
+			category.Code = categoryCode
 			category.IsActive = true
 			category.CreatedAt = time.Now()
 
@@ -357,12 +360,15 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *ProductI
 	// Auto-create Brand and get ID
 	if product.Brand != "" {
 		var brand models.Brand
-		err := tx.Where("name = ?", product.Brand).First(&brand).Error
+		brandCode := strings.ToUpper(strings.ReplaceAll(product.Brand, " ", "_"))
+		
+		// Check by both name and code to avoid duplicates
+		err := tx.Where("name = ? OR code = ?", product.Brand, brandCode).First(&brand).Error
 
 		if err == gorm.ErrRecordNotFound {
 			brand.ID = uuid.New().String()
 			brand.Name = product.Brand
-			brand.Code = strings.ToUpper(strings.ReplaceAll(product.Brand, " ", "_"))
+			brand.Code = brandCode
 			brand.IsActive = true
 			brand.CreatedAt = time.Now()
 
@@ -534,11 +540,8 @@ func (h *StreamingImportHandler) checkDBConnection() error {
 	return nil
 }
 
-// upsertProduct inserts or updates a product using the unified schema
+// upsertProduct inserts or updates a product using the flat TEXT schema
 func (h *StreamingImportHandler) upsertProduct(productTemp ProductImportTemp) (bool, error) {
-	// Convert ProductImportTemp to unified Product entity
-	product := h.convertToProduct(productTemp)
-
 	// Start transaction
 	tx := h.db.Begin()
 	defer func() {
@@ -547,41 +550,74 @@ func (h *StreamingImportHandler) upsertProduct(productTemp ProductImportTemp) (b
 		}
 	}()
 
-	// Look up master data IDs
-	if err := h.lookupMasterIDs(tx, &product, productTemp); err != nil {
-		tx.Rollback()
-		return false, fmt.Errorf("failed to lookup master IDs: %v", err)
+	// Build product map for flat schema (TEXT fields, not FKs)
+	productData := map[string]interface{}{
+		"sku":            productTemp.SKU,
+		"name":           productTemp.Name,
+		"category":       productTemp.Category,
+		"brand":          productTemp.Brand,
+		"potency":        productTemp.Potency,
+		"form":           productTemp.Form,
+		"pack_size":      productTemp.PackSize,
+		"uom":            productTemp.UOM,
+		"cost_price":     productTemp.CostPrice,
+		"selling_price":  productTemp.SellingPrice,
+		"mrp":            productTemp.MRP,
+		"tax_percent":    productTemp.TaxPercent,
+		"hsn_code":       productTemp.HSNCode,
+		"manufacturer":   productTemp.Manufacturer,
+		"current_stock":  productTemp.CurrentStock,
+		"min_stock":      productTemp.MinStock,
+		"max_stock":      productTemp.MaxStock,
+		"reorder_level":  productTemp.ReorderLevel,
+		"is_active":      productTemp.IsActive,
+		"updated_at":     time.Now(),
 	}
 
-	var existing models.Product
-	result := tx.Where("sku = ?", product.SKU).First(&existing)
-
-	now := time.Now()
-	product.UpdatedAt = now
+	// Check if product exists
+	var count int64
+	tx.Table("products").Where("sku = ?", productTemp.SKU).Count(&count)
 
 	var isNew bool
-	var err error
 
-	if result.Error == gorm.ErrRecordNotFound {
-		// Insert new
-		product.CreatedAt = now
-		// Ensure ID is set
-		if product.ID == "" {
-			product.ID = uuid.New().String()
-		}
+	if count == 0 {
+		// Insert new product using raw SQL
+		productData["id"] = uuid.New().String()
+		productData["created_at"] = time.Now()
+		
+		err := tx.Exec(`
+			INSERT INTO products (id, sku, name, category, brand, potency, form, pack_size, uom, 
+				cost_price, selling_price, mrp, tax_percent, hsn_code, manufacturer, 
+				current_stock, min_stock, max_stock, reorder_level, is_active, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`, productData["id"], productData["sku"], productData["name"], productData["category"],
+			productData["brand"], productData["potency"], productData["form"], productData["pack_size"],
+			productData["uom"], productData["cost_price"], productData["selling_price"], productData["mrp"],
+			productData["tax_percent"], productData["hsn_code"], productData["manufacturer"],
+			productData["current_stock"], productData["min_stock"], productData["max_stock"],
+			productData["reorder_level"], productData["is_active"], productData["created_at"], productData["updated_at"]).Error
 
-		if err = tx.Create(&product).Error; err != nil {
+		if err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("insert failed: %v", err)
 		}
 		isNew = true
-	} else if result.Error != nil {
-		// Database error
-		tx.Rollback()
-		return false, fmt.Errorf("query failed: %v", result.Error)
 	} else {
-		// Update existing
-		if err = tx.Model(&models.Product{}).Where("sku = ?", product.SKU).Updates(&product).Error; err != nil {
+		// Update existing product using raw SQL
+		err := tx.Exec(`
+			UPDATE products SET 
+				name = ?, category = ?, brand = ?, potency = ?, form = ?, pack_size = ?, uom = ?,
+				cost_price = ?, selling_price = ?, mrp = ?, tax_percent = ?, hsn_code = ?, manufacturer = ?,
+				current_stock = ?, min_stock = ?, max_stock = ?, reorder_level = ?, is_active = ?, updated_at = ?
+			WHERE sku = ?
+		`, productData["name"], productData["category"], productData["brand"], productData["potency"],
+			productData["form"], productData["pack_size"], productData["uom"], productData["cost_price"],
+			productData["selling_price"], productData["mrp"], productData["tax_percent"], productData["hsn_code"],
+			productData["manufacturer"], productData["current_stock"], productData["min_stock"],
+			productData["max_stock"], productData["reorder_level"], productData["is_active"],
+			productData["updated_at"], productData["sku"]).Error
+
+		if err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("update failed: %v", err)
 		}

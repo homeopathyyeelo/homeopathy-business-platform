@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+	
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -17,9 +19,14 @@ type Config struct {
 }
 
 func Load() *Config {
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Printf("⚠️  No .env file found, using environment variables and defaults")
+	}
+
 	cfg := &Config{
 		Port:        getEnv("PORT", "3005"),
-		DatabaseURL: getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy"),
+		DatabaseURL: getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"),
 		RedisURL:    getEnv("REDIS_URL", "redis://localhost:6380"),
 		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
 		Environment: getEnv("ENVIRONMENT", "development"),
@@ -28,6 +35,7 @@ func Load() *Config {
 	}
 
 	log.Printf("📋 Configuration loaded for %s environment", cfg.Environment)
+	log.Printf("🔌 Database: %s", cfg.DatabaseURL)
 	return cfg
 }
 

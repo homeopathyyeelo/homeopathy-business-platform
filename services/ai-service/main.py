@@ -454,6 +454,75 @@ def embed(req: EmbedRequest):
     return EmbedResponse(vectors=vectors)
 
 
+# ============ ENRICHMENT ENDPOINT (stub) ============
+class EnrichLineIn(BaseModel):
+    parsed_line_id: str
+    raw_text: str
+    parsed_description: Optional[str] = None
+    qty: Optional[float] = None
+    vendor_id: Optional[str] = None
+
+
+class EnrichRequest(BaseModel):
+    shop_id: Optional[str] = None
+    parsed_invoice_id: Optional[str] = None
+    lines: List[EnrichLineIn]
+    trace_id: Optional[str] = None
+
+
+class EnrichLineOut(BaseModel):
+    parsed_line_id: str
+    product_id: Optional[str] = None
+    match_type: str = "ai"
+    confidence: float = 0.0
+    hsn: Optional[str] = None
+    gst: Optional[float] = None
+    reason: Optional[str] = None
+    barcode: Optional[str] = None
+    CategoryID: Optional[str] = None
+    SubcategoryID: Optional[str] = None
+    FormID: Optional[str] = None
+    PotencyID: Optional[str] = None
+    UnitID: Optional[str] = None
+    Raw: Optional[dict] = None
+
+
+class EnrichResponse(BaseModel):
+    trace_id: str
+    model_version: str
+    tokens_used: int
+    lines: List[EnrichLineOut]
+
+
+@app.post("/v1/enrich", response_model=EnrichResponse)
+def enrich(req: EnrichRequest):
+    """Stub enrichment endpoint. Returns no-match with low confidence unless LOCAL_MODEL_URL is provided.
+    """
+    trace_id = req.trace_id or str(uuid.uuid4())
+    model_version = os.getenv("MODEL_VERSION", "stub-0.1")
+    tokens_used = 0
+    out: List[EnrichLineOut] = []
+
+    for ln in req.lines:
+        # Minimal heuristic: if text looks like contains a SKU token with hyphen, pretend a weak match
+        txt = (ln.parsed_description or ln.raw_text or "")
+        has_token = any(ch in txt for ch in ["-", "/"]) and any(ch.isdigit() for ch in txt)
+        confidence = 0.15 if has_token else 0.0
+        out.append(EnrichLineOut(
+            parsed_line_id=ln.parsed_line_id,
+            product_id=None,
+            match_type="ai",
+            confidence=confidence,
+            hsn=None,
+            gst=None,
+            reason="stub: no model connected; returning low-confidence placeholder",
+            Raw={"stub": True, "text": txt[:256]}
+        ))
+        tokens_used += min(64, len(txt.split()) + 8)
+
+    return EnrichResponse(trace_id=trace_id, model_version=model_version, tokens_used=tokens_used, lines=out)
+
+
 # ============ AI DEBUG ANALYZER ============
 class FixRequest(BaseModel):
     bug_id: str

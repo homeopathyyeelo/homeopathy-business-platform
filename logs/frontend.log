@@ -8,154 +8,176 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 3.2s
+ ✓ Ready in 2.2s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 933ms (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 10.5s (1221 modules)
- GET / 200 in 2286ms
- GET / 200 in 234ms
- ○ Compiling /products/brands ...
- ✓ Compiled /products/brands in 2.1s (1490 modules)
- GET /products/brands 200 in 2888ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1552ms (1586 modules)
- GET /api/auth/me 200 in 2042ms
- GET /api/erp/products/low-stock 404 in 2238ms
- GET /api/erp/analytics/top-products 404 in 160ms
- GET /api/erp/products/without-barcode 404 in 126ms
- GET /api/erp/products/duplicates 404 in 143ms
- GET /api/erp/products/recent-updates 404 in 119ms
- GET /api/erp/products/incomplete 404 in 115ms
- ○ Compiling /products/categories ...
- ✓ Compiled /products/categories in 1618ms (1613 modules)
- GET /products/categories 200 in 1899ms
- ○ Compiling /products/subcategories ...
- ✓ Compiled /products/subcategories in 632ms (1626 modules)
- GET /products/subcategories 200 in 836ms
- ○ Compiling /products/potencies ...
- ✓ Compiled /products/potencies in 1623ms (1635 modules)
- GET /products/potencies 200 in 1876ms
- ○ Compiling /products/forms ...
- ✓ Compiled /products/forms in 760ms (1645 modules)
- GET /products/forms 200 in 945ms
- ○ Compiling /products/hsn ...
- ✓ Compiled /products/hsn in 692ms (1656 modules)
- GET /products/hsn 200 in 879ms
- ○ Compiling /products/units ...
- ✓ Compiled /products/units in 887ms (1667 modules)
- GET /products/units 200 in 1092ms
- ○ Compiling /products/batches ...
- ✓ Compiled /products/batches in 927ms (1677 modules)
- GET /products/batches 200 in 1220ms
- ○ Compiling /products/barcode ...
- ✓ Compiled /products/barcode in 1090ms (1601 modules)
- GET /products/barcode 200 in 1432ms
- GET /products/subcategories 200 in 140ms
- GET /products/brands 200 in 129ms
- GET /products/subcategories 200 in 141ms
- GET /products/categories 200 in 124ms
- ○ Compiling /products/add ...
- ✓ Compiled /products/add in 1157ms (1622 modules)
- GET /products/add 200 in 1599ms
- GET /products/add 200 in 123ms
- ○ Compiling /products ...
- ✓ Compiled /products in 1015ms (1635 modules)
- GET /products 200 in 1196ms
- GET /products 200 in 601ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 707ms (1034 modules)
- ✓ Compiled (1035 modules)
- GET /api/auth/me 200 in 1552ms
- GET /api/erp/products/low-stock 404 in 1819ms
- GET /api/erp/analytics/top-products 404 in 179ms
- GET /api/erp/products/without-barcode 404 in 149ms
- GET /api/erp/products/duplicates 404 in 171ms
- GET /api/erp/products/recent-updates 404 in 147ms
- GET /api/erp/products/incomplete 404 in 144ms
- GET /products/add 200 in 180ms
- GET /products/categories 200 in 227ms
- GET /products/subcategories 200 in 163ms
- GET /products/categories 200 in 126ms
- GET /products/subcategories 200 in 140ms
- GET /products/brands 200 in 134ms
- ○ Compiling /products/potencies ...
- ✓ Compiled /products/potencies in 942ms (914 modules)
- GET /products/potencies 200 in 1241ms
- ✓ Compiled /products/forms in 325ms (920 modules)
- GET /products/forms 200 in 500ms
- ✓ Compiled /products/hsn in 365ms (927 modules)
- GET /products/hsn 200 in 542ms
- GET /products/hsn 200 in 612ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 822ms (1001 modules)
- ✓ Compiled (1002 modules)
- GET /api/auth/me 200 in 2551ms
- GET /api/erp/products/low-stock 404 in 2462ms
- GET /api/erp/analytics/top-products 404 in 193ms
- GET /api/erp/products/without-barcode 404 in 133ms
- GET /api/erp/products/duplicates 404 in 120ms
- GET /api/erp/products/recent-updates 404 in 116ms
- GET /api/erp/products/incomplete 404 in 109ms
- ✓ Compiled /products/subcategories in 447ms (1010 modules)
- GET /products/subcategories 200 in 655ms
- GET /products/categories 200 in 131ms
- ✓ Compiled in 1842ms (1687 modules)
- ✓ Compiled in 597ms (1687 modules)
- ✓ Compiled in 591ms (1592 modules)
- GET /products/categories 200 in 733ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 647ms (997 modules)
- ✓ Compiled (998 modules)
- GET /api/auth/me 200 in 1430ms
- GET /api/erp/products?limit=1 404 in 1670ms
- GET /api/erp/categories 404 in 143ms
- GET /api/erp/brands 404 in 150ms
- GET /api/erp/dashboard/activity?limit=3 404 in 158ms
- GET /products/categories 200 in 126ms
- GET /products/subcategories 200 in 467ms
- GET /products/subcategories 200 in 397ms
- GET /api/auth/me 200 in 154ms
- GET /api/erp/products?limit=1 404 in 163ms
- GET /api/erp/categories 404 in 174ms
- GET /api/erp/brands 404 in 118ms
- GET /api/erp/dashboard/activity?limit=3 404 in 129ms
- GET /products/brands 200 in 149ms
- ○ Compiling /products/potencies ...
- ✓ Compiled /products/potencies in 1850ms (1004 modules)
- GET /products/potencies 200 in 2156ms
- GET /products/potencies 200 in 556ms
- GET /api/auth/me 200 in 182ms
- GET /api/erp/products?limit=1 404 in 198ms
- GET /api/erp/categories 404 in 159ms
- GET /api/erp/brands 404 in 148ms
- GET /api/erp/dashboard/activity?limit=3 404 in 200ms
- ✓ Compiled /products/forms in 434ms (999 modules)
- GET /products/forms 200 in 635ms
- GET /products/hsn 200 in 143ms
- ✓ Compiled in 1242ms (1593 modules)
- ✓ Compiled in 955ms (1593 modules)
- GET /products/hsn 200 in 731ms
+ ✓ Compiled /middleware in 873ms (159 modules)
+ ○ Compiling /hr/payroll ...
+ ✓ Compiled /hr/payroll in 10.8s (1217 modules)
+ GET /hr/payroll 200 in 11730ms
  ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 721ms (991 modules)
- GET /api/auth/me 200 in 982ms
- GET /products/subcategories 200 in 181ms
- GET /products/brands 200 in 122ms
- ○ Compiling /products/units ...
- ✓ Compiled /products/units in 1204ms (999 modules)
- GET /products/units 200 in 1474ms
- GET /products/hsn 200 in 188ms
- GET /products/hsn 200 in 150ms
- GET /products/hsn 200 in 124ms
- GET /products/hsn 200 in 544ms
- GET /api/auth/me 200 in 175ms
- GET /products/hsn 200 in 285ms
- GET /api/auth/me 200 in 114ms
- GET /products/hsn 200 in 250ms
- GET /api/auth/me 200 in 112ms
- ✓ Compiled in 3.4s (1680 modules)
- GET /products/hsn 200 in 646ms
- GET /api/auth/me 200 in 129ms
+ ✓ Compiled /api/auth/me in 1532ms (1290 modules)
+ GET /api/auth/me 200 in 2341ms
+ GET /api/hr/payroll 404 in 2379ms
  ○ Compiling /products/import-export ...
- ✓ Compiled /products/import-export in 1482ms (1705 modules)
- GET /products/import-export 200 in 1809ms
+ ✓ Compiled /products/import-export in 1421ms (1502 modules)
+ GET /products/import-export 200 in 1778ms
+ ○ Compiling / ...
+ ✓ Compiled / in 800ms (1525 modules)
+ GET / 200 in 1363ms
+ GET /products/import-export 200 in 404ms
+ GET /api/auth/me 200 in 247ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /dashboard in 9s (2935 modules)
+ GET /dashboard 200 in 7224ms
+ GET /inventory/stock 200 in 9388ms
+ ○ Compiling /api/vendors ...
+ ✓ Compiled /api/vendors in 2.5s (2939 modules)
+ GET /api/vendors 200 in 2721ms
+ GET /api/customers 200 in 2941ms
+ GET /dashboard 200 in 2701ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 1458ms (2948 modules)
+ GET /dashboard/stats 200 in 1922ms
+ ○ Compiling /dashboard/activity ...
+ ✓ Compiled /dashboard/activity in 1243ms (2961 modules)
+ GET /dashboard/activity 200 in 1493ms
+ ○ Compiling /api/dashboard/activity-feed ...
+ ✓ Compiled /api/dashboard/activity-feed in 1370ms (2971 modules)
+ GET /api/system/health 200 in 1638ms
+ GET /api/ai/activity 200 in 1647ms
+ GET /api/system/bugs 200 in 1659ms
+ GET /api/dashboard/activity-feed 200 in 1673ms
+ GET /api/dashboard/metrics 200 in 1691ms
+ GET /api/dashboard/activity-feed 200 in 147ms
+ GET /api/ai/activity 200 in 125ms
+ GET /api/dashboard/activity-feed 200 in 117ms
+ GET /api/dashboard/activity-feed 200 in 114ms
+ GET /api/ai/activity 200 in 123ms
+ GET /api/dashboard/activity-feed 200 in 97ms
+ GET /api/dashboard/activity-feed 200 in 108ms
+ GET /api/system/health 200 in 129ms
+ GET /api/ai/activity 200 in 99ms
+ GET /api/dashboard/activity-feed 200 in 122ms
+ GET /api/dashboard/activity-feed 200 in 126ms
+ GET /api/ai/activity 200 in 125ms
+ GET /api/dashboard/activity-feed 200 in 169ms
+ GET /api/dashboard/metrics 200 in 696ms
+ GET /api/system/health 200 in 722ms
+ GET /api/ai/activity 200 in 724ms
+ GET /api/system/bugs 200 in 731ms
+ GET /api/dashboard/activity-feed 200 in 143ms
+ GET /dashboard/stats 200 in 204ms
+ GET /dashboard 200 in 145ms
+ GET /products/import-export 200 in 150ms
+ ○ Compiling /hr/employees ...
+ ✓ Compiled /hr/employees in 2.8s (2857 modules)
+ GET /hr/employees 200 in 3224ms
+ ○ Compiling /api/hr/employees ...
+ ✓ Compiled /api/hr/employees in 646ms (2875 modules)
+ GET /api/hr/employees 200 in 959ms
+ GET /api/hr/employees 200 in 188ms
+ ✓ Compiled /_not-found in 312ms (1566 modules)
+ GET /hr/employees/add 404 in 430ms
+ GET /hr/employees/add 404 in 414ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 549ms (1644 modules)
+ GET /api/auth/me 200 in 764ms
+ ○ Compiling /hr/roles ...
+ ✓ Compiled /hr/roles in 703ms (2961 modules)
+ GET /hr/roles 200 in 1034ms
+ GET /api/hr/roles 404 in 437ms
+ GET /api/hr/roles 404 in 172ms
+ ○ Compiling /hr/attendance ...
+ ✓ Compiled /hr/attendance in 659ms (2968 modules)
+ GET /hr/attendance 200 in 855ms
+ GET /api/hr/attendance 404 in 231ms
+ GET /api/hr/attendance 404 in 162ms
+ GET /hr/attendance 200 in 523ms
+ ✓ Compiled in 2s (3014 modules)
+ GET /hr/attendance 200 in 582ms
+ ○ Compiling /marketing/dashboard ...
+ ✓ Compiled /marketing/dashboard in 1719ms (2870 modules)
+ GET /marketing/dashboard 200 in 1949ms
+ ✓ Compiled in 1870ms (1542 modules)
+ GET /marketing/dashboard 200 in 323ms
+ ✓ Compiled in 2.2s (2864 modules)
+ GET /marketing/dashboard 200 in 278ms
+ GET /marketing/dashboard 200 in 654ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1494ms (1638 modules)
+ GET /api/auth/me 200 in 1949ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 1168ms (1646 modules)
+ GET /dashboard/stats 200 in 1887ms
+ GET /dashboard 200 in 398ms
+ ○ Compiling /dashboard/activity ...
+ ✓ Compiled /dashboard/activity in 574ms (1655 modules)
+ GET /dashboard/activity 200 in 797ms
+ GET /dashboard/activity 200 in 163ms
+ ○ Compiling /api/dashboard/activity-feed ...
+ ✓ Compiled /api/dashboard/activity-feed in 763ms (1657 modules)
+ ✓ Compiled (1665 modules)
+ GET /api/system/health 200 in 1482ms
+ GET /api/ai/activity 200 in 1499ms
+ GET /api/system/bugs 200 in 1423ms
+ GET /api/dashboard/activity-feed 200 in 1331ms
+ GET /api/dashboard/metrics 200 in 1640ms
+ GET /dashboard/stats 200 in 175ms
+ GET /dashboard 200 in 460ms
+ ○ Compiling /api/vendors ...
+ ✓ Compiled /api/vendors in 774ms (1667 modules)
+ ✓ Compiled (1669 modules)
+ GET /api/vendors 200 in 1566ms
+ GET /api/customers 200 in 1671ms
+ GET /dashboard 200 in 849ms
+ GET /api/customers 200 in 252ms
+ GET /api/vendors 200 in 370ms
+ GET /api/auth/me 200 in 313ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /inventory/stock in 578ms (1660 modules)
+ GET /inventory/stock 200 in 828ms
+ GET /inventory/stock 200 in 164ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 2.5s (2989 modules)
+ GET /products 200 in 2742ms
+ ○ Compiling /hr/employees ...
+ ✓ Compiled /hr/employees in 1153ms (1677 modules)
+ GET /hr/employees 200 in 1389ms
+ ○ Compiling /api/hr/employees ...
+ ✓ Compiled /api/hr/employees in 705ms (1679 modules)
+ GET /api/hr/employees 200 in 863ms
+ GET /api/hr/employees 200 in 136ms
+ ○ Compiling /products/categories ...
+ ✓ Compiled /products/categories in 2.3s (3014 modules)
+ GET /products/categories 200 in 2593ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/add in 1469ms (3030 modules)
+ GET /products/add 200 in 1747ms
+ ○ Compiling /products/import-export ...
+ ✓ Compiled /products/import-export in 3.7s (1700 modules)
+ GET /products/import-export 200 in 4113ms
+ GET /products/import-export 200 in 185ms
+ GET /products 200 in 807ms
+ GET /api/auth/me 200 in 244ms
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+ ✓ Compiled in 3s (2406 modules)
+ GET /products/import-export 200 in 974ms
+ ✓ Compiled /api/auth/me in 452ms (1008 modules)
+ GET /api/auth/me 200 in 745ms

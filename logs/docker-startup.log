@@ -1,22 +1,22 @@
  Network yeelo-network  Creating
  Network yeelo-network  Created
- Container homeopathy-business-platform-redis-1  Creating
- Container homeopathy-business-platform-postgres-1  Creating
  Container homeopathy-business-platform-minio-1  Creating
  Container homeopathy-business-platform-zookeeper-1  Creating
+ Container homeopathy-business-platform-postgres-1  Creating
+ Container homeopathy-business-platform-redis-1  Creating
  Container homeopathy-business-platform-minio-1  Created
- Container homeopathy-business-platform-redis-1  Created
  Container homeopathy-business-platform-postgres-1  Created
+ Container homeopathy-business-platform-redis-1  Created
  Container homeopathy-business-platform-zookeeper-1  Created
  Container homeopathy-business-platform-kafka-1  Creating
  Container homeopathy-business-platform-kafka-1  Created
- Container homeopathy-business-platform-zookeeper-1  Starting
- Container homeopathy-business-platform-postgres-1  Starting
- Container homeopathy-business-platform-redis-1  Starting
  Container homeopathy-business-platform-minio-1  Starting
- Container homeopathy-business-platform-postgres-1  Started
+ Container homeopathy-business-platform-postgres-1  Starting
+ Container homeopathy-business-platform-zookeeper-1  Starting
+ Container homeopathy-business-platform-redis-1  Starting
  Container homeopathy-business-platform-redis-1  Started
+ Container homeopathy-business-platform-minio-1  Started
+ Container homeopathy-business-platform-postgres-1  Started
  Container homeopathy-business-platform-zookeeper-1  Started
  Container homeopathy-business-platform-kafka-1  Starting
- Container homeopathy-business-platform-minio-1  Started
  Container homeopathy-business-platform-kafka-1  Started

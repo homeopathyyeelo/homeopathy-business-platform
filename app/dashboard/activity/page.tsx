@@ -1,82 +1,82 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Activity, User, Clock } from 'lucide-react'
+import { Activity, AlertTriangle, CheckCircle, XCircle, Zap, Database, TrendingUp, Package, DollarSign, ShoppingCart, Brain, Bug, Server, Clock, AlertCircle, RefreshCw } from 'lucide-react'
+import useSWR from 'swr'
 
-const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
-interface ActivityLog {
+interface SystemMetrics {
+  openBugs: number
+  activeServices: number
+  aiTasks: number
+  inventorySync: string
+  salesToday: number
+  systemLoad: number
+}
+
+interface ServiceHealth {
+  name: string
+  port: number
+  status: 'OK' | 'SLOW' | 'DOWN'
+  responseTime: number
+  version: string
+}
+
+interface AIActivity {
   id: string
+  agent: string
   action: string
-  module: string
-  description: string
-  user_name: string
-  user_email: string
   timestamp: string
-  ip_address: string
-  metadata: string
+  status: 'running' | 'completed' | 'failed'
+}
+
+interface BugReport {
+  id: string
+  title: string
+  severity: 'LOW' | 'MEDIUM' | 'CRITICAL'
+  status: 'OPEN' | 'AI_SUGGESTED' | 'RESOLVED'
+  aiSuggestion?: string
+}
+
+interface BusinessEvent {
+  id: string
+  event: string
+  module: string
+  timestamp: string
+  details: string
 }
 
 export default function ActivityPage() {
-  const [activities, setActivities] = useState<ActivityLog[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [moduleFilter, setModuleFilter] = useState('all')
+  // Real-time data with SWR (auto-refresh)
+  const { data: metrics } = useSWR<SystemMetrics>('/api/dashboard/metrics', fetcher, { refreshInterval: 60000 })
+  const { data: services } = useSWR<ServiceHealth[]>('/api/system/health', fetcher, { refreshInterval: 30000 })
+  const { data: aiActivities } = useSWR<AIActivity[]>('/api/ai/activity', fetcher, { refreshInterval: 10000 })
+  const { data: bugs } = useSWR<BugReport[]>('/api/system/bugs', fetcher, { refreshInterval: 60000 })
+  const { data: events } = useSWR<BusinessEvent[]>('/api/dashboard/activity-feed', fetcher, { refreshInterval: 5000 })
 
-  useEffect(() => {
-    fetchActivities()
-  }, [moduleFilter])
-
-  const fetchActivities = async () => {
-    try {
-      const params = new URLSearchParams()
-      if (moduleFilter !== 'all') params.append('module', moduleFilter)
-
-      const response = await fetch(`${API_URL}/api/erp/dashboard/activity?${params}`)
-      const data = await response.json()
-      if (data.success) {
-        setActivities(data.data || [])
-      }
-    } catch (error) {
-      console.error('Error fetching activities:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getActionColor = (action: string) => {
-    if (action.includes('created')) return 'bg-green-100 text-green-800'
-    if (action.includes('updated')) return 'bg-blue-100 text-blue-800'
-    if (action.includes('deleted')) return 'bg-red-100 text-red-800'
-    if (action.includes('login')) return 'bg-purple-100 text-purple-800'
-    return 'bg-gray-100 text-gray-800'
-  }
-
-  const getModuleIcon = (module: string) => {
-    // Return appropriate icon based on module
-    return <Activity className="w-4 h-4" />
-  }
-
-  const filteredActivities = activities.filter(activity =>
-    activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    activity.user_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    activity.action.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const formatTimestamp = (timestamp: string) => {
+  const formatTime = (timestamp: string) => {
     const date = new Date(timestamp)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
     const minutes = Math.floor(diff / 60000)
-    
     if (minutes < 1) return 'Just now'
-    if (minutes < 60) return `${minutes} min ago`
-    if (minutes < 1440) return `${Math.floor(minutes / 60)} hours ago`
+    if (minutes < 60) return `${minutes}m ago`
+    if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`
     return date.toLocaleDateString()
+  }
+
+  const getStatusIcon = (status: string) => {
+    if (status === 'OK') return <CheckCircle className="w-4 h-4 text-green-500" />
+    if (status === 'SLOW') return <AlertCircle className="w-4 h-4 text-orange-500" />
+    return <XCircle className="w-4 h-4 text-red-500" />
+  }
+
+  const getSeverityColor = (severity: string) => {
+    if (severity === 'CRITICAL') return 'bg-red-100 text-red-800 border-red-300'
+    if (severity === 'MEDIUM') return 'bg-orange-100 text-orange-800 border-orange-300'
+    return 'bg-yellow-100 text-yellow-800 border-yellow-300'
   }
 
   return (
@@ -86,108 +86,206 @@ export default function ActivityPage() {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Activity className="w-8 h-8 text-blue-500" />
-            Activity Log
+            System Activity Dashboard
           </h1>
-          <p className="text-gray-600 mt-1">Real-time system activity and user actions</p>
+          <p className="text-gray-600 mt-1">Real-time control center for ERP operations</p>
         </div>
+        <Badge variant="outline" className="flex items-center gap-1">
+          <RefreshCw className="w-3 h-3 animate-spin" />
+          Live Updates
+        </Badge>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search activities..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+      {/* Top Summary Widgets */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">Open Bugs</p>
+                <p className="text-2xl font-bold text-red-600">{metrics?.openBugs || 0}</p>
+              </div>
+              <Bug className="w-8 h-8 text-red-500" />
             </div>
+          </CardContent>
+        </Card>
 
-            <Select value={moduleFilter} onValueChange={setModuleFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by module" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Modules</SelectItem>
-                <SelectItem value="sales">Sales</SelectItem>
-                <SelectItem value="purchases">Purchases</SelectItem>
-                <SelectItem value="products">Products</SelectItem>
-                <SelectItem value="customers">Customers</SelectItem>
-                <SelectItem value="inventory">Inventory</SelectItem>
-                <SelectItem value="auth">Authentication</SelectItem>
-              </SelectContent>
-            </Select>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">Active Services</p>
+                <p className="text-2xl font-bold text-green-600">{metrics?.activeServices || 0}/5</p>
+              </div>
+              <Server className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">AI Tasks</p>
+                <p className="text-2xl font-bold text-purple-600">{metrics?.aiTasks || 0}</p>
+              </div>
+              <Brain className="w-8 h-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">Inventory Sync</p>
+                <p className="text-xs font-semibold text-blue-600">{metrics?.inventorySync || 'N/A'}</p>
+              </div>
+              <Package className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">Sales Today</p>
+                <p className="text-2xl font-bold text-green-600">₹{metrics?.salesToday || 0}</p>
+              </div>
+              <DollarSign className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-600">System Load</p>
+                <p className="text-2xl font-bold text-orange-600">{metrics?.systemLoad || 0}%</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AI System Activity Feed */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="w-5 h-5 text-purple-500" />
+            AI System Activity Feed
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {aiActivities?.slice(0, 5).map(activity => (
+              <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg bg-purple-50">
+                <div className="flex items-center gap-3">
+                  <Zap className="w-4 h-4 text-purple-600" />
+                  <div>
+                    <p className="text-sm font-medium">{activity.agent}</p>
+                    <p className="text-xs text-gray-600">{activity.action}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={activity.status === 'completed' ? 'default' : 'secondary'}>
+                    {activity.status}
+                  </Badge>
+                  <span className="text-xs text-gray-500">{formatTime(activity.timestamp)}</span>
+                </div>
+              </div>
+            )) || <p className="text-sm text-gray-500 text-center py-4">No AI activities</p>}
           </div>
         </CardContent>
       </Card>
 
-      {/* Activity Feed */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activities ({filteredActivities.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-center py-8">Loading activities...</div>
-          ) : filteredActivities.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No activities found</div>
-          ) : (
-            <div className="space-y-4">
-              {filteredActivities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-start gap-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="mt-1">
-                    {getModuleIcon(activity.module)}
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge className={getActionColor(activity.action)}>
-                        {activity.action}
-                      </Badge>
-                      <Badge variant="outline">{activity.module}</Badge>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Bug & Exception Monitor */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bug className="w-5 h-5 text-red-500" />
+              Bug & Exception Monitor
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {bugs?.slice(0, 5).map(bug => (
+                <div key={bug.id} className={`p-3 border rounded-lg ${getSeverityColor(bug.severity)}`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{bug.title}</p>
+                      {bug.aiSuggestion && (
+                        <p className="text-xs mt-1 text-gray-600">💡 {bug.aiSuggestion}</p>
+                      )}
                     </div>
-                    
-                    <p className="text-sm font-medium text-gray-900 mb-1">
-                      {activity.description}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 text-xs text-gray-500">
-                      <span className="flex items-center gap-1">
-                        <User className="w-3 h-3" />
-                        {activity.user_name}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {formatTimestamp(activity.timestamp)}
-                      </span>
-                      <span>IP: {activity.ip_address}</span>
-                    </div>
-                    
-                    {activity.metadata && activity.metadata !== '{}' && (
-                      <details className="mt-2">
-                        <summary className="text-xs text-blue-600 cursor-pointer hover:text-blue-800">
-                          View metadata
-                        </summary>
-                        <pre className="mt-1 text-xs bg-gray-100 p-2 rounded overflow-auto">
-                          {JSON.stringify(JSON.parse(activity.metadata), null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </div>
-                  
-                  <div className="text-xs text-gray-400">
-                    {new Date(activity.timestamp).toLocaleTimeString()}
+                    <Badge variant="outline">{bug.status}</Badge>
                   </div>
                 </div>
-              ))}
+              )) || <p className="text-sm text-gray-500 text-center py-4">No bugs reported</p>}
             </div>
-          )}
+          </CardContent>
+        </Card>
+
+        {/* Microservice Health */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Server className="w-5 h-5 text-blue-500" />
+              Microservice Health Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {services?.map(service => (
+                <div key={service.name} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    {getStatusIcon(service.status)}
+                    <div>
+                      <p className="text-sm font-medium">{service.name}</p>
+                      <p className="text-xs text-gray-600">Port {service.port} • v{service.version}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-medium">{service.responseTime}ms</p>
+                    <Badge variant={service.status === 'OK' ? 'default' : 'destructive'} className="text-xs">
+                      {service.status}
+                    </Badge>
+                  </div>
+                </div>
+              )) || <p className="text-sm text-gray-500 text-center py-4">No services data</p>}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Business Events Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-500" />
+            Business Events Timeline
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {events?.slice(0, 10).map(event => (
+              <div key={event.id} className="flex items-start gap-3 p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
+                <Clock className="w-4 h-4 text-blue-600 mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="outline">{event.module}</Badge>
+                    <span className="text-xs text-gray-500">{formatTime(event.timestamp)}</span>
+                  </div>
+                  <p className="text-sm font-medium">{event.event}</p>
+                  <p className="text-xs text-gray-600 mt-1">{event.details}</p>
+                </div>
+              </div>
+            )) || <p className="text-sm text-gray-500 text-center py-4">No recent events</p>}
+          </div>
         </CardContent>
       </Card>
     </div>

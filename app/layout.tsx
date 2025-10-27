@@ -8,6 +8,7 @@ import { AuthProvider } from '@/hooks/useAuth'
 import DynamicLayout from '@/components/layout/DynamicLayout'
 import { QueryProvider } from '@/components/providers/QueryProvider'
 import { Toaster } from '@/components/ui/toaster'
+import PageLoader from '@/components/common/PageLoader'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={`font-sans ${inter.className}`} suppressHydrationWarning>
         <QueryProvider>
           <AuthProvider>
+            <PageLoader />
             <DynamicLayout>
               {children}
             </DynamicLayout>

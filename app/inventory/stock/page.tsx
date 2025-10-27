@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 
 export default function StockListPage() {
   const router = useRouter();
+  const ALL_VALUE = '__ALL__';
   const [filters, setFilters] = useState({
     product_id: '',
     category: '',
@@ -34,7 +35,17 @@ export default function StockListPage() {
   const stock = stockResponse?.data || [];
 
   const { data: reportResponse } = useStockReport();
-  const report = reportResponse?.data;
+  const report = reportResponse?.data
+    ? {
+        ...reportResponse.data,
+        top_products: Array.isArray(reportResponse.data.top_products)
+          ? reportResponse.data.top_products
+          : [],
+        category_summary: Array.isArray(reportResponse.data.category_summary)
+          ? reportResponse.data.category_summary
+          : [],
+      }
+    : undefined;
 
   const { data: lowStockResponse } = useLowStockAlerts();
   const lowStockAlerts = lowStockResponse?.data || [];
@@ -46,7 +57,9 @@ export default function StockListPage() {
   const categories = [...new Set(products.map(p => p.category))];
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    // Map ALL_VALUE back to empty string for "no filter"
+    const mapped = value === ALL_VALUE ? '' : value;
+    setFilters(prev => ({ ...prev, [key]: mapped }));
   };
 
   const getExpiryStatusBadge = (status: string) => {
@@ -154,12 +167,12 @@ export default function StockListPage() {
           <div className="grid gap-4 md:grid-cols-5">
             <div className="space-y-2">
               <label className="text-sm font-medium">Product</label>
-              <Select value={filters.product_id} onValueChange={(value) => handleFilterChange('product_id', value)}>
+              <Select value={filters.product_id === '' ? ALL_VALUE : filters.product_id} onValueChange={(value) => handleFilterChange('product_id', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Products" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Products</SelectItem>
+                  <SelectItem value={ALL_VALUE}>All Products</SelectItem>
                   {products.map((product: any) => (
                     <SelectItem key={product.id} value={product.id.toString()}>
                       {product.name}
@@ -171,12 +184,12 @@ export default function StockListPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Category</label>
-              <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
+              <Select value={filters.category === '' ? ALL_VALUE : filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value={ALL_VALUE}>All Categories</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -197,12 +210,12 @@ export default function StockListPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Expiry Status</label>
-              <Select value={filters.expiry_status} onValueChange={(value) => handleFilterChange('expiry_status', value)}>
+              <Select value={filters.expiry_status === '' ? ALL_VALUE : filters.expiry_status} onValueChange={(value) => handleFilterChange('expiry_status', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Status</SelectItem>
+                  <SelectItem value={ALL_VALUE}>All Status</SelectItem>
                   <SelectItem value="fresh">Fresh</SelectItem>
                   <SelectItem value="expiring_7d">Expiring (7D)</SelectItem>
                   <SelectItem value="expiring_1m">Expiring (1M)</SelectItem>
@@ -277,9 +290,13 @@ export default function StockListPage() {
                       <TableCell>₹{item.mrp || 0}</TableCell>
                       <TableCell>₹{item.purchase_rate || 0}</TableCell>
                       <TableCell>
-                        <span className={item.margin_percent >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {item.margin_percent.toFixed(1)}%
-                        </span>
+                        {typeof item.margin_percent === 'number' ? (
+                          <span className={item.margin_percent >= 0 ? 'text-green-600' : 'text-red-600'}>
+                            {item.margin_percent.toFixed(1)}%
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {item.exp_date ? new Date(item.exp_date).toLocaleDateString() : '-'}
