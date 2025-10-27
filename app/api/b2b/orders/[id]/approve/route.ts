@@ -10,7 +10,7 @@ import { b2bCommerceService } from "@/lib/b2b-commerce"
 // PUT /api/b2b/orders/[id]/approve - Approve B2B order
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
     const user = await authenticateRequest(request)
@@ -23,12 +23,12 @@ export async function PUT(
       return NextResponse.json({ error: "Insufficient permissions" }, { status: 403 })
     }
 
-    const orderId = params.id
+    const orderId = context?.params?.id
     if (!orderId) {
       return NextResponse.json({ error: "Order ID is required" }, { status: 400 })
     }
 
-    await b2bCommerceService.approveB2BOrder(orderId, user.id)
+    await b2bCommerceService.approveB2BOrder(orderId, String(user.id))
 
     return NextResponse.json({
       success: true,
@@ -47,7 +47,7 @@ export async function PUT(
 // DELETE /api/b2b/orders/[id]/approve - Reject B2B order
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
     const user = await authenticateRequest(request)
@@ -75,7 +75,7 @@ export async function DELETE(
       )
     }
 
-    await b2bCommerceService.rejectB2BOrder(orderId, user.id, reason)
+    await b2bCommerceService.rejectB2BOrder(orderId, String(user.id), reason)
 
     return NextResponse.json({
       success: true,

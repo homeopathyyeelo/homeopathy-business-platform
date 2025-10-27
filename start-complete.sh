@@ -40,11 +40,16 @@ if ! command -v docker &> /dev/null; then
 fi
 log "✅ Docker $(docker --version | cut -d' ' -f3 | tr -d ',') detected"
 
-# Check Docker Compose
-if ! command -v docker-compose &> /dev/null; then
+# Resolve Docker Compose command (docker compose v2 or legacy docker-compose)
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE="docker compose -f docker-compose.dev.yml"
+    log "✅ Docker Compose (v2) detected"
+elif command -v docker-compose >/dev/null 2>&1; then
+    COMPOSE="docker-compose -f docker-compose.dev.yml"
+    log "✅ Docker Compose (legacy) detected"
+else
     error "❌ Docker Compose not found. Please install Docker Compose."
 fi
-log "✅ Docker Compose $(docker-compose --version | cut -d' ' -f4 | tr -d ',') detected"
 
 # Check Node.js
 if ! command -v node &> /dev/null; then
@@ -154,14 +159,14 @@ echo ""
 
 log "🐳 Starting Docker services..."
 
-# Check if docker-compose.yml exists
-if [ ! -f "docker-compose.yml" ]; then
-    error "❌ docker-compose.yml not found!"
+# Check if dev compose file exists
+if [ ! -f "docker-compose.dev.yml" ]; then
+    error "❌ docker-compose.dev.yml not found!"
 fi
 
 # Stop existing containers
 log "Stopping existing containers..."
-docker-compose down 2>&1 | tee -a logs/docker-startup.log
+$COMPOSE down 2>&1 | tee -a logs/docker-startup.log
 
 # Stop system Redis if running (to avoid port conflict)
 info "Checking for port conflicts..."
@@ -173,7 +178,7 @@ fi
 
 # Start Docker services
 info "Starting PostgreSQL, Redis, Kafka, MinIO..."
-docker-compose up -d postgres redis kafka minio 2>&1 | tee logs/docker-startup.log
+$COMPOSE up -d postgres redis kafka minio 2>&1 | tee logs/docker-startup.log
 
 # Wait for services to be ready
 log "⏳ Waiting for Docker services to be ready..."
@@ -182,7 +187,7 @@ sleep 10
 # Check PostgreSQL
 info "Checking PostgreSQL..."
 for i in {1..20}; do
-    if docker-compose exec -T postgres pg_isready -U postgres -d yeelo_homeopathy >/dev/null 2>&1; then
+    if $COMPOSE exec -T postgres pg_isready -U postgres -d yeelo_homeopathy >/dev/null 2>&1; then
         log "✅ PostgreSQL is ready"
         break
     fi
@@ -196,7 +201,7 @@ done
 # Check Redis
 info "Checking Redis..."
 for i in {1..10}; do
-    if docker-compose exec -T redis redis-cli -a redis_password ping 2>/dev/null | grep -q PONG; then
+    if $COMPOSE exec -T redis redis-cli ping 2>/dev/null | grep -q PONG; then
         log "✅ Redis is ready"
         break
     fi
@@ -282,6 +287,9 @@ if [ "$GO_AVAILABLE" = true ]; then
             go build -o bin/api cmd/main.go
         fi
         
+        # Ensure it talks to Dockerized Postgres/Redis on host ports
+        DATABASE_URL="postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy" \
+        REDIS_URL="redis://localhost:6380" \
         ./bin/api > ../../logs/api-golang-master.log 2>&1 &
         echo $! > ../../logs/api-golang-master.pid
         cd - > /dev/null
@@ -293,8 +301,8 @@ if [ "$GO_AVAILABLE" = true ]; then
     start_service "sales-service" "services/sales-service" "go run main.go" "8003"
 fi
 
-# Start NestJS API Gateway
-start_service "api-gateway" "services/api-gateway" "npm run start:dev" "4000"
+# Start API Gateway (Node) on 3001
+start_service "api-gateway" "services/api-gateway" "npm run dev" "3001"
 
 # Start Python AI Service
 if [ "$PYTHON_AVAILABLE" = true ] && [ -d "services/ai-service" ]; then
@@ -363,13 +371,13 @@ check_health() {
 
 # Check Docker services
 info "Checking Docker services..."
-if docker-compose exec -T postgres pg_isready -U postgres -d yeelo_homeopathy >/dev/null 2>&1; then
+if $COMPOSE exec -T postgres pg_isready -U postgres -d yeelo_homeopathy >/dev/null 2>&1; then
     log "✅ PostgreSQL is healthy"
 else
     warn "⚠️  PostgreSQL health check failed"
 fi
 
-if docker-compose exec -T redis redis-cli -a redis_password ping 2>/dev/null | grep -q PONG; then
+if $COMPOSE exec -T redis redis-cli ping 2>/dev/null | grep -q PONG; then
     log "✅ Redis is healthy"
 else
     warn "⚠️  Redis health check failed"
@@ -382,7 +390,7 @@ info "Checking microservices..."
 check_health "Product Service" "http://localhost:8001/health" 5 || true
 check_health "Inventory Service" "http://localhost:8002/health" 5 || true
 check_health "Sales Service" "http://localhost:8003/health" 5 || true
-check_health "API Gateway" "http://localhost:4000/health" 5 || true
+check_health "API Gateway" "http://localhost:3001/health" 5 || true
 check_health "AI Service" "http://localhost:8010/health" 5 || true
 
 # Check frontend (needs more time)
@@ -404,8 +412,8 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 
 echo -e "${CYAN}📦 INFRASTRUCTURE:${NC}"
-log "🐘 PostgreSQL:       localhost:5432"
-log "🔴 Redis:            localhost:6379"
+log "🐘 PostgreSQL:       localhost:5433"
+log "🔴 Redis:            localhost:6380"
 log "📨 Kafka:            localhost:9092"
 log "📦 MinIO:            http://localhost:9000 (admin/minioadmin)"
 echo ""
@@ -417,8 +425,8 @@ if [ "$GO_AVAILABLE" = true ]; then
     log "📦 Inventory Service: http://localhost:8002"
     log "🛒 Sales Service:    http://localhost:8003"
 fi
-log "🌐 API Gateway:      http://localhost:4000"
-log "🌐 GraphQL:          http://localhost:4000/graphql"
+log "🌐 API Gateway:      http://localhost:3001"
+log "🌐 GraphQL:          http://localhost:3001/graphql"
 if [ "$PYTHON_AVAILABLE" = true ]; then
     log "🤖 AI Service:       http://localhost:8010"
 fi
@@ -447,8 +455,8 @@ cat > logs/services.json << EOF
 {
   "started_at": "$(date -Iseconds)",
   "docker": {
-    "postgres": { "port": 5432, "status": "running" },
-    "redis": { "port": 6379, "status": "running" },
+    "postgres": { "port": 5433, "status": "running" },
+    "redis": { "port": 6380, "status": "running" },
     "kafka": { "port": 9092, "status": "running" },
     "minio": { "port": 9000, "status": "running" }
   },

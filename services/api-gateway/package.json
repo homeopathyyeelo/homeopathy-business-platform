@@ -4,15 +4,24 @@
   "description": "API Gateway for Yeelo Homeopathy Platform",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "PORT=3001 node dist/index.js",
+    "dev": "PORT=3001 ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "docker:build": "docker build -t yeelo/api-gateway .",
-    "docker:run": "docker run -p 3000:3000 yeelo/api-gateway"
+    "docker:run": "docker run -p 3001:3001 yeelo/api-gateway"
   },
   "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/swagger": "^7.3.0",
+    "@nestjs/typeorm": "^10.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.20",
     "@opentelemetry/auto-instrumentations-node": "^0.52.1",
     "@opentelemetry/exporter-trace-otlp-http": "^0.52.1",
     "@opentelemetry/resources": "^1.28.0",

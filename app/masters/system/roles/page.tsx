@@ -1,7 +1,7 @@
 import { Building2 } from "lucide-react"
-import GenericMasterPage from "@/components/generic-master-page"
+import GenericMasterPage, { MasterConfig } from "@/components/generic-master-page"
 
-const rolesConfig = {
+const rolesConfig: MasterConfig = {
   endpoint: 'roles',
   title: 'Roles & Permissions',
   description: 'Manage roles & permissions for your ERP system',
@@ -10,7 +10,7 @@ const rolesConfig = {
     { key: 'name', label: 'Name', sortable: true },
     { key: 'code', label: 'Code', sortable: true },
     { key: 'description', label: 'Description' },
-    { key: 'is_active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
+    { key: 'is_active', label: 'Status', render: (value: boolean) => value ? 'Active' : 'Inactive' },
   ],
   searchFields: ['name', 'code'],
   formFields: [
@@ -26,6 +26,6 @@ const rolesConfig = {
   }
 }
 
-export default function Roles&PermissionsPage() {
+export default function RolesAndPermissionsPage() {
   return <GenericMasterPage config={rolesConfig} />
 }

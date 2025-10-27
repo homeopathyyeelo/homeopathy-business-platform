@@ -12,8 +12,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies (use npm install to tolerate missing lockfile in dev)
+RUN npm install && npm cache clean --force
 
 # Copy source code
 COPY src/ ./src/
@@ -40,11 +40,11 @@ RUN chown -R yeelo:nodejs /app
 USER yeelo
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
+  CMD curl -f http://localhost:3001/health || exit 1
 
 # Start the application
 CMD ["node", "dist/index.js"]

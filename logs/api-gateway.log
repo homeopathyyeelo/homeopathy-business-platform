@@ -1,7 +1,32 @@
-npm error Lifecycle script `start:dev` failed with error:
-npm error workspace @yeelo/api-gateway@1.0.0
-npm error location /var/www/homeopathy-business-platform/services/api-gateway
-npm error Missing script: "start:dev"
-npm error
-npm error To see a list of scripts, run:
-npm error   npm run --workspace=@yeelo/api-gateway@1.0.0
+
+> @yeelo/api-gateway@1.0.0 dev
+> PORT=3001 ts-node-dev --respawn --transpile-only src/index.ts
+
+[INFO] 20:02:10 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[HPM] Proxy created: /  -> http://api-nest:3001
+[HPM] Proxy rewrite rule created: "^/api/auth" ~> ""
+[HPM] Proxy created: /  -> http://api-fastify:3002
+[HPM] Proxy rewrite rule created: "^/api/orders" ~> ""
+[HPM] Proxy created: /  -> http://api-express:3003
+[HPM] Proxy rewrite rule created: "^/api/campaigns" ~> ""
+[HPM] Proxy created: /  -> http://ai-service:8001
+[HPM] Proxy rewrite rule created: "^/api/ai" ~> ""
+[HPM] Proxy created: /  -> http://api-golang:3004
+[HPM] Proxy rewrite rule created: "^/api/analytics" ~> ""
+[HPM] Proxy created: /  -> http://invoice-parser:8005
+[HPM] Proxy rewrite rule created: "^/api/invoices" ~> "/api/v1/invoices"
+[HPM] Proxy created: /  -> http://purchase-service:8006
+[HPM] Proxy rewrite rule created: "^/api/purchases" ~> "/api/v1"
+[HPM] Proxy created: /  -> http://invoice-parser:8005
+[HPM] Proxy rewrite rule created: "^/api/sales" ~> "/api/v1/sales"
+[API Gateway] Server running on port 3001
+[API Gateway] Environment: development
+[API Gateway] Services configured: [
+  'auth',
+  'orders',
+  'campaigns',
+  'ai',
+  'analytics',
+  'invoiceParser',
+  'purchaseService'
+]

@@ -1,7 +1,7 @@
 import { Shield } from "lucide-react"
-import GenericMasterPage from "@/components/generic-master-page"
+import GenericMasterPage, { MasterConfig } from "@/components/generic-master-page"
 
-const twofactorSETTINGSConfig = {
+const twoFactorSettingsConfig: MasterConfig = {
   endpoint: 'two-factor-settings',
   title: '2FA Settings',
   description: 'Manage 2fa settings for your ERP system',
@@ -10,7 +10,7 @@ const twofactorSETTINGSConfig = {
     { key: 'name', label: 'Name', sortable: true },
     { key: 'code', label: 'Code', sortable: true },
     { key: 'description', label: 'Description' },
-    { key: 'is_active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
+    { key: 'is_active', label: 'Status', render: (value: boolean) => value ? 'Active' : 'Inactive' },
   ],
   searchFields: ['name', 'code'],
   formFields: [
@@ -26,6 +26,6 @@ const twofactorSETTINGSConfig = {
   }
 }
 
-export default function 2FASettingsPage() {
-  return <GenericMasterPage config={twofactor-settingsConfig} />
+export default function TwoFASettingsPage() {
+  return <GenericMasterPage config={twoFactorSettingsConfig} />
 }

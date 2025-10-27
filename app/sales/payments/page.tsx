@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DollarSign, Plus, Eye } from "lucide-react";
-import { useSalesPayments } from "@/lib/hooks/use-sales";
+import { usePayments } from "@/lib/hooks/use-sales";
 
 export default function SalesPaymentsPage() {
-  const { payments, isLoading } = useSalesPayments();
+  const { payments, isLoading } = usePayments();
 
   if (isLoading) return <div>Loading...</div>;
 

@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast"
 import { golangAPI } from "@/lib/api"
 import { useMasterMutations } from "@/lib/hooks/masters"
 
-interface FieldConfig {
+export interface FieldConfig {
   key: string
   label: string
   type: 'text' | 'number' | 'email' | 'tel' | 'textarea' | 'select' | 'date' | 'boolean' | 'currency'
@@ -26,7 +26,7 @@ interface FieldConfig {
   validation?: (value: any) => string | null
 }
 
-interface MasterConfig {
+export interface MasterConfig {
   endpoint: string
   title: string
   description: string
@@ -66,7 +66,7 @@ export default function GenericMasterPage({ config, breadcrumbs = [] }: GenericM
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(config.defaultSort?.direction || 'asc')
 
   // Fetch data using dynamic query
-  const { data: items = [], isLoading, refetch } = useQuery({
+  const { data: items = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: ['masters', config.endpoint],
     queryFn: async () => {
       const res = await golangAPI.get(`/api/masters/${config.endpoint}`)
@@ -101,19 +101,19 @@ export default function GenericMasterPage({ config, breadcrumbs = [] }: GenericM
 
   // Filter and sort data
   const filteredAndSortedItems = useMemo(() => {
-    let filtered = items
+    let filtered = items as any[]
 
     // Apply search filter
     if (searchTerm && config.searchFields) {
-      filtered = items.filter(item =>
-        config.searchFields!.some(field =>
+      filtered = (items as any[]).filter((item: any) =>
+        config.searchFields!.some((field: string) => (
           String(item[field]).toLowerCase().includes(searchTerm.toLowerCase())
-        )
+        ))
       )
     }
 
     // Apply sorting
-    filtered.sort((a, b) => {
+    filtered.sort((a: any, b: any) => {
       const aVal = a[sortField]
       const bVal = b[sortField]
 
@@ -122,7 +122,7 @@ export default function GenericMasterPage({ config, breadcrumbs = [] }: GenericM
       return 0
     })
 
-    return filtered
+    return filtered as any[]
   }, [items, searchTerm, sortField, sortDirection, config.searchFields])
 
   // Handle add
@@ -312,7 +312,7 @@ export default function GenericMasterPage({ config, breadcrumbs = [] }: GenericM
                 </tr>
               </thead>
               <tbody>
-                {filteredAndSortedItems.map((item) => (
+                {filteredAndSortedItems.map((item: any) => (
                   <tr key={item.id} className="border-b">
                     {config.tableColumns.map((column) => (
                       <td key={column.key} className="p-4">

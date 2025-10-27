@@ -36,7 +36,7 @@ export default function BugDetailPage() {
     }
   }
 
-  const handleApprove Fix = async () => {
+  const handleApproveFix = async () => {
     setApplying(true)
     try {
       const response = await fetch(`${API_URL}/api/v1/system/bugs/${params.id}/approve`, {

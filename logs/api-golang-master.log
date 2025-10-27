@@ -1,0 +1,275 @@
+2025/10/27 20:02:09 📋 Configuration loaded for development environment
+2025/10/27 20:02:09 ✅ Database connected and migrated successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /health                   --> main.main.func1 (4 handlers)
+[GIN-debug] GET    /api/v1/system/health     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemHealth-fm (4 handlers)
+[GIN-debug] GET    /api/v1/system/info       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemInfo-fm (4 handlers)
+[GIN-debug] GET    /api/erp/dashboard/summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetSummary-fm (4 handlers)
+[GIN-debug] GET    /api/erp/dashboard/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetStats-fm (4 handlers)
+[GIN-debug] GET    /api/erp/dashboard/activity --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetActivity-fm (4 handlers)
+[GIN-debug] GET    /api/erp/dashboard/revenue-chart --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetRevenueChart-fm (4 handlers)
+[GIN-debug] GET    /api/erp/dashboard/expiry-summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetExpirySummary-fm (4 handlers)
+[GIN-debug] GET    /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProducts-fm (4 handlers)
+[GIN-debug] GET    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProduct-fm (4 handlers)
+[GIN-debug] POST   /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateProduct-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateProduct-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteProduct-fm (4 handlers)
+[GIN-debug] GET    /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCategories-fm (4 handlers)
+[GIN-debug] GET    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCategory-fm (4 handlers)
+[GIN-debug] POST   /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateCategory-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateCategory-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteCategory-fm (4 handlers)
+[GIN-debug] GET    /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (4 handlers)
+[GIN-debug] POST   /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateBrand-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateBrand-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteBrand-fm (4 handlers)
+[GIN-debug] GET    /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (4 handlers)
+[GIN-debug] POST   /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreatePotency-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdatePotency-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeletePotency-fm (4 handlers)
+[GIN-debug] GET    /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (4 handlers)
+[GIN-debug] POST   /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateForm-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateForm-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteForm-fm (4 handlers)
+[GIN-debug] GET    /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (4 handlers)
+[GIN-debug] POST   /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateUnit-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateUnit-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteUnit-fm (4 handlers)
+[GIN-debug] GET    /api/erp/hsn-codes        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetHSNCodes-fm (4 handlers)
+[GIN-debug] POST   /api/erp/hsn-codes        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateHSNCode-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/hsn-codes/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateHSNCode-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/hsn-codes/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteHSNCode-fm (4 handlers)
+[GIN-debug] GET    /api/erp/warehouses       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetWarehouses-fm (4 handlers)
+[GIN-debug] POST   /api/erp/warehouses       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).CreateWarehouse-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/warehouses/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).UpdateWarehouse-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/warehouses/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).DeleteWarehouse-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetEnhancedStockList-fm (4 handlers)
+[GIN-debug] POST   /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).AddManualStock-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockTransactions-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/alerts/low-stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetLowStockAlerts-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/alerts/expiry --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetExpiryAlerts-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/valuation --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockValuation-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/reports/stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GenerateStockReport-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/inventory/alerts/low-stock/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveLowStockAlert-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/inventory/alerts/expiry/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveExpiryAlert-fm (4 handlers)
+[GIN-debug] GET    /api/erp/inventory/expiries/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetExpiryAlerts-fm (4 handlers)
+[GIN-debug] GET    /api/erp/purchases        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchases-fm (4 handlers)
+[GIN-debug] GET    /api/erp/purchases/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchase-fm (4 handlers)
+[GIN-debug] POST   /api/erp/purchases        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).CreateEnhancedPurchase-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/purchases/:id/approve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).ApproveEnhancedPurchase-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/purchases/:id/reject --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).RejectEnhancedPurchase-fm (4 handlers)
+[GIN-debug] GET    /api/erp/purchases/pending --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetPendingPurchases-fm (4 handlers)
+[GIN-debug] GET    /api/erp/purchases/:id/items --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetPurchaseItems-fm (4 handlers)
+[GIN-debug] POST   /api/erp/purchases/:id/items --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).AddPurchaseItem-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/purchases/:id/items/:itemId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).UpdatePurchaseItem-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/purchases/:id/items/:itemId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).DeletePurchaseItem-fm (4 handlers)
+[GIN-debug] GET    /api/erp/pos/counters     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetPOSCounters-fm (4 handlers)
+[GIN-debug] GET    /api/erp/products/barcode --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodes-fm (4 handlers)
+[GIN-debug] POST   /api/erp/products/barcode/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GenerateBarcode-fm (4 handlers)
+[GIN-debug] POST   /api/erp/products/barcode/print --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).PrintBarcodes-fm (4 handlers)
+[GIN-debug] PUT    /api/erp/products/barcode/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).UpdateBarcode-fm (4 handlers)
+[GIN-debug] DELETE /api/erp/products/barcode/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).DeleteBarcode-fm (4 handlers)
+[GIN-debug] GET    /api/erp/products/barcode/stats --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodeStats-fm (4 handlers)
+[GIN-debug] GET    /api/masters/subcategories --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetSubcategories-fm (4 handlers)
+[GIN-debug] GET    /api/masters/categories   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCategories-fm (4 handlers)
+[GIN-debug] GET    /api/masters/brands       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (4 handlers)
+[GIN-debug] GET    /api/masters/potencies    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (4 handlers)
+[GIN-debug] GET    /api/masters/forms        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (4 handlers)
+[GIN-debug] GET    /api/masters/units        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (4 handlers)
+[GIN-debug] GET    /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetBatches-fm (4 handlers)
+[GIN-debug] POST   /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).CreateBatch-fm (4 handlers)
+[GIN-debug] PUT    /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).UpdateBatch-fm (4 handlers)
+[GIN-debug] DELETE /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).DeleteBatch-fm (4 handlers)
+2025/10/27 20:02:09 🚀 HomeoERP API Server starting on port 3005
+2025/10/27 20:02:09 📊 Total API endpoints: 100+
+2025/10/27 20:02:09 🔗 Frontend URL: http://localhost:3000
+2025/10/27 20:02:09 🔗 API Base URL: http://localhost:3005/api
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3005
+[GIN] 2025/10/27 - 20:04:18 | 200 |     188.727µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:04:18 | 200 |   12.892235ms |             ::1 | GET      "/api/erp/brands"
+[GIN] 2025/10/27 - 20:04:18 | 200 |     263.283µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:04:34 | 200 |    1.856715ms |             ::1 | GET      "/api/erp/categories"
+
+2025/10/27 20:04:43 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.907ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:04:43 | 500 |    1.155455ms |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:04:44 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[1.293ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:04:44 | 500 |    1.868006ms |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:04:46 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[1.081ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:04:46 | 500 |    1.438775ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:04:47 | 200 |    1.354292ms |             ::1 | GET      "/api/erp/potencies"
+[GIN] 2025/10/27 - 20:04:48 | 200 |      43.813µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:04:48 | 200 |      42.522µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:04:54 | 200 |    1.365455ms |             ::1 | GET      "/api/erp/forms"
+[GIN] 2025/10/27 - 20:04:59 | 200 |     810.599µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:05:10 | 200 |    1.541504ms |             ::1 | GET      "/api/erp/units"
+[GIN] 2025/10/27 - 20:05:18 | 200 |      48.659µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:05:18 | 200 |      52.205µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:05:26 | 200 |       93.53µs |             ::1 | GET      "/api/products/batches"
+[GIN] 2025/10/27 - 20:05:26 | 200 |   11.094515ms |             ::1 | GET      "/api/erp/products?limit=10000&page=1"
+
+2025/10/27 20:05:37 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.551ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:37 | 500 |     675.327µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:05:38 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.515ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:38 | 500 |     590.759µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:05:41 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.670ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:41 | 500 |     839.367µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:05:42 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.836ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:42 | 500 |     994.558µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:05:44 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.608ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:44 | 500 |     756.445µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:05:48 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.482ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:05:48 | 500 |     590.403µs |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:05:48 | 200 |      61.024µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:05:48 | 200 |      75.764µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:06:10 | 200 |      63.554µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:06:10 | 200 |    2.498219ms |             ::1 | GET      "/api/erp/products?limit=10000&page=1"
+[GIN] 2025/10/27 - 20:06:10 | 200 |      62.636µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:06:13 | 200 |     744.009µs |             ::1 | GET      "/api/erp/products?limit=5"
+[GIN] 2025/10/27 - 20:06:32 | 200 |     912.398µs |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:06:32 | 200 |     407.328µs |             ::1 | GET      "/api/erp/brands"
+[GIN] 2025/10/27 - 20:06:40 | 200 |      25.127µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:06:40 | 200 |     166.834µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:07:10 | 200 |      31.794µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:07:10 | 200 |      49.561µs |             ::1 | GET      "/api/erp/pos/counters"
+
+2025/10/27 20:07:25 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[1.270ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:07:25 | 500 |    1.480478ms |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:07:26 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.984ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:07:26 | 500 |    1.125593ms |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:07:28 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.545ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:07:28 | 500 |     648.791µs |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:07:35 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.831ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:07:35 | 500 |    1.031889ms |             ::1 | GET      "/api/masters/subcategories"
+
+2025/10/27 20:07:36 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.673ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:07:36 | 500 |     789.558µs |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:07:40 | 200 |      51.196µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:07:40 | 200 |      39.702µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:08:10 | 200 |      54.573µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:08:10 | 200 |      51.368µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:08:11 | 200 |     855.807µs |             ::1 | GET      "/api/erp/potencies"
+[GIN] 2025/10/27 - 20:08:13 | 200 |    1.510121ms |             ::1 | GET      "/api/erp/forms"
+[GIN] 2025/10/27 - 20:08:15 | 200 |     616.447µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:08:40 | 200 |          59µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:08:40 | 200 |      137.52µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:09:10 | 200 |      49.329µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:09:10 | 200 |      41.959µs |             ::1 | GET      "/api/erp/pos/counters"
+
+2025/10/27 20:09:25 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/product_handler.go:400 [35;1mERROR: relation "subcategories" does not exist (SQLSTATE 42P01)
+[0m[33m[0.504ms] [34;1m[rows:0][0m SELECT * FROM "subcategories" ORDER BY name ASC
+[GIN] 2025/10/27 - 20:09:25 | 500 |     573.991µs |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:09:40 | 200 |       92.86µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:09:40 | 200 |       41.05µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:09:44 | 200 |      91.858µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:09:44 | 200 |     696.515µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:09:45 | 200 |      40.643µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:09:50 | 200 |     859.884µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:09:56 | 200 |    1.461663ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:09:56 | 200 |   12.129082ms |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:10:15 | 200 |     149.162µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:10:15 | 200 |      44.665µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:10:45 | 200 |      34.287µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:10:45 | 200 |      36.154µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:11:11 | 200 |    1.120139ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:11:15 | 200 |      32.427µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:11:15 | 200 |      60.223µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:11:45 | 200 |      34.847µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:11:45 | 200 |      41.304µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:12:15 | 200 |      38.522µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:12:15 | 200 |      27.158µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:12:40 | 200 |      52.345µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:12:40 | 200 |     878.574µs |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:12:40 | 200 |      41.916µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:13:00 | 200 |     873.407µs |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:13:10 | 200 |      81.237µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:13:10 | 200 |      91.927µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:13:40 | 200 |      51.432µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:13:40 | 200 |        70.1µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:14:06 | 200 |      26.662µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:14:06 | 200 |     3.20437ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:14:06 | 200 |    2.025571ms |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:14:06 | 200 |      38.392µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:14:17 | 200 |    1.403019ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:14:32 | 200 |    1.598137ms |             ::1 | GET      "/api/erp/brands"
+[GIN] 2025/10/27 - 20:14:36 | 200 |     179.019µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:14:36 | 200 |      58.695µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:14:40 | 200 |    1.070417ms |             ::1 | GET      "/api/erp/potencies"
+[GIN] 2025/10/27 - 20:14:43 | 200 |      79.995µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:14:43 | 200 |     692.263µs |             ::1 | GET      "/api/erp/potencies"
+[GIN] 2025/10/27 - 20:14:44 | 200 |      40.904µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:15:11 | 200 |     1.28154ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:15:13 | 200 |      31.322µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:15:13 | 200 |      35.088µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:15:28 | 200 |     778.927µs |             ::1 | GET      "/api/erp/forms"
+[GIN] 2025/10/27 - 20:15:29 | 200 |      547.24µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:15:44 | 200 |      79.712µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:15:44 | 200 |      66.979µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:16:14 | 200 |      61.151µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:16:14 | 200 |      53.481µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:16:44 | 200 |     296.168µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:16:44 | 200 |      62.716µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:17:14 | 200 |      30.746µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:17:14 | 200 |      36.965µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:17:44 | 200 |      62.051µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:17:44 | 200 |      47.746µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:18:39 | 200 |      34.736µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:18:39 | 200 |      44.091µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:19:39 | 200 |     291.865µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:19:39 | 200 |      80.005µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:20:39 | 200 |     138.896µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:20:39 | 200 |      83.965µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:20:46 | 200 |      45.677µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:20:46 | 200 |      50.025µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:20:49 | 200 |      40.187µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:20:49 | 200 |    1.208104ms |             ::1 | GET      "/api/erp/products?limit=1"
+[GIN] 2025/10/27 - 20:20:49 | 200 |     566.232µs |             ::1 | GET      "/api/erp/hsn-codes"
+[GIN] 2025/10/27 - 20:20:49 | 200 |      46.151µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:20:49 | 200 |     450.305µs |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:20:49 | 200 |      560.16µs |             ::1 | GET      "/api/erp/brands"
+[GIN] 2025/10/27 - 20:20:50 | 200 |     102.537µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
+[GIN] 2025/10/27 - 20:21:18 | 200 |      1.2357ms |             ::1 | GET      "/api/masters/subcategories"
+[GIN] 2025/10/27 - 20:21:18 | 200 |     588.128µs |             ::1 | GET      "/api/erp/categories"
+[GIN] 2025/10/27 - 20:21:19 | 200 |      29.909µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:21:19 | 200 |      41.598µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:21:25 | 200 |     659.838µs |             ::1 | GET      "/api/erp/brands"
+[GIN] 2025/10/27 - 20:21:50 | 200 |      26.936µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:21:50 | 200 |      49.871µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:22:20 | 200 |      34.157µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:22:20 | 200 |      40.656µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:22:50 | 200 |      47.132µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:22:50 | 200 |      37.713µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:23:20 | 200 |      33.393µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:23:20 | 200 |      58.111µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/10/27 - 20:23:50 | 200 |      30.571µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/10/27 - 20:23:50 | 200 |      41.044µs |             ::1 | GET      "/api/erp/pos/counters"

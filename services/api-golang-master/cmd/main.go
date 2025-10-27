@@ -24,6 +24,7 @@ func main() {
 	productHandler := handlers.NewProductHandler(db)
 	inventoryHandler := handlers.NewInventoryHandler(db)
 	systemHandler := handlers.NewSystemHandler()
+	dashboardHandler := handlers.NewDashboardHandler(db)
 
 	// Initialize enhanced inventory handler
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
@@ -67,6 +68,13 @@ func main() {
 	// ERP routes (shared prefix)
 	erp := r.Group("/api/erp")
 	{
+		// Dashboard endpoints (to match frontend expectations)
+		erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
+		erp.GET("/dashboard/stats", dashboardHandler.GetStats)
+		erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
+		erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+		erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
+
 		// Product routes
 		erp.GET("/products", productHandler.GetProducts)
 		erp.GET("/products/:id", productHandler.GetProduct)
@@ -128,6 +136,10 @@ func main() {
 			inventory.PUT("/alerts/low-stock/:id/resolve", enhancedInventoryHandler.ResolveLowStockAlert)
 			inventory.PUT("/alerts/expiry/:id/resolve", enhancedInventoryHandler.ResolveExpiryAlert)
 		}
+
+		// Alias to support legacy/frontend path used by dashboard widgets
+		erp.GET("/inventory/expiries/alerts", enhancedInventoryHandler.GetExpiryAlerts)
+
 		purchases := erp.Group("/purchases")
 		{
 			purchases.GET("", enhancedPurchaseHandler.GetEnhancedPurchases)
@@ -143,11 +155,6 @@ func main() {
 			purchases.PUT("/:id/items/:itemId", enhancedPurchaseHandler.UpdatePurchaseItem)
 			purchases.DELETE("/:id/items/:itemId", enhancedPurchaseHandler.DeletePurchaseItem)
 		}
-
-		// Barcode routes
-		erp.GET("/products/barcode", productHandler.GetBarcodes)
-		erp.POST("/products/barcode/generate", productHandler.GenerateBarcode)
-		erp.POST("/products/barcode/print", productHandler.PrintBarcodes)
 
 		// POS routes
 		pos := erp.Group("/pos")

@@ -1,8 +1,6 @@
+package handlers
+
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -800,6 +798,13 @@ func (h *ProductHandler) GetBarcodes(c *gin.Context) {
 
 		barcodes = append(barcodes, barcodeData)
 	}
+
+	// Return the aggregated barcode list
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    barcodes,
+		"total":   len(barcodes),
+	})
 }
 
 // ==================== CUSTOMERS ====================

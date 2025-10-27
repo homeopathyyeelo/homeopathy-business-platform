@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Zookeeper for Kafka
   zookeeper:
@@ -48,6 +46,11 @@ services:
       -c max_connections=200
       -c shared_buffers=256MB
       -c effective_cache_size=1GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d yeelo_homeopathy"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   # Redis for caching and sessions
   redis:
@@ -104,6 +107,69 @@ services:
     volumes:
       - ./services/ai-service:/app
     command: uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+  # Golang Core API
+  api-golang:
+    build:
+      context: ./services/api-golang-master
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3005
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:9092
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+    ports:
+      - "3005:3005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./services/api-golang-master:/app
+    command: /server
+
+  # API Gateway (Node)
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    environment:
+      NEST_API_URL: http://api-nest:3001
+      FASTIFY_API_URL: http://api-fastify:3002
+      EXPRESS_API_URL: http://api-express:3003
+      GOLANG_API_URL: http://api-golang:3005
+      AI_SERVICE_URL: http://ai-service:8001
+      REDIS_URL: redis://redis:6379
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - api-golang
+      - ai-service
+    volumes:
+      - ./services/api-gateway:/app
+      - /app/node_modules
+    command: node dist/index.js
+
+  # Next.js Frontend
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.nextjs
+    environment:
+      NEXT_PUBLIC_GOLANG_API_URL: http://localhost:3005
+      NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-golang
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev:app
 
 volumes:
   postgres-data:

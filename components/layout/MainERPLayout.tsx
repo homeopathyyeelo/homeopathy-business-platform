@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import TopBar from './TopBar';
 import EnterpriseLeftSidebar from './EnterpriseLeftSidebar';
-import RightPanel from './RightPanel';
+import DynamicRightPanel from './DynamicRightPanel';
 import BottomBar from './BottomBar';
 
 interface MainERPLayoutProps {
@@ -29,7 +29,7 @@ export default function MainERPLayout({ children }: MainERPLayoutProps) {
           <div className="p-6 min-h-screen">{children}</div>
         </main>
         
-        <RightPanel isOpen={rightOpen} onClose={() => setRightOpen(false)} />
+        {rightOpen && <DynamicRightPanel />}
       </div>
       
       {bottomOpen && <BottomBar onClose={() => setBottomOpen(false)} />}

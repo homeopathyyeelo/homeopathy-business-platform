@@ -1,7 +1,7 @@
 import { Users } from "lucide-react"
-import GenericMasterPage from "@/components/generic-master-page"
+import GenericMasterPage, { MasterConfig } from "@/components/generic-master-page"
 
-const followupstatusesConfig = {
+const followupstatusesConfig: MasterConfig = {
   endpoint: 'followup-statuses',
   title: 'Follow-up Statuses',
   description: 'Manage follow-up statuses for your ERP system',
@@ -10,7 +10,7 @@ const followupstatusesConfig = {
     { key: 'name', label: 'Name', sortable: true },
     { key: 'code', label: 'Code', sortable: true },
     { key: 'description', label: 'Description' },
-    { key: 'is_active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
+    { key: 'is_active', label: 'Status', render: (value: boolean) => value ? 'Active' : 'Inactive' },
   ],
   searchFields: ['name', 'code'],
   formFields: [
@@ -26,6 +26,6 @@ const followupstatusesConfig = {
   }
 }
 
-export default function Follow-upStatusesPage() {
+export default function FollowUpStatusesPage() {
   return <GenericMasterPage config={followupstatusesConfig} />
 }

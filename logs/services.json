@@ -1,31 +1,31 @@
 {
-  "started_at": "2025-10-27T16:08:02+05:30",
+  "started_at": "2025-10-27T20:03:24+05:30",
   "docker": {
-    "postgres": { "port": 5432, "status": "running" },
-    "redis": { "port": 6379, "status": "running" },
+    "postgres": { "port": 5433, "status": "running" },
+    "redis": { "port": 6380, "status": "running" },
     "kafka": { "port": 9092, "status": "running" },
     "minio": { "port": 9000, "status": "running" }
   },
   "microservices": {
     "api_golang_v2": {
-      "pid": 110017,
+      "pid": 223062,
       "port": 3005,
       "description": "Import/Export API"
     },
     "product_service": {
-      "pid": 110021,
+      "pid": 223066,
       "port": 8001
     },
     "inventory_service": {
-      "pid": 110033,
+      "pid": 223073,
       "port": 8002
     },
     "sales_service": {
-      "pid": 110041,
+      "pid": 223080,
       "port": 8003
     },
     "api_gateway": {
-      "pid": 110064,
+      "pid": 223087,
       "port": 4000
     },
     "ai_service": {
@@ -34,7 +34,7 @@
     }
   },
   "frontend": {
-    "pid": 110411,
+    "pid": 223517,
     "port": 3000,
     "url": "http://localhost:3000"
   }
