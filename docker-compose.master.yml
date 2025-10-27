@@ -240,10 +240,10 @@ services:
       - yeelo-network
     command: npm run dev
 
-  # Golang API - Low Latency Services (api-golang-v2)
+  # Golang API - Low Latency Services (api-golang-master)
   api-golang:
     build:
-      context: ./services/api-golang-v2
+      context: ./services/api-golang-master
       dockerfile: Dockerfile
     container_name: yeelo-api-golang
     environment:
@@ -260,7 +260,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./services/api-golang-v2:/app
+      - ./services/api-golang-master:/app
     networks:
       - yeelo-network
     command: go run cmd/main.go

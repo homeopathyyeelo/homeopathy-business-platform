@@ -3,7 +3,7 @@ set -e
 echo "🔍 Service Port Audit — $(date)"
 declare -A PORTS=(
   ["api-golang"]=3004
-  ["api-golang-v2"]=3005
+  ["api-golang-master"]=3005
   ["purchase-service"]=8006
   ["invoice-parser"]=8005
   ["api-gateway"]=4000

@@ -130,7 +130,7 @@ export default function StatusBarPage() {
               <span className="text-muted-foreground">http://localhost:3005</span>
             </div>
             <div className="flex justify-between py-2 border-b">
-              <span className="font-medium">api-golang-v2 (Primary)</span>
+              <span className="font-medium">api-golang-master (Primary)</span>
               <span className="text-muted-foreground">http://localhost:3005</span>
             </div>
             <div className="flex justify-between py-2 border-b">

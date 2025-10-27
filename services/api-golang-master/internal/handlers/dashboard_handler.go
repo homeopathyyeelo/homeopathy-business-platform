@@ -102,7 +102,7 @@ func (h *DashboardHandler) GetSystemHealth(c *gin.Context) {
 		URL  string
 	}{
 		{"api-golang", "http://localhost:3005/health"},
-		{"api-golang-v2", "http://localhost:3005/health"},
+		{"api-golang-master", "http://localhost:3005/health"},
 		{"purchase-service", "http://localhost:8006/health"},
 		{"invoice-parser", "http://localhost:8005/health"},
 		{"api-gateway", "http://localhost:4000/health"},

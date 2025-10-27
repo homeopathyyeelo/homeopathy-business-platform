@@ -51,7 +51,7 @@ func (m *ErrorLogger) logError(c *gin.Context) {
 			request_id, ip_address, metadata, created_at
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`,
-		"api-golang-v2",
+		"api-golang-master",
 		logLevel,
 		c.Errors.String(),
 		c.Writer.Status(),

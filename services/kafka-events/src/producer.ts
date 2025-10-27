@@ -67,7 +67,7 @@ class EventProducer {
   }
 
   // Domain-specific publish methods
-  async publishProductEvent(eventType: string, data: any, source: string = 'api-golang-v2'): Promise<void> {
+  async publishProductEvent(eventType: string, data: any, source: string = 'api-golang-master'): Promise<void> {
     const topic = this.getProductTopic(eventType)
     await this.publishEvent(topic, {
       eventType,
@@ -76,7 +76,7 @@ class EventProducer {
     })
   }
 
-  async publishSaleEvent(eventType: string, data: any, source: string = 'api-golang-v2'): Promise<void> {
+  async publishSaleEvent(eventType: string, data: any, source: string = 'api-golang-master'): Promise<void> {
     const topic = this.getSaleTopic(eventType)
     await this.publishEvent(topic, {
       eventType,
@@ -85,7 +85,7 @@ class EventProducer {
     })
   }
 
-  async publishInventoryEvent(eventType: string, data: any, source: string = 'api-golang-v2'): Promise<void> {
+  async publishInventoryEvent(eventType: string, data: any, source: string = 'api-golang-master'): Promise<void> {
     const topic = this.getInventoryTopic(eventType)
     await this.publishEvent(topic, {
       eventType,
@@ -94,7 +94,7 @@ class EventProducer {
     })
   }
 
-  async publishCustomerEvent(eventType: string, data: any, source: string = 'api-golang-v2'): Promise<void> {
+  async publishCustomerEvent(eventType: string, data: any, source: string = 'api-golang-master'): Promise<void> {
     const topic = this.getCustomerTopic(eventType)
     await this.publishEvent(topic, {
       eventType,

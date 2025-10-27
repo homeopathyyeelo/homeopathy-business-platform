@@ -32,7 +32,7 @@ var startTime = time.Now()
 func (h *HealthHandler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "ok",
-		"service": "api-golang-v2",
+		"service": "api-golang-master",
 		"port":    3005,
 		"version": "2.1.0",
 		"uptime":  time.Since(startTime).Seconds(),
@@ -44,7 +44,7 @@ func (h *HealthHandler) Health(c *gin.Context) {
 func (h *HealthHandler) SystemHealth(c *gin.Context) {
 	services := []ServiceHealth{
 		{
-			Service:   "api-golang-v2",
+			Service:   "api-golang-master",
 			Port:      3005,
 			Status:    "up",
 			URL:       "http://localhost:3005/health",

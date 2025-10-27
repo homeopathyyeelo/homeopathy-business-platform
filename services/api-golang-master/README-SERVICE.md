@@ -131,7 +131,7 @@ CORS is enabled for the Next.js frontend:
 
 View logs:
 ```bash
-tail -f /tmp/api-golang-v2.log
+tail -f /tmp/api-golang-master.log
 ```
 
 Check service status:
@@ -154,7 +154,7 @@ curl http://localhost:3005/api/erp/dashboard/stats | jq
 
 **Structure:**
 ```
-services/api-golang-v2/
+services/api-golang-master/
 ├── cmd/
 │   └── main.go              # Entry point
 ├── internal/
@@ -193,4 +193,4 @@ This service integrates with:
 - All endpoints currently return mock/placeholder data
 - Real database integration is in progress
 - Authentication/Authorization to be implemented
-- Service logs to `/tmp/api-golang-v2.log`
+- Service logs to `/tmp/api-golang-master.log`

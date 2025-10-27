@@ -79,4 +79,4 @@ github.com/gin-gonic/gin.(*RouterGroup).handle(0xc00005a280, {0xf7e7e8, 0x3}, {0
 github.com/gin-gonic/gin.(*RouterGroup).GET(...)
 	/home/yeelo-homeopathy/go/pkg/mod/github.com/gin-gonic/gin@v1.10.1/routergroup.go:117
 main.main()
-	/var/www/homeopathy-business-platform/services/api-golang-v2/cmd/main.go:159 +0x2a38
+	/var/www/homeopathy-business-platform/services/api-golang-master/cmd/main.go:159 +0x2a38

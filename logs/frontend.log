@@ -282,3 +282,1731 @@ Error fetching expiry data: TypeError: fetch failed
     port: 3005
   }
 }
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}
+Error fetching expiry data: TypeError: fetch failed
+    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
+  62 |
+  63 |       // Fetch expiry summary
+> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+     |                          ^
+  65 |       if (summaryRes.ok) {
+  66 |         const summaryData = await summaryRes.json();
+  67 |         if (summaryData.success && summaryData.data) { {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
+      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 3005
+  }
+}

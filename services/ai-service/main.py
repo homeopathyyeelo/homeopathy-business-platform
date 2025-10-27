@@ -465,7 +465,7 @@ def ai_fix(req: FixRequest):
     """Generate fix suggestions for a bug and persist to ai_fix_suggestions."""
     suggestion_id = str(uuid.uuid4())
     diff = """*** Begin Patch
-*** Update File: services/api-golang-v2/internal/handlers/example.go
+*** Update File: services/api-golang-master/internal/handlers/example.go
 - // TODO: nil check
 + if obj == nil { return }
 *** End Patch

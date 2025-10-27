@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS outbox_publisher_stats (
 
 -- Sample application logs for testing
 INSERT INTO application_logs (service_name, log_level, message, stack_trace, http_status) VALUES
-('api-golang-v2', 'ERROR', 'Database connection failed', 'sql: connection refused at line 45', 500),
+('api-golang-master', 'ERROR', 'Database connection failed', 'sql: connection refused at line 45', 500),
 ('api-core', 'ERROR', 'Null pointer exception in handler', 'panic: runtime error at handler.go:123', 500),
 ('ai-service', 'WARN', 'AI model timeout', NULL, NULL)
 ON CONFLICT DO NOTHING;

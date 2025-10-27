@@ -26,7 +26,7 @@ Health: http://localhost:3005/health
 ```
 
 **If Failed:**
-- Check logs: `cat logs/api-golang-v2.log`
+- Check logs: `cat logs/api-golang-master.log`
 - Database issue? See troubleshooting below
 
 ## 🧪 Test Everything Works
@@ -83,7 +83,7 @@ kill $(lsof -ti:3005)
 ### Issue: Go Dependencies Missing
 
 ```bash
-cd services/api-golang-v2
+cd services/api-golang-master
 go mod download
 go mod tidy
 cd ../..
@@ -101,10 +101,10 @@ cd ../..
 
 ```bash
 # Real-time logs
-tail -f logs/api-golang-v2.log
+tail -f logs/api-golang-master.log
 
 # Or view full log
-cat logs/api-golang-v2.log
+cat logs/api-golang-master.log
 ```
 
 ## 🛑 Stop Services
@@ -153,7 +153,7 @@ You should see:
 2. Live data in KPI cards (sales, purchases, etc.)
 3. Activity feed with real entries
 4. Microservices health widget at bottom showing:
-   - api-golang-v2 (port 3005) - 🟢 UP
+   - api-golang-master (port 3005) - 🟢 UP
 
 ## 📞 Quick Commands Reference
 
@@ -168,7 +168,7 @@ You should see:
 ./test-endpoints.sh
 
 # View logs
-tail -f logs/api-golang-v2.log
+tail -f logs/api-golang-master.log
 
 # Stop backend
 kill $(lsof -ti:3005)

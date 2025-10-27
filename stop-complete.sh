@@ -58,7 +58,7 @@ stop_service() {
 
 # Stop all services
 stop_service "frontend"
-stop_service "api-golang-v2"
+stop_service "api-golang-master"
 stop_service "api-gateway"
 stop_service "product-service"
 stop_service "inventory-service"
@@ -86,7 +86,7 @@ if command -v go &> /dev/null; then
     log "🛑 Stopping Go services..."
     
     # Kill Go processes
-    pkill -f "api-golang-v2" 2>/dev/null || true
+    pkill -f "api-golang-master" 2>/dev/null || true
     pkill -f "bin/api" 2>/dev/null || true
     pkill -f "product-service" 2>/dev/null || true
     pkill -f "inventory-service" 2>/dev/null || true

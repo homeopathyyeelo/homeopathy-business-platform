@@ -5,7 +5,7 @@
 
 SERVICE_NAME="API Golang V2"
 PORT=3005
-LOG_FILE="/tmp/api-golang-v2.log"
+LOG_FILE="/tmp/api-golang-master.log"
 
 echo "🚀 Starting $SERVICE_NAME..."
 

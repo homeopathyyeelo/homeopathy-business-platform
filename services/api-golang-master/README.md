@@ -156,7 +156,7 @@ This is the **next-generation** Homeopathy Business Platform built with **ONLY G
 ## 🏗️ Project Structure
 
 ```
-services/api-golang-v2/
+services/api-golang-master/
 ├── cmd/
 │   └── main.go              # Application entry point
 ├── internal/
@@ -206,7 +206,7 @@ services/api-golang-v2/
 
 1. **Install Dependencies**
    ```bash
-   cd services/api-golang-v2
+   cd services/api-golang-master
    go mod tidy
    ```
 

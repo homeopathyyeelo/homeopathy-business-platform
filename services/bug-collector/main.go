@@ -52,7 +52,7 @@ func main() {
 		select {
 		case <-ticker.C:
 			// placeholder: poll a local HTTP log endpoint or file
-			e := LogEvent{Service:"api-golang-v2", Level:"ERROR", Message:"panic: nil pointer", Timestamp: time.Now().Format(time.RFC3339), TraceID:"trace"}
+			e := LogEvent{Service:"api-golang-master", Level:"ERROR", Message:"panic: nil pointer", Timestamp: time.Now().Format(time.RFC3339), TraceID:"trace"}
 			key := dedupeKey(e)
 			if _, ok := seen[key]; ok { continue }
 			seen[key] = 1

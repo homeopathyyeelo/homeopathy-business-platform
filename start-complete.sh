@@ -271,21 +271,21 @@ start_service() {
 
 # Start Go services
 if [ "$GO_AVAILABLE" = true ]; then
-    # Start api-golang-v2 (Import/Export API - Port 3005)
-    if [ -d "services/api-golang-v2" ]; then
-        info "Starting api-golang-v2 (Import/Export API)..."
-        cd services/api-golang-v2
+    # Start api-golang-master (Import/Export API - Port 3005)
+    if [ -d "services/api-golang-master" ]; then
+        info "Starting api-golang-master (Import/Export API)..."
+        cd services/api-golang-master
         
         # Build if binary doesn't exist or source is newer
         if [ ! -f "bin/api" ] || [ "cmd/main.go" -nt "bin/api" ]; then
-            info "Building api-golang-v2..."
+            info "Building api-golang-master..."
             go build -o bin/api cmd/main.go
         fi
         
-        ./bin/api > ../../logs/api-golang-v2.log 2>&1 &
-        echo $! > ../../logs/api-golang-v2.pid
+        ./bin/api > ../../logs/api-golang-master.log 2>&1 &
+        echo $! > ../../logs/api-golang-master.pid
         cd - > /dev/null
-        log "✅ api-golang-v2 started (PID: $(cat logs/api-golang-v2.pid), Port: 3005)"
+        log "✅ api-golang-master started (PID: $(cat logs/api-golang-master.pid), Port: 3005)"
     fi
     
     start_service "product-service" "services/product-service" "go run main.go" "8001"
@@ -454,7 +454,7 @@ cat > logs/services.json << EOF
   },
   "microservices": {
     "api_golang_v2": {
-      "pid": $(cat logs/api-golang-v2.pid 2>/dev/null || echo "null"),
+      "pid": $(cat logs/api-golang-master.pid 2>/dev/null || echo "null"),
       "port": 3005,
       "description": "Import/Export API"
     },

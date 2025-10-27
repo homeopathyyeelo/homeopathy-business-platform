@@ -229,7 +229,7 @@ export default function BugsAdminPage() {
               <SelectContent>
                 <SelectItem value="all">All Services</SelectItem>
                 <SelectItem value="api-core">API Core</SelectItem>
-                <SelectItem value="api-golang-v2">API Golang v2</SelectItem>
+                <SelectItem value="api-golang-master">API Golang v2</SelectItem>
                 <SelectItem value="ai-service">AI Service</SelectItem>
                 <SelectItem value="campaign-service">Campaign Service</SelectItem>
               </SelectContent>

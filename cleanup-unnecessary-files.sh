@@ -131,7 +131,7 @@ log "Cleaning up old log files..."
 cd logs 2>/dev/null || mkdir -p logs
 
 # Remove old/duplicate logs
-rm -f api-golang-v2-test.log
+rm -f api-golang-master-test.log
 rm -f api-v2.log
 rm -f api-v2-minimal.log
 rm -f golang-api.log
