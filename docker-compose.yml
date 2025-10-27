@@ -215,16 +215,41 @@ services:
       timeout: 10s
       retries: 3
 
-  # Main API Service (Golang)
-  api-golang:
+  # User Service (Node.js/Express)
+  user-service:
     build:
-      context: ./services/api-golang
+      context: ./services/user-service
       dockerfile: Dockerfile
-    container_name: erp-api-golang
+    container_name: erp-user-service
     ports:
-      - "3004:3004"
+      - "8004:8004"
     environment:
-      PORT: 3004
+      PORT: 8004
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      JWT_SECRET: your-secret-key-change-in-production
+      JWT_ISSUER: urn:yeelo:auth
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Product Service (Node.js/Express)
+  product-service:
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+    container_name: erp-product-service
+    ports:
+      - "8002:8002"
+    environment:
+      PORT: 8002
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
       REDIS_URL: redis://:redis_password@redis:6379
       JWT_SECRET: your-secret-key-change-in-production
@@ -234,7 +259,62 @@ services:
       - postgres
       - redis
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3004/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Inventory Service (Node.js/Express)
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile
+    container_name: erp-inventory-service
+    ports:
+      - "8003:8003"
+    environment:
+      PORT: 8003
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: your-secret-key-change-in-production
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Order Service (Node.js/Express)
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: erp-order-service
+    ports:
+      - "8005:8005"
+    environment:
+      PORT: 8005
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      REDIS_URL: redis://:redis_password@redis:6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      JWT_SECRET: your-secret-key-change-in-production
+      STRIPE_SECRET_KEY: sk_test_...
+      RAZORPAY_KEY_ID: rzp_test_...
+      RAZORPAY_KEY_SECRET: ...
+    networks:
+      - erp-network
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -52,7 +52,7 @@ export default function DualPanelPOSPage() {
     setLoading(true)
     try {
       const userId = localStorage.getItem('user_id') || 'demo-user-id'
-      const response = await fetch('http://localhost:3004/api/pos/sessions', {
+      const response = await fetch('http://localhost:3005/api/pos/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: userId })
@@ -71,7 +71,7 @@ export default function DualPanelPOSPage() {
 
   const pauseSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3004/api/pos/sessions/${sessionId}/pause`, {
+      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}/pause`, {
         method: 'POST'
       })
       await loadUserSessions()
@@ -82,7 +82,7 @@ export default function DualPanelPOSPage() {
 
   const resumeSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3004/api/pos/sessions/${sessionId}/resume`, {
+      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}/resume`, {
         method: 'POST'
       })
       setActiveSession(sessionId)
@@ -94,7 +94,7 @@ export default function DualPanelPOSPage() {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3004/api/pos/sessions/${sessionId}`, {
+      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}`, {
         method: 'DELETE'
       })
       await loadUserSessions()

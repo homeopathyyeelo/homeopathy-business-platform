@@ -1,6 +1,6 @@
 /**
  * Next.js Middleware for Yeelo Homeopathy Platform
- * FIXED: Proper authentication enforcement
+ * FIXED: Proper authentication enforcement with API access
  */
 
 import { type NextRequest, NextResponse } from "next/server"
@@ -15,40 +15,29 @@ const PUBLIC_ROUTES = [
   "/api/auth/register",
   "/api/webhooks",
   "/api/health",
-  "/api/purchases",
-  "/api/sales",
-  "/api/inventory",
+  // Master data APIs that frontend needs
+  "/api/categories",
+  "/api/brands",
+  "/api/potencies",
+  "/api/forms",
+  "/api/units",
+  "/api/hsn-codes",
+  "/api/master",
+  "/api/masters",
+  // Essential APIs for frontend functionality
+  "/api/products",
   "/api/customers",
   "/api/vendors",
-  "/api/products",
+  "/api/inventory",
+  "/api/sales",
+  "/api/purchases",
   "/api/finance",
   "/api/hr",
   "/api/analytics",
   "/api/reports",
-  "/api/marketing",
-  "/api/orders",
-  "/api/receipts",
-  "/api/prescriptions",
-  "/api/workflows",
-  "/api/master",
-  "/api/masters",
-  "/api/branches",
-  "/api/brands",
-  "/api/categories",
   "/api/dashboard",
-  "/api/ai",
-  "/api/ai-content",
-  "/api/campaigns",
-  "/api/loyalty",
-  "/api/gst",
-  "/api/purchase-orders",
-  "/api/b2b",
-  "/api/customer-service",
-  "/api/delivery",
+  "/api/branches",
   "/api/erp",
-  "/api/schemes",
-  "/api/suppliers",
-  "/api/warehouse",
 ]
 
 // Protected routes requiring authentication
@@ -81,36 +70,36 @@ function isProtectedRoute(pathname: string): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   // Allow public routes
   if (isPublicRoute(pathname)) {
     return NextResponse.next()
   }
-  
+
   // Allow static files
   if (pathname.startsWith("/_next") || pathname.startsWith("/static")) {
     return NextResponse.next()
   }
-  
+
   // Check for auth token
-  const token = request.cookies.get("auth-token")?.value || 
+  const token = request.cookies.get("auth-token")?.value ||
                 request.headers.get("authorization")?.replace("Bearer ", "")
-  
+
   // If no token and accessing protected route, redirect to login
   if (!token && isProtectedRoute(pathname)) {
     const loginUrl = new URL("/login", request.url)
     loginUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(loginUrl)
   }
-  
-  // For API routes without token, return 401
+
+  // For API routes without token, return 401 (except public API routes)
   if (!token && pathname.startsWith("/api/") && !isPublicRoute(pathname)) {
     return NextResponse.json(
       { success: false, error: "Authentication required" },
       { status: 401 }
     )
   }
-  
+
   return NextResponse.next()
 }
 

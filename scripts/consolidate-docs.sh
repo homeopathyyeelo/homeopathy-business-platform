@@ -159,7 +159,7 @@ cd services/api-express && node src/index-complete.js
 ## 📞 Access Points
 
 **APIs:**
-- Golang API: http://localhost:3004 (✅ Ready)
+- Golang API: http://localhost:3005 (✅ Ready)
 - Express API: http://localhost:3003 (✅ Ready)
 - NestJS API: http://localhost:3001 (🔄 Fixing)
 - Fastify API: http://localhost:3002 (🔄 Building)

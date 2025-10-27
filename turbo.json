@@ -3,17 +3,77 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", "*.d.ts"]
+      "outputs": ["dist/**", "build/**", "*.d.ts", ".next/**", "generated/**"],
+      "env": ["DATABASE_URL", "REDIS_URL", "KAFKA_URL", "JWT_SECRET"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["DATABASE_URL", "REDIS_URL", "KAFKA_URL", "JWT_SECRET", "NODE_ENV"]
     },
     "lint": {
-      "outputs": []
+      "outputs": [],
+      "env": ["DATABASE_URL"]
     },
     "test": {
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "env": ["DATABASE_URL", "REDIS_URL"]
+    },
+    "test:e2e": {
+      "outputs": ["playwright-report/**"],
+      "env": ["DATABASE_URL", "REDIS_URL", "BASE_URL"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "clean": {
+      "outputs": []
+    },
+    "db:generate": {
+      "dependsOn": [],
+      "outputs": ["packages/shared-db/generated/**"],
+      "env": ["DATABASE_URL"]
+    },
+    "db:push": {
+      "dependsOn": ["db:generate"],
+      "outputs": [],
+      "env": ["DATABASE_URL"]
+    },
+    "db:migrate": {
+      "dependsOn": [],
+      "outputs": [],
+      "env": ["DATABASE_URL"]
+    },
+    "db:seed": {
+      "dependsOn": ["db:push"],
+      "outputs": [],
+      "env": ["DATABASE_URL"]
+    },
+    "docker:build": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "docker:up": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "docker:down": {
+      "dependsOn": [],
+      "outputs": []
+    },
+    "start": {
+      "dependsOn": ["docker:up", "db:push"],
+      "outputs": []
+    },
+    "stop": {
+      "dependsOn": [],
+      "outputs": []
     }
-  }
+  },
+  "globalDependencies": [
+    "package.json",
+    "tsconfig.json",
+    ".env*"
+  ]
 }

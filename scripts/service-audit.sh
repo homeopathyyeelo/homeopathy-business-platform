@@ -38,7 +38,7 @@ NC='\033[0m' # No Color
 # Service definitions
 declare -A services=(
     ["Next.js Frontend"]="http://localhost:3000"
-    ["API Golang v1 (Legacy)"]="http://localhost:3004/health"
+    ["API Golang v1 (Legacy)"]="http://localhost:3005/health"
     ["API Golang v2 (Primary)"]="http://localhost:3005/health"
     ["API Gateway"]="http://localhost:4000/health"
     ["Invoice Parser"]="http://localhost:8005/health"
@@ -108,7 +108,7 @@ else
     echo "Creating .env.local with recommended settings..."
     cat > .env.local << 'EOF'
 NEXT_PUBLIC_GOLANG_API_URL=http://localhost:3005
-NEXT_PUBLIC_API_LEGACY_URL=http://localhost:3004
+NEXT_PUBLIC_API_LEGACY_URL=http://localhost:3005
 NEXT_PUBLIC_PURCHASE_API_URL=http://localhost:8006
 NEXT_PUBLIC_INVOICE_API_URL=http://localhost:8005
 NEXT_PUBLIC_GATEWAY_URL=http://localhost:4000

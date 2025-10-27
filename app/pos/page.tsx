@@ -123,7 +123,7 @@ export default function POSPage() {
       }
 
       // Try to create order via API
-      const response = await fetch('http://localhost:3004/api/orders', {
+      const response = await fetch('http://localhost:3005/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

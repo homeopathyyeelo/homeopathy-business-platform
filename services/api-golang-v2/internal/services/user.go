@@ -2,7 +2,6 @@ package services
 
 import (
 "time"
-	"errors"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/models"
 )
@@ -36,31 +35,13 @@ func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
 }
 
 func (s *UserService) GetUserByUsername(username string) (*models.User, error) {
-	var user models.User
-	err := database.DB.First(&user, "username = ?", username).Error
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
+	// Note: Unified schema doesn't have username field, return email-based lookup
+	return s.GetUserByEmail(username)
 }
 
 func (s *UserService) GetUserByEmailOrUsername(email, username string) (*models.User, error) {
-	var user models.User
-	query := database.DB
-
-	if email != "" {
-		query = query.Where("email = ?", email)
-	} else if username != "" {
-		query = query.Where("username = ?", username)
-	} else {
-		return nil, errors.New("email or username required")
-	}
-
-	err := query.First(&user).Error
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
+	// Note: Unified schema uses email only, ignore username parameter
+	return s.GetUserByEmail(email)
 }
 
 func (s *UserService) UpdateUser(id string, updates map[string]interface{}) error {
@@ -78,8 +59,8 @@ func (s *UserService) ListUsers(page, limit int, search string) ([]models.User, 
 	query := database.DB.Model(&models.User{})
 
 	if search != "" {
-		query = query.Where("email ILIKE ? OR username ILIKE ? OR full_name ILIKE ?",
-			"%"+search+"%", "%"+search+"%", "%"+search+"%")
+		query = query.Where("email ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ? OR display_name ILIKE ?",
+			"%"+search+"%", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	// Get total count
@@ -102,5 +83,5 @@ func (s *UserService) DeactivateUser(id string) error {
 
 func (s *UserService) UpdateLastLogin(id string) error {
 	now := time.Now()
-	return s.UpdateUser(id, map[string]interface{}{"last_login": &now})
+	return s.UpdateUser(id, map[string]interface{}{"last_login_at": &now})
 }

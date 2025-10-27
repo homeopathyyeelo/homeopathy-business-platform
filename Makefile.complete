@@ -290,7 +290,7 @@ info: ## Show all service URLs
 	@echo "   Fastify Swagger:       http://localhost:3002/documentation"
 	@echo "   Express API:           http://localhost:3003"
 	@echo "   Express Swagger:       http://localhost:3003/api-docs"
-	@echo "   Golang API:            http://localhost:3004"
+	@echo "   Golang API:            http://localhost:3005"
 	@echo "   Python AI Service:     http://localhost:8001"
 	@echo "   Python Swagger:        http://localhost:8001/docs"
 	@echo ""

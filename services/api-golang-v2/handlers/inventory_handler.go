@@ -62,9 +62,6 @@ type StockTransfer struct {
 
 // GET /api/erp/inventory
 func (h *InventoryHandler) GetInventory(c *gin.Context) {
-	shopID := c.Query("shop_id")
-	productID := c.Query("product_id")
-	lowStock := c.Query("low_stock")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "20")
 
@@ -167,8 +164,6 @@ func (h *InventoryHandler) AdjustStock(c *gin.Context) {
 
 // GET /api/erp/inventory/adjustments
 func (h *InventoryHandler) GetAdjustments(c *gin.Context) {
-	shopID := c.Query("shop_id")
-	productID := c.Query("product_id")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "20")
 
@@ -274,8 +269,6 @@ func (h *InventoryHandler) TransferStock(c *gin.Context) {
 
 // GET /api/erp/inventory/transfers
 func (h *InventoryHandler) GetTransfers(c *gin.Context) {
-	shopID := c.Query("shop_id")
-	status := c.Query("status")
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "20")
 
@@ -329,7 +322,6 @@ func (h *InventoryHandler) GetTransfers(c *gin.Context) {
 
 // GET /api/erp/inventory/alerts
 func (h *InventoryHandler) GetAlerts(c *gin.Context) {
-	shopID := c.Query("shop_id")
 
 	alerts := gin.H{
 		"low_stock": []gin.H{

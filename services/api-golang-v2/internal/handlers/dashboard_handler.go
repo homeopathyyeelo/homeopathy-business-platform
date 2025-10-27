@@ -12,18 +12,18 @@ type DashboardHandler struct {
 }
 
 type DashboardStats struct {
-	TotalSales       float64 `json:"total_sales"`
-	TotalPurchases   float64 `json:"total_purchases"`
-	TotalCustomers   int     `json:"total_customers"`
-	TotalProducts    int     `json:"total_products"`
-	LowStockItems    int     `json:"low_stock_items"`
-	ExpiringItems    int     `json:"expiring_items"`
-	PendingOrders    int     `json:"pending_orders"`
-	TodayRevenue     float64 `json:"today_revenue"`
-	MonthRevenue     float64 `json:"month_revenue"`
-	YearRevenue      float64 `json:"year_revenue"`
-	ActiveUsers      int     `json:"active_users"`
-	PendingInvoices  int     `json:"pending_invoices"`
+	TotalSales      float64 `json:"total_sales"`
+	TotalPurchases  float64 `json:"total_purchases"`
+	TotalCustomers  int     `json:"total_customers"`
+	TotalProducts   int     `json:"total_products"`
+	LowStockItems   int     `json:"low_stock_items"`
+	ExpiringItems   int     `json:"expiring_items"`
+	PendingOrders   int     `json:"pending_orders"`
+	TodayRevenue    float64 `json:"today_revenue"`
+	MonthRevenue    float64 `json:"month_revenue"`
+	YearRevenue     float64 `json:"year_revenue"`
+	ActiveUsers     int     `json:"active_users"`
+	PendingInvoices int     `json:"pending_invoices"`
 }
 
 type ActivityLog struct {
@@ -101,7 +101,7 @@ func (h *DashboardHandler) GetSystemHealth(c *gin.Context) {
 		Name string
 		URL  string
 	}{
-		{"api-golang", "http://localhost:3004/health"},
+		{"api-golang", "http://localhost:3005/health"},
 		{"api-golang-v2", "http://localhost:3005/health"},
 		{"purchase-service", "http://localhost:8006/health"},
 		{"invoice-parser", "http://localhost:8005/health"},
@@ -154,8 +154,8 @@ func (h *DashboardHandler) GetStats(c *gin.Context) {
 // GET /api/erp/dashboard/activity
 func (h *DashboardHandler) GetActivity(c *gin.Context) {
 	_ = c.DefaultQuery("limit", "20") // TODO: implement pagination
-	_ = c.Query("module") // TODO: filter by module
-	_ = c.Query("user_id") // TODO: filter by user
+	_ = c.Query("module")             // TODO: filter by module
+	_ = c.Query("user_id")            // TODO: filter by user
 
 	// TODO: Query real data from audit_logs table
 	now := time.Now()
@@ -227,7 +227,7 @@ func (h *DashboardHandler) GetActivity(c *gin.Context) {
 // GET /api/erp/dashboard/recent-sales
 func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
 	_ = c.DefaultQuery("limit", "10") // TODO: implement pagination
-	_ = c.Query("shop_id") // TODO: filter by shop
+	_ = c.Query("shop_id")            // TODO: filter by shop
 
 	// TODO: Query real data from sales_invoices table
 	now := time.Now()
@@ -266,8 +266,8 @@ func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
 
 // GET /api/erp/dashboard/top-products
 func (h *DashboardHandler) GetTopProducts(c *gin.Context) {
-	_ = c.DefaultQuery("limit", "10") // TODO: implement pagination
-	_ = c.Query("shop_id") // TODO: filter by shop
+	_ = c.DefaultQuery("limit", "10")     // TODO: implement pagination
+	_ = c.Query("shop_id")                // TODO: filter by shop
 	_ = c.DefaultQuery("period", "month") // today, week, month, year
 
 	// TODO: Query real data with GROUP BY
@@ -361,26 +361,26 @@ func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
 // GET /api/erp/dashboard/expiry-summary
 func (h *DashboardHandler) GetExpirySummary(c *gin.Context) {
 	summary := gin.H{
-		"expired": 12,
-		"expiring7Days": 23,
+		"expired":        12,
+		"expiring7Days":  23,
 		"expiring30Days": 58,
 		"expiring90Days": 142,
 		"alerts": []gin.H{
 			{
 				"productName": "Arnica Montana 30C",
-				"batchNo": "BATCH-2024-001",
-				"expiryDate": time.Now().AddDate(0, 1, 15).Format("2006-01-02"),
-				"daysLeft": 45,
-				"quantity": 25,
-				"severity": "warning",
+				"batchNo":     "BATCH-2024-001",
+				"expiryDate":  time.Now().AddDate(0, 1, 15).Format("2006-01-02"),
+				"daysLeft":    45,
+				"quantity":    25,
+				"severity":    "warning",
 			},
 			{
 				"productName": "Calendula MT",
-				"batchNo": "BATCH-2024-045",
-				"expiryDate": time.Now().AddDate(0, 0, 20).Format("2006-01-02"),
-				"daysLeft": 20,
-				"quantity": 12,
-				"severity": "critical",
+				"batchNo":     "BATCH-2024-045",
+				"expiryDate":  time.Now().AddDate(0, 0, 20).Format("2006-01-02"),
+				"daysLeft":    20,
+				"quantity":    12,
+				"severity":    "critical",
 			},
 		},
 	}

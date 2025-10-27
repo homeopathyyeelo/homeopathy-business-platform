@@ -240,10 +240,10 @@ services:
       - yeelo-network
     command: npm run dev
 
-  # Golang API - Low Latency Services
+  # Golang API - Low Latency Services (api-golang-v2)
   api-golang:
     build:
-      context: ./services/api-golang
+      context: ./services/api-golang-v2
       dockerfile: Dockerfile
     container_name: yeelo-api-golang
     environment:
@@ -260,10 +260,10 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./services/api-golang:/app
+      - ./services/api-golang-v2:/app
     networks:
       - yeelo-network
-    command: go run cmd/server/main.go
+    command: go run cmd/main.go
 
   # Python AI Service - ML & AI Operations
   ai-service:
@@ -304,7 +304,7 @@ services:
       NEST_API_URL: http://api-nest:3001
       FASTIFY_API_URL: http://api-fastify:3002
       EXPRESS_API_URL: http://api-express:3003
-      GOLANG_API_URL: http://api-golang:3004
+      GOLANG_API_URL: http://api-golang:3005
       AI_SERVICE_URL: http://ai-service:8001
       REDIS_URL: redis://redis:6379
       PORT: 4000
@@ -331,7 +331,7 @@ services:
       NEST_API_URL: http://api-nest:3001
       FASTIFY_API_URL: http://api-fastify:3002
       EXPRESS_API_URL: http://api-express:3003
-      GOLANG_API_URL: http://api-golang:3004
+      GOLANG_API_URL: http://api-golang:3005
       AI_SERVICE_URL: http://ai-service:8001
       REDIS_URL: redis://redis:6379
       PORT: 5000

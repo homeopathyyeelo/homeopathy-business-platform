@@ -5,7 +5,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 // Service base URLs
 const GOLANG_V1_URL = process.env.NEXT_PUBLIC_GOLANG_V1_URL || 'http://localhost:3005'
-const GOLANG_V2_URL = process.env.NEXT_PUBLIC_GOLANG_V2_URL || 'http://localhost:3004'
+const GOLANG_V2_URL = process.env.NEXT_PUBLIC_GOLANG_V2_URL || 'http://localhost:3005'
 const NEST_URL = process.env.NEXT_PUBLIC_NEST_URL || 'http://localhost:3001'
 const FASTIFY_URL = process.env.NEXT_PUBLIC_FASTIFY_URL || 'http://localhost:3002'
 const PYTHON_URL = process.env.NEXT_PUBLIC_PYTHON_URL || 'http://localhost:8001'

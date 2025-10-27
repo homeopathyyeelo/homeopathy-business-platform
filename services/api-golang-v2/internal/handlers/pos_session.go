@@ -28,8 +28,8 @@ func NewPOSSessionHandler() *POSSessionHandler {
 // @Router /api/pos/sessions [post]
 func (h *POSSessionHandler) CreateSession(c *gin.Context) {
 	var req struct {
-		UserID   string `json:"user_id" binding:"required"`
-		BranchID string `json:"branch_id"`
+		EmployeeID string `json:"employee_id" binding:"required"`
+		ShopID     string `json:"shop_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -37,22 +37,19 @@ func (h *POSSessionHandler) CreateSession(c *gin.Context) {
 		return
 	}
 
-	userID, err := uuid.Parse(req.UserID)
+	employeeID, err := uuid.Parse(req.EmployeeID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid employee_id"})
 		return
 	}
 
-	var branchID uuid.UUID
-	if req.BranchID != "" {
-		branchID, err = uuid.Parse(req.BranchID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid branch_id"})
-			return
-		}
+	shopID, err := uuid.Parse(req.ShopID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid shop_id"})
+		return
 	}
 
-	session, err := h.service.CreateSession(c.Request.Context(), userID, branchID)
+	session, err := h.service.CreateSession(c.Request.Context(), employeeID, shopID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -88,17 +85,17 @@ func (h *POSSessionHandler) GetSession(c *gin.Context) {
 // @Summary Get user sessions
 // @Tags POS
 // @Produce json
-// @Param user_id query string true "User ID"
+// @Param employee_id query string true "Employee ID"
 // @Success 200 {array} models.POSSession
 // @Router /api/pos/sessions [get]
 func (h *POSSessionHandler) GetUserSessions(c *gin.Context) {
-	userID, err := uuid.Parse(c.Query("user_id"))
+	employeeID, err := uuid.Parse(c.Query("employee_id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user_id"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid employee_id"})
 		return
 	}
 
-	sessions, err := h.service.GetUserSessions(c.Request.Context(), userID)
+	sessions, err := h.service.GetUserSessions(c.Request.Context(), employeeID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -237,7 +234,7 @@ func (h *POSSessionHandler) DeleteSession(c *gin.Context) {
 // @Tags POS
 // @Produce json
 // @Param id path string true "Session ID"
-// @Success 200 {array} models.POSSessionItem
+// @Success 200 {object} object
 // @Router /api/pos/sessions/{id}/items [get]
 func (h *POSSessionHandler) GetSessionItems(c *gin.Context) {
 	sessionID, err := uuid.Parse(c.Param("id"))

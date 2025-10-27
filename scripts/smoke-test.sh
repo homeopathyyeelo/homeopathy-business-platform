@@ -67,7 +67,7 @@ test_port "Kafka" "localhost" "9092"
 echo ""
 
 echo -e "${YELLOW}━━━ Backend APIs ━━━${NC}"
-test_endpoint "Golang API" "http://localhost:3004/health"
+test_endpoint "Golang API" "http://localhost:3005/health"
 test_endpoint "Express API" "http://localhost:3003/health"
 test_endpoint "NestJS API" "http://localhost:3001/health"
 test_endpoint "Fastify API" "http://localhost:3002/health"
@@ -81,7 +81,7 @@ echo ""
 
 echo -e "${YELLOW}━━━ Authentication Test ━━━${NC}"
 echo -n "Testing Auth Login... "
-if response=$(curl -fsS -X POST "http://localhost:3004/api/auth/login" \
+if response=$(curl -fsS -X POST "http://localhost:3005/api/auth/login" \
     -H "Content-Type: application/json" \
     -d '{"email":"admin@yeelo.com","password":"admin123"}' 2>/dev/null); then
     
@@ -100,12 +100,12 @@ fi
 echo ""
 
 echo -e "${YELLOW}━━━ API Endpoints Test ━━━${NC}"
-test_endpoint "Get Products" "http://localhost:3004/api/products"
-test_endpoint "Get Customers (Auth)" "http://localhost:3004/api/customers" 401
+test_endpoint "Get Products" "http://localhost:3005/api/products"
+test_endpoint "Get Customers (Auth)" "http://localhost:3005/api/customers" 401
 echo ""
 
 echo -e "${YELLOW}━━━ Swagger Documentation ━━━${NC}"
-test_endpoint "Golang Swagger" "http://localhost:3004/swagger"
+test_endpoint "Golang Swagger" "http://localhost:3005/swagger"
 test_endpoint "Express Swagger" "http://localhost:3003/api-docs"
 test_endpoint "NestJS Swagger" "http://localhost:3001/api"
 test_endpoint "Python AI Swagger" "http://localhost:8001/docs"

@@ -8,11 +8,12 @@ const nextConfig = {
       },
     ];
   },
+  // Enable proper error reporting
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     unoptimized: true,

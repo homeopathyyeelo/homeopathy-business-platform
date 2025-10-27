@@ -34,7 +34,7 @@
 [GIN-debug] POST   /api/inventory/adjust     --> main.handleAdjustInventory (5 handlers)
 [GIN-debug] GET    /api/inventory/low-stock  --> main.handleGetLowStock (5 handlers)
 2025/10/14 23:01:57 🚀 Golang API server starting on port 3004
-2025/10/14 23:01:57 📚 Swagger UI available at http://localhost:3004/swagger
+2025/10/14 23:01:57 📚 Swagger UI available at http://localhost:3005/swagger
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :3004

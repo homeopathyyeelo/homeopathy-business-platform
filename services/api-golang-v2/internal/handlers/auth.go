@@ -22,15 +22,14 @@ func NewAuthHandler() *AuthHandler {
 }
 
 type RegisterRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=6"`
-	Username string `json:"username" binding:"required"`
-	FullName string `json:"fullName" binding:"required"`
+	Email     string `json:"email" binding:"required,email"`
+	Password  string `json:"password" binding:"required,min=6"`
+	FirstName string `json:"firstName" binding:"required"`
+	LastName  string `json:"lastName" binding:"required"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Username string `json:"username"`
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -50,12 +49,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	user := &models.User{
-		Email:     req.Email,
-		Username:  req.Username,
-		FullName:  req.FullName,
-		Password:  string(hashedPassword),
-		IsActive:  true,
-		CreatedAt: time.Now(),
+		Email:        req.Email,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		DisplayName:  req.FirstName + " " + req.LastName,
+		PasswordHash: string(hashedPassword),
+		IsActive:     true,
+		CreatedAt:    time.Now(),
 	}
 
 	if err := h.userService.CreateUser(user); err != nil {
@@ -74,7 +74,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := h.userService.GetUserByEmailOrUsername(req.Email, req.Username)
+	user, err := h.userService.GetUserByEmail(req.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
@@ -85,7 +85,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
@@ -100,21 +100,22 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":       user.ID,
-			"email":    user.Email,
-			"username": user.Username,
-			"fullName": user.FullName,
+			"id":          user.ID,
+			"email":       user.Email,
+			"displayName": user.DisplayName,
+			"firstName":   user.FirstName,
+			"lastName":    user.LastName,
 		},
 	})
 }
 
 func (h *AuthHandler) generateToken(user *models.User) (string, error) {
 	claims := &jwt.MapClaims{
-		"user_id":  user.ID,
-		"email":    user.Email,
-		"username": user.Username,
-		"exp":      time.Now().Add(24 * time.Hour).Unix(),
-		"iat":      time.Now().Unix(),
+		"user_id":     user.ID,
+		"email":       user.Email,
+		"displayName": user.DisplayName,
+		"exp":         time.Now().Add(24 * time.Hour).Unix(),
+		"iat":         time.Now().Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -150,10 +151,11 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":       user.ID,
-		"email":    user.Email,
-		"username": user.Username,
-		"fullName": user.FullName,
+		"id":          user.ID,
+		"email":       user.Email,
+		"displayName": user.DisplayName,
+		"firstName":   user.FirstName,
+		"lastName":    user.LastName,
 	})
 }
 

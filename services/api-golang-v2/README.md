@@ -228,8 +228,8 @@ services/api-golang-v2/
    ```
 
 5. **API Documentation**
-   - Swagger UI: http://localhost:3004/swagger/index.html
-   - Health Check: http://localhost:3004/health
+   - Swagger UI: http://localhost:3005/swagger/index.html
+   - Health Check: http://localhost:3005/health
 
 ## 📡 API Endpoints
 

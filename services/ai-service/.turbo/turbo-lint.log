@@ -1,0 +1,4 @@
+
+> @yeelo/ai-service@1.0.0 lint
+> python3 -m flake8 src/
+

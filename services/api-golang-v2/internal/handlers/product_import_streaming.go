@@ -17,6 +17,15 @@ import (
 	"github.com/yeelo/homeopathy-erp/internal/models"
 )
 
+// MasterRecord represents a master record
+type MasterRecord struct {
+	ID        string `json:"id" gorm:"primaryKey"`
+	Code      string `json:"code"`
+	Name      string `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 // StreamingImportHandler handles real-time streaming imports
 type StreamingImportHandler struct {
 	db *gorm.DB
@@ -276,16 +285,37 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 	}
 }
 
-// MasterRecord represents a master data record
-type MasterRecord struct {
-	ID        string    `gorm:"primaryKey;type:uuid"`
-	Name      string    `gorm:"size:255;uniqueIndex"`
-	Code      string    `gorm:"size:64;uniqueIndex"`
-	CreatedAt time.Time
+// ProductImportTemp represents a product import record (temporary struct for parsing)
+type ProductImportTemp struct {
+	SKU          string
+	Name         string
+	Category     string
+	Type         string
+	Brand        string
+	Potency      string
+	Form         string
+	PackSize     string
+	UOM          string
+	CostPrice    float64
+	SellingPrice float64
+	MRP          float64
+	TaxPercent   float64
+	HSNCode      string
+	Manufacturer string
+	Description  string
+	Barcode      string
+	ReorderLevel int
+	MinStock     int
+	MaxStock     int
+	CurrentStock int
+	IsActive     bool
+	Tags         string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
-// ensureMasters auto-creates master data if not exists and returns IDs
-func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.ProductImport, rowNum int) error {
+// ensureMasters auto-creates master data if not exists using unified entities
+func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *ProductImportTemp, rowNum int) error {
 	// Start transaction for atomic master creation
 	tx := h.db.Begin()
 	defer func() {
@@ -296,20 +326,22 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.P
 
 	// Auto-create Category and get ID
 	if product.Category != "" {
-		var master MasterRecord
-		err := tx.Table("categories").Where("name = ?", product.Category).First(&master).Error
-		
+		var category models.Category
+		err := tx.Where("name = ?", product.Category).First(&category).Error
+
 		if err == gorm.ErrRecordNotFound {
 			// Create new category
-			master.ID = uuid.New().String()
-			master.Name = product.Category
-			master.CreatedAt = time.Now()
-			
-			if err := tx.Table("categories").Create(&master).Error; err != nil {
+			category.ID = uuid.New().String()
+			category.Name = product.Category
+			category.Code = strings.ToUpper(strings.ReplaceAll(product.Category, " ", "_"))
+			category.IsActive = true
+			category.CreatedAt = time.Now()
+
+			if err := tx.Create(&category).Error; err != nil {
 				tx.Rollback()
 				return fmt.Errorf("failed to create category: %v", err)
 			}
-			
+
 			h.sendProgress(c, ProgressMessage{
 				Type:      "master",
 				Message:   fmt.Sprintf("  🏷️  Created category: %s", product.Category),
@@ -320,24 +352,25 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.P
 			tx.Rollback()
 			return fmt.Errorf("failed to query category: %v", err)
 		}
-		// Note: Category ID would be used here if products table has category_id FK
 	}
 
 	// Auto-create Brand and get ID
 	if product.Brand != "" {
-		var master MasterRecord
-		err := tx.Table("brands").Where("name = ?", product.Brand).First(&master).Error
-		
+		var brand models.Brand
+		err := tx.Where("name = ?", product.Brand).First(&brand).Error
+
 		if err == gorm.ErrRecordNotFound {
-			master.ID = uuid.New().String()
-			master.Name = product.Brand
-			master.CreatedAt = time.Now()
-			
-			if err := tx.Table("brands").Create(&master).Error; err != nil {
+			brand.ID = uuid.New().String()
+			brand.Name = product.Brand
+			brand.Code = strings.ToUpper(strings.ReplaceAll(product.Brand, " ", "_"))
+			brand.IsActive = true
+			brand.CreatedAt = time.Now()
+
+			if err := tx.Create(&brand).Error; err != nil {
 				tx.Rollback()
 				return fmt.Errorf("failed to create brand: %v", err)
 			}
-			
+
 			h.sendProgress(c, ProgressMessage{
 				Type:      "master",
 				Message:   fmt.Sprintf("  🏢 Created brand: %s", product.Brand),
@@ -352,20 +385,22 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.P
 
 	// Auto-create Potency and get ID
 	if product.Potency != "" {
-		var master MasterRecord
-		err := tx.Table("potencies").Where("code = ?", product.Potency).First(&master).Error
-		
+		var potency models.Potency
+		err := tx.Where("code = ? OR name = ?", product.Potency, product.Potency).First(&potency).Error
+
 		if err == gorm.ErrRecordNotFound {
-			master.ID = uuid.New().String()
-			master.Code = product.Potency
-			master.Name = product.Potency
-			master.CreatedAt = time.Now()
-			
-			if err := tx.Table("potencies").Create(&master).Error; err != nil {
+			potency.ID = uuid.New().String()
+			potency.Name = product.Potency
+			potency.Code = product.Potency
+			potency.PotencyType = "CENTESIMAL" // Default type
+			potency.IsActive = true
+			potency.CreatedAt = time.Now()
+
+			if err := tx.Create(&potency).Error; err != nil {
 				tx.Rollback()
 				return fmt.Errorf("failed to create potency: %v", err)
 			}
-			
+
 			h.sendProgress(c, ProgressMessage{
 				Type:      "master",
 				Message:   fmt.Sprintf("  💊 Created potency: %s", product.Potency),
@@ -380,19 +415,22 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.P
 
 	// Auto-create Form and get ID
 	if product.Form != "" {
-		var master MasterRecord
-		err := tx.Table("forms").Where("name = ?", product.Form).First(&master).Error
-		
+		var form models.Form
+		err := tx.Where("name = ?", product.Form).First(&form).Error
+
 		if err == gorm.ErrRecordNotFound {
-			master.ID = uuid.New().String()
-			master.Name = product.Form
-			master.CreatedAt = time.Now()
-			
-			if err := tx.Table("forms").Create(&master).Error; err != nil {
+			form.ID = uuid.New().String()
+			form.Name = product.Form
+			form.Code = strings.ToUpper(strings.ReplaceAll(product.Form, " ", "_"))
+			form.FormType = "LIQUID" // Default type
+			form.IsActive = true
+			form.CreatedAt = time.Now()
+
+			if err := tx.Create(&form).Error; err != nil {
 				tx.Rollback()
 				return fmt.Errorf("failed to create form: %v", err)
 			}
-			
+
 			h.sendProgress(c, ProgressMessage{
 				Type:      "master",
 				Message:   fmt.Sprintf("  📦 Created form: %s", product.Form),
@@ -413,8 +451,8 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *models.P
 	return nil
 }
 
-// parseRow converts a row to ProductImport
-func (h *StreamingImportHandler) parseRow(row []string, colIdx map[string]int, lineNum int) (models.ProductImport, string) {
+// parseRow converts a row to ProductImportTemp
+func (h *StreamingImportHandler) parseRow(row []string, colIdx map[string]int, lineNum int) (ProductImportTemp, string) {
 	getValue := func(col string) string {
 		if idx, ok := colIdx[strings.ToLower(col)]; ok && idx < len(row) {
 			return strings.TrimSpace(row[idx])
@@ -447,13 +485,13 @@ func (h *StreamingImportHandler) parseRow(row []string, colIdx map[string]int, l
 	name := getValue("name")
 
 	if sku == "" {
-		return models.ProductImport{}, "SKU is required"
+		return ProductImportTemp{}, "SKU is required"
 	}
 	if name == "" {
-		return models.ProductImport{}, "Name is required"
+		return ProductImportTemp{}, "Name is required"
 	}
 
-	product := models.ProductImport{
+	product := ProductImportTemp{
 		SKU:          sku,
 		Name:         name,
 		Category:     getValue("category"),
@@ -496,8 +534,11 @@ func (h *StreamingImportHandler) checkDBConnection() error {
 	return nil
 }
 
-// upsertProduct inserts or updates a product with transaction safety
-func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bool, error) {
+// upsertProduct inserts or updates a product using the unified schema
+func (h *StreamingImportHandler) upsertProduct(productTemp ProductImportTemp) (bool, error) {
+	// Convert ProductImportTemp to unified Product entity
+	product := h.convertToProduct(productTemp)
+
 	// Start transaction
 	tx := h.db.Begin()
 	defer func() {
@@ -506,9 +547,15 @@ func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bo
 		}
 	}()
 
-	var existing models.ProductImport
+	// Look up master data IDs
+	if err := h.lookupMasterIDs(tx, &product, productTemp); err != nil {
+		tx.Rollback()
+		return false, fmt.Errorf("failed to lookup master IDs: %v", err)
+	}
+
+	var existing models.Product
 	result := tx.Where("sku = ?", product.SKU).First(&existing)
-	
+
 	now := time.Now()
 	product.UpdatedAt = now
 
@@ -522,7 +569,7 @@ func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bo
 		if product.ID == "" {
 			product.ID = uuid.New().String()
 		}
-		
+
 		if err = tx.Create(&product).Error; err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("insert failed: %v", err)
@@ -534,7 +581,7 @@ func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bo
 		return false, fmt.Errorf("query failed: %v", result.Error)
 	} else {
 		// Update existing
-		if err = tx.Model(&models.ProductImport{}).Where("sku = ?", product.SKU).Updates(product).Error; err != nil {
+		if err = tx.Model(&models.Product{}).Where("sku = ?", product.SKU).Updates(&product).Error; err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("update failed: %v", err)
 		}
@@ -547,6 +594,88 @@ func (h *StreamingImportHandler) upsertProduct(product models.ProductImport) (bo
 	}
 
 	return isNew, nil
+}
+
+// convertToProduct converts ProductImportTemp to unified Product entity
+func (h *StreamingImportHandler) convertToProduct(temp ProductImportTemp) models.Product {
+	return models.Product{
+		SKU:                    temp.SKU,
+		Name:                   temp.Name,
+		CategoryID:             nil, // Will be set by lookupMasterIDs
+		BrandID:                nil, // Will be set by lookupMasterIDs
+		PotencyID:              nil, // Will be set by lookupMasterIDs
+		FormID:                 nil, // Will be set by lookupMasterIDs
+		HSNCodeID:              nil, // Will be set by lookupMasterIDs
+		UnitID:                 nil, // Will be set by lookupMasterIDs
+		CostPrice:              temp.CostPrice,
+		SellingPrice:           temp.SellingPrice,
+		MRP:                    temp.MRP,
+		TaxRate:                temp.TaxPercent,
+		PackSize:               temp.PackSize,
+		ReorderLevel:           temp.ReorderLevel,
+		MinStock:               temp.MinStock,
+		MaxStock:               temp.MaxStock,
+		CurrentStock:           float64(temp.CurrentStock),
+		Barcode:                temp.Barcode,
+		Description:            temp.Description,
+		Manufacturer:           temp.Manufacturer,
+		IsPrescriptionRequired: false,
+		IsActive:               temp.IsActive,
+		Tags:                   temp.Tags,
+	}
+}
+
+// lookupMasterIDs looks up and sets master data IDs for the product
+func (h *StreamingImportHandler) lookupMasterIDs(tx *gorm.DB, product *models.Product, temp ProductImportTemp) error {
+	// Lookup Category ID
+	if product.CategoryID == nil && temp.Category != "" {
+		var category models.Category
+		if err := tx.Where("name = ?", temp.Category).First(&category).Error; err == nil {
+			product.CategoryID = &category.ID
+		}
+	}
+
+	// Lookup Brand ID
+	if product.BrandID == nil && temp.Brand != "" {
+		var brand models.Brand
+		if err := tx.Where("name = ?", temp.Brand).First(&brand).Error; err == nil {
+			product.BrandID = &brand.ID
+		}
+	}
+
+	// Lookup Potency ID
+	if product.PotencyID == nil && temp.Potency != "" {
+		var potency models.Potency
+		if err := tx.Where("code = ? OR name = ?", temp.Potency, temp.Potency).First(&potency).Error; err == nil {
+			product.PotencyID = &potency.ID
+		}
+	}
+
+	// Lookup Form ID
+	if product.FormID == nil && temp.Form != "" {
+		var form models.Form
+		if err := tx.Where("name = ?", temp.Form).First(&form).Error; err == nil {
+			product.FormID = &form.ID
+		}
+	}
+
+	// Lookup Unit ID (default to first unit if not specified)
+	if product.UnitID == nil {
+		var unit models.Unit
+		if err := tx.First(&unit).Error; err == nil {
+			product.UnitID = &unit.ID
+		}
+	}
+
+	// Lookup HSN Code ID
+	if product.HSNCodeID == nil && temp.HSNCode != "" {
+		var hsnCode models.HSNCode
+		if err := tx.Where("code = ?", temp.HSNCode).First(&hsnCode).Error; err == nil {
+			product.HSNCodeID = &hsnCode.ID
+		}
+	}
+
+	return nil
 }
 
 // sendProgress sends a progress message via SSE

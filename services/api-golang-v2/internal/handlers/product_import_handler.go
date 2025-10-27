@@ -75,14 +75,14 @@ func (h *ProductImportHandler) BulkImport(c *gin.Context) {
 		successRate = float64(totalProcessed) / float64(len(rows)-1) * 100
 	}
 
-	result := models.ImportResult{
-		TotalRows:   len(rows) - 1, // exclude header
-		Inserted:    inserted,
-		Updated:     updated,
-		Skipped:     skipped,
-		Errors:      allErrors,
-		ProcessTime: time.Since(startTime).String(),
-		SuccessRate: successRate,
+	result := map[string]interface{}{
+		"totalRows":   len(rows) - 1, // exclude header
+		"inserted":    inserted,
+		"updated":     updated,
+		"skipped":     skipped,
+		"errors":      allErrors,
+		"processTime": time.Since(startTime).String(),
+		"successRate": successRate,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -178,13 +178,13 @@ func (h *ProductImportHandler) parseExcel(path string) ([][]string, error) {
 	return rows, nil
 }
 
-// mapAndValidate converts rows to ProductImport structs with validation
-func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.ProductImport, []string) {
+// mapAndValidate converts rows to Product structs with validation
+func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.Product, []string) {
 	if len(rows) < 2 {
 		return nil, []string{"File must have at least a header row and one data row"}
 	}
 
-	var products []models.ProductImport
+	var products []models.Product
 	var errors []string
 
 	// Build column index map (case-insensitive)
@@ -253,28 +253,20 @@ func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.Product
 			continue
 		}
 
-		product := models.ProductImport{
+		product := models.Product{
 			SKU:          sku,
 			Name:         name,
-			Category:     getValue(row, "category"),
-			Type:         getValue(row, "type"),
-			Brand:        getValue(row, "brand"),
-			Potency:      getValue(row, "potency"),
-			Form:         getValue(row, "form"),
-			PackSize:     getValue(row, "pack_size"),
-			UOM:          getValue(row, "uom"),
 			CostPrice:    parseFloat(getValue(row, "cost_price")),
 			SellingPrice: parseFloat(getValue(row, "selling_price")),
 			MRP:          parseFloat(getValue(row, "mrp")),
-			TaxPercent:   parseFloat(getValue(row, "tax_percent")),
-			HSNCode:      getValue(row, "hsn_code"),
-			Manufacturer: getValue(row, "manufacturer"),
-			Description:  getValue(row, "description"),
+			PackSize:     getValue(row, "pack_size"),
 			Barcode:      getValue(row, "barcode"),
+			Description:  getValue(row, "description"),
+			Manufacturer: getValue(row, "manufacturer"),
 			ReorderLevel: parseInt(getValue(row, "reorder_level")),
 			MinStock:     parseInt(getValue(row, "min_stock")),
 			MaxStock:     parseInt(getValue(row, "max_stock")),
-			CurrentStock: parseInt(getValue(row, "current_stock")),
+			CurrentStock: parseFloat(getValue(row, "current_stock")),
 			IsActive:     parseBool(getValue(row, "is_active")),
 			Tags:         getValue(row, "tags"),
 		}
@@ -286,7 +278,7 @@ func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.Product
 }
 
 // upsertProducts inserts or updates products in database
-func (h *ProductImportHandler) upsertProducts(products []models.ProductImport) (inserted int, updated int, skipped int, errors []string) {
+func (h *ProductImportHandler) upsertProducts(products []models.Product) (inserted int, updated int, skipped int, errors []string) {
 	if len(products) == 0 {
 		return 0, 0, 0, nil
 	}
@@ -298,7 +290,7 @@ func (h *ProductImportHandler) upsertProducts(products []models.ProductImport) (
 		skus[i] = p.SKU
 	}
 
-	err := h.db.Model(&models.ProductImport{}).
+	err := h.db.Model(&models.Product{}).
 		Where("sku IN ?", skus).
 		Pluck("sku", &existingSKUs).Error
 	if err != nil {
@@ -318,7 +310,7 @@ func (h *ProductImportHandler) upsertProducts(products []models.ProductImport) (
 		if existingSKUMap[product.SKU] {
 			// Update existing
 			product.UpdatedAt = now
-			result := h.db.Model(&models.ProductImport{}).
+			result := h.db.Model(&models.Product{}).
 				Where("sku = ?", product.SKU).
 				Updates(product)
 			
@@ -352,8 +344,8 @@ func (h *ProductImportHandler) upsertProducts(products []models.ProductImport) (
 
 // GET /api/erp/products/export - Export products to CSV
 func (h *ProductImportHandler) ExportProducts(c *gin.Context) {
-	var products []models.ProductImport
-	
+	var products []models.Product
+
 	if err := h.db.Find(&products).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products", "success": false})
 		return
@@ -362,19 +354,18 @@ func (h *ProductImportHandler) ExportProducts(c *gin.Context) {
 	// Create CSV content
 	var csvData [][]string
 	csvData = append(csvData, []string{
-		"SKU", "Name", "Category", "Type", "Brand", "Potency", "Form", "Pack Size", "UOM",
-		"Cost Price", "Selling Price", "MRP", "Tax Percent", "HSN Code", "Manufacturer",
-		"Description", "Barcode", "Reorder Level", "Min Stock", "Max Stock", "Current Stock",
+		"SKU", "Name", "Cost Price", "Selling Price", "MRP", "Pack Size", "Barcode",
+		"Description", "Manufacturer", "Reorder Level", "Min Stock", "Max Stock", "Current Stock",
 		"Is Active", "Tags",
 	})
 
 	for _, p := range products {
 		csvData = append(csvData, []string{
-			p.SKU, p.Name, p.Category, p.Type, p.Brand, p.Potency, p.Form, p.PackSize, p.UOM,
+			p.SKU, p.Name,
 			fmt.Sprintf("%.2f", p.CostPrice), fmt.Sprintf("%.2f", p.SellingPrice), fmt.Sprintf("%.2f", p.MRP),
-			fmt.Sprintf("%.2f", p.TaxPercent), p.HSNCode, p.Manufacturer, p.Description, p.Barcode,
+			p.PackSize, p.Barcode, p.Description, p.Manufacturer,
 			fmt.Sprintf("%d", p.ReorderLevel), fmt.Sprintf("%d", p.MinStock), fmt.Sprintf("%d", p.MaxStock),
-			fmt.Sprintf("%d", p.CurrentStock), fmt.Sprintf("%t", p.IsActive), p.Tags,
+			fmt.Sprintf("%.2f", p.CurrentStock), fmt.Sprintf("%t", p.IsActive), p.Tags,
 		})
 	}
 

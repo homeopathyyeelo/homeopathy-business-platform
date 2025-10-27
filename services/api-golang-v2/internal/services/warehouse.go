@@ -16,8 +16,8 @@ func NewWarehouseService() *WarehouseService {
 	}
 }
 
-func (s *WarehouseService) GetWarehouseByID(id string) (*models.Warehouse, error) {
-	var warehouse models.Warehouse
-	err := s.db.Where("id = ?", id).First(&warehouse).Error
-	return &warehouse, err
+func (s *WarehouseService) GetWarehouseByID(id string) (*models.Rack, error) {
+	var rack models.Rack
+	err := s.db.Where("id = ?", id).First(&rack).Error
+	return &rack, err
 }

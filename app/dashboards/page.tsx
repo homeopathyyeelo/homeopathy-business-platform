@@ -15,7 +15,7 @@ export default function DashboardPage() {
     { name: 'Auth Service', url: 'http://localhost:3001/health', status: 'checking' },
     { name: 'NestJS API', url: 'http://localhost:3002/health', status: 'checking' },
     { name: 'Express API', url: 'http://localhost:3003/health', status: 'checking' },
-    { name: 'Golang API', url: 'http://localhost:3004/health', status: 'checking' },
+    { name: 'Golang API', url: 'http://localhost:3005/health', status: 'checking' },
     { name: 'AI Service', url: 'http://localhost:8001/health', status: 'checking' },
   ])
 

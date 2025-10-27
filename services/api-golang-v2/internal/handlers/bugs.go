@@ -12,18 +12,18 @@ type BugHandler struct{ Service *services.BugService }
 
 func NewBugHandler(s *services.BugService) *BugHandler { return &BugHandler{Service: s} }
 
-// GET /api/v1/system/bugs?severity=&status=&service=&page=&size=
+// GET /api/v1/system/bugs?severity=&status=&environment=&page=&size=
 func (h *BugHandler) ListBugs(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	size, _ := strconv.Atoi(c.DefaultQuery("size", "20"))
 	if size <= 0 { size = 20 }
 	if page <= 0 { page = 1 }
 	f := services.BugFilter{
-		Severity: c.Query("severity"),
-		Status:   c.Query("status"),
-		Service:  c.Query("service"),
-		Limit:    size,
-		Offset:   (page-1)*size,
+		Severity:    c.Query("severity"),
+		Status:      c.Query("status"),
+		Environment: c.Query("environment"),
+		Limit:       size,
+		Offset:      (page-1)*size,
 	}
 	rows, total, err := h.Service.ListBugs(f)
 	if err != nil {

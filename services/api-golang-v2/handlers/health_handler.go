@@ -12,7 +12,7 @@ type HealthHandler struct{}
 type ServiceHealth struct {
 	Service   string    `json:"service"`
 	Port      int       `json:"port"`
-	Status    string    `json:"status"` // up, down, degraded
+	Status    string    `json:"status"`  // up, down, degraded
 	Latency   int64     `json:"latency"` // milliseconds
 	LastCheck time.Time `json:"last_check"`
 	URL       string    `json:"url"`
@@ -56,7 +56,7 @@ func (h *HealthHandler) SystemHealth(c *gin.Context) {
 			Service:   "api-golang-v1",
 			Port:      3004,
 			Status:    "up",
-			URL:       "http://localhost:3004/health",
+			URL:       "http://localhost:3005/health",
 			Version:   "1.0.0",
 			LastCheck: time.Now(),
 			Latency:   8,

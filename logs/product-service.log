@@ -1,9 +1,9 @@
 
-2025/10/26 12:17:16 [35m/var/www/homeopathy-business-platform/services/product-service/main.go:141
+2025/10/27 14:56:45 [35m/var/www/homeopathy-business-platform/services/product-service/main.go:141
 [0m[31m[error] [0mfailed to initialize database, got error failed to connect to `user=postgres database=yeelo_homeopathy`:
 	hostname resolving error: lookup postgres on 127.0.0.53:53: server misbehaving
 	lookup postgres on 127.0.0.53:53: server misbehaving
-2025/10/26 12:17:16 Failed to connect to database: failed to connect to `user=postgres database=yeelo_homeopathy`:
+2025/10/27 14:56:45 Failed to connect to database: failed to connect to `user=postgres database=yeelo_homeopathy`:
 	hostname resolving error: lookup postgres on 127.0.0.53:53: server misbehaving
 	lookup postgres on 127.0.0.53:53: server misbehaving
 exit status 1

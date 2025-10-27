@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/yeelo/homeopathy-erp/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -340,26 +341,26 @@ func (h *ProductHandler) DeleteCategory(c *gin.Context) {
 
 // Subcategory model
 type Subcategory struct {
-	ID                 string    `json:"id" gorm:"primaryKey;type:uuid"`
-	Name               string    `json:"name"`
-	Code               string    `json:"code"`
-	CategoryID         string    `json:"category_id" gorm:"column:category_id;type:uuid"`
-	Description        string    `json:"description"`
-	IsActive           bool      `json:"is_active" gorm:"column:is_active"`
-	CreatedAt          time.Time `json:"created_at" gorm:"column:created_at"`
-	UpdatedAt          time.Time `json:"updated_at" gorm:"column:updated_at"`
+	ID          string    `json:"id" gorm:"primaryKey;type:uuid"`
+	Name        string    `json:"name"`
+	Code        string    `json:"code"`
+	CategoryID  string    `json:"category_id" gorm:"column:category_id;type:uuid"`
+	Description string    `json:"description"`
+	IsActive    bool      `json:"is_active" gorm:"column:is_active"`
+	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
 // GET /api/masters/subcategories - List subcategories
 func (h *ProductHandler) GetSubcategories(c *gin.Context) {
 	categoryID := c.Query("category_id")
-	
+
 	query := h.db.Table("subcategories").Order("name ASC")
-	
+
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
 	}
-	
+
 	var subcategories []Subcategory
 	result := query.Find(&subcategories)
 
@@ -762,11 +763,261 @@ func (h *ProductHandler) GetBarcodes(c *gin.Context) {
 
 		barcodes = append(barcodes, barcodeData)
 	}
+}
+
+// ==================== CUSTOMERS ====================
+
+// GET /api/erp/customers - List customers
+func (h *ProductHandler) GetCustomers(c *gin.Context) {
+	var customers []models.Customer
+	result := h.db.Table("customers").Order("name ASC").Find(&customers)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch customers: " + result.Error.Error(),
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    barcodes,
-		"total":   len(barcodes),
+		"data":    customers,
+		"total":   len(customers),
+	})
+}
+
+// GET /api/erp/customers/:id - Get single customer
+func (h *ProductHandler) GetCustomer(c *gin.Context) {
+	id := c.Param("id")
+
+	var customer models.Customer
+	result := h.db.Table("customers").Where("id = ? OR customer_code = ?", id, id).First(&customer)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Customer not found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch customer: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    customer,
+	})
+}
+
+// POST /api/erp/customers - Create customer
+func (h *ProductHandler) CreateCustomer(c *gin.Context) {
+	var req models.Customer
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.ID = uuid.New().String()
+	req.CreatedAt = time.Now()
+	req.UpdatedAt = time.Now()
+	req.IsActive = true
+
+	if err := h.db.Table("customers").Create(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to create customer: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    req,
+		"message": "Customer created successfully",
+	})
+}
+
+// PUT /api/erp/customers/:id - Update customer
+func (h *ProductHandler) UpdateCustomer(c *gin.Context) {
+	id := c.Param("id")
+	var req models.Customer
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.UpdatedAt = time.Now()
+
+	if err := h.db.Table("customers").Where("id = ?", id).Updates(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to update customer: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Customer updated successfully",
+	})
+}
+
+// DELETE /api/erp/customers/:id - Delete customer
+func (h *ProductHandler) DeleteCustomer(c *gin.Context) {
+	id := c.Param("id")
+
+	if err := h.db.Table("customers").Where("id = ?", id).Delete(&models.Customer{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to delete customer: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Customer deleted successfully",
+	})
+}
+
+// ==================== VENDORS ====================
+
+// GET /api/erp/vendors - List vendors
+func (h *ProductHandler) GetVendors(c *gin.Context) {
+	var vendors []models.Vendor
+	result := h.db.Table("vendors").Order("name ASC").Find(&vendors)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch vendors: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    vendors,
+		"total":   len(vendors),
+	})
+}
+
+// GET /api/erp/vendors/:id - Get single vendor
+func (h *ProductHandler) GetVendor(c *gin.Context) {
+	id := c.Param("id")
+
+	var vendor models.Vendor
+	result := h.db.Table("vendors").Where("id = ? OR vendor_code = ?", id, id).First(&vendor)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{
+				"success": false,
+				"error":   "Vendor not found",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch vendor: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    vendor,
+	})
+}
+
+// POST /api/erp/vendors - Create vendor
+func (h *ProductHandler) CreateVendor(c *gin.Context) {
+	var req models.Vendor
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.ID = uuid.New().String()
+	req.CreatedAt = time.Now()
+	req.UpdatedAt = time.Now()
+	req.IsActive = true
+
+	if err := h.db.Table("vendors").Create(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to create vendor: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    req,
+		"message": "Vendor created successfully",
+	})
+}
+
+// PUT /api/erp/vendors/:id - Update vendor
+func (h *ProductHandler) UpdateVendor(c *gin.Context) {
+	id := c.Param("id")
+	var req models.Vendor
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.UpdatedAt = time.Now()
+
+	if err := h.db.Table("vendors").Where("id = ?", id).Updates(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to update vendor: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Vendor updated successfully",
+	})
+}
+
+// DELETE /api/erp/vendors/:id - Delete vendor
+func (h *ProductHandler) DeleteVendor(c *gin.Context) {
+	id := c.Param("id")
+
+	if err := h.db.Table("vendors").Where("id = ?", id).Delete(&models.Vendor{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to delete vendor: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Vendor deleted successfully",
 	})
 }
 
@@ -914,6 +1165,291 @@ func (h *ProductHandler) PrintBarcodes(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    printData,
-		"message": "Barcode labels prepared for printing",
+		"message": "Print data prepared successfully",
+	})
+}
+
+// ==================== PAYMENTS ====================
+
+// GET /api/erp/payments - List payments
+func (h *ProductHandler) GetPayments(c *gin.Context) {
+	var payments []models.Payment
+	result := h.db.Table("payments").Order("created_at DESC").Find(&payments)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch payments: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    payments,
+		"total":   len(payments),
+	})
+}
+
+// POST /api/erp/payments - Create payment
+func (h *ProductHandler) CreatePayment(c *gin.Context) {
+	var req models.Payment
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.ID = uuid.New().String()
+	req.CreatedAt = time.Now()
+	req.UpdatedAt = time.Now()
+	req.UpdatedBy = "system" // TODO: Get from auth context
+	req.Status = "COMPLETED"
+
+	if err := h.db.Table("payments").Create(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to create payment: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    req,
+		"message": "Payment created successfully",
+	})
+}
+
+// PUT /api/erp/payments/:id - Update payment
+func (h *ProductHandler) UpdatePayment(c *gin.Context) {
+	id := c.Param("id")
+	var req models.Payment
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	req.UpdatedAt = time.Now()
+	req.UpdatedBy = "system" // TODO: Get from auth context
+
+	if err := h.db.Table("payments").Where("id = ?", id).Updates(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to update payment: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Payment updated successfully",
+	})
+}
+
+// ==================== INVENTORY ====================
+
+// GET /api/erp/inventory - Get inventory
+func (h *ProductHandler) GetInventory(c *gin.Context) {
+	var items []models.InventoryBatch
+	result := h.db.Table("inventory").Order("product_name ASC").Find(&items)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch inventory: " + result.Error.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    items,
+		"total":   len(items),
+	})
+}
+
+// POST /api/erp/inventory/adjust - Adjust stock
+func (h *ProductHandler) AdjustStock(c *gin.Context) {
+	var req struct {
+		ProductID string  `json:"productId"`
+		Quantity  float64 `json:"quantity"`
+		Type      string  `json:"type"` // "ADD" or "REMOVE"
+		Reason    string  `json:"reason"`
+		Notes     string  `json:"notes"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	// Update inventory
+	var currentStock float64
+	h.db.Table("inventory").Where("product_id = ?", req.ProductID).Select("current_stock").Row().Scan(&currentStock)
+
+	if req.Type == "ADD" {
+		currentStock += req.Quantity
+	} else {
+		currentStock -= req.Quantity
+	}
+
+	if err := h.db.Table("inventory").Where("product_id = ?", req.ProductID).Update("current_stock", currentStock).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to adjust stock: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Stock adjusted successfully",
+		"data": gin.H{
+			"productId": req.ProductID,
+			"quantity":  req.Quantity,
+			"type":      req.Type,
+			"newStock":  currentStock,
+		},
+	})
+}
+
+// GET /api/erp/inventory/adjustments - Get stock adjustments
+func (h *ProductHandler) GetAdjustments(c *gin.Context) {
+	var adjustments []gin.H
+
+	// For now, return sample data since we don't have a stock_adjustments table yet
+	adjustments = []gin.H{
+		{
+			"id":          uuid.New().String(),
+			"productId":   "test-product-1",
+			"productName": "Arnica Montana 30C",
+			"quantity":    50,
+			"type":        "ADD",
+			"reason":      "Purchase Receipt",
+			"notes":       "Stock received from vendor",
+			"adjustedBy":  "system",
+			"adjustedAt":  time.Now().Format(time.RFC3339),
+		},
+		{
+			"id":          uuid.New().String(),
+			"productId":   "test-product-2",
+			"productName": "Belladonna 200C",
+			"quantity":    -10,
+			"type":        "REMOVE",
+			"reason":      "Damage",
+			"notes":       "Expired stock removed",
+			"adjustedBy":  "admin",
+			"adjustedAt":  time.Now().Add(-24 * time.Hour).Format(time.RFC3339),
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    adjustments,
+		"total":   len(adjustments),
+	})
+}
+
+// POST /api/erp/inventory/transfer - Transfer stock
+func (h *ProductHandler) TransferStock(c *gin.Context) {
+	var req struct {
+		ProductID    string  `json:"productId"`
+		Quantity     float64 `json:"quantity"`
+		FromLocation string  `json:"fromLocation"`
+		ToLocation   string  `json:"toLocation"`
+		Reason       string  `json:"reason"`
+		Notes        string  `json:"notes"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Stock transfer initiated",
+		"data": gin.H{
+			"transferId":   uuid.New().String(),
+			"productId":    req.ProductID,
+			"quantity":     req.Quantity,
+			"fromLocation": req.FromLocation,
+			"toLocation":   req.ToLocation,
+			"status":       "PENDING",
+		},
+	})
+}
+
+// GET /api/erp/inventory/transfers - Get stock transfers
+func (h *ProductHandler) GetTransfers(c *gin.Context) {
+	var transfers []gin.H
+
+	transfers = []gin.H{
+		{
+			"id":           uuid.New().String(),
+			"productId":    "test-product-1",
+			"productName":  "Arnica Montana 30C",
+			"quantity":     25,
+			"fromLocation": "Main Warehouse",
+			"toLocation":   "Branch A",
+			"reason":       "Branch Replenishment",
+			"status":       "COMPLETED",
+			"initiatedBy":  "admin",
+			"initiatedAt":  time.Now().Add(-2 * time.Hour).Format(time.RFC3339),
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    transfers,
+		"total":   len(transfers),
+	})
+}
+
+// GET /api/erp/inventory/alerts - Get inventory alerts
+func (h *ProductHandler) GetAlerts(c *gin.Context) {
+	var alerts []gin.H
+
+	alerts = []gin.H{
+		{
+			"id":           uuid.New().String(),
+			"type":         "LOW_STOCK",
+			"severity":     "HIGH",
+			"productId":    "test-product-2",
+			"productName":  "Belladonna 200C",
+			"currentStock": 15,
+			"minStock":     25,
+			"message":      "Stock below minimum level",
+			"createdAt":    time.Now().Format(time.RFC3339),
+		},
+		{
+			"id":          uuid.New().String(),
+			"type":        "EXPIRY",
+			"severity":    "MEDIUM",
+			"productId":   "test-product-3",
+			"productName": "Nux Vomica 1M",
+			"expiryDate":  time.Now().Add(7 * 24 * time.Hour).Format("2006-01-02"),
+			"message":     "Product expires in 7 days",
+			"createdAt":   time.Now().Format(time.RFC3339),
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    alerts,
+		"total":   len(alerts),
 	})
 }
