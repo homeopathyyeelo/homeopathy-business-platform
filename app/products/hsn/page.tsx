@@ -41,18 +41,56 @@ export default function HSNCodesPage() {
   });
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Fetch HSN codes
+  // Helpers to derive gst rate and category from code/description
+  const deriveGstRate = (code: string, description: string): number => {
+    const m = description?.match(/(\d+\.?\d*)%/);
+    if (m) return parseFloat(m[1]);
+    if (code?.startsWith('33')) return 18;
+    if (code?.startsWith('3004') || code?.startsWith('3003')) return 5;
+    return 12;
+  };
+
+  const deriveCategory = (code: string): string => {
+    if (code?.startsWith('33')) return 'Cosmetics & Personal Care';
+    if (code?.startsWith('9018')) return 'Medical Instruments';
+    if (code?.startsWith('3824')) return 'OTC Chemicals';
+    if (code?.startsWith('300')) return 'Medicaments';
+    return 'General';
+  };
+
+  // Fetch HSN codes (map backend MasterData -> UI shape)
   const { data: hsnCodes = [], isLoading } = useQuery({
     queryKey: ['hsn-codes'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/erp/hsn-codes');
-      return Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
+      return list.map((item: any) => {
+        const code = item.code || item.hsn_code;
+        const description = item.description || item.name || '';
+        return {
+          id: item.id,
+          hsn_code: code,
+          description,
+          gst_rate: deriveGstRate(code, description),
+          category: deriveCategory(code),
+          is_active: item.isActive ?? item.is_active ?? true,
+        } as HSNCode;
+      });
     },
   });
 
   // Mutations
   const createMutation = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/erp/hsn-codes', payload),
+    mutationFn: (payload: any) => {
+      // Transform UI payload -> backend MasterData
+      const body = {
+        name: payload.category || `HSN ${payload.hsn_code}`,
+        code: payload.hsn_code,
+        description: `${payload.description}${payload.gst_rate ? ` | GST ${payload.gst_rate}%` : ''}${payload.category ? ` | Category: ${payload.category}` : ''}`,
+        isActive: true,
+      };
+      return golangAPI.post('/api/erp/hsn-codes', body);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hsn-codes'] });
       toast({ title: "HSN Code Created", description: "HSN code has been created successfully" });
@@ -63,8 +101,15 @@ export default function HSNCodesPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
-      golangAPI.put(`/api/erp/hsn-codes/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => {
+      const body = {
+        name: data.category || `HSN ${data.hsn_code}`,
+        code: data.hsn_code,
+        description: `${data.description}${data.gst_rate ? ` | GST ${data.gst_rate}%` : ''}${data.category ? ` | Category: ${data.category}` : ''}`,
+        isActive: true,
+      };
+      return golangAPI.put(`/api/erp/hsn-codes/${id}`, body);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hsn-codes'] });
       toast({ title: "HSN Code Updated", description: "HSN code has been updated successfully" });
