@@ -47,6 +47,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Convert user.id to UUID or null (handle "0" or invalid UUIDs)
+    const userId = user.id && user.id !== '0' ? user.id : null;
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
     
@@ -68,7 +71,7 @@ export async function POST(req: NextRequest) {
         total_items
       ) VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *`,
-      ['inventory', file.name, file.size, records.length, 'processing', user.id, records.length]
+      ['inventory', file.name, file.size, records.length, 'processing', userId, records.length]
     );
 
     if (sessionResult.rows.length === 0) {
@@ -134,7 +137,7 @@ export async function POST(req: NextRequest) {
         size: item.Size,
         form: item.Form,
         batch_number: item['Batch Number'],
-        expiry_date: item['Expiry Date'],
+        expiry_date: item['Expiry Date'] && item['Expiry Date'].trim() ? item['Expiry Date'] : null,
         quantity: quantity,
         unit_price: costPrice,
         mrp: mrp,
@@ -146,6 +149,9 @@ export async function POST(req: NextRequest) {
       });
 
       // Also insert into inventory_uploads table
+      // Convert empty dates to null
+      const expiryDate = item['Expiry Date'] && item['Expiry Date'].trim() ? item['Expiry Date'] : null;
+      
       await query(
         `INSERT INTO inventory_uploads (
           session_id, product_id, product_code, product_name,
@@ -154,7 +160,7 @@ export async function POST(req: NextRequest) {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
           session.id, matchedProductId, item['Product Code'], item['Product Name'],
-          item['Batch Number'], item['Expiry Date'], quantity, costPrice,
+          item['Batch Number'], expiryDate, quantity, costPrice,
           sellingPrice, mrp, null, item.Location || null, item['Rack Number'] || null,
           'pending'
         ]

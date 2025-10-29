@@ -53,6 +53,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Convert user.id to UUID or null (handle "0" or invalid UUIDs)
+    const userId = user.id && user.id !== '0' ? user.id : null;
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
     
@@ -95,7 +98,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Process each invoice
-    const results = [];
+    const results: any[] = [];
     for (const [invoiceNo, items] of invoiceGroups.entries()) {
       const firstItem = items[0];
       
@@ -110,7 +113,28 @@ export async function POST(req: NextRequest) {
         return sum + (qty * unitPrice * taxPercent / 100);
       }, 0);
 
+      // GST breakup and margin estimates
+      const gstBreakup: Record<string, number> = {};
+      let estProfitNumerator = 0; // sum((mrp - unit_price) * qty)
+      let estProfitDenominator = 0; // sum(mrp * qty)
+      items.forEach((item) => {
+        const qty = parseFloat(item.Quantity || '0');
+        const unitPrice = parseFloat(item['Unit Price'] || '0');
+        const mrp = parseFloat((item as any).MRP || '0');
+        const taxPercent = String(parseFloat(item['Tax %'] || '0'));
+        gstBreakup[taxPercent] = (gstBreakup[taxPercent] || 0) + (qty * unitPrice * (parseFloat(item['Tax %'] || '0')/100));
+        if (mrp > 0 && qty > 0) {
+          estProfitNumerator += (mrp - unitPrice) * qty;
+          estProfitDenominator += mrp * qty;
+        }
+      });
+
       // Create upload session
+      // Convert empty date strings to null for PostgreSQL
+      const invoiceDate = firstItem['Invoice Date'] && firstItem['Invoice Date'].trim() 
+        ? firstItem['Invoice Date'] 
+        : null;
+
       const sessionResult = await query(
         `INSERT INTO upload_sessions (
           upload_type, file_name, file_size, total_rows, status, uploaded_by,
@@ -118,8 +142,8 @@ export async function POST(req: NextRequest) {
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING *`,
         [
-          'purchase', file.name, file.size, items.length, 'processing', user.id,
-          firstItem['Supplier Name'], invoiceNo, firstItem['Invoice Date'],
+          'purchase', file.name, file.size, items.length, 'processing', userId,
+          firstItem['Supplier Name'], invoiceNo, invoiceDate,
           subtotal, items.length
         ]
       );
@@ -152,7 +176,7 @@ export async function POST(req: NextRequest) {
         [
           session.id, vendorId, firstItem['Supplier Name'],
           firstItem['Supplier GSTIN'] || null, invoiceNo,
-          firstItem['Invoice Date'], subtotal, taxAmount, subtotal, 'pending'
+          invoiceDate, subtotal, taxAmount, subtotal, 'pending'
         ]
       );
 
@@ -162,7 +186,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Process items
-      const uploadItems = [];
+      const uploadItems: any[] = [];
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
         
@@ -171,11 +195,20 @@ export async function POST(req: NextRequest) {
         let matchType = null;
         let matchConfidence = 0;
 
-        // First try exact SKU match
-        const productResult = await query(
+        // First try exact SKU match, then normalized (strip leading zeros)
+        const sku = item['Product Code']?.trim() || '';
+        const normalizedSku = sku.replace(/^0+/, '');
+        let productResult = await query(
           `SELECT id FROM products WHERE sku = $1 LIMIT 1`,
-          [item['Product Code']]
+          [sku]
         );
+
+        if (productResult.rows.length === 0 && normalizedSku && normalizedSku !== sku) {
+          productResult = await query(
+            `SELECT id FROM products WHERE sku = $1 LIMIT 1`,
+            [normalizedSku]
+          );
+        }
 
         if (productResult.rows.length > 0) {
           matchedProductId = productResult.rows[0].id;
@@ -215,7 +248,7 @@ export async function POST(req: NextRequest) {
           form: item.Form,
           hsn_code: item['HSN Code'],
           batch_number: item['Batch Number'],
-          expiry_date: item['Expiry Date'],
+          expiry_date: item['Expiry Date'] && item['Expiry Date'].trim() ? item['Expiry Date'] : null,
           quantity: quantity,
           unit_price: unitPrice,
           mrp: parseFloat(item.MRP || '0'),
@@ -262,12 +295,22 @@ export async function POST(req: NextRequest) {
         ['awaiting_approval', items.length, session.id]
       );
 
+      const matchedCount = uploadItems.filter(i => i.matched_product_id).length;
+      const unmatchedCount = uploadItems.length - matchedCount;
+      const estProfitPercent = estProfitDenominator > 0 ? Math.round((estProfitNumerator / estProfitDenominator) * 100) : 0;
+
       results.push({
         sessionId: session.id,
         invoiceNumber: invoiceNo,
         itemCount: items.length,
-        matchedCount: uploadItems.filter(i => i.matched_product_id).length,
-        unmatchedCount: uploadItems.filter(i => !i.matched_product_id).length,
+        matchedCount,
+        unmatchedCount,
+        totals: {
+          subtotal,
+          taxAmount,
+          gstBreakup,
+          estimatedProfitPercent: estProfitPercent,
+        }
       });
     }
 

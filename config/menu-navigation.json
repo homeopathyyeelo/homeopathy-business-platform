@@ -11,6 +11,14 @@
       "children": []
     },
     {
+      "id": "approvals",
+      "label": "Approvals",
+      "icon": "CheckCircle2",
+      "path": "/admin/approvals",
+      "roles": ["SUPER_ADMIN"],
+      "children": []
+    },
+    {
       "id": "products",
       "label": "Products",
       "icon": "Package",
@@ -93,6 +101,12 @@
           "label": "Stock List",
           "path": "/app/inventory/stock-list",
           "roles": ["*"]
+        },
+        {
+          "id": "inventory-upload",
+          "label": "Inventory Upload",
+          "path": "/inventory/upload",
+          "roles": ["SUPER_ADMIN", "INVENTORY_MANAGER"]
         },
         {
           "id": "inventory-adjustments",

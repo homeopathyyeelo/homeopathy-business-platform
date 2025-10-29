@@ -10,6 +10,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Convert user.id to UUID or null (handle "0" or invalid UUIDs)
+    const userId = user.id && user.id !== '0' ? user.id : null;
+
     // TODO: Check if user has super user role
     // For now, allowing all authenticated users
 
@@ -35,7 +38,7 @@ export async function POST(req: NextRequest) {
              updated_at = NOW()
          WHERE id = $3 AND approval_status = 'pending'
          RETURNING *`,
-        [user.id, reason || 'Rejected by administrator', sessionId]
+        [userId, reason || 'Rejected by administrator', sessionId]
       );
 
       if (result.rows.length === 0) {
@@ -76,15 +79,15 @@ export async function POST(req: NextRequest) {
                approved_at = NOW(),
                updated_at = NOW()
            WHERE id = $2`,
-          [user.id, sessionId]
+          [userId, sessionId]
         );
 
         if (session.upload_type === 'purchase') {
           // Import purchase data
-          await importPurchaseData(client, sessionId, user.id);
+          await importPurchaseData(client, sessionId, userId);
         } else if (session.upload_type === 'inventory') {
           // Import inventory data
-          await importInventoryData(client, sessionId, user.id);
+          await importInventoryData(client, sessionId, userId);
         }
 
         return session;
@@ -109,7 +112,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Helper function to import purchase data
-async function importPurchaseData(client: PoolClient, sessionId: string, userId: string) {
+async function importPurchaseData(client: PoolClient, sessionId: string, userId: string | null) {
   // Get purchase upload
   const purchaseResult = await client.query(
     `SELECT * FROM purchase_uploads WHERE session_id = $1 LIMIT 1`,
@@ -223,6 +226,38 @@ async function importPurchaseData(client: PoolClient, sessionId: string, userId:
         item.mrp,
       ]
     );
+
+    // Also reflect stock in core.inventory_batches if present (UI may read this)
+    try {
+      const invTable = await client.query(`SELECT to_regclass('core.inventory_batches') as exists`);
+      if (invTable.rows[0]?.exists) {
+        // Pick a shop to attribute the stock to
+        const shopRow = await client.query(`SELECT id FROM core.shops ORDER BY created_at ASC LIMIT 1`);
+        const shopId = shopRow.rows[0]?.id;
+        if (shopId) {
+          await client.query(
+            `INSERT INTO core.inventory_batches (
+               shop_id, product_id, batch_no, expiry_date, qty, landed_unit_cost, last_restocked
+             ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
+             ON CONFLICT (shop_id, product_id, batch_no)
+             DO UPDATE SET
+               qty = core.inventory_batches.qty + EXCLUDED.qty,
+               landed_unit_cost = COALESCE(EXCLUDED.landed_unit_cost, core.inventory_batches.landed_unit_cost),
+               last_restocked = NOW()`,
+            [
+              shopId,
+              item.matched_product_id,
+              item.batch_number,
+              item.expiry_date,
+              item.quantity,
+              item.unit_price,
+            ]
+          );
+        }
+      }
+    } catch (e) {
+      // Non-fatal: core schema may not exist; continue
+    }
   }
 
   // Update purchase upload status
@@ -243,7 +278,7 @@ async function importPurchaseData(client: PoolClient, sessionId: string, userId:
 }
 
 // Helper function to import inventory data
-async function importInventoryData(client: PoolClient, sessionId: string, userId: string) {
+async function importInventoryData(client: PoolClient, sessionId: string, userId: string | null) {
   // Get inventory uploads
   const inventoryResult = await client.query(
     `SELECT * FROM inventory_uploads WHERE session_id = $1`,

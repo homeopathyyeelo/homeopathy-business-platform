@@ -40,6 +40,7 @@ const menuItems: MenuItem[] = [
       { label: 'Overview', path: '/dashboard' },
       { label: 'Quick Stats', path: '/dashboard/stats' },
       { label: 'Activity Log', path: '/dashboard/activity' },
+      { label: 'Approvals', path: '/admin/approvals' },
     ]
   },
   {
@@ -70,6 +71,7 @@ const menuItems: MenuItem[] = [
     path: '/inventory',
     color: 'from-purple-500 to-purple-600',
     submenus: [
+      { label: 'Inventory Upload', path: '/inventory/upload' },
       { label: 'Current Stock', path: '/inventory/stock' },
       { label: 'Stock Adjustments', path: '/inventory/adjustments' },
       { label: 'Stock Transfers', path: '/inventory/transfers' },

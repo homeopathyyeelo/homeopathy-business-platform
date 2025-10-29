@@ -5,7 +5,7 @@
 
 interface MargHeader {
   invoiceNumber: string;
-  invoiceDate: string;
+  invoiceDate: string | null;
   supplierName: string;
   supplierGSTIN: string;
   totalAmount: number;
@@ -19,11 +19,15 @@ interface MargItem {
   batchNumber: string;
   quantity: number;
   mrp: number;
-  unitPrice: number;
-  amount: number;
-  taxPercent: number;
+  unitPrice: number; // computed pre-tax unit cost
+  grossAmount: number; // qty * rate (before discounts)
+  discountPercent: number; // primary discount
+  splPercent: number; // special discount
+  gstPercent: number; // GST rate
+  netAmount: number; // net including tax (as provided)
+  taxAmount: number; // tax amount
   hsnCode: string;
-  expiryDate?: string;
+  expiryDate?: string | null;
 }
 
 interface MargInvoice {
@@ -68,19 +72,36 @@ export function parseMargERPCSV(content: string): MargInvoice[] {
     } else if (recordType === 'T' && currentHeader) {
       // Parse transaction line
       // T,OIF,SBL (DILUTION),0001973,,SBL DILUTION 200,30ML,,N5,00000000,,,5,0,130,,130,,0,,71,0,64,6065.37,4.76,3164.63,...
+      const qty = parseFloat(fields[20] || '0'); // 71
+      const gstPercent = parseFloat(fields[12] || '0'); // 5 (GST%)
+      const mrp = parseFloat(fields[14] || '0') || parseFloat(fields[16] || '0'); // 130 (Rate)
+      const discPercent = parseFloat(fields[22] || '0'); // 64 (Disc%)
+      const grossAmount = parseFloat(fields[23] || '0'); // 6065.37 (Gross)
+      const splPercent = parseFloat(fields[24] || '0'); // 4.76 (Spl%)
+      const netAmount = parseFloat(fields[25] || '0'); // 3164.63 (Net incl GST)
+      const taxAmount = parseFloat(fields[26] || '0'); // 158.23
+
+      // Derive pre-tax total and unit price used by our importer
+      const preTaxTotal = isFinite(netAmount - taxAmount) ? (netAmount - taxAmount) : 0;
+      const unitPrice = qty > 0 ? preTaxTotal / qty : 0;
+
       const item: MargItem = {
-        brand: fields[2] || '', // SBL (DILUTION)
-        productCode: fields[3] || '', // 0001973
-        productName: fields[5] || '', // SBL DILUTION 200
-        size: fields[6] || '', // 30ML
-        batchNumber: fields[8] || '', // N5
-        quantity: parseFloat(fields[20] || '0'), // 71
-        mrp: parseFloat(fields[14] || '0') || parseFloat(fields[16] || '0'), // 130
-        unitPrice: parseFloat(fields[22] || '0'), // 64
-        amount: parseFloat(fields[23] || '0'), // 6065.37
-        taxPercent: parseFloat(fields[24] || '0'), // 4.76
-        hsnCode: fields[39] || '', // 30049014
-        expiryDate: parseDate(fields[9] || ''), // 00000000 means no expiry or need parsing
+        brand: fields[2] || '',
+        productCode: fields[3] || '',
+        productName: fields[5] || '',
+        size: fields[6] || '',
+        batchNumber: fields[8] || '',
+        quantity: qty,
+        mrp: mrp,
+        unitPrice: unitPrice,
+        grossAmount: grossAmount,
+        discountPercent: discPercent,
+        splPercent: splPercent,
+        gstPercent: gstPercent,
+        netAmount: netAmount,
+        taxAmount: taxAmount,
+        hsnCode: fields[39] || '',
+        expiryDate: parseDate(fields[9] || ''),
       };
 
       currentItems.push(item);
@@ -105,19 +126,26 @@ export function parseMargERPCSV(content: string): MargInvoice[] {
 
 /**
  * Parse date from Marg ERP format (DDMMYYYY or 00000000 for none)
+ * Returns null for invalid/empty dates instead of empty string
  */
-function parseDate(dateStr: string): string {
+function parseDate(dateStr: string): string | null {
   if (!dateStr || dateStr === '00000000' || dateStr.length !== 8) {
-    return '';
+    return null;
   }
 
   try {
     const day = dateStr.substring(0, 2);
     const month = dateStr.substring(2, 4);
     const year = dateStr.substring(4, 8);
+    
+    // Validate date parts
+    if (day === '00' || month === '00' || year === '0000') {
+      return null;
+    }
+    
     return `${year}-${month}-${day}`; // YYYY-MM-DD format
   } catch {
-    return '';
+    return null;
   }
 }
 
@@ -133,7 +161,7 @@ export function convertMargToStandard(margInvoices: MargInvoice[]) {
     totalAmount: invoice.header.totalAmount,
     items: invoice.items.map(item => ({
       'Invoice Number': invoice.header.invoiceNumber,
-      'Invoice Date': invoice.header.invoiceDate,
+      'Invoice Date': invoice.header.invoiceDate || '', // Convert null to empty string for compatibility
       'Supplier Name': invoice.header.supplierName,
       'Supplier GSTIN': invoice.header.supplierGSTIN,
       'Product Code': item.productCode,
@@ -146,11 +174,15 @@ export function convertMargToStandard(margInvoices: MargInvoice[]) {
       'Batch Number': item.batchNumber,
       'Expiry Date': item.expiryDate || '',
       'Quantity': item.quantity.toString(),
-      'Unit Price': item.unitPrice.toString(),
-      'MRP': item.mrp.toString(),
-      'Discount %': '0',
-      'Tax %': item.taxPercent.toString(),
-      'Total Amount': item.amount.toString(),
+      // Use computed pre-tax unit cost to align with importer
+      'Unit Price': item.unitPrice.toFixed(2),
+      'MRP': item.mrp.toFixed(2),
+      // Combine Disc% + Spl% (and potential SPL2 if present in future)
+      'Discount %': (item.discountPercent + item.splPercent).toFixed(2),
+      // Set GST as Tax % for importer to recompute tax correctly
+      'Tax %': item.gstPercent.toFixed(2),
+      // Use pre-tax total so importer adds tax to reach Net
+      'Total Amount': (item.unitPrice * item.quantity).toFixed(2),
     })),
   }));
 }

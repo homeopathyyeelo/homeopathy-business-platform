@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   CheckCircle2,
   XCircle,
@@ -37,6 +38,7 @@ interface UploadSession {
 }
 
 export default function ApprovalsPage() {
+  const router = useRouter();
   const [sessions, setSessions] = useState<UploadSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'purchase' | 'inventory'>('all');
@@ -303,6 +305,13 @@ export default function ApprovalsPage() {
                 {/* Actions */}
                 <div className="flex flex-col gap-2 ml-4">
                   <button
+                    onClick={() => router.push(`/admin/approvals/${session.id}`)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    <FileText className="w-4 h-4" />
+                    View Invoice
+                  </button>
+                  <button
                     onClick={() => handleApprove(session.id)}
                     disabled={actionLoading === session.id}
                     className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
@@ -334,7 +343,7 @@ export default function ApprovalsPage() {
                     ) : (
                       <>
                         <ChevronDown className="w-4 h-4" />
-                        Details
+                        Summary
                       </>
                     )}
                   </button>
