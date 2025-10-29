@@ -62,10 +62,10 @@ export default function DashboardPage() {
   // Use React Query hooks
   const { data: products = [] } = useProducts();
   const productStats = useProductStats(products);
-  const { customers = [] } = useCustomers();
+  const { data: customers = [] } = useCustomers();
   const { data: inventory = [] } = useInventory();
-  const { data: lowStock = [] } = useLowStock();
-  const { vendors = [] } = useVendors();
+  const { data: lowStockRaw = [] } = useLowStock();
+  const { data: vendors = [] } = useVendors();
 
   const [stats, setStats] = useState<DashboardStats>({
     totalSales: 0,
@@ -206,9 +206,21 @@ export default function DashboardPage() {
   }, []);
 
   // Top selling products
-  const topProducts = products
-    .sort((a: any, b: any) => (b.total_sold || 0) - (a.total_sold || 0))
+  const productList: any[] = Array.isArray(products)
+    ? products
+    : (Array.isArray((products as any)?.items) ? (products as any).items
+      : (Array.isArray((products as any)?.data) ? (products as any).data : []));
+
+  const topProducts = productList
+    .slice() // copy before sort to avoid mutating cached data
+    .sort((a: any, b: any) => (b?.total_sold || 0) - (a?.total_sold || 0))
     .slice(0, 5);
+
+  // Normalize low stock list
+  const lowStockList: any[] = Array.isArray(lowStockRaw)
+    ? lowStockRaw
+    : (Array.isArray((lowStockRaw as any)?.data) ? (lowStockRaw as any).data : []);
+  const lowStockCountSafe = Array.isArray(lowStockList) ? lowStockList.length : 0;
 
   return (
     <div className="space-y-6">
@@ -395,11 +407,11 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Low Stock Alerts */}
-            {lowStock.length > 0 && (
+            {lowStockCountSafe > 0 && (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>{lowStock.length} products</strong> are running low on stock.
+                  <strong>{lowStockCountSafe} products</strong> are running low on stock.
                   <Button variant="link" className="p-0 h-auto ml-2" onClick={() => router.push('/inventory')}>
                     View Details
                   </Button>

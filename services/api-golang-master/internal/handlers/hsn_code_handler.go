@@ -96,3 +96,8 @@ func (h *HSNCodeHandler) DeleteHSNCode(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "HSN code deleted successfully"})
 }
+
+// GetHSNCodes is an alias for ListHSNCodes
+func (h *HSNCodeHandler) GetHSNCodes(c *gin.Context) {
+	h.ListHSNCodes(c)
+}

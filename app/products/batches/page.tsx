@@ -56,6 +56,10 @@ export default function BatchesPage() {
   // Use React Query hooks
   const { data: batches = [], isLoading } = useProductBatches();
   const { data: products = [] } = useProducts();
+  const productList: any[] = Array.isArray(products)
+    ? products as any[]
+    : (Array.isArray((products as any)?.items) ? (products as any).items
+      : (Array.isArray((products as any)?.data) ? (products as any).data : []));
   const { create, update } = useBatchMutations();
 
   // Filter batches based on search term and filters
@@ -216,7 +220,7 @@ export default function BatchesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Products</SelectItem>
-            {products.map((product: any) => (
+            {productList.map((product: any) => (
               <SelectItem key={product.id} value={product.id}>{product.name}</SelectItem>
             ))}
           </SelectContent>
@@ -308,7 +312,7 @@ export default function BatchesPage() {
                   <SelectValue placeholder="Select product" />
                 </SelectTrigger>
                 <SelectContent>
-                  {products.map((product: any) => (
+                  {productList.map((product: any) => (
                     <SelectItem key={product.id} value={product.id}>{product.name}</SelectItem>
                   ))}
                 </SelectContent>

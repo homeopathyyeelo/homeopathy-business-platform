@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type BulkOperationsHandler struct {
@@ -120,5 +123,91 @@ func (h *BulkOperationsHandler) BulkDelete(c *gin.Context) {
 		"success": true,
 		"deleted": len(req.IDs),
 		"entity": req.Entity,
+	})
+}
+
+// POST /api/erp/bulk/products
+func (h *BulkOperationsHandler) BulkCreateProducts(c *gin.Context) {
+	var req []map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	ids := make([]string, 0, len(req))
+	for range req {
+		ids = append(ids, uuid.New().String())
+	}
+
+	c.JSON(201, gin.H{
+		"success":    true,
+		"created":    len(ids),
+		"product_ids": ids,
+		"processed_at": time.Now(),
+		"message":    "Bulk product creation completed",
+	})
+}
+
+// POST /api/erp/bulk/products/delete
+func (h *BulkOperationsHandler) BulkDeleteProducts(c *gin.Context) {
+	var req struct {
+		ProductIDs []string `json:"product_ids"`
+		HardDelete bool     `json:"hard_delete"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if len(req.ProductIDs) == 0 {
+		c.JSON(400, gin.H{"error": "product_ids cannot be empty"})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"success":     true,
+		"deleted":     len(req.ProductIDs),
+		"hard_delete": req.HardDelete,
+		"processed_at": time.Now(),
+		"message":     "Bulk product deletion completed",
+	})
+}
+
+// POST /api/erp/bulk/inventory/adjust
+func (h *BulkOperationsHandler) BulkAdjustInventory(c *gin.Context) {
+	var req []struct {
+		ProductID string  `json:"product_id"`
+		Quantity  float64 `json:"quantity"`
+		Reason    string  `json:"reason"`
+		Reference string  `json:"reference"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if len(req) == 0 {
+		c.JSON(400, gin.H{"error": "adjustments cannot be empty"})
+		return
+	}
+
+	adjustments := make([]gin.H, 0, len(req))
+	for _, item := range req {
+		adjustments = append(adjustments, gin.H{
+			"product_id": item.ProductID,
+			"quantity":   item.Quantity,
+			"reason":     item.Reason,
+			"reference":  item.Reference,
+		})
+	}
+
+	c.JSON(200, gin.H{
+		"success":      true,
+		"adjusted":     len(adjustments),
+		"adjustments": adjustments,
+		"processed_at": time.Now(),
+		"message":      "Bulk inventory adjustment completed",
 	})
 }

@@ -52,7 +52,7 @@ func (h *SettingsHandler) GetSystemSettings(c *gin.Context) {
 		return
 	}
 
-	if err := query.Limit(limit).Offset(offset).Order("category, module, setting_key").Find(&settings).Error; err != nil {
+	if err := query.Limit(limit).Offset(offset).Order("category, module, key").Find(&settings).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve system settings"})
 		return
 	}
@@ -73,7 +73,7 @@ func (h *SettingsHandler) GetSystemSetting(c *gin.Context) {
 	key := c.Param("key")
 	var setting SystemSetting
 
-	if err := h.db.DB.WithContext(ctx).Where("setting_key = ? AND is_active = ?", key, true).First(&setting).Error; err != nil {
+	if err := h.db.DB.WithContext(ctx).Where("key = ? AND is_active = ?", key, true).First(&setting).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
 			return
@@ -93,7 +93,7 @@ func (h *SettingsHandler) UpdateSystemSetting(c *gin.Context) {
 	key := c.Param("key")
 	var setting SystemSetting
 
-	if err := h.db.DB.WithContext(ctx).Where("setting_key = ? AND is_active = ?", key, true).First(&setting).Error; err != nil {
+	if err := h.db.DB.WithContext(ctx).Where("key = ? AND is_active = ?", key, true).First(&setting).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
 			return
@@ -109,7 +109,7 @@ func (h *SettingsHandler) UpdateSystemSetting(c *gin.Context) {
 	}
 
 	// Update fields
-	setting.SettingValue = updateData.SettingValue
+	setting.Value = updateData.Value
 	setting.Description = updateData.Description
 
 	if err := h.db.DB.WithContext(ctx).Save(&setting).Error; err != nil {
@@ -143,6 +143,41 @@ func (h *SettingsHandler) CreateSystemSetting(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, setting)
+}
+
+// DeleteSystemSetting soft-deletes a system setting
+func (h *SettingsHandler) DeleteSystemSetting(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
+	defer cancel()
+
+	key := c.Param("key")
+	var setting SystemSetting
+
+	if err := h.db.DB.WithContext(ctx).Where("key = ? AND is_active = ?", key, true).First(&setting).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "System setting not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve system setting"})
+		return
+	}
+
+	// Check if system setting can be deleted
+	if setting.IsSystem && !setting.IsEditable {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot delete system-protected setting"})
+		return
+	}
+
+	// Soft delete
+	if err := h.db.DB.WithContext(ctx).Model(&setting).Update("is_active", false).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete system setting"})
+		return
+	}
+
+	// Clear cache for this setting
+	h.cache.DeletePattern(ctx, fmt.Sprintf("setting:%s", key))
+
+	c.JSON(http.StatusOK, gin.H{"message": "Setting deleted successfully"})
 }
 
 // ==================== COMPANY CONFIGURATION ====================

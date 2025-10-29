@@ -33,6 +33,7 @@ export default function RolesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = async () => {
     if (!selectedRole) return;
@@ -58,6 +59,11 @@ export default function RolesPage() {
     }
   };
 
+  const filteredRoles = roles.filter(role =>
+    role.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    role.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (isError) {
     return (
       <Alert variant="destructive">
@@ -82,6 +88,18 @@ export default function RolesPage() {
         </Button>
       </div>
 
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Search roles..."
+            className="w-full px-4 py-2 border rounded-lg"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>All Roles</CardTitle>
@@ -94,7 +112,7 @@ export default function RolesPage() {
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
-          ) : roles.length === 0 ? (
+          ) : filteredRoles.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No roles found. Create your first role to get started.
             </div>
@@ -111,7 +129,7 @@ export default function RolesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {roles.map((role) => (
+                {filteredRoles.map((role) => (
                   <TableRow key={role.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">

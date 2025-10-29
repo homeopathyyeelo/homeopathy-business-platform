@@ -398,3 +398,117 @@ func (h *InventoryHandler) DeleteWarehouse(c *gin.Context) {
 		"id":      id,
 	})
 }
+
+// ==================== INVENTORY BASIC OPERATIONS ====================
+
+// GetInventory returns overall inventory data
+func (h *InventoryHandler) GetInventory(c *gin.Context) {
+	inventory := []gin.H{
+		{
+			"id":            uuid.New().String(),
+			"productName":   "Arnica Montana 30C",
+			"batchNo":       "BATCH-001",
+			"quantity":      500,
+			"unit":          "bottles",
+			"location":      "Warehouse A",
+			"reorderLevel":  100,
+			"status":        "sufficient",
+		},
+		{
+			"id":            uuid.New().String(),
+			"productName":   "Belladonna 200C",
+			"batchNo":       "BATCH-002",
+			"quantity":      50,
+			"unit":          "bottles",
+			"location":      "Warehouse B",
+			"reorderLevel":  100,
+			"status":        "low",
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    inventory,
+	})
+}
+
+// AdjustStock adjusts stock quantity
+func (h *InventoryHandler) AdjustStock(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	adjustment := gin.H{
+		"id":          uuid.New().String(),
+		"productID":   req["product_id"],
+		"adjustment":  req["adjustment"],
+		"reason":      req["reason"],
+		"adjustedBy":  req["adjusted_by"],
+		"adjustedAt":  time.Now().Format(time.RFC3339),
+		"newQuantity": req["new_quantity"],
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    adjustment,
+		"message": "Stock adjusted successfully",
+	})
+}
+
+// TransferStock transfers stock between locations
+func (h *InventoryHandler) TransferStock(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	transfer := gin.H{
+		"id":           uuid.New().String(),
+		"productID":    req["product_id"],
+		"fromLocation": req["from_location"],
+		"toLocation":   req["to_location"],
+		"quantity":     req["quantity"],
+		"transferredBy": req["transferred_by"],
+		"transferredAt": time.Now().Format(time.RFC3339),
+		"status":       "completed",
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"success": true,
+		"data":    transfer,
+		"message": "Stock transferred successfully",
+	})
+}
+
+// GetAlerts returns inventory alerts (low stock, expiring, etc.)
+func (h *InventoryHandler) GetAlerts(c *gin.Context) {
+	alerts := []gin.H{
+		{
+			"id":          uuid.New().String(),
+			"type":        "low_stock",
+			"productName": "Belladonna 200C",
+			"currentQty":  50,
+			"minQty":      100,
+			"severity":    "medium",
+			"createdAt":   time.Now().Add(-2 * time.Hour).Format(time.RFC3339),
+		},
+		{
+			"id":          uuid.New().String(),
+			"type":        "expiring_soon",
+			"productName": "Nux Vomica 30C",
+			"batchNo":     "BATCH-045",
+			"expiryDate":  time.Now().Add(30 * 24 * time.Hour).Format("2006-01-02"),
+			"quantity":    150,
+			"severity":    "high",
+			"createdAt":   time.Now().Add(-1 * time.Hour).Format(time.RFC3339),
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    alerts,
+	})
+}

@@ -15,7 +15,8 @@ import { useToast } from '@/hooks/use-toast';
 interface Employee {
   id: string;
   employee_code?: string;
-  name: string;
+  name?: string; // Frontend form field
+  full_name?: string; // API response field
   email?: string;
   phone?: string;
   department?: string;
@@ -75,7 +76,19 @@ export default function EmployeesPage() {
 
   const handleEdit = (employee: Employee) => {
     setSelectedEmployee(employee);
-    setFormData(employee);
+    // Map API fields (full_name) to form fields (name)
+    setFormData({
+      name: employee.name || employee.full_name || '', // Handle both field names
+      email: employee.email || '',
+      phone: employee.phone || '',
+      department: employee.department || '',
+      designation: employee.designation || '',
+      role: employee.role || 'USER',
+      salary: employee.salary || 0,
+      date_of_joining: employee.date_of_joining || '',
+      employee_code: employee.employee_code || '',
+      is_active: employee.is_active !== false
+    });
     setIsEditModalOpen(true);
   };
 
@@ -89,13 +102,33 @@ export default function EmployeesPage() {
       const url = isEditModalOpen && selectedEmployee
         ? `/api/hr/employees/${selectedEmployee.id}`
         : '/api/hr/employees';
-      
+
       const method = isEditModalOpen ? 'PUT' : 'POST';
-      
+
+      // Prepare data in format expected by API
+      const submitData = {
+        name: formData.name, // Frontend form field
+        full_name: formData.name, // Also send as full_name for API compatibility
+        email: formData.email,
+        phone: formData.phone,
+        department: formData.department,
+        designation: formData.designation,
+        role: formData.role,
+        salary: formData.salary,
+        date_of_joining: formData.date_of_joining,
+        employee_code: formData.employee_code,
+        is_active: formData.is_active,
+        // Include existing data for updates
+        ...(isEditModalOpen && selectedEmployee && {
+          username: selectedEmployee.username,
+          created_at: selectedEmployee.created_at
+        })
+      };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(submitData)
       });
 
       if (response.ok) {
@@ -107,19 +140,21 @@ export default function EmployeesPage() {
         setIsEditModalOpen(false);
         fetchEmployees();
       } else {
-        throw new Error('Failed to save employee');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save employee');
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to save employee',
+        description: error.message || 'Failed to save employee',
         variant: 'destructive'
       });
     }
   };
 
   const handleDelete = async (employee: Employee) => {
-    if (!confirm(`Are you sure you want to delete ${employee.name}?`)) return;
+    const employeeName = employee.name || employee.full_name || 'this employee';
+    if (!confirm(`Are you sure you want to delete ${employeeName}?`)) return;
 
     try {
       const response = await fetch(`/api/hr/employees/${employee.id}`, {
@@ -229,7 +264,7 @@ export default function EmployeesPage() {
                     <TableCell className="font-medium">
                       {employee.employee_code || 'N/A'}
                     </TableCell>
-                    <TableCell>{employee.name}</TableCell>
+                    <TableCell>{employee.name || employee.full_name || 'N/A'}</TableCell>
                     <TableCell>{employee.email || 'N/A'}</TableCell>
                     <TableCell>{employee.phone || 'N/A'}</TableCell>
                     <TableCell>{employee.department || 'N/A'}</TableCell>
@@ -413,7 +448,7 @@ export default function EmployeesPage() {
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Name</Label>
-                  <p className="font-medium">{selectedEmployee.name}</p>
+                  <p className="font-medium">{selectedEmployee.name || selectedEmployee.full_name || 'N/A'}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">

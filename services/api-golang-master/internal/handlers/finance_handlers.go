@@ -1,5 +1,5 @@
 // Finance Handlers - Complete implementation for ledgers, cashbook, expenses, GST, and financial reports
-package main
+package handlers
 
 import (
 	"context"

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -91,12 +90,15 @@ func (h *EmployeeHandler) CreateEmployee(c *gin.Context) {
 	}
 
 	// Set default values
-	payload["id"] = uuid.New().String()
 	payload["created_at"] = time.Now()
 	payload["updated_at"] = time.Now()
 	
 	if payload["is_active"] == nil {
 		payload["is_active"] = true
+	}
+
+	if payload["role"] == nil {
+		payload["role"] = "USER"
 	}
 
 	if err := h.db.Table("users").Create(&payload).Error; err != nil {

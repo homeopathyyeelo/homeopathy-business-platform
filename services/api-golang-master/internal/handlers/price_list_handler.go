@@ -127,3 +127,8 @@ func (h *PriceListHandler) RemoveProductFromPriceList(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Product removed from price list successfully"})
 }
+
+// GetPriceLists is an alias for ListPriceLists
+func (h *PriceListHandler) GetPriceLists(c *gin.Context) {
+	h.ListPriceLists(c)
+}

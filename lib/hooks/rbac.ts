@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import apiClient from '@/lib/api-client';
+import { golangAPI } from '@/lib/api';
 
 // Types
 export interface Role {
@@ -47,14 +47,14 @@ export interface MenuTree extends Menu {
 }
 
 // Fetcher function
-const fetcher = (url: string) => apiClient.get(url).then(res => res.data);
+const fetcher = (url: string) => golangAPI.get(url).then((res: any) => res.data);
 
 // ============================================================================
 // ROLES HOOKS
 // ============================================================================
 
 export function useRoles() {
-  const { data, error, mutate } = useSWR<{ data: Role[] }>('/api/v1/rbac/roles', fetcher);
+  const { data, error, mutate } = useSWR<{ data: Role[] }>('/api/erp/rbac/roles', fetcher);
 
   return {
     roles: data?.data || [],
@@ -66,7 +66,7 @@ export function useRoles() {
 
 export function useRole(id: string | null) {
   const { data, error, mutate } = useSWR<{ data: RoleWithPermissions }>(
-    id ? `/api/v1/rbac/roles/${id}` : null,
+    id ? `/api/erp/rbac/roles/${id}` : null,
     fetcher
   );
 
@@ -84,7 +84,7 @@ export async function createRole(data: {
   description?: string;
   level?: number;
 }) {
-  const response = await apiClient.post('/api/v1/rbac/roles', data);
+  const response = await golangAPI.post('/api/erp/rbac/roles', data);
   return response.data;
 }
 
@@ -94,12 +94,12 @@ export async function updateRole(id: string, data: {
   level?: number;
   is_active: boolean;
 }) {
-  const response = await apiClient.put(`/api/v1/rbac/roles/${id}`, data);
+  const response = await golangAPI.put(`/api/erp/rbac/roles/${id}`, data);
   return response.data;
 }
 
 export async function deleteRole(id: string) {
-  const response = await apiClient.delete(`/api/v1/rbac/roles/${id}`);
+  const response = await golangAPI.delete(`/api/erp/rbac/roles/${id}`);
   return response.data;
 }
 
@@ -108,7 +108,7 @@ export async function deleteRole(id: string) {
 // ============================================================================
 
 export function usePermissions() {
-  const { data, error, mutate } = useSWR<{ data: Permission[] }>('/api/v1/rbac/permissions', fetcher);
+  const { data, error, mutate } = useSWR<{ data: Permission[] }>('/api/erp/rbac/permissions', fetcher);
 
   return {
     permissions: data?.data || [],
@@ -120,7 +120,7 @@ export function usePermissions() {
 
 export function usePermission(id: string | null) {
   const { data, error, mutate } = useSWR<{ data: Permission }>(
-    id ? `/api/v1/rbac/permissions/${id}` : null,
+    id ? `/api/erp/rbac/permissions/${id}` : null,
     fetcher
   );
 
@@ -139,7 +139,7 @@ export async function createPermission(data: {
   action: string;
   description?: string;
 }) {
-  const response = await apiClient.post('/api/v1/rbac/permissions', data);
+  const response = await golangAPI.post('/api/erp/rbac/permissions', data);
   return response.data;
 }
 
@@ -148,12 +148,12 @@ export async function updatePermission(id: string, data: {
   description?: string;
   is_active: boolean;
 }) {
-  const response = await apiClient.put(`/api/v1/rbac/permissions/${id}`, data);
+  const response = await golangAPI.put(`/api/erp/rbac/permissions/${id}`, data);
   return response.data;
 }
 
 export async function deletePermission(id: string) {
-  const response = await apiClient.delete(`/api/v1/rbac/permissions/${id}`);
+  const response = await golangAPI.delete(`/api/erp/rbac/permissions/${id}`);
   return response.data;
 }
 
@@ -163,7 +163,7 @@ export async function deletePermission(id: string) {
 
 export function useRolePermissions(roleId: string | null) {
   const { data, error, mutate } = useSWR<{ data: Permission[] }>(
-    roleId ? `/api/v1/rbac/roles/${roleId}/permissions` : null,
+    roleId ? `/api/erp/rbac/roles/${roleId}/permissions` : null,
     fetcher
   );
 
@@ -176,14 +176,14 @@ export function useRolePermissions(roleId: string | null) {
 }
 
 export async function assignPermissionsToRole(roleId: string, permissionIds: string[]) {
-  const response = await apiClient.post(`/api/v1/rbac/roles/${roleId}/permissions`, {
+  const response = await golangAPI.put(`/api/erp/rbac/roles/${roleId}/permissions`, {
     permission_ids: permissionIds,
   });
   return response.data;
 }
 
 export async function removePermissionFromRole(roleId: string, permissionId: string) {
-  const response = await apiClient.delete(`/api/v1/rbac/roles/${roleId}/permissions/${permissionId}`);
+  const response = await golangAPI.delete(`/api/erp/rbac/roles/${roleId}/permissions/${permissionId}`);
   return response.data;
 }
 
@@ -193,7 +193,7 @@ export async function removePermissionFromRole(roleId: string, permissionId: str
 
 export function useUserRoles(userId: string | null) {
   const { data, error, mutate } = useSWR<{ data: Role[] }>(
-    userId ? `/api/v1/rbac/users/${userId}/roles` : null,
+    userId ? `/api/erp/rbac/users/${userId}/roles` : null,
     fetcher
   );
 
@@ -207,7 +207,7 @@ export function useUserRoles(userId: string | null) {
 
 export function useUserPermissions(userId: string | null) {
   const { data, error, mutate } = useSWR<{ data: string[] }>(
-    userId ? `/api/v1/rbac/users/${userId}/permissions` : null,
+    userId ? `/api/erp/rbac/users/${userId}/permissions` : null,
     fetcher
   );
 
@@ -220,7 +220,7 @@ export function useUserPermissions(userId: string | null) {
 }
 
 export async function assignRoleToUser(userId: string, roleId: string, branchId?: string) {
-  const response = await apiClient.post(`/api/v1/rbac/users/${userId}/roles`, {
+  const response = await golangAPI.post(`/api/erp/rbac/users/${userId}/roles`, {
     role_id: roleId,
     branch_id: branchId,
   });
@@ -228,7 +228,7 @@ export async function assignRoleToUser(userId: string, roleId: string, branchId?
 }
 
 export async function removeRoleFromUser(userId: string, roleId: string) {
-  const response = await apiClient.delete(`/api/v1/rbac/users/${userId}/roles/${roleId}`);
+  const response = await golangAPI.delete(`/api/erp/rbac/users/${userId}/roles/${roleId}`);
   return response.data;
 }
 
@@ -237,7 +237,7 @@ export async function removeRoleFromUser(userId: string, roleId: string) {
 // ============================================================================
 
 export function useMenus() {
-  const { data, error, mutate } = useSWR<{ data: Menu[] }>('/api/v1/rbac/menus', fetcher);
+  const { data, error, mutate } = useSWR<{ data: Menu[] }>('/api/erp/rbac/menus', fetcher);
 
   return {
     menus: data?.data || [],
@@ -248,7 +248,7 @@ export function useMenus() {
 }
 
 export function useMenuTree() {
-  const { data, error, mutate } = useSWR<{ data: MenuTree[] }>('/api/v1/rbac/menus/tree', fetcher);
+  const { data, error, mutate } = useSWR<{ data: MenuTree[] }>('/api/erp/rbac/menus/tree', fetcher);
 
   return {
     menuTree: data?.data || [],
@@ -260,7 +260,7 @@ export function useMenuTree() {
 
 export function useUserMenus(userId: string | null) {
   const { data, error, mutate } = useSWR<{ data: MenuTree[] }>(
-    userId ? `/api/v1/rbac/menus/user/${userId}` : null,
+    userId ? `/api/erp/rbac/menus/user/${userId}` : null,
     fetcher
   );
 
@@ -281,7 +281,7 @@ export async function createMenu(data: {
   sort_order?: number;
   permission_code?: string;
 }) {
-  const response = await apiClient.post('/api/v1/rbac/menus', data);
+  const response = await golangAPI.post('/api/erp/rbac/menus', data);
   return response.data;
 }
 
@@ -294,12 +294,12 @@ export async function updateMenu(id: string, data: {
   permission_code?: string;
   is_active: boolean;
 }) {
-  const response = await apiClient.put(`/api/v1/rbac/menus/${id}`, data);
+  const response = await golangAPI.put(`/api/erp/rbac/menus/${id}`, data);
   return response.data;
 }
 
 export async function deleteMenu(id: string) {
-  const response = await apiClient.delete(`/api/v1/rbac/menus/${id}`);
+  const response = await golangAPI.delete(`/api/erp/rbac/menus/${id}`);
   return response.data;
 }
 

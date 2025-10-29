@@ -4,180 +4,324 @@
 
    ▲ Next.js 15.5.6
    - Local:        http://localhost:3000
-   - Network:      http://192.168.1.7:3000
+   - Network:      http://192.168.1.3:3000
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2.2s
+ ✓ Ready in 2.7s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 873ms (159 modules)
- ○ Compiling /hr/payroll ...
- ✓ Compiled /hr/payroll in 10.8s (1217 modules)
- GET /hr/payroll 200 in 11730ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 1532ms (1290 modules)
- GET /api/auth/me 200 in 2341ms
- GET /api/hr/payroll 404 in 2379ms
- ○ Compiling /products/import-export ...
- ✓ Compiled /products/import-export in 1421ms (1502 modules)
- GET /products/import-export 200 in 1778ms
+ ✓ Compiled /middleware in 1313ms (159 modules)
  ○ Compiling / ...
- ✓ Compiled / in 800ms (1525 modules)
- GET / 200 in 1363ms
- GET /products/import-export 200 in 404ms
- GET /api/auth/me 200 in 247ms
- ○ Compiling /inventory/stock ...
- ✓ Compiled /dashboard in 9s (2935 modules)
- GET /dashboard 200 in 7224ms
- GET /inventory/stock 200 in 9388ms
- ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 2.5s (2939 modules)
- GET /api/vendors 200 in 2721ms
- GET /api/customers 200 in 2941ms
- GET /dashboard 200 in 2701ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 1458ms (2948 modules)
- GET /dashboard/stats 200 in 1922ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 1243ms (2961 modules)
- GET /dashboard/activity 200 in 1493ms
- ○ Compiling /api/dashboard/activity-feed ...
- ✓ Compiled /api/dashboard/activity-feed in 1370ms (2971 modules)
- GET /api/system/health 200 in 1638ms
- GET /api/ai/activity 200 in 1647ms
- GET /api/system/bugs 200 in 1659ms
- GET /api/dashboard/activity-feed 200 in 1673ms
- GET /api/dashboard/metrics 200 in 1691ms
- GET /api/dashboard/activity-feed 200 in 147ms
- GET /api/ai/activity 200 in 125ms
- GET /api/dashboard/activity-feed 200 in 117ms
- GET /api/dashboard/activity-feed 200 in 114ms
- GET /api/ai/activity 200 in 123ms
- GET /api/dashboard/activity-feed 200 in 97ms
- GET /api/dashboard/activity-feed 200 in 108ms
- GET /api/system/health 200 in 129ms
- GET /api/ai/activity 200 in 99ms
- GET /api/dashboard/activity-feed 200 in 122ms
- GET /api/dashboard/activity-feed 200 in 126ms
- GET /api/ai/activity 200 in 125ms
- GET /api/dashboard/activity-feed 200 in 169ms
- GET /api/dashboard/metrics 200 in 696ms
- GET /api/system/health 200 in 722ms
- GET /api/ai/activity 200 in 724ms
- GET /api/system/bugs 200 in 731ms
- GET /api/dashboard/activity-feed 200 in 143ms
- GET /dashboard/stats 200 in 204ms
- GET /dashboard 200 in 145ms
- GET /products/import-export 200 in 150ms
- ○ Compiling /hr/employees ...
- ✓ Compiled /hr/employees in 2.8s (2857 modules)
- GET /hr/employees 200 in 3224ms
- ○ Compiling /api/hr/employees ...
- ✓ Compiled /api/hr/employees in 646ms (2875 modules)
- GET /api/hr/employees 200 in 959ms
- GET /api/hr/employees 200 in 188ms
- ✓ Compiled /_not-found in 312ms (1566 modules)
- GET /hr/employees/add 404 in 430ms
- GET /hr/employees/add 404 in 414ms
+ ✓ Compiled / in 10.2s (1224 modules)
+ GET / 200 in 2357ms
+ GET / 200 in 214ms
+ GET / 200 in 251ms
  ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 549ms (1644 modules)
- GET /api/auth/me 200 in 764ms
- ○ Compiling /hr/roles ...
- ✓ Compiled /hr/roles in 703ms (2961 modules)
- GET /hr/roles 200 in 1034ms
- GET /api/hr/roles 404 in 437ms
- GET /api/hr/roles 404 in 172ms
- ○ Compiling /hr/attendance ...
- ✓ Compiled /hr/attendance in 659ms (2968 modules)
- GET /hr/attendance 200 in 855ms
- GET /api/hr/attendance 404 in 231ms
- GET /api/hr/attendance 404 in 162ms
- GET /hr/attendance 200 in 523ms
- ✓ Compiled in 2s (3014 modules)
- GET /hr/attendance 200 in 582ms
- ○ Compiling /marketing/dashboard ...
- ✓ Compiled /marketing/dashboard in 1719ms (2870 modules)
- GET /marketing/dashboard 200 in 1949ms
- ✓ Compiled in 1870ms (1542 modules)
- GET /marketing/dashboard 200 in 323ms
- ✓ Compiled in 2.2s (2864 modules)
- GET /marketing/dashboard 200 in 278ms
- GET /marketing/dashboard 200 in 654ms
- ○ Compiling /api/auth/me ...
- ✓ Compiled /api/auth/me in 1494ms (1638 modules)
- GET /api/auth/me 200 in 1949ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 1168ms (1646 modules)
- GET /dashboard/stats 200 in 1887ms
- GET /dashboard 200 in 398ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 574ms (1655 modules)
- GET /dashboard/activity 200 in 797ms
- GET /dashboard/activity 200 in 163ms
- ○ Compiling /api/dashboard/activity-feed ...
- ✓ Compiled /api/dashboard/activity-feed in 763ms (1657 modules)
- ✓ Compiled (1665 modules)
- GET /api/system/health 200 in 1482ms
- GET /api/ai/activity 200 in 1499ms
- GET /api/system/bugs 200 in 1423ms
- GET /api/dashboard/activity-feed 200 in 1331ms
- GET /api/dashboard/metrics 200 in 1640ms
- GET /dashboard/stats 200 in 175ms
- GET /dashboard 200 in 460ms
+ ✓ Compiled /api/auth/me in 997ms (1296 modules)
+ GET /api/auth/me 200 in 1343ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 5.8s (2876 modules)
+ GET /dashboard 200 in 6238ms
+ GET /dashboard 200 in 146ms
  ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 774ms (1667 modules)
- ✓ Compiled (1669 modules)
- GET /api/vendors 200 in 1566ms
- GET /api/customers 200 in 1671ms
- GET /dashboard 200 in 849ms
- GET /api/customers 200 in 252ms
- GET /api/vendors 200 in 370ms
- GET /api/auth/me 200 in 313ms
- ○ Compiling /inventory/stock ...
- ✓ Compiled /inventory/stock in 578ms (1660 modules)
- GET /inventory/stock 200 in 828ms
- GET /inventory/stock 200 in 164ms
- ○ Compiling /products ...
- ✓ Compiled /products in 2.5s (2989 modules)
- GET /products 200 in 2742ms
- ○ Compiling /hr/employees ...
- ✓ Compiled /hr/employees in 1153ms (1677 modules)
- GET /hr/employees 200 in 1389ms
- ○ Compiling /api/hr/employees ...
- ✓ Compiled /api/hr/employees in 705ms (1679 modules)
- GET /api/hr/employees 200 in 863ms
- GET /api/hr/employees 200 in 136ms
- ○ Compiling /products/categories ...
- ✓ Compiled /products/categories in 2.3s (3014 modules)
- GET /products/categories 200 in 2593ms
- ○ Compiling /products/add ...
- ✓ Compiled /products/add in 1469ms (3030 modules)
- GET /products/add 200 in 1747ms
- ○ Compiling /products/import-export ...
- ✓ Compiled /products/import-export in 3.7s (1700 modules)
- GET /products/import-export 200 in 4113ms
- GET /products/import-export 200 in 185ms
- GET /products 200 in 807ms
- GET /api/auth/me 200 in 244ms
-Error fetching expiry data: TypeError: fetch failed
-    at async ExpiryNotificationService.fetchExpiryData (lib/expiry-notifications.ts:64:26)
-  62 |
-  63 |       // Fetch expiry summary
-> 64 |       const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
-     |                          ^
-  65 |       if (summaryRes.ok) {
-  66 |         const summaryData = await summaryRes.json();
-  67 |         if (summaryData.success && summaryData.data) { {
-  [cause]: Error: connect ECONNREFUSED 127.0.0.1:3005
-      at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:3005) {
-    errno: -111,
-    code: 'ECONNREFUSED',
-    syscall: 'connect',
-    address: '127.0.0.1',
-    port: 3005
-  }
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /api/vendors in 1883ms (2880 modules)
+ GET /api/vendors 200 in 2135ms
+ GET /api/customers 200 in 2214ms
+ GET /dashboard 200 in 1944ms
+ GET /api/customers 200 in 135ms
+ GET /api/vendors 200 in 346ms
+ GET /api/auth/me 200 in 384ms
+ GET /dashboard 200 in 294ms
+ GET /api/customers 200 in 112ms
+ GET /api/vendors 200 in 236ms
+ GET /api/auth/me 200 in 253ms
+ GET /dashboard 200 in 263ms
+ GET /api/customers 200 in 281ms
+ GET /api/vendors 200 in 355ms
+ GET /api/auth/me 200 in 300ms
+ GET /dashboard 200 in 352ms
+ GET /api/customers 200 in 160ms
+ GET /api/vendors 200 in 281ms
+ GET /api/auth/me 200 in 288ms
+ ✓ Compiled in 923ms (2771 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 845ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 799ms (1520 modules)
+ ✓ Compiled (1600 modules)
+ GET /api/vendors 200 in 1245ms
+ GET /api/auth/me 200 in 1214ms
+ GET /api/customers 200 in 1334ms
+ GET /dashboard 200 in 673ms
+ GET /api/customers 200 in 121ms
+ GET /api/vendors 200 in 238ms
+ GET /api/auth/me 200 in 288ms
+ GET /dashboard 200 in 333ms
+ GET /api/customers 200 in 150ms
+ GET /api/vendors 200 in 342ms
+ GET /api/auth/me 200 in 310ms
+ GET /dashboard 200 in 304ms
+ GET /api/customers 200 in 148ms
+ GET /api/vendors 200 in 516ms
+ GET /api/auth/me 200 in 534ms
+ GET /dashboard 200 in 260ms
+ GET /api/customers 200 in 154ms
+ GET /api/vendors 200 in 339ms
+ GET /api/auth/me 200 in 305ms
+ ✓ Compiled in 1798ms (2869 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 751ms
+ GET /api/customers 200 in 141ms
+ GET /api/vendors 200 in 238ms
+ GET /api/auth/me 200 in 272ms
+ ✓ Compiled in 984ms (2869 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: lowStock is not defined
+    at DashboardPage (app/dashboard/page.tsx:410:14)
+  408 |           <CardContent className="space-y-4">
+  409 |             {/* Low Stock Alerts */}
+> 410 |             {lowStock.length > 0 && (
+      |              ^
+  411 |               <Alert>
+  412 |                 <AlertTriangle className="h-4 w-4" />
+  413 |                 <AlertDescription> {
+  digest: '158844135'
 }
- ✓ Compiled in 3s (2406 modules)
- GET /products/import-export 200 in 974ms
- ✓ Compiled /api/auth/me in 452ms (1008 modules)
- GET /api/auth/me 200 in 745ms
+ GET /dashboard 500 in 818ms
+ ✓ Compiled in 641ms (2869 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 704ms
+ GET /api/customers 200 in 129ms
+ GET /api/vendors 200 in 197ms
+ GET /api/auth/me 200 in 227ms
+ GET /dashboard 200 in 306ms
+ GET /api/customers 200 in 163ms
+ GET /api/vendors 200 in 273ms
+ GET /api/auth/me 200 in 251ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1945ms (2792 modules)
+ GET /products 200 in 2360ms
+ ○ Compiling /products/subcategories ...
+ ✓ Compiled /products/subcategories in 754ms (2822 modules)
+ GET /products/subcategories 200 in 964ms
+ ○ Compiling /products/units ...
+ ✓ Compiled /products/units in 578ms (2833 modules)
+ GET /products/units 200 in 750ms
+ ○ Compiling /products/batches ...
+ ✓ Compiled /products/batches in 553ms (2842 modules)
+ GET /products/batches 200 in 720ms
+ ✓ Compiled in 2.6s (2824 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /products/batches 200 in 933ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 3.1s (1620 modules)
+ GET /api/auth/me 200 in 3491ms
+ ○ Compiling /products/barcode ...
+ ✓ Compiled /products/barcode in 1815ms (2937 modules)
+ GET /products/barcode 200 in 2204ms
+ GET /products/batches 200 in 154ms
+ ○ Compiling /settings/global ...
+ ✓ Compiled /settings/global in 1747ms (2962 modules)
+ GET /settings/global 200 in 2950ms
+ ○ Compiling /settings/payments ...
+ ✓ Compiled /settings/payments in 2.1s (2882 modules)
+ GET /settings/payments 200 in 2455ms
+ GET /settings/payments 200 in 533ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 734ms (1009 modules)
+ GET /api/auth/me 200 in 1005ms
+ GET /products 200 in 183ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/add in 1313ms (2250 modules)
+ GET /products/add 200 in 1727ms
+ GET /products/add 200 in 580ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 792ms (1011 modules)
+ GET /api/auth/me 200 in 1036ms
+ GET /products/add 200 in 751ms
+ GET /api/auth/me 200 in 162ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /inventory/stock in 2.9s (2350 modules)
+ GET /inventory/stock 200 in 3231ms
+ ○ Compiling /purchases/orders ...
+ ✓ Compiled /purchases/orders in 1801ms (2258 modules)
+ GET /purchases/orders 200 in 2114ms
+ ○ Compiling /purchases/orders/create ...
+ ✓ Compiled /purchases/orders/create in 535ms (2254 modules)
+ GET /purchases/orders/create 200 in 738ms
+ ○ Compiling /purchases/returns ...
+ ✓ Compiled /purchases/returns in 731ms (2255 modules)
+ GET /purchases/returns 200 in 907ms
+ ○ Compiling /purchases/grn ...
+ ✓ Compiled /purchases/grn in 547ms (2262 modules)
+ GET /purchases/grn 200 in 785ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1204ms (2265 modules)
+ GET /api/purchases/grn 404 in 1633ms
+ GET /api/purchases/grn 404 in 171ms
+ GET /purchases/orders 200 in 115ms
+ GET /purchases/grn 200 in 115ms
+ GET /api/purchases/grn 404 in 151ms
+ GET /api/purchases/grn 404 in 109ms
+ ○ Compiling /purchases/bills ...
+ ✓ Compiled /purchases/bills in 1717ms (2275 modules)
+ GET /purchases/bills 200 in 1913ms
+ GET /purchases/grn 200 in 121ms
+ GET /purchases/orders 200 in 127ms
+ GET /purchases/grn 200 in 132ms
+ GET /api/purchases/grn 404 in 362ms
+ GET /api/purchases/grn 404 in 148ms
+ GET /purchases/orders 200 in 123ms
+ GET /purchases/grn 200 in 127ms
+ GET /api/purchases/grn 404 in 161ms
+ GET /api/purchases/grn 404 in 146ms
+ GET /purchases/orders 200 in 115ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.5s (1540 modules)
+ GET /dashboard 200 in 2735ms
+ ○ Compiling /api/vendors ...
+ ✓ Compiled /api/vendors in 993ms (1558 modules)
+ ✓ Compiled (1560 modules)
+ GET /api/vendors 200 in 1521ms
+ GET /api/customers 200 in 1613ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/add in 636ms (1567 modules)
+ GET /products/add 200 in 950ms
+ ✓ Compiled in 4.3s (2886 modules)
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1279ms (1547 modules)
+ GET /products 200 in 1585ms
+ GET /products 200 in 512ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1790ms (1636 modules)
+ GET /api/auth/me 200 in 2064ms
+ GET /products/add 200 in 203ms
+ GET /products 200 in 126ms
+ GET /products 200 in 541ms
+ GET /api/auth/me 200 in 126ms
+ ○ Compiling /products/subcategories ...
+ ✓ Compiled /products/subcategories in 2.1s (1555 modules)
+ GET /products/subcategories 200 in 2463ms
+ ○ Compiling /products/brands ...
+ ✓ Compiled /products/brands in 3s (2902 modules)
+ GET /products/brands 200 in 3278ms
+ GET /products/brands 200 in 580ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 520ms (1643 modules)
+ GET /api/auth/me 200 in 764ms
+ GET /products/brands 200 in 621ms
+ GET /api/auth/me 200 in 135ms
+ GET /products 200 in 191ms
+ GET /products 200 in 346ms
+ ✓ Compiled in 2.9s (3056 modules)
+ GET /products 200 in 699ms
+ GET /products 200 in 327ms
+ ✓ Compiled in 1866ms (3056 modules)
+ GET /products 200 in 219ms
+ GET /products 200 in 316ms
+ ✓ Compiled in 1029ms (3056 modules)
+ GET /products 200 in 183ms
+ GET /products 200 in 306ms
+ ✓ Compiled in 891ms (3056 modules)
+ GET /products 200 in 210ms
+ GET /products 200 in 376ms
+ ✓ Compiled in 1978ms (3056 modules)
+ GET /products 200 in 271ms
+ GET /products 200 in 332ms
+ ✓ Compiled in 880ms (3056 modules)
+ GET /products 200 in 203ms
+ ○ Compiling /purchases/upload ...
+ ✓ Compiled /purchases/upload in 4.1s (2909 modules)
+ GET /purchases/upload 200 in 5305ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1466ms (1651 modules)
+ GET /api/auth/me 200 in 2133ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /inventory/stock in 996ms (1013 modules)
+ GET /inventory/stock 200 in 1680ms
+ GET /api/auth/me 200 in 173ms
+ GET /purchases/upload 200 in 141ms
+ ○ Compiling /admin/approvals ...
+ ✓ Compiled /admin/approvals in 5.1s (2275 modules)
+ GET /admin/approvals 200 in 5939ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 1327ms (2375 modules)
+ GET /api/auth/me 200 in 1761ms
+Database query error: Error: getaddrinfo EAI_AGAIN postgres
+    at async query (lib/database.ts:76:20)
+    at async GET (app/api/uploads/purchase/route.ts:314:20)
+  74 |
+  75 |   try {
+> 76 |     const result = await db.query<T>(text, params)
+     |                    ^
+  77 |     const duration = Date.now() - start
+  78 |
+  79 |     // Log slow queries (> 100ms) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'postgres'
+}
+Query: 
+      SELECT * FROM upload_sessions
+      WHERE upload_type = $1
+     AND approval_status = $2 ORDER BY created_at DESC
+Params: [ 'purchase', 'pending' ]
+Fetch error: Error: getaddrinfo EAI_AGAIN postgres
+    at async query (lib/database.ts:76:20)
+    at async GET (app/api/uploads/purchase/route.ts:314:20)
+  74 |
+  75 |   try {
+> 76 |     const result = await db.query<T>(text, params)
+     |                    ^
+  77 |     const duration = Date.now() - start
+  78 |
+  79 |     // Log slow queries (> 100ms) {
+  errno: -3001,
+  code: 'EAI_AGAIN',
+  syscall: 'getaddrinfo',
+  hostname: 'postgres'
+}
+ GET /api/uploads/purchase?status=pending 500 in 2125ms
+ ○ Compiling /api/uploads/inventory ...
+ ✓ Compiled /api/uploads/inventory in 668ms (2377 modules)
+Database query error: Error: Connection terminated due to connection timeout
+    at async query (lib/database.ts:76:20)
+    at async GET (app/api/uploads/inventory/route.ts:234:20)
+  74 |
+  75 |   try {
+> 76 |     const result = await db.query<T>(text, params)
+     |                    ^
+  77 |     const duration = Date.now() - start
+  78 |
+  79 |     // Log slow queries (> 100ms) {
+  [cause]: [Error: Connection terminated unexpectedly]
+}
+Query: 
+      SELECT * FROM upload_sessions
+      WHERE upload_type = 'inventory'
+     AND approval_status = $1 ORDER BY created_at DESC
+Params: [ 'pending' ]
+Fetch error: Error: Connection terminated due to connection timeout
+    at async query (lib/database.ts:76:20)
+    at async GET (app/api/uploads/inventory/route.ts:234:20)
+  74 |
+  75 |   try {
+> 76 |     const result = await db.query<T>(text, params)
+     |                    ^
+  77 |     const duration = Date.now() - start
+  78 |
+  79 |     // Log slow queries (> 100ms) {
+  [cause]: [Error: Connection terminated unexpectedly]
+}
+ GET /api/uploads/inventory?status=pending 500 in 3064ms
+ ○ Compiling /inventory/upload ...
+ ✓ Compiled /inventory/upload in 1715ms (2375 modules)
+ GET /inventory/upload 200 in 2349ms
+ GET /api/auth/me 200 in 183ms
+ GET /purchases/upload 200 in 292ms
+ GET /api/auth/me 200 in 131ms
+ ✓ Compiled in 5.9s (2252 modules)
+ ✓ Compiled in 1811ms (2254 modules)

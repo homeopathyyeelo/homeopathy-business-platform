@@ -31,11 +31,11 @@ export function initializeDatabase(): Pool {
   }
 
   const config: DatabaseConfig = {
-    host: process.env.DB_HOST || "localhost",
-    port: Number.parseInt(process.env.DB_PORT || "5432"),
-    database: process.env.DB_NAME || "yeelo_homeopathy",
-    user: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "",
+    host: process.env.POSTGRES_HOST || process.env.DB_HOST || "localhost",
+    port: Number.parseInt(process.env.POSTGRES_PORT || process.env.DB_PORT || "5433"),
+    database: process.env.POSTGRES_DB || process.env.DB_NAME || "yeelo_homeopathy",
+    user: process.env.POSTGRES_USER || process.env.DB_USER || "postgres",
+    password: process.env.POSTGRES_PASSWORD || process.env.DB_PASSWORD || "postgres",
     ssl: process.env.NODE_ENV === "production",
     max: 20, // Maximum number of clients in the pool
     idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
@@ -68,7 +68,7 @@ export function getDatabase(): Pool {
  * Execute a query with parameters
  * Provides type safety and error handling
  */
-export async function query<T = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
+export async function query<T extends Record<string, any> = any>(text: string, params?: any[]): Promise<QueryResult<T>> {
   const db = getDatabase()
   const start = Date.now()
 

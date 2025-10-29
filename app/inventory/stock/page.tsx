@@ -29,7 +29,10 @@ export default function StockListPage() {
   });
 
   const { data: productsData } = useProducts();
-  const products = productsData || [];
+  const products: any[] = Array.isArray(productsData)
+    ? (productsData as any[])
+    : (Array.isArray((productsData as any)?.items) ? (productsData as any).items
+      : (Array.isArray((productsData as any)?.data) ? (productsData as any).data : []));
 
   const { data: stockResponse, isLoading } = useEnhancedInventory(filters);
   const stock = stockResponse?.data || [];
@@ -54,7 +57,7 @@ export default function StockListPage() {
   const expiryAlerts = expiryResponse?.data || [];
 
   // Filter products by category
-  const categories = [...new Set(products.map(p => p.category))];
+  const categories = [...new Set(products.map((p: any) => p?.category).filter(Boolean))];
 
   const handleFilterChange = (key: string, value: string) => {
     // Map ALL_VALUE back to empty string for "no filter"

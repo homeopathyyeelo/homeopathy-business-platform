@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Search, Filter, Download, Plus, Edit2, Trash2, Eye, MoreVertical } from 'lucide-react';
 
 interface Column {
@@ -8,6 +8,14 @@ interface Column {
   title: string;
   sortable?: boolean;
   render?: (value: any, row: any) => React.ReactNode;
+}
+
+interface ServerPaginationConfig {
+  page: number;
+  perPage: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onPerPageChange: (perPage: number) => void;
 }
 
 interface DataTableProps {
@@ -21,6 +29,9 @@ interface DataTableProps {
   searchable?: boolean;
   exportable?: boolean;
   loading?: boolean;
+  serverPagination?: ServerPaginationConfig;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 export default function DataTable({
@@ -34,35 +45,63 @@ export default function DataTable({
   searchable = true,
   exportable = true,
   loading = false,
+  serverPagination,
+  searchValue,
+  onSearchChange,
 }: DataTableProps) {
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(25);
+  const isServerPaginated = Boolean(serverPagination);
+
+  const [internalSearch, setInternalSearch] = useState('');
+  const [pageState, setPageState] = useState(1);
+  const [perPageState, setPerPageState] = useState(25);
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
+  const searchTerm = searchValue ?? internalSearch;
+  const currentPage = serverPagination ? serverPagination.page : pageState;
+  const currentPerPage = serverPagination ? serverPagination.perPage : perPageState;
+  const shouldFilterLocally = !(isServerPaginated && onSearchChange);
+
   // Filter data
-  const filteredData = data.filter((row) =>
-    Object.values(row).some((val) =>
-      String(val).toLowerCase().includes(search.toLowerCase())
-    )
-  );
+  const filteredData = useMemo(() => {
+    if (!searchTerm || !shouldFilterLocally) {
+      return data;
+    }
+
+    const lowered = searchTerm.toLowerCase();
+    return data.filter((row) =>
+      Object.values(row).some((val) =>
+        String(val).toLowerCase().includes(lowered)
+      )
+    );
+  }, [data, searchTerm, shouldFilterLocally]);
 
   // Sort data
-  const sortedData = sortKey
-    ? [...filteredData].sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
-        if (sortDir === 'asc') {
-          return aVal > bVal ? 1 : -1;
-        }
-        return aVal < bVal ? 1 : -1;
-      })
-    : filteredData;
+  const sortedData = useMemo(() => {
+    if (!sortKey) {
+      return filteredData;
+    }
+
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[sortKey];
+      const bVal = b[sortKey];
+      if (sortDir === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      }
+      return aVal < bVal ? 1 : -1;
+    });
+  }, [filteredData, sortDir, sortKey]);
 
   // Paginate
-  const paginatedData = sortedData.slice((page - 1) * perPage, page * perPage);
-  const totalPages = Math.ceil(sortedData.length / perPage);
+  const displayedData = isServerPaginated
+    ? sortedData
+    : sortedData.slice((currentPage - 1) * currentPerPage, currentPage * currentPerPage);
+
+  const totalItems = isServerPaginated
+    ? (shouldFilterLocally ? sortedData.length : serverPagination!.total)
+    : sortedData.length;
+
+  const totalPages = Math.max(1, Math.ceil(totalItems / currentPerPage)) || 1;
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -70,6 +109,50 @@ export default function DataTable({
     } else {
       setSortKey(key);
       setSortDir('asc');
+    }
+  };
+
+  const handleSearchInput = (value: string) => {
+    if (onSearchChange) {
+      onSearchChange(value);
+      if (serverPagination) {
+        serverPagination.onPageChange(1);
+      } else {
+        setPageState(1);
+      }
+    } else {
+      setInternalSearch(value);
+      if (!isServerPaginated) {
+        setPageState(1);
+      }
+    }
+  };
+
+  const handlePerPageChange = (value: number) => {
+    if (serverPagination) {
+      serverPagination.onPerPageChange(value);
+      serverPagination.onPageChange(1);
+    } else {
+      setPerPageState(value);
+      setPageState(1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentPage === 1) return;
+    if (serverPagination) {
+      serverPagination.onPageChange(currentPage - 1);
+    } else {
+      setPageState((prev) => Math.max(1, prev - 1));
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage >= totalPages) return;
+    if (serverPagination) {
+      serverPagination.onPageChange(currentPage + 1);
+    } else {
+      setPageState((prev) => Math.min(totalPages, prev + 1));
     }
   };
 
@@ -120,8 +203,8 @@ export default function DataTable({
             <input
               type="text"
               placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => handleSearchInput(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -163,14 +246,14 @@ export default function DataTable({
                   </div>
                 </td>
               </tr>
-            ) : paginatedData.length === 0 ? (
+            ) : displayedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-gray-500">
                   No data found
                 </td>
               </tr>
             ) : (
-              paginatedData.map((row, idx) => (
+              displayedData.map((row, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3 text-sm text-gray-900">
@@ -222,8 +305,8 @@ export default function DataTable({
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Show</span>
           <select
-            value={perPage}
-            onChange={(e) => setPerPage(Number(e.target.value))}
+            value={currentPerPage}
+            onChange={(e) => handlePerPageChange(Number(e.target.value))}
             className="border rounded px-2 py-1"
           >
             <option value={10}>10</option>
@@ -232,24 +315,24 @@ export default function DataTable({
             <option value={100}>100</option>
           </select>
           <span>
-            of {filteredData.length} entries
+            of {totalItems} entries
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setPage(Math.max(1, page - 1))}
-            disabled={page === 1}
+            onClick={handlePrev}
+            disabled={currentPage === 1}
             className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >
             Previous
           </button>
           <span className="text-sm text-gray-600">
-            Page {page} of {totalPages}
+            Page {Math.min(currentPage, totalPages)} of {totalPages}
           </span>
           <button
-            onClick={() => setPage(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
+            onClick={handleNext}
+            disabled={currentPage >= totalPages}
             className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
           >
             Next

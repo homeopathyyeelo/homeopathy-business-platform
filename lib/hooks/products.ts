@@ -1,14 +1,44 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { golangAPI, nestjsAPI } from '@/lib/api'
 
-export function useProducts() {
-  return useQuery({
-    queryKey: ['products', 'list'],
+interface ProductsQueryParams {
+  page?: number
+  perPage?: number
+  search?: string
+}
+
+interface PaginatedProducts {
+  items: any[]
+  total: number
+  page: number
+  perPage: number
+}
+
+export function useProducts({ page = 1, perPage = 100, search }: ProductsQueryParams = {}): UseQueryResult<PaginatedProducts> {
+  return useQuery<PaginatedProducts>({
+    queryKey: ['products', 'list', page, perPage, search],
     queryFn: async () => {
-      // Call Golang API directly with high limit to get all products
-      const res = await golangAPI.get('/api/erp/products?limit=10000&page=1')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const params = new URLSearchParams()
+      params.set('limit', String(perPage))
+      params.set('offset', String((page - 1) * perPage))
+      if (search) {
+        params.set('search', search)
+      }
+
+      const res = await golangAPI.get(`/api/erp/products?${params.toString()}`)
+
+      const products = Array.isArray(res.data)
+        ? res.data
+        : res.data?.products ?? res.data?.data ?? []
+
+      const pagination = res.data?.pagination || {}
+
+      return {
+        items: products,
+        total: typeof pagination.total === 'number' ? pagination.total : products.length,
+        page,
+        perPage,
+      }
     },
     staleTime: 60_000,
   })
@@ -89,23 +119,27 @@ export function useProductImages(productId?: string) {
   })
 }
 
-export function useProductStats(products: any[] | undefined) {
-  if (!products) return {
-    total: 0,
-    active: 0,
-    lowStock: 0,
-    totalValue: 0,
-    categories: 0,
-    brands: 0
+export function useProductStats(products: any) {
+  // Normalize to array from various shapes: array | {items}|{data}
+  const list: any[] = Array.isArray(products)
+    ? products
+    : (Array.isArray(products?.items) ? products.items
+      : (Array.isArray(products?.data) ? products.data : []))
+
+  if (!Array.isArray(list) || list.length === 0) {
+    return { total: 0, active: 0, lowStock: 0, totalValue: 0, categories: 0, brands: 0 }
   }
 
-  const total = products.length
-  const active = products.filter((p: any) => p.isActive ?? p.is_active ?? true).length
-  const lowStock = products.filter((p: any) => (p.stock ?? p.stock_qty ?? 0) < 10).length
-  const totalValue = products.reduce((sum: number, p: any) =>
-    sum + ((p.stock ?? p.stock_qty ?? 0) * (p.unit_price ?? p.price ?? 0)), 0)
-  const categories = new Set(products.map(p => p.category)).size
-  const brands = new Set(products.map(p => p.brand)).size
+  const total = list.length
+  const active = list.filter((p: any) => (p?.isActive ?? p?.is_active ?? true) === true).length
+  const lowStock = list.filter((p: any) => Number(p?.stock ?? p?.stock_qty ?? 0) < 10).length
+  const totalValue = list.reduce((sum: number, p: any) => {
+    const qty = Number(p?.stock ?? p?.stock_qty ?? 0)
+    const price = Number(p?.unit_price ?? p?.price ?? 0)
+    return sum + (qty * price)
+  }, 0)
+  const categories = new Set(list.map((p: any) => p?.category).filter(Boolean)).size
+  const brands = new Set(list.map((p: any) => p?.brand).filter(Boolean)).size
 
   return { total, active, lowStock, totalValue, categories, brands }
 }
@@ -114,18 +148,18 @@ export function useProductMutations() {
   const qc = useQueryClient()
 
   const create = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/products', payload),
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/products', payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
   })
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      golangAPI.put(`/api/products/${id}`, data),
+      golangAPI.put(`/api/erp/products/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
   })
 
   const remove = useMutation({
-    mutationFn: (id: string) => golangAPI.delete(`/api/products/${id}`),
+    mutationFn: (id: string) => golangAPI.delete(`/api/erp/products/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products'] }),
   })
 

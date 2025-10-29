@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback, useMemo, useState } from 'react';
 import DataTable from '@/components/common/DataTable';
 import { useRouter } from 'next/navigation';
 import { Package, Plus, TrendingUp, AlertTriangle } from 'lucide-react';
@@ -7,9 +8,36 @@ import { useProducts, useProductStats, useProductMutations } from '@/lib/hooks/p
 
 export default function ProductListPage() {
   const router = useRouter();
-  const { data: products = [], isLoading } = useProducts()
-  const stats = useProductStats(products)
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(100);
+  const [search, setSearch] = useState('');
+
+  const { data, isLoading } = useProducts({ page, perPage, search });
+  const products = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const stats = useProductStats(products);
   const { remove } = useProductMutations();
+
+  const handleAdd = useCallback(() => router.push('/products/add'), [router]);
+  const handleEdit = useCallback((row: any) => router.push(`/products/edit/${row.id}`), [router]);
+  const handleView = useCallback((row: any) => router.push(`/products/${row.id}`), [router]);
+
+  const handleDelete = useCallback((row: any) => {
+    if (confirm(`Delete product: ${row.name}?`)) {
+      remove.mutateAsync(String(row.id)).catch(() => {/* noop */});
+    }
+  }, [remove]);
+
+  const serverPagination = useMemo(() => ({
+    page,
+    perPage,
+    total,
+    onPageChange: (newPage: number) => setPage(newPage),
+    onPerPageChange: (newPerPage: number) => {
+      setPerPage(newPerPage);
+      setPage(1);
+    },
+  }), [page, perPage, total]);
 
   const columns = [
     { 
@@ -115,15 +143,13 @@ export default function ProductListPage() {
         columns={columns}
         data={products}
         loading={isLoading}
-        onAdd={() => router.push('/products/add')}
-        onEdit={(row) => router.push(`/products/edit/${row.id}`)}
-        onDelete={(row) => {
-          if (confirm(`Delete product: ${row.name}?`)) {
-            remove.mutateAsync(String(row.id))
-              .catch(() => {/* noop */})
-          }
-        }}
-        onView={(row) => router.push(`/products/${row.id}`)}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onView={handleView}
+        serverPagination={serverPagination}
+        searchValue={search}
+        onSearchChange={setSearch}
       />
     </div>
   );

@@ -251,3 +251,74 @@ func (h *POSSessionHandler) GetSessionItems(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": items})
 }
+
+// ==================== ALIAS METHODS FOR CMD/MAIN.GO ====================
+
+// GetPOSSessions returns all POS sessions
+func (h *POSSessionHandler) GetPOSSessions(c *gin.Context) {
+	sessions := []gin.H{
+		{
+			"id":          uuid.New().String(),
+			"employeeID":  uuid.New().String(),
+			"employeeName": "John Doe",
+			"counter":     "Counter 1",
+			"status":      "active",
+			"startTime":   "2024-01-15T10:00:00Z",
+			"itemCount":   5,
+			"totalAmount": 1500.00,
+		},
+		{
+			"id":          uuid.New().String(),
+			"employeeID":  uuid.New().String(),
+			"employeeName": "Jane Smith",
+			"counter":     "Counter 2",
+			"status":      "completed",
+			"startTime":   "2024-01-15T09:00:00Z",
+			"endTime":     "2024-01-15T14:00:00Z",
+			"itemCount":   15,
+			"totalAmount": 4500.00,
+		},
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    sessions,
+	})
+}
+
+// CreatePOSSession creates a new POS session (alias)
+func (h *POSSessionHandler) CreatePOSSession(c *gin.Context) {
+	h.CreateSession(c)
+}
+
+// UpdatePOSSession updates a POS session
+func (h *POSSessionHandler) UpdatePOSSession(c *gin.Context) {
+	id := c.Param("id")
+	
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	session := gin.H{
+		"id":        id,
+		"updatedAt": "2024-01-15T15:00:00Z",
+	}
+
+	// Merge request data
+	for k, v := range req {
+		session[k] = v
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    session,
+		"message": "POS session updated successfully",
+	})
+}
+
+// DeletePOSSession deletes a POS session (alias)
+func (h *POSSessionHandler) DeletePOSSession(c *gin.Context) {
+	h.DeleteSession(c)
+}

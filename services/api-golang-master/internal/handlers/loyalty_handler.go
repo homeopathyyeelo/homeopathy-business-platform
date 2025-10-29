@@ -3,6 +3,7 @@ package handlers
 import (
 	"time"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type LoyaltyHandler struct {
@@ -181,4 +182,56 @@ func (h *LoyaltyHandler) GetTransactions(c *gin.Context) {
 		"success": true,
 		"data": transactions,
 	})
+}
+
+// GetLoyaltyPoints returns all loyalty points
+func (h *LoyaltyHandler) GetLoyaltyPoints(c *gin.Context) {
+	points := []gin.H{
+		{"customerId": uuid.New().String(), "customerName": "John Doe", "points": 1250, "tier": "Silver"},
+		{"customerId": uuid.New().String(), "customerName": "Jane Smith", "points": 3500, "tier": "Gold"},
+	}
+	c.JSON(200, gin.H{"success": true, "data": points})
+}
+
+// GetCustomerLoyaltyPoints returns loyalty points for a specific customer
+func (h *LoyaltyHandler) GetCustomerLoyaltyPoints(c *gin.Context) {
+	customerID := c.Param("customerId")
+	points := gin.H{
+		"customerId": customerID,
+		"customerName": "John Doe",
+		"totalPoints": 1250,
+		"availablePoints": 1000,
+		"redeemedPoints": 250,
+		"tier": "Silver",
+	}
+	c.JSON(200, gin.H{"success": true, "data": points})
+}
+
+// AddLoyaltyPoints adds loyalty points to a customer
+func (h *LoyaltyHandler) AddLoyaltyPoints(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(201, gin.H{"success": true, "message": "Loyalty points added successfully"})
+}
+
+// RedeemLoyaltyPoints redeems loyalty points for a customer
+func (h *LoyaltyHandler) RedeemLoyaltyPoints(c *gin.Context) {
+	var req map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "message": "Loyalty points redeemed successfully"})
+}
+
+// GetLoyaltyTransactions returns all loyalty transactions
+func (h *LoyaltyHandler) GetLoyaltyTransactions(c *gin.Context) {
+	transactions := []gin.H{
+		{"id": uuid.New().String(), "customerId": uuid.New().String(), "points": 100, "type": "earned"},
+		{"id": uuid.New().String(), "customerId": uuid.New().String(), "points": -50, "type": "redeemed"},
+	}
+	c.JSON(200, gin.H{"success": true, "data": transactions})
 }

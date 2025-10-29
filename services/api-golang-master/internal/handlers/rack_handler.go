@@ -97,3 +97,8 @@ func (h *RackHandler) DeleteRack(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Rack deleted successfully"})
 }
+
+// GetRacks is an alias for ListRacks
+func (h *RackHandler) GetRacks(c *gin.Context) {
+	h.ListRacks(c)
+}

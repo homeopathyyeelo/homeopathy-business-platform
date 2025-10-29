@@ -96,3 +96,8 @@ func (h *CustomerGroupHandler) DeleteCustomerGroup(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Customer group deleted successfully"})
 }
+
+// GetCustomerGroups is an alias for ListCustomerGroups
+func (h *CustomerGroupHandler) GetCustomerGroups(c *gin.Context) {
+	h.ListCustomerGroups(c)
+}
