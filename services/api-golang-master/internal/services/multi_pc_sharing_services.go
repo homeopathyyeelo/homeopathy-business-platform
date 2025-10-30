@@ -1,5 +1,5 @@
 // Multi-PC Sharing Services - Session management, sync, and device coordination
-package main
+package services
 
 import (
 	"sync"
@@ -197,9 +197,9 @@ func (m *PCSyncManager) GetSessionStats(sessionID string) map[string]interface{}
 	m.mutex.RUnlock()
 
 	return map[string]interface{}{
-		"session_id":         sessionID,
-		"connected_devices":  len(listeners),
-		"active_listeners":   len(listeners),
-		"last_notification":  time.Now(),
+		"session_id":        sessionID,
+		"connected_devices": len(listeners),
+		"active_listeners":  len(listeners),
+		"last_notification": time.Now(),
 	}
 }

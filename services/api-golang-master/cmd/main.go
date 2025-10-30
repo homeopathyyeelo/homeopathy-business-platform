@@ -9,11 +9,15 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	_ "github.com/yeelo/homeopathy-erp/docs"
 	"github.com/yeelo/homeopathy-erp/internal/config"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/handlers"
 	"github.com/yeelo/homeopathy-erp/internal/middleware"
 	"github.com/yeelo/homeopathy-erp/internal/services"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -81,6 +85,9 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(gin.Logger())
 
+	// Authenticated Swagger docs endpoint
+	r.GET("/docs/*any", middleware.RequireAuth(), ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// Add custom middleware
 	r.Use(middleware.RequestIDMiddleware())   // Add request ID to all requests
 	r.Use(middleware.DefaultTimeout())        // Add 30s timeout to all requests
@@ -117,7 +124,7 @@ func main() {
 		}
 
 		// System routes (v1 API)
-		v1 := api.Group("/v1")
+		v1 := api.Group("/v1", middleware.RequireAuth())
 		{
 			system := v1.Group("/system")
 			{
@@ -143,7 +150,7 @@ func main() {
 		}
 
 		// ERP routes
-		erp := api.Group("/erp")
+		erp := api.Group("/erp", middleware.RequireAuth())
 		{
 			// Dashboard
 			erp.GET("/dashboard/stats", dashboardHandler.GetStats)
@@ -152,6 +159,12 @@ func main() {
 			erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
+			erp.GET("/dashboard/quick-actions", dashboardHandler.GetQuickActions)
+			erp.GET("/notifications/recent", notificationHandler.GetRecentNotifications)
+			erp.GET("/favicon.ico", func(c *gin.Context) {
+				c.File("favicon.ico")
+			})
 
 			// Products
 			erp.GET("/products", productHandler.GetProducts)
@@ -466,7 +479,7 @@ func main() {
 		}
 
 		// Legacy routes
-		masters := api.Group("/masters")
+		masters := api.Group("/masters", middleware.RequireAuth())
 		{
 			masters.GET("/subcategories", productHandler.GetSubcategories)
 			masters.GET("/categories", categoriesHandler.GetCategories)
@@ -482,7 +495,7 @@ func main() {
 		}
 
 		// Products routes
-		products := api.Group("/products")
+		products := api.Group("/products", middleware.RequireAuth())
 		{
 			products.GET("/batches", inventoryHandler.GetBatches)
 			products.POST("/batches", inventoryHandler.CreateBatch)
@@ -491,9 +504,12 @@ func main() {
 		}
 
 		// WhatsApp Integration
-		api.POST("/whatsapp/send", whatsappHandler.SendMessage)
-		api.GET("/whatsapp/templates", whatsappHandler.GetTemplates)
-		api.GET("/whatsapp/status/:messageId", whatsappHandler.GetMessageStatus)
+		whatsapp := api.Group("/whatsapp", middleware.RequireAuth())
+		{
+			whatsapp.POST("/send", whatsappHandler.SendMessage)
+			whatsapp.GET("/templates", whatsappHandler.GetTemplates)
+			whatsapp.GET("/status/:messageId", whatsappHandler.GetMessageStatus)
+		}
 	}
 
 	port := os.Getenv("PORT")

@@ -1,5 +1,5 @@
 // Payment Gateway Services - Stripe and Razorpay service interfaces
-package main
+package services
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 
 // StripeService handles Stripe payment operations
 type StripeService struct {
-	apiKey     string
+	apiKey        string
 	webhookSecret string
 }
 
@@ -102,13 +102,13 @@ type RazorpayOrder struct {
 
 // RazorpayPayment represents a Razorpay payment
 type RazorpayPayment struct {
-	ID      string    `json:"id"`
-	OrderID string    `json:"order_id"`
-	Amount  int64     `json:"amount"`
-	Currency string   `json:"currency"`
-	Status  string    `json:"status"`
-	Method  string    `json:"method"`
-	Created time.Time `json:"created_at"`
+	ID       string    `json:"id"`
+	OrderID  string    `json:"order_id"`
+	Amount   int64     `json:"amount"`
+	Currency string    `json:"currency"`
+	Status   string    `json:"status"`
+	Method   string    `json:"method"`
+	Created  time.Time `json:"created_at"`
 }
 
 // RazorpayRefund represents a Razorpay refund
@@ -137,13 +137,13 @@ func (r *RazorpayService) CreateOrder(amount int64, currency, description string
 func (r *RazorpayService) GetPayment(paymentID string) (*RazorpayPayment, error) {
 	// In a real implementation, this would call the Razorpay API
 	return &RazorpayPayment{
-		ID:      paymentID,
-		OrderID: "order_mock_" + generateID(),
-		Amount:  100000, // 1000 INR in paise
+		ID:       paymentID,
+		OrderID:  "order_mock_" + generateID(),
+		Amount:   100000, // 1000 INR in paise
 		Currency: "INR",
-		Status:  "captured",
-		Method:  "card",
-		Created: time.Now(),
+		Status:   "captured",
+		Method:   "card",
+		Created:  time.Now(),
 	}, nil
 }
 

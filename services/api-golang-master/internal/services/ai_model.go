@@ -1,9 +1,9 @@
 package services
 
 import (
-	"gorm.io/gorm"
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/models"
+	"gorm.io/gorm"
 )
 
 type AIModelService struct {

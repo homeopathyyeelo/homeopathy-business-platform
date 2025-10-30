@@ -91,6 +91,60 @@ func (h *NotificationHandler) ensureTableExists() error {
 	return err
 }
 
+// GetRecentNotifications returns the latest notifications for the dashboard
+func (h *NotificationHandler) GetRecentNotifications(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 15*time.Second)
+	defer cancel()
+
+	if h.db == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database not initialized"})
+		return
+	}
+
+	if err := h.ensureTableExists(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to initialize notifications table"})
+		return
+	}
+
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "6"))
+	query := `
+		SELECT id, user_id, type, title, message, priority, category,
+		       is_read, read_at, action_url, action_label, metadata,
+		       expires_at, created_at, updated_at
+		FROM notifications
+		WHERE expires_at IS NULL OR expires_at > NOW()
+		ORDER BY created_at DESC
+		LIMIT $1
+	`
+
+	rows, err := h.db.QueryContext(ctx, query, limit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load notifications", "details": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	var recent []Notification
+	for rows.Next() {
+		var n Notification
+		if err := rows.Scan(
+			&n.ID, &n.UserID, &n.Type, &n.Title, &n.Message,
+			&n.Priority, &n.Category, &n.IsRead, &n.ReadAt,
+			&n.ActionURL, &n.ActionLabel, &n.Metadata,
+			&n.ExpiresAt, &n.CreatedAt, &n.UpdatedAt,
+		); err != nil {
+			continue
+		}
+		recent = append(recent, n)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    recent,
+		"count":   len(recent),
+	})
+}
+
 // GetNotifications retrieves notifications with filters
 func (h *NotificationHandler) GetNotifications(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)

@@ -63,6 +63,14 @@ type AlertItem struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
+type QuickAction struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+	Link        string `json:"link"`
+	Priority    string `json:"priority"`
+}
+
 func NewDashboardHandler(db interface{}) *DashboardHandler {
 	return &DashboardHandler{db: db}
 }

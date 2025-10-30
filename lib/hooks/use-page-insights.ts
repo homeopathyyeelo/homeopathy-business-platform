@@ -80,6 +80,9 @@ export function usePageInsights(maxInsights: number = 5): PageInsights {
             : `http://localhost:3005${insightConfig.dataFetcher}`;
           
           const response = await fetch(apiUrl);
+          if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`);
+          }
           const data = await response.json();
 
           setInsightsData(prev => {
