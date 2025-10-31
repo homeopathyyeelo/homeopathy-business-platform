@@ -2,22 +2,27 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
-	"golang.org/x/crypto/bcrypt"
-	"github.com/golang-jwt/jwt/v5"
-	"time"
 	"os"
 )
 
 type AuthHandler struct {
-	userService *services.UserService
+	userService    *services.UserService
+	sessionService *services.SessionService
 }
 
 func NewAuthHandler() *AuthHandler {
 	return &AuthHandler{
-		userService: services.NewUserService(),
+		userService:    services.NewUserService(),
+		sessionService: services.NewSessionService(),
 	}
 }
 
@@ -91,14 +96,27 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// Generate JWT token
-	token, err := h.generateToken(user)
+	token, expiresAt, err := h.generateToken(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
+	if err := h.sessionService.DeleteSessionsForUser(user.ID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to prepare session"})
+		return
+	}
+
+	if err := h.sessionService.CreateSession(token, user.ID, expiresAt); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to persist session"})
+		return
+	}
+
+	_ = h.userService.UpdateLastLogin(user.ID)
+
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
+		"token":     token,
+		"expiresAt": expiresAt,
 		"user": gin.H{
 			"id":          user.ID,
 			"email":       user.Email,
@@ -109,7 +127,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	})
 }
 
-func (h *AuthHandler) generateToken(user *models.User) (string, error) {
+
+
+func (h *AuthHandler) generateToken(user *models.User) (string, time.Time, error) {
 	claims := &jwt.MapClaims{
 		"user_id":     user.ID,
 		"email":       user.Email,
@@ -119,7 +139,9 @@ func (h *AuthHandler) generateToken(user *models.User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	expiry := time.Now().Add(24 * time.Hour)
+	signed, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	return signed, expiry, err
 }
 
 // RefreshToken handles token refresh
@@ -161,6 +183,22 @@ func (h *AuthHandler) Me(c *gin.Context) {
 
 // Logout handles user logout
 func (h *AuthHandler) Logout(c *gin.Context) {
-	// Implementation for logout (token blacklisting if needed)
+	authHeader := c.GetHeader("Authorization")
+	if authHeader == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization header required"})
+		return
+	}
+
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+	if token == authHeader || token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Bearer token required"})
+		return
+	}
+
+	if err := h.sessionService.DeleteSessionByToken(token); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to terminate session"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
 }

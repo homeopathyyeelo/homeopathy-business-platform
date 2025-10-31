@@ -2,7 +2,7 @@
 > @yeelo/api-gateway@1.0.0 dev
 > PORT=3001 ts-node-dev --respawn --transpile-only src/index.ts
 
-[INFO] 21:12:44 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[INFO] 22:02:52 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
 [HPM] Proxy created: /  -> http://api-nest:3001
 [HPM] Proxy rewrite rule created: "^/api/auth" ~> ""
 [HPM] Proxy created: /  -> http://api-fastify:3002
@@ -26,8 +26,8 @@ Error: listen EADDRINUSE: address already in use :::3001
     at Function.listen (/var/www/homeopathy-business-platform/services/api-gateway/node_modules/express/lib/application.js:635:24)
     at Object.<anonymous> (/var/www/homeopathy-business-platform/services/api-gateway/src/index.ts:318:5)
     at Module.<anonymous> (node:internal/modules/cjs/loader:1688:14)
-    at Module._compile (/var/www/homeopathy-business-platform/node_modules/source-map-support/source-map-support.js:521:25)
-    at Module.m._compile (/tmp/ts-node-dev-hook-6749643237171083.js:69:33)
+    at Module._compile (/var/www/homeopathy-business-platform/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-6170076637281208.js:69:33)
     at node:internal/modules/cjs/loader:1820:10
-    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-6749643237171083.js:114:20)
-[ERROR] 21:12:45 Error: listen EADDRINUSE: address already in use :::3001
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-6170076637281208.js:114:20)
+[ERROR] 22:02:53 Error: listen EADDRINUSE: address already in use :::3001

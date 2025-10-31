@@ -68,17 +68,23 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-        
+        const user = data.user;
+
         // The API sets the cookie, so we don't need to store in localStorage
         // localStorage.setItem('auth_token', data.token);
-        
+
         // Remember email if checked
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", email);
         } else {
           localStorage.removeItem("rememberedEmail");
         }
-        
+
+        // Persist authenticated user for client-side guards
+        if (user && typeof window !== "undefined") {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+
         // Show success toast
         toast({
           title: "Login Successful",

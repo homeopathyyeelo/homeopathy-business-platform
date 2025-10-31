@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import jwt from "jsonwebtoken"
+import {
+  authServiceFetch,
+  attachAuthCookies,
+  clearAuthCookies,
+  getUserFromHeaders,
+  mapAuthServiceUser,
+  validateAccessToken,
+  type AuthenticatedUser,
+} from "@/lib/server/auth-service"
 
 // Permission codes for all features
 export enum PermissionCode {
@@ -200,13 +208,15 @@ export enum PermissionCode {
 
 // User roles enum
 export enum UserRole {
+  SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
   MANAGER = "MANAGER",
   STAFF = "STAFF",
   MARKETER = "MARKETER",
   CASHIER = "CASHIER",
   DOCTOR = "DOCTOR",
-  PHARMACIST = "PHARMACIST"
+  PHARMACIST = "PHARMACIST",
+  CUSTOMER = "CUSTOMER",
 }
 
 // User interface
@@ -217,93 +227,17 @@ export interface User {
   role: UserRole
   shopId?: string
   isActive: boolean
-  permissions?: PermissionCode[]
+  permissions?: string[]
+  isSuperAdmin?: boolean
 }
-
-// JWT payload interface
-export interface JWTPayload {
-  id: string
-  email: string
-  role: UserRole
-  shopId?: string
-  permissions?: PermissionCode[]
-  iat: number
-  exp: number
-}
-
-// Mock users for development
-const MOCK_USERS: User[] = [
-  {
-    id: "0",
-    email: "admin@admin.com",
-    name: "Super Admin",
-    role: UserRole.ADMIN,
-    shopId: "main-branch",
-    isActive: true
-  },
-  {
-    id: "1",
-    email: "admin@yeelo.com",
-    name: "Admin User",
-    role: UserRole.ADMIN,
-    shopId: "dist-yeelo",
-    isActive: true
-  },
-  {
-    id: "2", 
-    email: "manager@yeelo.com",
-    name: "Manager User",
-    role: UserRole.MANAGER,
-    shopId: "retail-a",
-    isActive: true
-  },
-  {
-    id: "3",
-    email: "staff@yeelo.com", 
-    name: "Staff User",
-    role: UserRole.STAFF,
-    shopId: "retail-a",
-    isActive: true
-  },
-  {
-    id: "4",
-    email: "marketer@yeelo.com",
-    name: "Marketer User", 
-    role: UserRole.MARKETER,
-    shopId: "dist-yeelo",
-    isActive: true
-  },
-  {
-    id: "5",
-    email: "cashier@yeelo.com",
-    name: "Cashier User",
-    role: UserRole.CASHIER,
-    shopId: "retail-b", 
-    isActive: true
-  },
-  {
-    id: "6",
-    email: "doctor@yeelo.com",
-    name: "Dr. Smith",
-    role: UserRole.DOCTOR,
-    shopId: "retail-a",
-    isActive: true
-  },
-  {
-    id: "7",
-    email: "pharmacist@yeelo.com",
-    name: "Pharmacist User",
-    role: UserRole.PHARMACIST,
-    shopId: "retail-b",
-    isActive: true
-  }
-]
 
 /**
  * Check if user has required permission
  */
 export function hasPermission(user: User, requiredPermission: PermissionCode): boolean {
   if (!user) return false
+
+  if (user.isSuperAdmin) return true
 
   // Admin has all permissions
   if (user.role === UserRole.ADMIN) return true
@@ -630,70 +564,20 @@ export function getRolePermissions(role: UserRole): PermissionCode[] {
   }
 }
 
-// JWT secret
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production"
-
-/**
- * Generate JWT token for user
- */
-export function generateToken(user: User): string {
-  const payload: Omit<JWTPayload, 'iat' | 'exp'> = {
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    shopId: user.shopId
-  }
-
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-}
-
-/**
- * Verify JWT token
- */
-export function verifyToken(token: string): JWTPayload | null {
-  try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload
-  } catch (error) {
-    return null
-  }
-}
-
-/**
- * Get user from token
- */
-export function getUserFromToken(token: string): User | null {
-  const payload = verifyToken(token)
-  if (!payload) return null
-  
-  return MOCK_USERS.find(user => user.id === payload.id) || null
-}
-
-/**
- * Authenticate user with email/password
- */
-export function authenticateUser(email: string, password: string): { user: User; token: string } | null {
-  // For development, accept any password
-  const user = MOCK_USERS.find(u => u.email === email && u.isActive)
-  if (!user) return null
-  
-  return {
-    user,
-    token: generateToken(user)
-  }
-}
-
 /**
  * Check if user has required role
  */
 export function hasRole(user: User, requiredRole: UserRole): boolean {
   const roleHierarchy = {
+    [UserRole.SUPER_ADMIN]: 8,
     [UserRole.ADMIN]: 7,
     [UserRole.MANAGER]: 6,
     [UserRole.DOCTOR]: 5,
     [UserRole.PHARMACIST]: 4,
     [UserRole.MARKETER]: 3,
     [UserRole.STAFF]: 2,
-    [UserRole.CASHIER]: 1
+    [UserRole.CASHIER]: 1,
+    [UserRole.CUSTOMER]: 0,
   }
   
   return roleHierarchy[user.role] >= roleHierarchy[requiredRole]
@@ -710,20 +594,12 @@ export function hasAnyRole(user: User, requiredRoles: UserRole[]): boolean {
  * Get user from request headers or cookies
  */
 export function getUserFromRequest(request: NextRequest): User | null {
-  // Try authorization header first
-  const authHeader = request.headers.get('authorization')
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7)
-    return getUserFromToken(token)
+  const headerUser = getUserFromHeaders(request)
+  if (!headerUser) {
+    return null
   }
-  
-  // Try cookie as fallback
-  const cookieToken = request.cookies.get('auth-token')?.value
-  if (cookieToken) {
-    return getUserFromToken(cookieToken)
-  }
-  
-  return null
+
+  return mapAuthenticatedUser(headerUser)
 }
 
 /**
@@ -737,19 +613,15 @@ export function createAuthResponse(user: User, token: string): NextResponse {
       email: user.email,
       name: user.name,
       role: user.role,
-      shopId: user.shopId
+      shopId: user.shopId,
+      permissions: user.permissions ?? [],
+      isSuperAdmin: user.isSuperAdmin ?? false,
     },
-    token
+    token,
   })
-  
-  // Set HTTP-only cookie
-  response.cookies.set('auth-token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 // 7 days
-  })
-  
+
+  attachAuthCookies(response, { accessToken: token })
+
   return response
 }
 
@@ -768,11 +640,25 @@ export function createErrorResponse(message: string, status: number = 401): Next
  */
 export function requireAuth(handler: (request: NextRequest, user: User) => Promise<NextResponse>) {
   return async (request: NextRequest): Promise<NextResponse> => {
-    const user = getUserFromRequest(request)
+    let user = getUserFromRequest(request)
+    if (!user) {
+      const token = request.cookies.get("auth-token")?.value
+      if (!token) {
+        return createErrorResponse('Authentication required', 401)
+      }
+
+      const authUser = await validateAccessToken(token)
+      if (!authUser) {
+        return createErrorResponse('Authentication required', 401)
+      }
+
+      user = mapAuthenticatedUser(authUser)
+    }
+
     if (!user) {
       return createErrorResponse('Authentication required', 401)
     }
-    
+
     return handler(request, user)
   }
 }
@@ -781,36 +667,26 @@ export function requireAuth(handler: (request: NextRequest, user: User) => Promi
  * Middleware to require specific role
  */
 export function requireRole(requiredRole: UserRole, handler: (request: NextRequest, user: User) => Promise<NextResponse>) {
-  return async (request: NextRequest): Promise<NextResponse> => {
-    const user = getUserFromRequest(request)
-    if (!user) {
-      return createErrorResponse('Authentication required', 401)
-    }
-    
+  return requireAuth(async (request, user) => {
     if (!hasRole(user, requiredRole)) {
       return createErrorResponse('Insufficient permissions', 403)
     }
     
     return handler(request, user)
-  }
+  })
 }
 
 /**
  * Middleware to require any of the specified roles
  */
 export function requireAnyRole(requiredRoles: UserRole[], handler: (request: NextRequest, user: User) => Promise<NextResponse>) {
-  return async (request: NextRequest): Promise<NextResponse> => {
-    const user = getUserFromRequest(request)
-    if (!user) {
-      return createErrorResponse('Authentication required', 401)
-    }
-    
+  return requireAuth(async (request, user) => {
     if (!hasAnyRole(user, requiredRoles)) {
       return createErrorResponse('Insufficient permissions', 403)
     }
     
     return handler(request, user)
-  }
+  })
 }
 
 /**
@@ -845,69 +721,83 @@ export function validatePasswordStrength(password: string): { isValid: boolean; 
   };
 }
 
-/**
- * Change user password
- */
-export function changePassword(userId: string, currentPassword: string, newPassword: string): { success: boolean; error?: string } {
-  try {
-    // Find user in mock database
-    const user = MOCK_USERS.find((u: User) => u.id === userId);
-    if (!user) {
-      return { success: false, error: 'User not found' };
-    }
-    
-    // Note: In development, we skip password verification for simplicity
-    // In production, you'd verify the current password properly
-    
-    // Validate new password
-    const validation = validatePasswordStrength(newPassword);
-    if (!validation.isValid) {
-      return { success: false, error: validation.errors.join(', ') };
-    }
-    
-    // Note: In development, we don't actually update the password
-    // In production, you'd hash and store the new password
-    
-    return { success: true };
-  } catch (error) {
-    console.error('Change password error:', error);
-    return { success: false, error: 'Internal server error' };
+function mapAuthenticatedUser(user: AuthenticatedUser): User {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: normalizeRole(user.role),
+    isActive: true,
+    permissions: user.permissions || [],
+    isSuperAdmin: user.isSuperAdmin,
   }
 }
 
-/**
- * Create new user
- */
-export function createUser(userData: { email: string; password: string; name: string; role: UserRole; shopId?: string }): { success: boolean; user?: User; error?: string } {
-  try {
-    // Validate password
-    const validation = validatePasswordStrength(userData.password);
-    if (!validation.isValid) {
-      return { success: false, error: validation.errors.join(', ') };
-    }
-    
-    // Check if user already exists
-    const existingUser = MOCK_USERS.find((u: User) => u.email === userData.email);
-    if (existingUser) {
-      return { success: false, error: 'User with this email already exists' };
-    }
-    
-    // Create new user
-    const newUser: User = {
-      id: (MOCK_USERS.length + 1).toString(),
-      email: userData.email,
-      name: userData.name,
-      role: userData.role,
-      shopId: userData.shopId || "1",
-      isActive: true
-    };
-    
-    // Note: In development, we don't actually add to the mock users array
-    // In production, you'd save to the database
-    
-    return { success: true, user: newUser };
-  } catch (error) {
-    console.error('Create user error:', error);
-    return { success: false, error: 'Internal server error' };
+function normalizeRole(role?: string | null): UserRole {
+  if (!role) return UserRole.STAFF
+  const normalized = role.toUpperCase().replace(/[^A-Z0-9]/g, "_")
+  if (Object.values(UserRole).includes(normalized as UserRole)) {
+    return normalized as UserRole
   }
+  return UserRole.STAFF
+}
+
+export async function loginWithAuthService(email: string, password: string) {
+  const response = await authServiceFetch("/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  })
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    return { success: false as const, error }
+  }
+
+  const data = await response.json()
+  const user = mapAuthenticatedUser(mapAuthServiceUser(data.user))
+
+  return {
+    success: true as const,
+    user,
+    tokens: {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    },
+  }
+}
+
+export async function registerWithAuthService(payload: {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  role?: string
+}) {
+  const response = await authServiceFetch("/register", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    return { success: false as const, error }
+  }
+
+  const data = await response.json()
+  const user = mapAuthenticatedUser(mapAuthServiceUser(data.user))
+
+  return {
+    success: true as const,
+    user,
+    tokens: {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    },
+  }
+}
+
+export async function loadUserFromToken(token: string): Promise<User | null> {
+  const authUser = await validateAccessToken(token)
+  if (!authUser) return null
+  return mapAuthenticatedUser(authUser)
 }

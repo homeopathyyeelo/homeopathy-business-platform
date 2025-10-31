@@ -3,7 +3,7 @@
  * POST /api/auth/logout
  */
 import { type NextRequest, NextResponse } from "next/server"
-// import { logEvent } from "@/lib/database"
+import { clearAuthCookies } from "@/lib/server/auth-service"
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       message: "Logged out successfully",
     })
 
-    response.cookies.delete("auth-token")
+    clearAuthCookies(response)
 
     return response
   } catch (error) {

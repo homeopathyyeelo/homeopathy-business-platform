@@ -2,8 +2,11 @@ package database
 
 import (
 	"log"
-	"gorm.io/gorm"
+
 	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
+	"github.com/yeelo/homeopathy-erp/internal/models"
 )
 
 var DB *gorm.DB
@@ -16,7 +19,7 @@ func Init(databaseURL string) *gorm.DB {
 
 	// Auto migrate tables
 	err = db.AutoMigrate(
-		// Add all your models here
+		&models.Session{},
 	)
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)

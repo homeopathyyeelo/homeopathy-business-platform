@@ -1,5 +1,5 @@
 
-> @yeelo/kafka-events@1.0.0 dev
+> @yeelo/inventory-service@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
 [1G[0K

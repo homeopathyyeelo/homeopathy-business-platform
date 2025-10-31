@@ -2,7 +2,7 @@
 > @yeelo/ai-service@1.0.0 dev
 > ./venv/bin/python main.py
 
-Traceback (most recent call last):
+[1G[0KTraceback (most recent call last):
   File "/var/www/homeopathy-business-platform/services/ai-service/main.py", line 3, in <module>
     from fastapi import FastAPI, HTTPException
   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/__init__.py", line 7, in <module>
@@ -13,35 +13,113 @@ Traceback (most recent call last):
     from fastapi import params
   File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/params.py", line 5, in <module>
     from fastapi.openapi.models import Example
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/openapi/models.py", line 4, in <module>
-    from fastapi._compat import (
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/_compat.py", line 23, in <module>
-    from fastapi.exceptions import RequestErrorModel
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/exceptions.py", line 3, in <module>
-    from pydantic import BaseModel, create_model
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/__init__.py", line 5, in <module>
-    from ._migration import getattr_migration
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_migration.py", line 4, in <module>
-    from pydantic.warnings import PydanticDeprecatedSince20
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/warnings.py", line 5, in <module>
-    from .version import version_short
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/version.py", line 7, in <module>
-    from pydantic_core import __version__ as __pydantic_core_version__
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/__init__.py", line 31, in <module>
-    from .core_schema import CoreConfig, CoreSchema, CoreSchemaType, ErrorType
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 4341, in <module>
-    @deprecated('`field_before_validator_function` is deprecated, use `with_info_before_validator_function` instead.')
-     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/typing_extensions.py", line 2997, in __call__
-    import asyncio.coroutines
-  File "/usr/lib/python3.12/asyncio/__init__.py", line 8, in <module>
-    from .base_events import *
-  File "/usr/lib/python3.12/asyncio/base_events.py", line 40, in <module>
-    from . import coroutines
-  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 991, in exec_module
-  File "<frozen importlib._bootstrap_external>", line 1087, in get_code
-  File "<frozen importlib._bootstrap_external>", line 1187, in get_data
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/fastapi/openapi/models.py", line 274, in <module>
+    class Parameter(ParameterBase):
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py", line 255, in __new__
+    complete_model_class(
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py", line 648, in complete_model_class
+    schema = gen_schema.generate_schema(cls)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 729, in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1023, in _generate_schema_inner
+    return self._model_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 856, in _model_schema
+    {k: self._generate_md_field_schema(k, v, decorators) for k, v in fields.items()},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1228, in _generate_md_field_schema
+    schema, metadata = self._common_field_schema(name, field_info, decorators)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1282, in _common_field_schema
+    schema = self._apply_annotations(
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 2227, in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_schema_generation_shared.py", line 83, in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 2206, in inner_handler
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1028, in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1144, in match_type
+    return self._match_generic_type(obj, origin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1167, in _match_generic_type
+    return self._union_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1327, in _union_schema
+    choices.append(self.generate_schema(arg))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 729, in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1023, in _generate_schema_inner
+    return self._model_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 856, in _model_schema
+    {k: self._generate_md_field_schema(k, v, decorators) for k, v in fields.items()},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1228, in _generate_md_field_schema
+    schema, metadata = self._common_field_schema(name, field_info, decorators)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1282, in _common_field_schema
+    schema = self._apply_annotations(
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 2227, in _apply_annotations
+    schema = get_inner_schema(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_schema_generation_shared.py", line 83, in __call__
+    schema = self._handler(source_type)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 2206, in inner_handler
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1028, in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1144, in match_type
+    return self._match_generic_type(obj, origin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1167, in _match_generic_type
+    return self._union_schema(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1327, in _union_schema
+    choices.append(self.generate_schema(arg))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 729, in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1028, in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1144, in match_type
+    return self._match_generic_type(obj, origin)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1171, in _match_generic_type
+    return self._list_schema(self._get_first_arg_or_any(obj))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 384, in _list_schema
+    return core_schema.list_schema(self.generate_schema(items_type))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 729, in generate_schema
+    schema = self._generate_schema_inner(obj)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1028, in _generate_schema_inner
+    return self.match_type(obj)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py", line 1056, in match_type
+    return core_schema.any_schema()
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 549, in any_schema
+    return _dict_not_none(type='any', ref=ref, metadata=metadata, serialization=serialization)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/homeopathy-business-platform/services/ai-service/venv/lib/python3.12/site-packages/pydantic_core/core_schema.py", line 4333, in _dict_not_none
+    return {k: v for k, v in kwargs.items() if v is not None}
+            ^^^^
 KeyboardInterrupt

@@ -1,4 +1,5 @@
 
 > @yeelo/api-gateway@1.0.0 dev
-> ts-node-dev --respawn --transpile-only src/index.ts
+> PORT=3001 ts-node-dev --respawn --transpile-only src/index.ts
 
+[1G[0K

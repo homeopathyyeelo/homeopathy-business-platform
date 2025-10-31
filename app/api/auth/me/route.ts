@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getUserFromRequest, createErrorResponse } from "@/lib/auth"
+import { loadUserFromToken, createErrorResponse } from "@/lib/auth"
+import { clearAuthCookies } from "@/lib/server/auth-service"
 
 // Logout endpoint
 export async function POST(request: NextRequest) {
@@ -8,15 +9,9 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Logged out successfully'
     })
-    
-    // Clear the auth cookie
-    response.cookies.set('auth-token', '', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 0
-    })
-    
+
+    clearAuthCookies(response)
+
     return response
   } catch (error) {
     console.error('Logout error:', error)
@@ -27,11 +22,16 @@ export async function POST(request: NextRequest) {
 // Get current user endpoint
 export async function GET(request: NextRequest) {
   try {
-    const user = getUserFromRequest(request)
+    const token = request.cookies.get('auth-token')?.value
+    if (!token) {
+      return createErrorResponse('Not authenticated', 401)
+    }
+
+    const user = await loadUserFromToken(token)
     if (!user) {
       return createErrorResponse('Not authenticated', 401)
     }
-    
+
     return NextResponse.json({
       success: true,
       user: {
@@ -39,7 +39,8 @@ export async function GET(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: user.role,
-        shopId: user.shopId
+        permissions: user.permissions,
+        isSuperAdmin: user.isSuperAdmin ?? false,
       }
     })
   } catch (error) {

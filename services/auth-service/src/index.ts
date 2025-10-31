@@ -15,7 +15,7 @@ import jwt from "jsonwebtoken"
 import { Pool } from "pg"
 import type { Request, Response } from "express"
 import client from "prom-client"
-import { generateKeyPair, exportJWK, importJWK, SignJWT, JWK } from "jose"
+import { generateKeyPair, exportJWK, importJWK, SignJWT, JWK, jwtVerify } from "jose"
 import swaggerUi from "swagger-ui-express"
 
 const app = express()
@@ -47,11 +47,11 @@ const openapi = {
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi))
 
 const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: Number.parseInt(process.env.DB_PORT || "5432"),
-  database: process.env.DB_NAME || "yeelo_homeopathy",
-  user: process.env.DB_USER || "postgres",
-  password: process.env.DB_PASSWORD || "password",
+  host: process.env.DB_HOST || process.env.POSTGRES_HOST || "localhost",
+  port: Number.parseInt(process.env.DB_PORT || process.env.POSTGRES_PORT || "5433"),
+  database: process.env.DB_NAME || process.env.POSTGRES_DB || "yeelo_homeopathy",
+  user: process.env.DB_USER || process.env.POSTGRES_USER || "postgres",
+  password: process.env.DB_PASSWORD || process.env.POSTGRES_PASSWORD || "postgres",
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
@@ -125,6 +125,23 @@ async function signAccessToken(payload: { id: string; email: string; role: strin
     .sign(privateKey)
 }
 
+async function fetchUserPermissions(userId: string) {
+  const { rows } = await pool.query(
+    `SELECT DISTINCT p.code
+     FROM role_permissions rp
+     JOIN permissions p ON rp.permission_id = p.id
+     JOIN user_roles ur ON rp.role_id = ur.role_id
+     WHERE ur.user_id = $1
+     UNION
+     SELECT DISTINCT p2.code
+     FROM user_permissions up
+     JOIN permissions p2 ON up.permission_id = p2.id
+     WHERE up.user_id = $1`,
+    [userId],
+  )
+  return rows.map((row) => row.code)
+}
+
 async function issueTokenPair(user: any) {
   const accessToken = await signAccessToken({ id: user.id, email: user.email, role: user.role })
   const refreshTtl = Number.parseInt(process.env.REFRESH_TTL_DAYS || "30")
@@ -151,6 +168,54 @@ function cryptoRandomString() {
   return buf.toString("base64url")
 }
 
+function buildFullName(row: any) {
+  if (row.full_name) return row.full_name
+  const combined = `${row.first_name || ""} ${row.last_name || ""}`.trim()
+  if (combined) return combined
+  return row.email
+}
+
+async function buildUserResponse(row: any) {
+  const permissions = await fetchUserPermissions(row.id)
+  return {
+    id: row.id,
+    email: row.email,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    fullName: buildFullName(row),
+    role: row.role,
+    isActive: row.is_active,
+    isSuperAdmin: row.is_super_admin ?? false,
+    permissions,
+  }
+}
+
+async function createSessionRecord(user: any, accessToken: string, refreshToken: string | null, req: Request) {
+  const decoded = (jwt.decode(accessToken) as any) || {}
+  const expiresAt = decoded?.exp ? new Date(decoded.exp * 1000) : new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+  await pool.query(
+    `INSERT INTO user_sessions (user_id, session_token, refresh_token, session_data, ip_address, user_agent, expires_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     ON CONFLICT (session_token) DO UPDATE SET
+       refresh_token = EXCLUDED.refresh_token,
+       session_data = EXCLUDED.session_data,
+       ip_address = EXCLUDED.ip_address,
+       user_agent = EXCLUDED.user_agent,
+       expires_at = EXCLUDED.expires_at,
+       last_activity_at = NOW()`,
+    [
+      user.id,
+      accessToken,
+      refreshToken,
+      JSON.stringify({ permissions: await fetchUserPermissions(user.id) }),
+      req.ip,
+      req.get("User-Agent"),
+      expiresAt,
+    ],
+  )
+}
+
 app.post("/register", async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName, role = "customer" } = req.body
@@ -168,32 +233,33 @@ app.post("/register", async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
     const result = await pool.query(
-      `INSERT INTO users (email, password_hash, first_name, last_name, role, created_at, updated_at, is_active)
-       VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), TRUE)
-       RETURNING id, email, first_name, last_name, role, created_at`,
-      [email, hashedPassword, firstName, lastName, role]
+      `INSERT INTO users (email, password_hash, full_name, first_name, last_name, role, created_at, updated_at, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), TRUE)
+       RETURNING id, email, full_name, first_name, last_name, role, is_active, is_super_admin`,
+      [email.trim().toLowerCase(), hashedPassword, `${firstName} ${lastName}`.trim(), firstName, lastName, role]
     )
 
-    const user = result.rows[0]
+    const userRow = result.rows[0]
 
-    const tokens = await issueTokenPair(user)
+    // Ensure user has corresponding role mapping
+    const roleQuery = await pool.query("SELECT id FROM roles WHERE name = $1", [role])
+    if (roleQuery.rows.length > 0) {
+      await pool.query(
+        `INSERT INTO user_roles (user_id, role_id)
+         VALUES ($1, $2)
+         ON CONFLICT (user_id, role_id) DO NOTHING`,
+        [userRow.id, roleQuery.rows[0].id]
+      )
+    }
 
-    await pool.query(
-      `INSERT INTO user_events (user_id, event_type, event_data, created_at)
-       VALUES ($1, 'registration', $2, NOW())`,
-      [user.id, JSON.stringify({ ip: req.ip, userAgent: req.get("User-Agent") })]
-    )
+    const tokens = await issueTokenPair(userRow)
+    await createSessionRecord(userRow, tokens.accessToken, tokens.refreshToken, req)
+
+    const user = await buildUserResponse(userRow)
 
     res.status(201).json({
       message: "User registered successfully",
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        role: user.role,
-        createdAt: user.created_at,
-      },
+      user,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     })
@@ -210,43 +276,51 @@ app.post("/login", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Email and password are required" })
     }
 
+    console.log("[Auth Service] Login attempt", { email })
+
     const result = await pool.query(
-      "SELECT id, email, password_hash, first_name, last_name, role, is_active FROM users WHERE email = $1",
-      [email]
+      `SELECT id, email, full_name, first_name, last_name, role, is_active, is_super_admin, password_hash
+       FROM users WHERE email = $1`,
+      [email.trim().toLowerCase()]
     )
+
+    if (result.rows.length === 0) {
+      console.log("[Auth Service] User not found", { email })
+      return res.status(401).json({ error: "Invalid credentials" })
+    }
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: "Invalid credentials" })
     }
 
-    const user = result.rows[0]
-    if (!user.is_active) {
+    const userRow = result.rows[0]
+    if (!userRow.is_active) {
       return res.status(401).json({ error: "Account is deactivated" })
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password_hash)
+    const isValidPassword = await bcrypt.compare(password, userRow.password_hash)
+    if (!isValidPassword) {
+      console.log("[Auth Service] Invalid password", {
+        email,
+        storedHash: userRow.password_hash,
+        hashLength: userRow.password_hash?.length,
+      })
+    } else {
+      console.log("[Auth Service] Password validated", { email })
+    }
     if (!isValidPassword) {
       return res.status(401).json({ error: "Invalid credentials" })
     }
 
-    const tokens = await issueTokenPair(user)
+    const tokens = await issueTokenPair(userRow)
+    await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = $1", [userRow.id])
+    await createSessionRecord(userRow, tokens.accessToken, tokens.refreshToken, req)
 
-    await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = $1", [user.id])
-    await pool.query(
-      `INSERT INTO user_events (user_id, event_type, event_data, created_at)
-       VALUES ($1, 'login', $2, NOW())`,
-      [user.id, JSON.stringify({ ip: req.ip, userAgent: req.get("User-Agent") })]
-    )
+    const user = await buildUserResponse(userRow)
 
     res.json({
       message: "Login successful",
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        role: user.role,
-      },
+      user,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     })
@@ -298,6 +372,7 @@ app.post("/token/refresh", async (req: Request, res: Response) => {
     const user = userRes.rows[0]
 
     const tokens = await issueTokenPair(user)
+    await createSessionRecord(user, tokens.accessToken, tokens.refreshToken, req)
     res.json({ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken })
   } catch (error) {
     console.error("[Auth Service] Refresh error:", error)
@@ -313,28 +388,28 @@ app.post("/validate", async (req: Request, res: Response) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-secret") as any
+      if (!privateKey) {
+        await ensureKeys()
+      }
+      const verification = await jwtVerify(token, privateKey, {
+        issuer: getIssuer(),
+        audience: "yeelo-clients",
+      })
+      const userId = verification.payload.id as string
       const result = await pool.query(
-        "SELECT id, email, first_name, last_name, role, is_active FROM users WHERE id = $1",
-        [decoded.id]
+        `SELECT id, email, full_name, first_name, last_name, role, is_active, is_super_admin
+         FROM users WHERE id = $1`,
+        [userId]
       )
       if (result.rows.length === 0 || !result.rows[0].is_active) {
         return res.status(401).json({ error: "Invalid token" })
       }
-      const user = result.rows[0]
-      return res.json({
-        valid: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          role: user.role,
-        },
-      })
-    } catch {}
-
-    return res.json({ valid: true })
+      const user = await buildUserResponse(result.rows[0])
+      return res.json({ valid: true, user })
+    } catch (err) {
+      console.error("[Auth Service] Token validation error:", err)
+      return res.status(401).json({ error: "Invalid token" })
+    }
   } catch (error) {
     console.error("[Auth Service] Token validation error:", error)
     res.status(401).json({ error: "Invalid token" })
