@@ -301,6 +301,9 @@ if [ "$GO_AVAILABLE" = true ]; then
     start_service "sales-service" "services/sales-service" "go run main.go" "8003"
 fi
 
+# Start Auth Service (Node) on 3050
+start_service "auth-service" "services/auth-service" "env PORT=3050 npm run dev" "3050"
+
 # Start API Gateway (Node) on 3001
 start_service "api-gateway" "services/api-gateway" "npm run dev" "3001"
 

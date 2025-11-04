@@ -1,34 +1,20 @@
  Network yeelo-network  Creating
  Network yeelo-network  Created
- Volume "homeopathy-business-platform_postgres-data"  Creating
- Volume "homeopathy-business-platform_postgres-data"  Created
- Volume "homeopathy-business-platform_kafka-data"  Creating
- Volume "homeopathy-business-platform_kafka-data"  Created
- Volume "homeopathy-business-platform_minio-data"  Creating
- Volume "homeopathy-business-platform_minio-data"  Created
- Volume "homeopathy-business-platform_zookeeper-data"  Creating
- Volume "homeopathy-business-platform_zookeeper-data"  Created
- Volume "homeopathy-business-platform_zookeeper-logs"  Creating
- Volume "homeopathy-business-platform_zookeeper-logs"  Created
- Volume "homeopathy-business-platform_redis-data"  Creating
- Volume "homeopathy-business-platform_redis-data"  Created
- Container homeopathy-business-platform-postgres-1  Creating
+ Container homeopathy-business-platform-minio-1  Creating
  Container homeopathy-business-platform-zookeeper-1  Creating
  Container homeopathy-business-platform-redis-1  Creating
- Container homeopathy-business-platform-minio-1  Creating
- Container homeopathy-business-platform-minio-1  Created
+ Container homeopathy-business-platform-postgres-1  Creating
  Container homeopathy-business-platform-redis-1  Created
+ Container homeopathy-business-platform-minio-1  Created
  Container homeopathy-business-platform-postgres-1  Created
  Container homeopathy-business-platform-zookeeper-1  Created
  Container homeopathy-business-platform-kafka-1  Creating
  Container homeopathy-business-platform-kafka-1  Created
  Container homeopathy-business-platform-redis-1  Starting
- Container homeopathy-business-platform-postgres-1  Starting
  Container homeopathy-business-platform-minio-1  Starting
+ Container homeopathy-business-platform-postgres-1  Starting
  Container homeopathy-business-platform-zookeeper-1  Starting
- Container homeopathy-business-platform-postgres-1  Started
- Container homeopathy-business-platform-zookeeper-1  Started
- Container homeopathy-business-platform-kafka-1  Starting
  Container homeopathy-business-platform-redis-1  Started
+ Container homeopathy-business-platform-postgres-1  Started
  Container homeopathy-business-platform-minio-1  Started
- Container homeopathy-business-platform-kafka-1  Started
+Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint homeopathy-business-platform-zookeeper-1 (0831b0b9fe2089854b1f0b1bb7471eda25307ea13f13cd6341f70cbf55b44154): Bind for 0.0.0.0:2181 failed: port is already allocated
