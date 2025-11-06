@@ -1,13 +1,9 @@
-INFO:     Started server process [75990]
+INFO:     Started server process [21663]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8010 (Press CTRL+C to quit)
-INFO:     127.0.0.1:42864 - "GET /health HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:42868 - "GET /health HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:42884 - "GET /health HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:45168 - "GET /health HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:45174 - "GET /health HTTP/1.1" 404 Not Found
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [75990]
+INFO:     127.0.0.1:49676 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49678 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39170 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39174 - "GET /health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:39184 - "GET /health HTTP/1.1" 404 Not Found

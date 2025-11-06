@@ -2,16 +2,120 @@
 > @yeelo/auth-service@1.0.0 dev
 > ts-node-dev --respawn --transpile-only src/index.ts
 
-[INFO] 22:26:09 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-Error: listen EADDRINUSE: address already in use :::3050
-    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
-    at listenInCluster (node:net:1997:12)
-    at Server.listen (node:net:2102:7)
-    at Function.listen (/var/www/homeopathy-business-platform/services/auth-service/node_modules/express/lib/application.js:635:24)
-    at Object.<anonymous> (/var/www/homeopathy-business-platform/services/auth-service/src/index.ts:423:5)
-    at Module.<anonymous> (node:internal/modules/cjs/loader:1688:14)
-    at Module._compile (/var/www/homeopathy-business-platform/node_modules/source-map-support/source-map-support.js:568:25)
-    at Module.m._compile (/tmp/ts-node-dev-hook-7651543957459814.js:69:33)
-    at node:internal/modules/cjs/loader:1820:10
-    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-7651543957459814.js:114:20)
-[ERROR] 22:26:10 Error: listen EADDRINUSE: address already in use :::3050
+[INFO] 18:47:48 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[Auth Service] Server running on port 3050
+[Auth Service] Login attempt { email: 'admin@yeelo.com' }
+[Auth Service] Login error: error: column "first_name" does not exist
+    at /var/www/homeopathy-business-platform/node_modules/pg-pool/index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at /var/www/homeopathy-business-platform/services/auth-service/src/index.ts:281:20 {
+  length: 110,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '30',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3665',
+  routine: 'errorMissingColumn'
+}
+[Auth Service] Login attempt { email: 'admin@yeelo.com' }
+[Auth Service] Login error: error: column "first_name" does not exist
+    at /var/www/homeopathy-business-platform/node_modules/pg-pool/index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at /var/www/homeopathy-business-platform/services/auth-service/src/index.ts:281:20 {
+  length: 110,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '30',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3665',
+  routine: 'errorMissingColumn'
+}
+[Auth Service] Login attempt { email: 'admin@yeelo.com' }
+[Auth Service] Login error: error: column "first_name" does not exist
+    at /var/www/homeopathy-business-platform/node_modules/pg-pool/index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at /var/www/homeopathy-business-platform/services/auth-service/src/index.ts:281:20 {
+  length: 110,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '30',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3665',
+  routine: 'errorMissingColumn'
+}
+[Auth Service] Login attempt { email: 'admin@yeelo.com' }
+[Auth Service] Login error: error: column "first_name" does not exist
+    at /var/www/homeopathy-business-platform/node_modules/pg-pool/index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at /var/www/homeopathy-business-platform/services/auth-service/src/index.ts:281:20 {
+  length: 110,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '30',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3665',
+  routine: 'errorMissingColumn'
+}
+[Auth Service] Login attempt { email: 'admin@yeelo.com' }
+[Auth Service] Login error: error: column "first_name" does not exist
+    at /var/www/homeopathy-business-platform/node_modules/pg-pool/index.js:45:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at /var/www/homeopathy-business-platform/services/auth-service/src/index.ts:281:20 {
+  length: 110,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '30',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_relation.c',
+  line: '3665',
+  routine: 'errorMissingColumn'
+}

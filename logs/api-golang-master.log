@@ -1,6 +1,6 @@
-2025/11/03 22:26:08 📋 Configuration loaded for development environment
-2025/11/03 22:26:08 🔌 Database: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
-2025/11/03 22:26:08 ✅ Database connected and migrated successfully
+2025/11/06 18:47:47 📋 Configuration loaded for development environment
+2025/11/06 18:47:47 🔌 Database: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
+2025/11/06 18:47:47 ✅ Database connected and migrated successfully
 ✅ Notifications table ready
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
@@ -253,10 +253,10 @@
 [GIN-debug] POST   /api/whatsapp/send        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).SendMessage-fm (7 handlers)
 [GIN-debug] GET    /api/whatsapp/templates   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetTemplates-fm (7 handlers)
 [GIN-debug] GET    /api/whatsapp/status/:messageId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetMessageStatus-fm (7 handlers)
-2025/11/03 22:26:08 🚀 HomeoERP API Server starting on port 3005
-2025/11/03 22:26:08 📊 Total API endpoints: 80+ (150+ routes defined, 70+ need implementation)
-2025/11/03 22:26:08 🔗 Frontend URL: http://localhost:3000
-2025/11/03 22:26:08 🔗 API Base URL: http://localhost:3005/api
+2025/11/06 18:47:47 🚀 HomeoERP API Server starting on port 3005
+2025/11/06 18:47:47 📊 Total API endpoints: 80+ (150+ routes defined, 70+ need implementation)
+2025/11/06 18:47:47 🔗 Frontend URL: http://localhost:3000
+2025/11/06 18:47:47 🔗 API Base URL: http://localhost:3005/api
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :3005
