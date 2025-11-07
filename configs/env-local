@@ -2,7 +2,7 @@
 NODE_ENV=development
 
 # Database
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy?schema=public
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy?schema=public
 
 # Caches & brokers
 REDIS_URL=redis://localhost:6379

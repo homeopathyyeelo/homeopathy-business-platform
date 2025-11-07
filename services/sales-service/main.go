@@ -28,40 +28,40 @@ type Config struct {
 
 // Invoice model
 type Invoice struct {
-	ID           string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	InvoiceNo    string    `json:"invoice_no" gorm:"uniqueIndex;not null"`
-	CustomerID   string    `json:"customer_id" gorm:"type:uuid;index"`
-	ShopID       string    `json:"shop_id" gorm:"type:uuid;not null;index"`
-	InvoiceDate  time.Time `json:"invoice_date" gorm:"not null"`
-	SubTotal     float64   `json:"sub_total" gorm:"not null"`
-	TaxAmount    float64   `json:"tax_amount" gorm:"not null;default:0"`
-	DiscountAmt  float64   `json:"discount_amount" gorm:"not null;default:0"`
-	TotalAmount  float64   `json:"total_amount" gorm:"not null"`
-	PaidAmount   float64   `json:"paid_amount" gorm:"not null;default:0"`
-	DueAmount    float64   `json:"due_amount" gorm:"not null;default:0"`
-	PaymentMode  string    `json:"payment_mode"` // CASH, CARD, UPI, CREDIT
-	Status       string    `json:"status" gorm:"not null;default:'DRAFT'"` // DRAFT, PAID, PARTIAL, CANCELLED
-	Notes        string    `json:"notes"`
-	CreatedBy    string    `json:"created_by" gorm:"type:uuid"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	Items        []InvoiceItem `json:"items" gorm:"foreignKey:InvoiceID"`
+	ID          string        `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	InvoiceNo   string        `json:"invoice_no" gorm:"uniqueIndex;not null"`
+	CustomerID  string        `json:"customer_id" gorm:"type:uuid;index"`
+	ShopID      string        `json:"shop_id" gorm:"type:uuid;not null;index"`
+	InvoiceDate time.Time     `json:"invoice_date" gorm:"not null"`
+	SubTotal    float64       `json:"sub_total" gorm:"not null"`
+	TaxAmount   float64       `json:"tax_amount" gorm:"not null;default:0"`
+	DiscountAmt float64       `json:"discount_amount" gorm:"not null;default:0"`
+	TotalAmount float64       `json:"total_amount" gorm:"not null"`
+	PaidAmount  float64       `json:"paid_amount" gorm:"not null;default:0"`
+	DueAmount   float64       `json:"due_amount" gorm:"not null;default:0"`
+	PaymentMode string        `json:"payment_mode"`                           // CASH, CARD, UPI, CREDIT
+	Status      string        `json:"status" gorm:"not null;default:'DRAFT'"` // DRAFT, PAID, PARTIAL, CANCELLED
+	Notes       string        `json:"notes"`
+	CreatedBy   string        `json:"created_by" gorm:"type:uuid"`
+	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
+	Items       []InvoiceItem `json:"items" gorm:"foreignKey:InvoiceID"`
 }
 
 // InvoiceItem model
 type InvoiceItem struct {
-	ID         string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	InvoiceID  string    `json:"invoice_id" gorm:"type:uuid;not null;index"`
-	ProductID  string    `json:"product_id" gorm:"type:uuid;not null"`
-	ProductName string   `json:"product_name" gorm:"not null"`
-	Quantity   float64   `json:"quantity" gorm:"not null"`
-	Price      float64   `json:"price" gorm:"not null"`
-	TaxRate    float64   `json:"tax_rate" gorm:"not null;default:0"`
-	TaxAmount  float64   `json:"tax_amount" gorm:"not null;default:0"`
-	Discount   float64   `json:"discount" gorm:"not null;default:0"`
-	Total      float64   `json:"total" gorm:"not null"`
-	BatchNo    string    `json:"batch_no"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID          string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	InvoiceID   string    `json:"invoice_id" gorm:"type:uuid;not null;index"`
+	ProductID   string    `json:"product_id" gorm:"type:uuid;not null"`
+	ProductName string    `json:"product_name" gorm:"not null"`
+	Quantity    float64   `json:"quantity" gorm:"not null"`
+	Price       float64   `json:"price" gorm:"not null"`
+	TaxRate     float64   `json:"tax_rate" gorm:"not null;default:0"`
+	TaxAmount   float64   `json:"tax_amount" gorm:"not null;default:0"`
+	Discount    float64   `json:"discount" gorm:"not null;default:0"`
+	Total       float64   `json:"total" gorm:"not null"`
+	BatchNo     string    `json:"batch_no"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 // HeldBill model
@@ -140,7 +140,7 @@ func main() {
 func loadConfig() Config {
 	return Config{
 		Port:         getEnv("PORT", "8003"),
-		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy"),
+		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy"),
 		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379/2"),
 		KafkaBrokers: getEnv("KAFKA_BROKERS", "localhost:9092"),
 		ServiceName:  getEnv("SERVICE_NAME", "sales-service"),
@@ -318,14 +318,14 @@ func holdBill(c echo.Context) error {
 
 func listHeldBills(c echo.Context) error {
 	shopID := c.QueryParam("shop_id")
-	
+
 	var heldBills []HeldBill
 	query := db.Model(&HeldBill{})
-	
+
 	if shopID != "" {
 		query = query.Where("shop_id = ?", shopID)
 	}
-	
+
 	query.Order("created_at DESC").Find(&heldBills)
 
 	return c.JSON(http.StatusOK, Response{
@@ -409,25 +409,25 @@ func cancelOrder(c echo.Context) error {
 
 func listInvoices(c echo.Context) error {
 	var invoices []Invoice
-	
+
 	query := db.Model(&Invoice{}).Preload("Items")
-	
+
 	// Filters
 	if shopID := c.QueryParam("shop_id"); shopID != "" {
 		query = query.Where("shop_id = ?", shopID)
 	}
-	
+
 	if status := c.QueryParam("status"); status != "" {
 		query = query.Where("status = ?", status)
 	}
-	
+
 	// Pagination
 	page := 1
 	limit := 20
-	
+
 	var total int64
 	query.Count(&total)
-	
+
 	query.Offset((page - 1) * limit).Limit(limit).Order("created_at DESC").Find(&invoices)
 
 	return c.JSON(http.StatusOK, Response{
@@ -492,7 +492,7 @@ func listReturns(c echo.Context) error {
 
 func listDues(c echo.Context) error {
 	var invoices []Invoice
-	
+
 	db.Where("status IN ? AND due_amount > 0", []string{"PARTIAL", "PAID"}).
 		Order("invoice_date DESC").
 		Find(&invoices)

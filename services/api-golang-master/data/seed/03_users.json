@@ -1,0 +1,64 @@
+{
+  "users": [
+    {
+      "email": "test@test.com",
+      "password": "test123",
+      "password_hash": "$2a$10$N9qo8uLOickgx2ZMRZoMye1DQYfL2dGZVQm3eKGGqJYNQdT2LmXCC",
+      "first_name": "Test",
+      "last_name": "User",
+      "display_name": "Test User",
+      "phone": "+91-9876543310",
+      "is_active": true,
+      "is_verified": true,
+      "roles": ["sales_staff"]
+    },
+    {
+      "email": "admin@homeopathy.com",
+      "password": "admin123",
+      "password_hash": "$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa",
+      "first_name": "Admin",
+      "last_name": "User",
+      "display_name": "Admin User",
+      "phone": "+91-9876543311",
+      "is_active": true,
+      "is_verified": true,
+      "roles": ["admin"]
+    },
+    {
+      "email": "medicine@yeelohomeopathy.com",
+      "password": "Medicine@2024",
+      "password_hash": "$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa",
+      "first_name": "Super",
+      "last_name": "Admin",
+      "display_name": "Super Administrator",
+      "phone": "+91-9876543312",
+      "is_active": true,
+      "is_verified": true,
+      "roles": ["super_admin"]
+    },
+    {
+      "email": "manager@homeopathy.com",
+      "password": "manager123",
+      "password_hash": "$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa",
+      "first_name": "Store",
+      "last_name": "Manager",
+      "display_name": "Store Manager",
+      "phone": "+91-9876543313",
+      "is_active": true,
+      "is_verified": true,
+      "roles": ["manager"]
+    },
+    {
+      "email": "cashier@homeopathy.com",
+      "password": "cashier123",
+      "password_hash": "$2a$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa",
+      "first_name": "Front",
+      "last_name": "Desk",
+      "display_name": "Front Desk Cashier",
+      "phone": "+91-9876543314",
+      "is_active": true,
+      "is_verified": true,
+      "roles": ["cashier"]
+    }
+  ]
+}

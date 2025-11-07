@@ -151,7 +151,7 @@ async def get_db_conn():
     """Get database connection pool"""
     conn = await asyncpg.connect(
         host=os.getenv("DB_HOST", "localhost"),
-        port=int(os.getenv("DB_PORT", "5432")),
+        port=int(os.getenv("DB_PORT", "5433")),
         user=os.getenv("DB_USER", "postgres"),
         password=os.getenv("DB_PASSWORD", ""),
         database=os.getenv("DB_NAME", "yeelo_homeopathy")

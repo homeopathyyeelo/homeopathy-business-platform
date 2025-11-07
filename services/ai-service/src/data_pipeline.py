@@ -308,7 +308,7 @@ class HomeoERPDataPipeline:
 
 # Usage example
 if __name__ == "__main__":
-    DATABASE_URL = "postgresql://user:pass@localhost:5432/homeoerp"
+    DATABASE_URL = "postgresql://user:pass@localhost:5433/homeoerp"
 
     pipeline = HomeoERPDataPipeline(DATABASE_URL)
     training_data = pipeline.prepare_training_data()

@@ -1,0 +1,77 @@
+{
+  "categories": [
+    {"code": "MT", "name": "Mother Tinctures (Q)", "description": "Herbal extracts in alcohol base", "sort_order": 1},
+    {"code": "DIL", "name": "Dilutions", "description": "Homeopathic dilutions in various potencies", "sort_order": 2},
+    {"code": "BIO", "name": "Biochemic Tablets", "description": "12 tissue salts and bio combinations", "sort_order": 3},
+    {"code": "OINT", "name": "Ointments", "description": "External application creams", "sort_order": 4},
+    {"code": "DROP", "name": "Drops", "description": "Liquid formulations in drop form", "sort_order": 5},
+    {"code": "SYR", "name": "Syrups", "description": "Cough and health syrups", "sort_order": 6},
+    {"code": "TAB", "name": "Tablets", "description": "Medicinal tablets", "sort_order": 7},
+    {"code": "GLOB", "name": "Globules", "description": "Sugar pills medicated", "sort_order": 8},
+    {"code": "TRIT", "name": "Trituration", "description": "Powdered medicinal preparations", "sort_order": 9},
+    {"code": "BACH", "name": "Bach Flower Remedies", "description": "38 Bach flower essences", "sort_order": 10},
+    {"code": "LM", "name": "LM Potencies", "description": "Fifty Millesimal potencies", "sort_order": 11},
+    {"code": "CREAM", "name": "Creams & Gels", "description": "External skin care", "sort_order": 12},
+    {"code": "OIL", "name": "Oils", "description": "Medicated oils", "sort_order": 13},
+    {"code": "COSM", "name": "Cosmetics", "description": "Homeopathic cosmetics", "sort_order": 14},
+    {"code": "HAIR", "name": "Hair Care", "description": "Hair treatments", "sort_order": 15}
+  ],
+  "brands": [
+    {"code": "SBL", "name": "SBL (Dr. Willmar Schwabe)", "description": "Largest homeopathy manufacturer in India", "country": "India"},
+    {"code": "RECKEWEG", "name": "Dr. Reckeweg & Co.", "description": "German homeopathy - India operations", "country": "Germany"},
+    {"code": "ALLEN", "name": "Allen Homoeo", "description": "Premium Indian brand", "country": "India"},
+    {"code": "BAKSON", "name": "Bakson Drugs", "description": "Trusted Indian manufacturer", "country": "India"},
+    {"code": "SCHWABE", "name": "Schwabe India", "description": "German quality standards", "country": "Germany"},
+    {"code": "WHEEZAL", "name": "Wheezal", "description": "Quality medicines", "country": "India"},
+    {"code": "HAHNEMANN", "name": "Hahnemann Lab", "description": "Scientific homeopathy", "country": "India"},
+    {"code": "ADEL", "name": "Adel Germany", "description": "Complex remedies from Germany", "country": "Germany"},
+    {"code": "HASLAB", "name": "Haslab", "description": "Himalaya homeopathy division", "country": "India"},
+    {"code": "BJAIN", "name": "Bjain Pharma", "description": "Large scale manufacturer", "country": "India"}
+  ],
+  "potencies": [
+    {"code": "3X", "name": "3X", "potency_type": "DECIMAL", "value": 3, "description": "Third decimal", "sort_order": 1},
+    {"code": "6X", "name": "6X", "potency_type": "DECIMAL", "value": 6, "description": "Sixth decimal - Biochemic standard", "sort_order": 2},
+    {"code": "12X", "name": "12X", "potency_type": "DECIMAL", "value": 12, "description": "Twelfth decimal", "sort_order": 3},
+    {"code": "30X", "name": "30X", "potency_type": "DECIMAL", "value": 30, "description": "Thirtieth decimal", "sort_order": 4},
+    {"code": "6C", "name": "6C", "potency_type": "CENTESIMAL", "value": 6, "description": "Sixth centesimal - Acute", "sort_order": 5},
+    {"code": "30C", "name": "30C", "potency_type": "CENTESIMAL", "value": 30, "description": "Thirtieth centesimal - Most popular", "sort_order": 6},
+    {"code": "200C", "name": "200C", "potency_type": "CENTESIMAL", "value": 200, "description": "Two hundredth - Chronic", "sort_order": 7},
+    {"code": "1M", "name": "1M", "potency_type": "CENTESIMAL", "value": 1000, "description": "One thousand - High potency", "sort_order": 8},
+    {"code": "10M", "name": "10M", "potency_type": "CENTESIMAL", "value": 10000, "description": "Ten thousand", "sort_order": 9},
+    {"code": "CM", "name": "CM", "potency_type": "CENTESIMAL", "value": 100000, "description": "Hundred thousand", "sort_order": 10},
+    {"code": "Q", "name": "Q (Mother Tincture)", "potency_type": "MOTHER_TINCTURE", "value": 0, "description": "Original extract", "sort_order": 11}
+  ],
+  "forms": [
+    {"code": "LIQ", "name": "Liquid (Dilution)", "form_type": "LIQUID", "description": "Liquid in alcohol/water"},
+    {"code": "TAB", "name": "Tablet", "form_type": "SOLID", "description": "Solid oral tablets"},
+    {"code": "GLOB", "name": "Globules", "form_type": "SOLID", "description": "Sugar pills"},
+    {"code": "MT", "name": "Mother Tincture", "form_type": "LIQUID", "description": "Herbal extract"},
+    {"code": "OINT", "name": "Ointment", "form_type": "EXTERNAL", "description": "External application"},
+    {"code": "CRM", "name": "Cream", "form_type": "EXTERNAL", "description": "Lighter formulation"},
+    {"code": "DROP", "name": "Drops", "form_type": "LIQUID", "description": "Concentrated liquid"},
+    {"code": "SYR", "name": "Syrup", "form_type": "LIQUID", "description": "Sweet liquid"},
+    {"code": "TRIT", "name": "Trituration", "form_type": "SOLID", "description": "Powder form"}
+  ],
+  "units": [
+    {"code": "ml", "name": "Millilitre", "unit_type": "VOLUME", "conversion_factor": 1, "base_unit": "ml"},
+    {"code": "L", "name": "Litre", "unit_type": "VOLUME", "conversion_factor": 1000, "base_unit": "ml"},
+    {"code": "dr", "name": "Dram", "unit_type": "VOLUME", "conversion_factor": 3.7, "base_unit": "ml"},
+    {"code": "oz", "name": "Ounce", "unit_type": "VOLUME", "conversion_factor": 30, "base_unit": "ml"},
+    {"code": "gm", "name": "Gram", "unit_type": "WEIGHT", "conversion_factor": 1, "base_unit": "gm"},
+    {"code": "kg", "name": "Kilogram", "unit_type": "WEIGHT", "conversion_factor": 1000, "base_unit": "gm"},
+    {"code": "mg", "name": "Milligram", "unit_type": "WEIGHT", "conversion_factor": 0.001, "base_unit": "gm"},
+    {"code": "pcs", "name": "Piece", "unit_type": "COUNT", "conversion_factor": 1, "base_unit": "pcs"},
+    {"code": "btl", "name": "Bottle", "unit_type": "COUNT", "conversion_factor": 1, "base_unit": "pcs"},
+    {"code": "tube", "name": "Tube", "unit_type": "COUNT", "conversion_factor": 1, "base_unit": "pcs"},
+    {"code": "box", "name": "Box", "unit_type": "COUNT", "conversion_factor": 1, "base_unit": "pcs"},
+    {"code": "strip", "name": "Strip", "unit_type": "COUNT", "conversion_factor": 1, "base_unit": "pcs"}
+  ],
+  "hsn_codes": [
+    {"code": "30049011", "description": "Homeopathic Medicines - Dilutions", "gst_rate": 12.0},
+    {"code": "30049012", "description": "Homeopathic Medicines - Mother Tinctures", "gst_rate": 12.0},
+    {"code": "30049013", "description": "Homeopathic Medicines - Biochemic", "gst_rate": 12.0},
+    {"code": "30049014", "description": "Homeopathic Medicines - Triturations", "gst_rate": 12.0},
+    {"code": "30049015", "description": "Homeopathic Medicines - Ointments", "gst_rate": 12.0},
+    {"code": "33049900", "description": "Cosmetic Products", "gst_rate": 18.0}
+  ]
+}

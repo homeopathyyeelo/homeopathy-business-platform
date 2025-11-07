@@ -2,11 +2,11 @@
 
 -- Insert Suppliers
 INSERT INTO suppliers (id, "companyName", "contactPerson", phone, email, address, "isActive", "shopId", "createdAt", "updatedAt") VALUES
-('sup001', 'SBL Pvt Ltd', 'Rajesh Kumar', '9876543210', 'contact@sbl.com', 'Mumbai', true, 'dist-yeelo', NOW(), NOW()),
-('sup002', 'Dr. Willmar Schwabe India', 'Amit Sharma', '9876543211', 'info@schwabe.in', 'Delhi', true, 'dist-yeelo', NOW(), NOW()),
-('sup003', 'Bakson Drugs', 'Priya Patel', '9876543212', 'sales@bakson.com', 'Kolkata', true, 'dist-yeelo', NOW(), NOW()),
-('sup004', 'Hahnemann Scientific Lab', 'Suresh Reddy', '9876543213', 'contact@hahnemann.com', 'Hyderabad', true, 'dist-yeelo', NOW(), NOW()),
-('sup005', 'Reckeweg India', 'Neha Singh', '9876543214', 'info@reckeweg.in', 'Chennai', true, 'dist-yeelo', NOW(), NOW())
+('sup001', 'SBL Pvt Ltd', 'Rajesh Kumar', '9876543310', 'contact@sbl.com', 'Mumbai', true, 'dist-yeelo', NOW(), NOW()),
+('sup002', 'Dr. Willmar Schwabe India', 'Amit Sharma', '9876543311', 'info@schwabe.in', 'Delhi', true, 'dist-yeelo', NOW(), NOW()),
+('sup003', 'Bakson Drugs', 'Priya Patel', '9876543312', 'sales@bakson.com', 'Kolkata', true, 'dist-yeelo', NOW(), NOW()),
+('sup004', 'Hahnemann Scientific Lab', 'Suresh Reddy', '9876543313', 'contact@hahnemann.com', 'Hyderabad', true, 'dist-yeelo', NOW(), NOW()),
+('sup005', 'Reckeweg India', 'Neha Singh', '9876543314', 'info@reckeweg.in', 'Chennai', true, 'dist-yeelo', NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert Categories

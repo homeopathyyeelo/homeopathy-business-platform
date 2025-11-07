@@ -15,13 +15,13 @@ go run cmd/main.go
 ## 📋 Configuration
 
 **Port:** 3005  
-**Database:** PostgreSQL (localhost:5432)  
+**Database:** PostgreSQL (localhost:5433)  
 **Redis:** localhost:6379
 
 Environment variables (`.env` file):
 ```
 PORT=3005
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
 REDIS_URL=redis://:redis_password@localhost:6379
 JWT_SECRET=your-secret-key-change-in-production
 ENVIRONMENT=development
@@ -183,7 +183,7 @@ services/api-golang-master/
 
 This service integrates with:
 - **Next.js Frontend** (port 3000) - UI layer
-- **PostgreSQL** (port 5432) - Database
+- **PostgreSQL** (port 5433) - Database
 - **Redis** (port 6379) - Caching
 - **Kafka** (port 9092) - Event streaming
 - **Invoice Parser** (port 8005) - PDF processing

@@ -243,8 +243,8 @@ const EnhancedImportContacts = () => {
   const downloadTemplate = () => {
     const csvContent = [
       'first_name,last_name,phone_number,email,category,city,area,society',
-      'John,Doe,+919876543210,john.doe@email.com,doctor,Gurgaon,Sohna,Green Valley',
-      'Jane,Smith,+919876543211,jane.smith@email.com,patient,Delhi,CP,Central Plaza'
+      'John,Doe,+919876543310,john.doe@email.com,doctor,Gurgaon,Sohna,Green Valley',
+      'Jane,Smith,+919876543311,jane.smith@email.com,patient,Delhi,CP,Central Plaza'
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -394,7 +394,7 @@ const EnhancedImportContacts = () => {
                     id="phone_number"
                     value={manualContact.phone_number}
                     onChange={(e) => setManualContact(prev => ({ ...prev, phone_number: e.target.value }))}
-                    placeholder="+919876543210"
+                    placeholder="+919876543310"
                   />
                 </div>
                 <div>

@@ -40,7 +40,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: homeoerp_test
         ports:
-          - 5432:5432
+          - 5433:5433
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -73,7 +73,7 @@ jobs:
       - name: Run tests
         run: npm run test
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/homeoerp_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
 
   # ============================================
   # BUILD & DEPLOY
@@ -185,7 +185,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         ports:
-          - 5432:5432
+          - 5433:5433
 
     steps:
       - uses: actions/checkout@v4
@@ -206,4 +206,4 @@ jobs:
           npm run db:push
           npm run test:e2e
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy

@@ -37,7 +37,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: yeelo_homeopathy
     ports:
-      - "5433:5432"
+      - "5433:5433"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     command: >
@@ -92,7 +92,7 @@ services:
       context: ./services/ai-service
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy
       REDIS_URL: redis://redis:6379
       MINIO_URL: http://minio:9000
       KAFKA_BROKERS: kafka:9092
@@ -115,7 +115,7 @@ services:
       dockerfile: Dockerfile
     environment:
       PORT: 3005
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy
       REDIS_URL: redis://redis:6379
       KAFKA_BROKERS: kafka:9092
       JWT_SECRET: your-super-secret-jwt-key-change-in-production

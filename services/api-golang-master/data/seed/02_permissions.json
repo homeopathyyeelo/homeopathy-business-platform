@@ -1,0 +1,214 @@
+{
+  "permissions": [
+    {
+      "code": "products:view",
+      "name": "View Products",
+      "module": "products",
+      "action": "view",
+      "description": "View product catalog and details"
+    },
+    {
+      "code": "products:create",
+      "name": "Create Products",
+      "module": "products",
+      "action": "create",
+      "description": "Add new products to catalog"
+    },
+    {
+      "code": "products:edit",
+      "name": "Edit Products",
+      "module": "products",
+      "action": "edit",
+      "description": "Modify existing product details"
+    },
+    {
+      "code": "products:delete",
+      "name": "Delete Products",
+      "module": "products",
+      "action": "delete",
+      "description": "Remove products from catalog"
+    },
+    {
+      "code": "inventory:view",
+      "name": "View Inventory",
+      "module": "inventory",
+      "action": "view",
+      "description": "View stock levels and inventory"
+    },
+    {
+      "code": "inventory:create",
+      "name": "Add Stock",
+      "module": "inventory",
+      "action": "create",
+      "description": "Add new stock entries"
+    },
+    {
+      "code": "inventory:adjust",
+      "name": "Adjust Inventory",
+      "module": "inventory",
+      "action": "adjust",
+      "description": "Adjust stock levels"
+    },
+    {
+      "code": "inventory:transfer",
+      "name": "Transfer Stock",
+      "module": "inventory",
+      "action": "transfer",
+      "description": "Transfer stock between warehouses"
+    },
+    {
+      "code": "sales:view",
+      "name": "View Sales",
+      "module": "sales",
+      "action": "view",
+      "description": "View sales orders and invoices"
+    },
+    {
+      "code": "sales:create",
+      "name": "Create Sales",
+      "module": "sales",
+      "action": "create",
+      "description": "Create new sales orders"
+    },
+    {
+      "code": "sales:edit",
+      "name": "Edit Sales",
+      "module": "sales",
+      "action": "edit",
+      "description": "Modify sales orders"
+    },
+    {
+      "code": "sales:delete",
+      "name": "Delete Sales",
+      "module": "sales",
+      "action": "delete",
+      "description": "Cancel sales orders"
+    },
+    {
+      "code": "purchases:view",
+      "name": "View Purchases",
+      "module": "purchases",
+      "action": "view",
+      "description": "View purchase orders"
+    },
+    {
+      "code": "purchases:create",
+      "name": "Create Purchases",
+      "module": "purchases",
+      "action": "create",
+      "description": "Create purchase orders"
+    },
+    {
+      "code": "purchases:approve",
+      "name": "Approve Purchases",
+      "module": "purchases",
+      "action": "approve",
+      "description": "Approve pending purchase orders"
+    },
+    {
+      "code": "customers:view",
+      "name": "View Customers",
+      "module": "customers",
+      "action": "view",
+      "description": "View customer list and details"
+    },
+    {
+      "code": "customers:create",
+      "name": "Create Customers",
+      "module": "customers",
+      "action": "create",
+      "description": "Add new customers"
+    },
+    {
+      "code": "customers:edit",
+      "name": "Edit Customers",
+      "module": "customers",
+      "action": "edit",
+      "description": "Modify customer details"
+    },
+    {
+      "code": "customers:delete",
+      "name": "Delete Customers",
+      "module": "customers",
+      "action": "delete",
+      "description": "Remove customers"
+    },
+    {
+      "code": "vendors:view",
+      "name": "View Vendors",
+      "module": "vendors",
+      "action": "view",
+      "description": "View vendor list"
+    },
+    {
+      "code": "vendors:create",
+      "name": "Create Vendors",
+      "module": "vendors",
+      "action": "create",
+      "description": "Add new vendors"
+    },
+    {
+      "code": "users:view",
+      "name": "View Users",
+      "module": "users",
+      "action": "view",
+      "description": "View user accounts"
+    },
+    {
+      "code": "users:create",
+      "name": "Create Users",
+      "module": "users",
+      "action": "create",
+      "description": "Create new user accounts"
+    },
+    {
+      "code": "users:edit",
+      "name": "Edit Users",
+      "module": "users",
+      "action": "edit",
+      "description": "Modify user accounts"
+    },
+    {
+      "code": "users:delete",
+      "name": "Delete Users",
+      "module": "users",
+      "action": "delete",
+      "description": "Remove user accounts"
+    },
+    {
+      "code": "reports:view",
+      "name": "View Reports",
+      "module": "reports",
+      "action": "view",
+      "description": "Access reports and analytics"
+    },
+    {
+      "code": "settings:view",
+      "name": "View Settings",
+      "module": "settings",
+      "action": "view",
+      "description": "View system settings"
+    },
+    {
+      "code": "settings:edit",
+      "name": "Edit Settings",
+      "module": "settings",
+      "action": "edit",
+      "description": "Modify system settings"
+    },
+    {
+      "code": "pos:create",
+      "name": "POS Operations",
+      "module": "pos",
+      "action": "create",
+      "description": "Create POS sales"
+    },
+    {
+      "code": "warehouses:manage",
+      "name": "Manage Warehouses",
+      "module": "warehouses",
+      "action": "manage",
+      "description": "Manage warehouse locations"
+    }
+  ]
+}

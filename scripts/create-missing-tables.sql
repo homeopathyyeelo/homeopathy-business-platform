@@ -52,9 +52,9 @@ INSERT INTO loyalty_accounts (points, tier) VALUES
 ON CONFLICT DO NOTHING;
 
 INSERT INTO marketing_contacts (name, email, phone, source) VALUES
-('John Doe', 'john@test.com', '9876543210', 'website'),
-('Jane Smith', 'jane@test.com', '9876543211', 'referral'),
-('Bob Johnson', 'bob@test.com', '9876543212', 'social')
+('John Doe', 'john@test.com', '9876543310', 'website'),
+('Jane Smith', 'jane@test.com', '9876543311', 'referral'),
+('Bob Johnson', 'bob@test.com', '9876543312', 'social')
 ON CONFLICT DO NOTHING;
 
 SELECT 'Tables created and seeded successfully!' as status;

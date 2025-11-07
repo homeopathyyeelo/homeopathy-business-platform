@@ -2,7 +2,7 @@
 NODE_ENV=production
 
 # Database
-DATABASE_URL=postgresql://APP_USER:APP_PASSWORD@DB_HOST:5432/yeelo_homeopathy?schema=public
+DATABASE_URL=postgresql://APP_USER:APP_PASSWORD@DB_HOST:5433/yeelo_homeopathy?schema=public
 
 # Caches & brokers
 REDIS_URL=redis://redis:6379

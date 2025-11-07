@@ -6,9 +6,9 @@
 export const DATABASE_CONFIG = {
   // PostgreSQL - Primary Database
   postgres: {
-    url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy',
+    url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy',
     host: process.env.POSTGRES_HOST || 'postgres',
-    port: parseInt(process.env.POSTGRES_PORT || '5432'),
+    port: parseInt(process.env.POSTGRES_PORT || '5433'),
     user: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD || 'postgres',
     database: process.env.POSTGRES_DB || 'yeelo_homeopathy',

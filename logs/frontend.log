@@ -8,25 +8,18 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
- ✓ Ready in 13.7s
+ ✓ Ready in 2.6s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 887ms (159 modules)
+ ✓ Compiled /middleware in 739ms (159 modules)
  ○ Compiling / ...
- ✓ Compiled / in 7.7s (1067 modules)
- GET / 200 in 1722ms
- GET / 200 in 234ms
+ ✓ Compiled / in 6.2s (1067 modules)
+ GET / 200 in 705ms
+ GET / 200 in 230ms
  ○ Compiling /login ...
- ✓ Compiled /login in 715ms (1065 modules)
- GET /login?redirect=%2Fdashboard 200 in 988ms
- GET /login?redirect=%2Fdashboard 200 in 107ms
- ✓ Compiled /api/auth/login in 397ms (1086 modules)
- POST /api/auth/login 401 in 712ms
- POST /api/auth/login 401 in 131ms
- POST /api/auth/login 401 in 108ms
- POST /api/auth/login 401 in 126ms
- POST /api/auth/login 401 in 105ms
+ ✓ Compiled /login in 682ms (1065 modules)
+ GET /login?redirect=%2Fdashboard 200 in 929ms
+ GET /login?redirect=%2Fdashboard 200 in 114ms
+ ✓ Compiled /api/auth/login in 389ms (1086 modules)
+ POST /api/auth/login 401 in 683ms
+ GET / 200 in 437ms
+ GET /login?redirect=%2Fdashboard 200 in 121ms

@@ -233,9 +233,9 @@ INSERT INTO products (sku, name, category, brand, potency, form, cost_price, sel
 ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO customers (customer_code, name, email, phone, customer_type) VALUES
-('CUST001', 'Rajesh Kumar', 'rajesh@example.com', '9876543210', 'retail'),
-('CUST002', 'Priya Sharma', 'priya@example.com', '9876543211', 'retail'),
-('CUST003', 'Amit Patel', 'amit@example.com', '9876543212', 'wholesale')
+('CUST001', 'Rajesh Kumar', 'rajesh@example.com', '9876543310', 'retail'),
+('CUST002', 'Priya Sharma', 'priya@example.com', '9876543311', 'retail'),
+('CUST003', 'Amit Patel', 'amit@example.com', '9876543312', 'wholesale')
 ON CONFLICT (customer_code) DO NOTHING;
 
 INSERT INTO vendors (vendor_code, name, contact_person, email, phone, gst_number) VALUES

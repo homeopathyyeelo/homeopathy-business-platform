@@ -10,7 +10,7 @@ let branches: any[] = [
     city: 'Mumbai',
     state: 'Maharashtra',
     pincode: '400001',
-    phone: '9876543210',
+    phone: '9876543310',
     email: 'main@yeelo.com',
     is_head_office: true,
     is_active: true,

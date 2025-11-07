@@ -79,7 +79,7 @@ export default function AddCustomerPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" name="phone" value={form.phone} onChange={onChange} placeholder="e.g., 9876543210" />
+              <Input id="phone" name="phone" value={form.phone} onChange={onChange} placeholder="e.g., 9876543310" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

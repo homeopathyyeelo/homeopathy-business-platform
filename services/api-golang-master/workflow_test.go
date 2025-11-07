@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -385,7 +386,7 @@ func TestDatabaseConnection(t *testing.T) {
 	// Test database connectivity
 	db, err := NewDatabase(DatabaseConfig{
 		Host:     "localhost",
-		Port:     5432,
+		Port:     5433,
 		Username: "postgres",
 		Password: "password",
 		Database: "test_db",

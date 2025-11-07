@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     
     # Database
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/homeoerp"
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"
     
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"

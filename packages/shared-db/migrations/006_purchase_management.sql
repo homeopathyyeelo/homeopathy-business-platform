@@ -117,9 +117,9 @@ CREATE INDEX IF NOT EXISTS idx_vendor_performance_vendor ON vendor_performance(v
 
 -- Insert sample vendors
 INSERT INTO vendors (id, name, contact_person, phone, email, address, gst_number, credit_limit, payment_terms) VALUES
-('vendor-1', 'ABC Homeopathy Suppliers', 'Rajesh Kumar', '+91-9876543210', 'rajesh@abchomeopathy.com', '123 Medical Street, Delhi', '07ABCDE1234F1Z5', 100000, 30),
+('vendor-1', 'ABC Homeopathy Suppliers', 'Rajesh Kumar', '+91-9876543310', 'rajesh@abchomeopathy.com', '123 Medical Street, Delhi', '07ABCDE1234F1Z5', 100000, 30),
 ('vendor-2', 'German Remedies Ltd', 'Dr. Schmidt', '+49-1234567890', 'schmidt@germanremedies.de', '456 Pharma Avenue, Berlin', 'DE123456789', 200000, 45),
-('vendor-3', 'Indian Homeopathy Co', 'Priya Sharma', '+91-8765432109', 'priya@indianhomeopathy.com', '789 Ayurveda Road, Mumbai', '27FGHIJ5678K9L1', 75000, 15)
+('vendor-3', 'Indian Homeopathy Co', 'Priya Sharma', '+91-8765433109', 'priya@indianhomeopathy.com', '789 Ayurveda Road, Mumbai', '27FGHIJ5678K9L1', 75000, 15)
 ON CONFLICT (id) DO NOTHING;
 
 -- Grant permissions

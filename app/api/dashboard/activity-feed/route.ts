@@ -43,7 +43,7 @@ export async function GET() {
       event: 'New customer registered', 
       module: 'CRM', 
       timestamp: new Date(Date.now() - 25 * 60000).toISOString(), 
-      details: 'Priya Sharma, Phone: 9876543210' 
+      details: 'Priya Sharma, Phone: 9876543310' 
     },
     { 
       id: '7', 

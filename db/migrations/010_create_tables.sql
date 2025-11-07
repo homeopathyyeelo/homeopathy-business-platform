@@ -171,11 +171,11 @@ INSERT INTO products (name, category, brand, price, stock, mrp, description, sku
 ON CONFLICT DO NOTHING;
 
 INSERT INTO customers (name, email, phone, address, city, state, pincode, customer_type) VALUES
-('Rajesh Kumar', 'rajesh@example.com', '9876543210', '123 MG Road', 'Mumbai', 'Maharashtra', '400001', 'retail'),
-('Priya Sharma', 'priya@example.com', '9876543211', '456 Park Street', 'Kolkata', 'West Bengal', '700016', 'retail'),
-('Amit Patel', 'amit@example.com', '9876543212', '789 Brigade Road', 'Bangalore', 'Karnataka', '560001', 'wholesale'),
-('Sneha Reddy', 'sneha@example.com', '9876543213', '321 Anna Salai', 'Chennai', 'Tamil Nadu', '600002', 'retail'),
-('Vikram Singh', 'vikram@example.com', '9876543214', '654 Connaught Place', 'Delhi', 'Delhi', '110001', 'retail')
+('Rajesh Kumar', 'rajesh@example.com', '9876543310', '123 MG Road', 'Mumbai', 'Maharashtra', '400001', 'retail'),
+('Priya Sharma', 'priya@example.com', '9876543311', '456 Park Street', 'Kolkata', 'West Bengal', '700016', 'retail'),
+('Amit Patel', 'amit@example.com', '9876543312', '789 Brigade Road', 'Bangalore', 'Karnataka', '560001', 'wholesale'),
+('Sneha Reddy', 'sneha@example.com', '9876543313', '321 Anna Salai', 'Chennai', 'Tamil Nadu', '600002', 'retail'),
+('Vikram Singh', 'vikram@example.com', '9876543314', '654 Connaught Place', 'Delhi', 'Delhi', '110001', 'retail')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO vendors (name, contact_person, email, phone, address, city, state, gst_number) VALUES

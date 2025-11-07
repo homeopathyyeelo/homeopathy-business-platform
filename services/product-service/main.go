@@ -123,7 +123,7 @@ func main() {
 func loadConfig() Config {
 	return Config{
 		Port:         getEnv("PORT", "8001"),
-		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy"),
+		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy"),
 		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379/0"),
 		KafkaBrokers: getEnv("KAFKA_BROKERS", "localhost:9092"),
 		ServiceName:  getEnv("SERVICE_NAME", "product-service"),
@@ -245,16 +245,16 @@ func healthCheck(c *gin.Context) {
 
 func listProducts(c *gin.Context) {
 	var products []Product
-	
+
 	query := db.Model(&Product{})
-	
+
 	// Pagination
 	page := c.DefaultQuery("page", "1")
 	limit := c.DefaultQuery("limit", "20")
-	
+
 	var total int64
 	query.Count(&total)
-	
+
 	query.Limit(20).Offset(0).Find(&products)
 
 	c.JSON(http.StatusOK, Response{

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize services
 ml_models = HomeoERPMLModels()
-data_pipeline = HomeoERPDataPipeline(os.getenv('DATABASE_URL', 'postgresql://user:pass@localhost:5432/homeoerp'))
+data_pipeline = HomeoERPDataPipeline(os.getenv('DATABASE_URL', 'postgresql://user:pass@localhost:5433/homeoerp'))
 
 # Enhanced Pydantic models
 class ProductRecommendationRequest(BaseModel):

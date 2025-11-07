@@ -356,7 +356,7 @@ export default function EmployeesPage() {
                   id="phone"
                   value={formData.phone || ''}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+91 9876543210"
+                  placeholder="+91 9876543310"
                 />
               </div>
             </div>

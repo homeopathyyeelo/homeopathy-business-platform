@@ -4,17 +4,17 @@ import (
 	"log"
 	"os"
 	"strconv"
-	
+
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Port        string
-	DatabaseURL string
-	RedisURL    string
-	JWTSecret   string
-	Environment string
-	KafkaBrokers string
+	Port             string
+	DatabaseURL      string
+	RedisURL         string
+	JWTSecret        string
+	Environment      string
+	KafkaBrokers     string
 	InvoiceParserURL string
 }
 
@@ -25,12 +25,12 @@ func Load() *Config {
 	}
 
 	cfg := &Config{
-		Port:        getEnv("PORT", "3005"),
-		DatabaseURL: getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"),
-		RedisURL:    getEnv("REDIS_URL", "redis://localhost:6380"),
-		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
-		Environment: getEnv("ENVIRONMENT", "development"),
-		KafkaBrokers: getEnv("KAFKA_BROKERS", "localhost:9092"),
+		Port:             getEnv("PORT", "3005"),
+		DatabaseURL:      getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"),
+		RedisURL:         getEnv("REDIS_URL", "redis://localhost:6380"),
+		JWTSecret:        getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
+		Environment:      getEnv("ENVIRONMENT", "development"),
+		KafkaBrokers:     getEnv("KAFKA_BROKERS", "localhost:9092"),
 		InvoiceParserURL: getEnv("INVOICE_PARSER_URL", "http://localhost:8005"),
 	}
 

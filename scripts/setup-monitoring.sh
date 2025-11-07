@@ -144,7 +144,7 @@ spec:
         image: prometheuscommunity/postgres-exporter:latest
         env:
         - name: DATA_SOURCE_NAME
-          value: "postgresql://postgres:password@postgres.yeelo-platform:5432/yeelo_homeopathy?sslmode=disable"
+          value: "postgresql://postgres:password@postgres.yeelo-platform:5433/yeelo_homeopathy?sslmode=disable"
         ports:
         - containerPort: 9187
           name: metrics

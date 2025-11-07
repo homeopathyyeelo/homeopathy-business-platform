@@ -1,0 +1,118 @@
+{
+  "roles": [
+    {
+      "code": "super_admin",
+      "name": "Super Administrator",
+      "description": "Full system access - all modules, all permissions",
+      "level": 100,
+      "is_system": true,
+      "is_active": true,
+      "permissions": ["*"]
+    },
+    {
+      "code": "admin",
+      "name": "Administrator",
+      "description": "Administrative access - manage users, settings, view all data",
+      "level": 80,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "users:*",
+        "products:*",
+        "inventory:*",
+        "sales:*",
+        "purchases:*",
+        "customers:*",
+        "vendors:*",
+        "reports:view",
+        "settings:*"
+      ]
+    },
+    {
+      "code": "manager",
+      "name": "Manager",
+      "description": "Operations manager - full CRUD on business modules",
+      "level": 60,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "products:view",
+        "products:create",
+        "products:edit",
+        "inventory:*",
+        "sales:*",
+        "purchases:*",
+        "customers:*",
+        "vendors:view",
+        "reports:view"
+      ]
+    },
+    {
+      "code": "sales_staff",
+      "name": "Sales Staff",
+      "description": "Sales operations - POS, invoicing, customer management",
+      "level": 40,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "products:view",
+        "inventory:view",
+        "sales:create",
+        "sales:edit",
+        "sales:view",
+        "customers:view",
+        "customers:create",
+        "customers:edit",
+        "pos:*"
+      ]
+    },
+    {
+      "code": "inventory_staff",
+      "name": "Inventory Staff",
+      "description": "Inventory management - stock, purchases, warehouses",
+      "level": 40,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "products:view",
+        "inventory:*",
+        "purchases:view",
+        "purchases:create",
+        "vendors:view",
+        "warehouses:*"
+      ]
+    },
+    {
+      "code": "cashier",
+      "name": "Cashier",
+      "description": "POS operations only - create sales, view products",
+      "level": 20,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "products:view",
+        "sales:create",
+        "sales:view",
+        "customers:view",
+        "pos:*"
+      ]
+    },
+    {
+      "code": "viewer",
+      "name": "Viewer",
+      "description": "Read-only access - view reports and data",
+      "level": 10,
+      "is_system": true,
+      "is_active": true,
+      "permissions": [
+        "products:view",
+        "inventory:view",
+        "sales:view",
+        "purchases:view",
+        "customers:view",
+        "vendors:view",
+        "reports:view"
+      ]
+    }
+  ]
+}

@@ -97,7 +97,7 @@ if [ ! -f ".env" ]; then
         warn "⚠️  No .env file found. Creating default..."
         cat > .env << 'EOF'
 # Database
-DATABASE_URL="postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy"
+DATABASE_URL="postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy"
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=yeelo_homeopathy

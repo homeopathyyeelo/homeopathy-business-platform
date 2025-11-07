@@ -108,7 +108,7 @@ Upload → Parse → Match → Reconcile → Confirm → Post
 Create `.env` file:
 
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/homeoerp
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
 REDIS_URL=redis://localhost:6379/0
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 MINIO_ENDPOINT=localhost:9000

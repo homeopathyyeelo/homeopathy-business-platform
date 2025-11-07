@@ -358,7 +358,7 @@ def run_complete_ml_pipeline():
 
     # 1. Data preparation
     print("📊 Phase 1: Data Preparation")
-    data_pipeline = HomeoERPDataPipeline("postgresql://user:pass@localhost:5432/homeoerp")
+    data_pipeline = HomeoERPDataPipeline("postgresql://user:pass@localhost:5433/homeoerp")
     training_data = data_pipeline.prepare_training_data()
 
     # 2. Model training

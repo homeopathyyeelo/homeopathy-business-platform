@@ -48,10 +48,10 @@ type KafkaConfig struct {
 }
 
 type JWTConfig struct {
-	Secret           string
-	AccessExpiry     time.Duration
-	RefreshExpiry    time.Duration
-	Issuer           string
+	Secret        string
+	AccessExpiry  time.Duration
+	RefreshExpiry time.Duration
+	Issuer        string
 }
 
 func Load() (*Config, error) {

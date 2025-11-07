@@ -30,7 +30,7 @@ echo "----------------------------"
 
 echo "1. Run data pipeline:"
 cd /var/www/homeopathy-business-platform/services/ai-service
-python -c "from src.data_pipeline import HomeoERPDataPipeline; pipeline = HomeoERPDataPipeline('postgresql://user:pass@localhost:5432/homeoerp'); pipeline.prepare_training_data()"
+python -c "from src.data_pipeline import HomeoERPDataPipeline; pipeline = HomeoERPDataPipeline('postgresql://user:pass@localhost:5433/homeoerp'); pipeline.prepare_training_data()"
 
 echo ""
 echo "2. Verify data quality:"

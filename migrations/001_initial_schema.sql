@@ -673,12 +673,12 @@ ON CONFLICT DO NOTHING;
 
 -- Insert default company
 INSERT INTO companies (name, description, address, phone, email) VALUES
-('Demo Homeopathy Store', 'Default demo company for HomeoERP', '123 Main Street, City, State - 123456', '+91-9876543210', 'demo@homeoerp.com')
+('Demo Homeopathy Store', 'Default demo company for HomeoERP', '123 Main Street, City, State - 123456', '+91-9876543310', 'demo@homeoerp.com')
 ON CONFLICT DO NOTHING;
 
 -- Insert default shop
 INSERT INTO shops (company_id, name, address, phone, email) VALUES
-(1, 'Main Branch', '123 Main Street, City, State - 123456', '+91-9876543210', 'main@homeoerp.com')
+(1, 'Main Branch', '123 Main Street, City, State - 123456', '+91-9876543310', 'main@homeoerp.com')
 ON CONFLICT DO NOTHING;
 
 -- Insert default admin user (password: admin123)

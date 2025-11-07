@@ -3,9 +3,9 @@
 
 -- Insert admin user
 INSERT INTO users (full_name, phone, email, password_hash, role) VALUES
-('Amit Ghosh', '9876543210', 'amit@yeelo.in', '$2b$10$example_hash_here', 'admin'),
-('Priya Sharma', '9876543211', 'priya@yeelo.in', '$2b$10$example_hash_here', 'staff'),
-('Rajesh Kumar', '9876543212', 'rajesh@yeelo.in', '$2b$10$example_hash_here', 'marketer');
+('Amit Ghosh', '9876543310', 'amit@yeelo.in', '$2b$10$example_hash_here', 'admin'),
+('Priya Sharma', '9876543311', 'priya@yeelo.in', '$2b$10$example_hash_here', 'staff'),
+('Rajesh Kumar', '9876543312', 'rajesh@yeelo.in', '$2b$10$example_hash_here', 'marketer');
 
 -- Insert main shop
 INSERT INTO shops (name, address, geo_lat, geo_lng, phone, gmb_place_id) VALUES

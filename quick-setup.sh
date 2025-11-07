@@ -52,7 +52,7 @@ if [ -n "$DATABASE_URL" ]; then
     echo "✅ Database setup attempted"
 else
     echo "⚠️  DATABASE_URL not set. Please set your PostgreSQL connection string."
-    echo "   Example: export DATABASE_URL='postgresql://user:password@localhost:5432/homeoerp'"
+    echo "   Example: export DATABASE_URL='postgresql://user:password@localhost:5433/homeoerp'"
 fi
 
 # Build the application
@@ -79,7 +79,7 @@ echo -e "\n🚀 Setup Complete!"
 echo "=================="
 echo ""
 echo "📋 Next Steps:"
-echo "1. Set DATABASE_URL: export DATABASE_URL='postgresql://user:password@localhost:5432/homeoerp'"
+echo "1. Set DATABASE_URL: export DATABASE_URL='postgresql://user:password@localhost:5433/homeoerp'"
 echo "2. Run database setup: psql \$DATABASE_URL -f create-basic-tables.sql"
 echo "3. Start development: npm run dev:app"
 echo "4. Access: http://localhost:3000"

@@ -212,7 +212,7 @@ services/api-golang-master/
 
 2. **Set Environment Variables**
    ```bash
-   export DATABASE_URL="postgresql://user:pass@localhost:5432/yeelo_homeopathy"
+   export DATABASE_URL="postgresql://user:pass@localhost:5433/yeelo_homeopathy"
    export JWT_SECRET="your-super-secret-key"
    export PORT=3004
    ```

@@ -28,7 +28,7 @@ export function DatabaseSettings() {
   
   const [postgresConfig, setPostgresConfig] = useState<PostgreSQLConfig>({
     host: 'localhost',
-    port: 5432,
+    port: 5433,
     database: 'yeelo_homeopathy',
     user: 'postgres',
     password: '',
@@ -263,8 +263,8 @@ export function DatabaseSettings() {
                     id="port"
                     type="number"
                     value={postgresConfig.port}
-                    onChange={(e) => setPostgresConfig(prev => ({ ...prev, port: parseInt(e.target.value) || 5432 }))}
-                    placeholder="5432"
+                    onChange={(e) => setPostgresConfig(prev => ({ ...prev, port: parseInt(e.target.value) || 5433 }))}
+                    placeholder="5433"
                   />
                 </div>
               </div>

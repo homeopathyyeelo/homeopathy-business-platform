@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -41,16 +40,16 @@ type Stock struct {
 
 // Batch model
 type Batch struct {
-	ID         string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
-	ProductID  string    `json:"product_id" gorm:"type:uuid;not null;index"`
-	BatchNo    string    `json:"batch_no" gorm:"not null;index"`
-	MfgDate    time.Time `json:"mfg_date"`
-	ExpiryDate time.Time `json:"expiry_date" gorm:"index"`
-	Quantity   float64   `json:"quantity" gorm:"not null"`
-	MRP        float64   `json:"mrp"`
-	PurchasePrice float64 `json:"purchase_price"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID            string    `json:"id" gorm:"primaryKey;type:uuid;default:gen_random_uuid()"`
+	ProductID     string    `json:"product_id" gorm:"type:uuid;not null;index"`
+	BatchNo       string    `json:"batch_no" gorm:"not null;index"`
+	MfgDate       time.Time `json:"mfg_date"`
+	ExpiryDate    time.Time `json:"expiry_date" gorm:"index"`
+	Quantity      float64   `json:"quantity" gorm:"not null"`
+	MRP           float64   `json:"mrp"`
+	PurchasePrice float64   `json:"purchase_price"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 // StockMovement model
@@ -130,7 +129,7 @@ func main() {
 func loadConfig() Config {
 	return Config{
 		Port:         getEnv("PORT", "8002"),
-		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy"),
+		DatabaseURL:  getEnv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy"),
 		RedisURL:     getEnv("REDIS_URL", "redis://localhost:6379/1"),
 		KafkaBrokers: getEnv("KAFKA_BROKERS", "localhost:9092"),
 		ServiceName:  getEnv("SERVICE_NAME", "inventory-service"),
@@ -211,19 +210,19 @@ func healthCheck(c *fiber.Ctx) error {
 
 func listStock(c *fiber.Ctx) error {
 	var stocks []Stock
-	
+
 	query := db.Model(&Stock{})
-	
+
 	// Filter by shop
 	if shopID := c.Query("shop_id"); shopID != "" {
 		query = query.Where("shop_id = ?", shopID)
 	}
-	
+
 	// Filter low stock
 	if c.Query("low_stock") == "true" {
 		query = query.Where("available < ?", 10)
 	}
-	
+
 	query.Find(&stocks)
 
 	return c.JSON(Response{
@@ -238,7 +237,7 @@ func getStockByProduct(c *fiber.Ctx) error {
 
 	var stock Stock
 	query := db.Where("product_id = ?", productID)
-	
+
 	if shopID != "" {
 		query = query.Where("shop_id = ?", shopID)
 	}
@@ -344,11 +343,11 @@ func adjustStock(c *fiber.Ctx) error {
 
 func transferStock(c *fiber.Ctx) error {
 	type TransferRequest struct {
-		ProductID    string  `json:"product_id"`
-		FromShopID   string  `json:"from_shop_id"`
-		ToShopID     string  `json:"to_shop_id"`
-		Quantity     float64 `json:"quantity"`
-		Reason       string  `json:"reason"`
+		ProductID  string  `json:"product_id"`
+		FromShopID string  `json:"from_shop_id"`
+		ToShopID   string  `json:"to_shop_id"`
+		Quantity   float64 `json:"quantity"`
+		Reason     string  `json:"reason"`
 	}
 
 	var req TransferRequest
@@ -377,13 +376,13 @@ func reconcileStock(c *fiber.Ctx) error {
 
 func listBatches(c *fiber.Ctx) error {
 	var batches []Batch
-	
+
 	query := db.Model(&Batch{})
-	
+
 	if productID := c.Query("product_id"); productID != "" {
 		query = query.Where("product_id = ?", productID)
 	}
-	
+
 	query.Order("expiry_date ASC").Find(&batches)
 
 	return c.JSON(Response{
@@ -434,11 +433,11 @@ func createBatch(c *fiber.Ctx) error {
 
 func getExpiryAlerts(c *fiber.Ctx) error {
 	days := c.QueryInt("days", 30)
-	
+
 	var batches []Batch
 	expiryThreshold := time.Now().AddDate(0, 0, days)
-	
-	db.Where("expiry_date <= ? AND expiry_date > ? AND quantity > 0", 
+
+	db.Where("expiry_date <= ? AND expiry_date > ? AND quantity > 0",
 		expiryThreshold, time.Now()).
 		Order("expiry_date ASC").
 		Find(&batches)
@@ -451,17 +450,17 @@ func getExpiryAlerts(c *fiber.Ctx) error {
 
 func listMovements(c *fiber.Ctx) error {
 	var movements []StockMovement
-	
+
 	query := db.Model(&StockMovement{})
-	
+
 	if productID := c.Query("product_id"); productID != "" {
 		query = query.Where("product_id = ?", productID)
 	}
-	
+
 	if shopID := c.Query("shop_id"); shopID != "" {
 		query = query.Where("shop_id = ?", shopID)
 	}
-	
+
 	query.Order("created_at DESC").Limit(100).Find(&movements)
 
 	return c.JSON(Response{

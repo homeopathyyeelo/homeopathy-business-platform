@@ -6,13 +6,13 @@
 import { Pool } from 'pg';
 
 // Get database URL from environment or use default
-// For Docker: postgres:5432, For local: localhost:5432
+// For Docker: postgres:5433, For local: localhost:5433
 const getDatabaseUrl = () => {
   if (process.env.DATABASE_URL) {
     // Replace 'postgres' hostname with 'localhost' when running outside Docker
     return process.env.DATABASE_URL.replace('@postgres:', '@localhost:');
   }
-  return 'postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy';
+  return 'postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy';
 };
 
 // Create a connection pool

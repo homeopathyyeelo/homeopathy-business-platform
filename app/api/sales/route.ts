@@ -5,7 +5,7 @@ const mockSales = [
   {
     id: 1,
     invoiceNumber: 'INV-2025-001',
-    customer: { id: 1, name: 'Rajesh Kumar', phone: '9876543210' },
+    customer: { id: 1, name: 'Rajesh Kumar', phone: '9876543310' },
     totalAmount: 2500,
     status: 'PAID',
     paymentMethod: 'CASH',
@@ -17,7 +17,7 @@ const mockSales = [
   {
     id: 2,
     invoiceNumber: 'INV-2025-002',
-    customer: { id: 2, name: 'Priya Sharma', phone: '9876543211' },
+    customer: { id: 2, name: 'Priya Sharma', phone: '9876543311' },
     totalAmount: 3200,
     status: 'PAID',
     paymentMethod: 'UPI',
@@ -29,7 +29,7 @@ const mockSales = [
   {
     id: 3,
     invoiceNumber: 'INV-2025-003',
-    customer: { id: 3, name: 'Amit Patel', phone: '9876543212' },
+    customer: { id: 3, name: 'Amit Patel', phone: '9876543312' },
     totalAmount: 1800,
     status: 'PENDING',
     paymentMethod: 'CREDIT',
@@ -41,7 +41,7 @@ const mockSales = [
   {
     id: 4,
     invoiceNumber: 'INV-2025-004',
-    customer: { id: 4, name: 'Sunita Verma', phone: '9876543213' },
+    customer: { id: 4, name: 'Sunita Verma', phone: '9876543313' },
     totalAmount: 4500,
     status: 'PAID',
     paymentMethod: 'CARD',

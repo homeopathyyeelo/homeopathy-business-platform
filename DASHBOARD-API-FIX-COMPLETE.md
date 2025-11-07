@@ -6,7 +6,7 @@
 
 ## Root Causes Identified
 1. **Missing routes**: Dashboard endpoints not registered in Go API
-2. **Database connection**: API was trying to connect to wrong port (5432 instead of 5433)
+2. **Database connection**: API was trying to connect to wrong port (5433 instead of 5433)
 3. **Missing tables**: Database had no tables, handlers were querying non-existent schema
 4. **Table naming mismatch**: Created tables had "enhanced_" prefix but models expected different names
 
@@ -37,7 +37,7 @@ Tables created matching exact Go handler expectations:
 Updated `.env` files to use correct Postgres port:
 - `/var/www/homeopathy-business-platform/.env.local`
 - `/var/www/homeopathy-business-platform/services/api-golang-master/.env`
-- Changed from `localhost:5432` to `localhost:5433`
+- Changed from `localhost:5433` to `localhost:5433`
 
 ### 4. API Restart
 Restarted Go API on port 3005 with correct environment variables:

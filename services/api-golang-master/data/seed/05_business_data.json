@@ -1,0 +1,237 @@
+{
+  "vendors": [
+    {
+      "code": "SBL-V",
+      "name": "SBL Pvt Ltd",
+      "contact_person": "Sales Manager",
+      "phone": "011-45678900",
+      "email": "sales@sbl.co.in",
+      "address": "SBL House, Pocket B, Okhla Industrial Area",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "pincode": "110020",
+      "gstin": "07AAACS1234F1Z5",
+      "payment_terms": "Net 30",
+      "credit_days": 30,
+      "is_active": true
+    },
+    {
+      "code": "RECK-V",
+      "name": "Dr. Reckeweg & Co",
+      "contact_person": "Distribution Head",
+      "phone": "011-45678901",
+      "email": "sales@reckeweg.in",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "payment_terms": "Net 30",
+      "credit_days": 30,
+      "is_active": true
+    },
+    {
+      "code": "SCHW-V",
+      "name": "Willmar Schwabe India",
+      "contact_person": "Sales Head",
+      "phone": "011-45678902",
+      "email": "info@schwabeindia.com",
+      "city": "Noida",
+      "state": "Uttar Pradesh",
+      "country": "India",
+      "payment_terms": "Net 30",
+      "credit_days": 30,
+      "is_active": true
+    },
+    {
+      "code": "ALLEN-V",
+      "name": "Allen Homeopathy",
+      "contact_person": "Sales Manager",
+      "phone": "0141-2345678",
+      "email": "sales@allenlab.com",
+      "city": "Jaipur",
+      "state": "Rajasthan",
+      "country": "India",
+      "payment_terms": "Net 30",
+      "credit_days": 30,
+      "is_active": true
+    },
+    {
+      "code": "BAK-V",
+      "name": "Bakson Drugs",
+      "contact_person": "Distribution",
+      "phone": "011-45678904",
+      "email": "sales@bakson.com",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "country": "India",
+      "payment_terms": "Net 30",
+      "credit_days": 30,
+      "is_active": true
+    }
+  ],
+  "customer_groups": [
+    {
+      "code": "RETAIL",
+      "name": "Retail Customers",
+      "discount_percentage": 0,
+      "description": "Walk-in retail customers",
+      "is_active": true
+    },
+    {
+      "code": "WHOLESALE",
+      "name": "Wholesale Customers",
+      "discount_percentage": 15,
+      "description": "Wholesale buyers - 15% discount",
+      "is_active": true
+    },
+    {
+      "code": "DIST",
+      "name": "Distributors",
+      "discount_percentage": 25,
+      "description": "Distributors - 25% discount",
+      "is_active": true
+    },
+    {
+      "code": "DOCTOR",
+      "name": "Doctors",
+      "discount_percentage": 20,
+      "description": "Homeopathy doctors - 20% discount",
+      "is_active": true
+    },
+    {
+      "code": "CLINIC",
+      "name": "Clinics",
+      "discount_percentage": 18,
+      "description": "Homeopathy clinics - 18% discount",
+      "is_active": true
+    },
+    {
+      "code": "VIP",
+      "name": "VIP Customers",
+      "discount_percentage": 10,
+      "description": "VIP/Premium customers - 10% discount",
+      "is_active": true
+    }
+  ],
+  "price_lists": [
+    {
+      "code": "RETAIL-PL",
+      "name": "Retail Price List",
+      "price_type": "retail",
+      "discount_percentage": 0,
+      "is_default": true,
+      "is_active": true
+    },
+    {
+      "code": "WHOLESALE-PL",
+      "name": "Wholesale Price List",
+      "price_type": "wholesale",
+      "discount_percentage": 15,
+      "is_default": false,
+      "is_active": true
+    },
+    {
+      "code": "DIST-PL",
+      "name": "Distributor Price List",
+      "price_type": "distributor",
+      "discount_percentage": 25,
+      "is_default": false,
+      "is_active": true
+    },
+    {
+      "code": "DOCTOR-PL",
+      "name": "Doctor Price List",
+      "price_type": "doctor",
+      "discount_percentage": 20,
+      "is_default": false,
+      "is_active": true
+    }
+  ],
+  "warehouses": [
+    {
+      "code": "WH001",
+      "name": "Main Warehouse",
+      "location": "Head Office - Storage Area",
+      "address": "Plot No. 123, Industrial Area",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "is_default": true,
+      "is_active": true
+    },
+    {
+      "code": "WH002",
+      "name": "Retail Counter",
+      "location": "Front Store - Retail Section",
+      "address": "Shop No. 45, Main Market",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "is_default": false,
+      "is_active": true
+    }
+  ],
+  "racks": [
+    {
+      "code": "A1",
+      "name": "Rack A1",
+      "location": "Main Store - Left Side",
+      "description": "Dilutions 30C",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "A2",
+      "name": "Rack A2",
+      "location": "Main Store - Left Side",
+      "description": "Dilutions 200C",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "A3",
+      "name": "Rack A3",
+      "location": "Main Store - Left Side",
+      "description": "Dilutions 1M, 10M",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "B1",
+      "name": "Rack B1",
+      "location": "Main Store - Center",
+      "description": "Mother Tinctures A-M",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "B2",
+      "name": "Rack B2",
+      "location": "Main Store - Center",
+      "description": "Mother Tinctures N-Z",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "C1",
+      "name": "Rack C1",
+      "location": "Main Store - Right Side",
+      "description": "Biochemic Medicines",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "C2",
+      "name": "Rack C2",
+      "location": "Main Store - Right Side",
+      "description": "Bio Combinations",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "D1",
+      "name": "Rack D1",
+      "location": "Back Store",
+      "description": "Ointments & External Use",
+      "warehouse_code": "WH001"
+    },
+    {
+      "code": "E1",
+      "name": "Rack E1",
+      "location": "Counter Area",
+      "description": "Fast Moving Items",
+      "warehouse_code": "WH002"
+    }
+  ]
+}

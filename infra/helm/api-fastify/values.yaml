@@ -14,7 +14,7 @@ env:
   LOG_LEVEL: info
   PORT: "3001"
   REDIS_URL: "redis://redis:6379"
-  DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/yeelo_homeopathy?schema=public"
+  DATABASE_URL: "postgresql://postgres:postgres@postgres:5433/yeelo_homeopathy?schema=public"
   KAFKA_BROKERS: "kafka:9092"
 
 resources:

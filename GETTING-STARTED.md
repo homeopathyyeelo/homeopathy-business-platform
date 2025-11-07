@@ -48,7 +48,7 @@ nano .env
 ### Environment Variables (.env)
 ```bash
 # Database
-DATABASE_URL=postgresql://erp_user:erp_password@localhost:5432/erp_db
+DATABASE_URL=postgresql://erp_user:erp_password@localhost:5433/erp_db
 POSTGRES_USER=erp_user
 POSTGRES_PASSWORD=erp_password
 
@@ -96,7 +96,7 @@ docker-compose ps
 
 # Expected output:
 # NAME                STATUS              PORTS
-# postgres            Up                  0.0.0.0:5432->5432/tcp
+# postgres            Up                  0.0.0.0:5433->5433/tcp
 # redis               Up                  0.0.0.0:6379->6379/tcp
 # kafka               Up                  0.0.0.0:9092->9092/tcp
 # zookeeper           Up                  2181/tcp
@@ -428,7 +428,7 @@ docker-compose exec kafka kafka-consumer-groups --list --bootstrap-server localh
 # Check what's using a port
 lsof -i :3000  # Frontend
 lsof -i :4000  # API Gateway
-lsof -i :5432  # PostgreSQL
+lsof -i :5433  # PostgreSQL
 lsof -i :6379  # Redis
 lsof -i :9092  # Kafka
 
