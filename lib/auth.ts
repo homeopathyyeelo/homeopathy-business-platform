@@ -760,7 +760,7 @@ export async function loginWithAuthService(email: string, password: string) {
     success: true as const,
     user,
     tokens: {
-      accessToken: data.accessToken,
+      accessToken: data.token || data.accessToken,  // Support both formats
       refreshToken: data.refreshToken,
     },
   }

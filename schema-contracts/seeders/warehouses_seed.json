@@ -1,0 +1,32 @@
+[
+  {
+    "id": "50000000-0000-0000-0000-000000000001",
+    "name": "Main Warehouse",
+    "code": "WH-MAIN-01",
+    "address": "123 Industrial Area, Phase 1",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "pincode": "400001",
+    "is_active": true
+  },
+  {
+    "id": "50000000-0000-0000-0000-000000000002",
+    "name": "Branch Warehouse Delhi",
+    "code": "WH-DEL-01",
+    "address": "45 Warehouse Complex, Sector 12",
+    "city": "New Delhi",
+    "state": "Delhi",
+    "pincode": "110012",
+    "is_active": true
+  },
+  {
+    "id": "50000000-0000-0000-0000-000000000003",
+    "name": "Branch Warehouse Bangalore",
+    "code": "WH-BLR-01",
+    "address": "78 Storage Hub, Electronic City",
+    "city": "Bangalore",
+    "state": "Karnataka",
+    "pincode": "560100",
+    "is_active": true
+  }
+]

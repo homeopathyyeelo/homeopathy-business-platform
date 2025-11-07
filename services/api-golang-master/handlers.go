@@ -51,17 +51,25 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 			return
 		}
 
-		// Demo authentication - replace with real authentication
-		if req.Email == "admin@yeelo.com" && req.Password == "admin123" {
-			token, err := signJWT("admin-1", "ADMIN", jwtSecret)
+		// Super Admin authentication
+		if req.Email == "medicine@yeelohomeopathy.com" && req.Password == "Medicine@2024" {
+			token, err := signJWT("superadmin-1", "SUPERADMIN", jwtSecret)
 			if err != nil {
 				c.JSON(500, gin.H{"error": "Failed to generate token"})
 				return
 			}
 			c.JSON(200, gin.H{
-				"access_token": token,
-				"token_type":   "Bearer",
-				"expires_in":   86400,
+				"token": token,
+				"expiresAt": time.Now().Add(24 * time.Hour).Format(time.RFC3339),
+				"user": gin.H{
+					"id":          "superadmin-1",
+					"email":       "medicine@yeelohomeopathy.com",
+					"displayName": "Super Admin",
+					"firstName":   "Super",
+					"lastName":    "Admin",
+					"role":        "SUPERADMIN",
+					"isSuperAdmin": true,
+				},
 			})
 			return
 		}
@@ -750,17 +758,25 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 			return
 		}
 
-		// Demo authentication - replace with real authentication
-		if req.Email == "admin@yeelo.com" && req.Password == "admin123" {
-			token, err := signJWT("admin-1", "ADMIN", jwtSecret)
+		// Super Admin authentication
+		if req.Email == "medicine@yeelohomeopathy.com" && req.Password == "Medicine@2024" {
+			token, err := signJWT("superadmin-1", "SUPERADMIN", jwtSecret)
 			if err != nil {
 				c.JSON(500, gin.H{"error": "Failed to generate token"})
 				return
 			}
 			c.JSON(200, gin.H{
-				"access_token": token,
-				"token_type":   "Bearer",
-				"expires_in":   86400,
+				"token": token,
+				"expiresAt": time.Now().Add(24 * time.Hour).Format(time.RFC3339),
+				"user": gin.H{
+					"id":          "superadmin-1",
+					"email":       "medicine@yeelohomeopathy.com",
+					"displayName": "Super Admin",
+					"firstName":   "Super",
+					"lastName":    "Admin",
+					"role":        "SUPERADMIN",
+					"isSuperAdmin": true,
+				},
 			})
 			return
 		}

@@ -1,19 +1,32 @@
 FROM golang:1.24-alpine AS builder
+
 WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache git
+
+# Copy go mod files
 COPY go.mod go.sum ./
 RUN go mod download
+
+# Copy source code
 COPY . .
-# Build the service from the correct entrypoint
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/main.go
 
-FROM gcr.io/distroless/base-debian12
-WORKDIR /
-COPY --from=builder /app/server /server
-# Optional: include OpenAPI if present
-COPY --from=builder /app/openapi.json /openapi.json
-ENV PORT=3005
+# Build binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main cmd/main.go
+
+# Final stage
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates tzdata
+
+WORKDIR /root/
+
+# Copy binary from builder
+COPY --from=builder /app/main .
+
+# Expose port
 EXPOSE 3005
-USER nonroot:nonroot
-ENTRYPOINT ["/server"]
 
-
+# Run
+CMD ["./main"]

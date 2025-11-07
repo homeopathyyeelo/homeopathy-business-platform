@@ -1,0 +1,58 @@
+[
+  {
+    "id": "20000000-0000-0000-0000-000000000001",
+    "name": "Dilutions",
+    "description": "Homeopathic dilutions in various potencies",
+    "parent_id": null,
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000002",
+    "name": "Mother Tinctures",
+    "description": "Mother tinctures (Q potency)",
+    "parent_id": null,
+    "sort_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000003",
+    "name": "Biochemic Tablets",
+    "description": "Biochemic tissue salts",
+    "parent_id": null,
+    "sort_order": 3,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000004",
+    "name": "Trituration",
+    "description": "Homeopathic triturations",
+    "parent_id": null,
+    "sort_order": 4,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000005",
+    "name": "Ointments & Creams",
+    "description": "Topical homeopathic applications",
+    "parent_id": null,
+    "sort_order": 5,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000006",
+    "name": "Single Remedies",
+    "description": "Single homeopathic remedies",
+    "parent_id": "20000000-0000-0000-0000-000000000001",
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "20000000-0000-0000-0000-000000000007",
+    "name": "Combination Remedies",
+    "description": "Combination homeopathic formulas",
+    "parent_id": "20000000-0000-0000-0000-000000000001",
+    "sort_order": 2,
+    "is_active": true
+  }
+]

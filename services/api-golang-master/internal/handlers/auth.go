@@ -79,6 +79,30 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// Super Admin mode: hardcoded credentials
+	if req.Email == "medicine@yeelohomeopathy.com" && req.Password == "Medicine@2024" {
+		token, expiresAt, err := h.generateDemoToken()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"token":     token,
+			"expiresAt": expiresAt,
+			"user": gin.H{
+				"id":          "superadmin-1",
+				"email":       "medicine@yeelohomeopathy.com",
+				"displayName": "Super Admin",
+				"firstName":   "Super",
+				"lastName":    "Admin",
+				"role":        "SUPERADMIN",
+				"isSuperAdmin": true,
+			},
+		})
+		return
+	}
+
 	user, err := h.userService.GetUserByEmail(req.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
@@ -136,6 +160,23 @@ func (h *AuthHandler) generateToken(user *models.User) (string, time.Time, error
 		"displayName": user.DisplayName,
 		"exp":         time.Now().Add(24 * time.Hour).Unix(),
 		"iat":         time.Now().Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	expiry := time.Now().Add(24 * time.Hour)
+	signed, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	return signed, expiry, err
+}
+
+func (h *AuthHandler) generateDemoToken() (string, time.Time, error) {
+	claims := &jwt.MapClaims{
+		"user_id":      "superadmin-1",
+		"email":        "medicine@yeelohomeopathy.com",
+		"displayName":  "Super Admin",
+		"role":         "SUPERADMIN",
+		"isSuperAdmin": true,
+		"exp":          time.Now().Add(24 * time.Hour).Unix(),
+		"iat":          time.Now().Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

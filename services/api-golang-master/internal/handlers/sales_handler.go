@@ -357,7 +357,7 @@ func (h *SalesHandler) CreateSalesOrder(c *gin.Context) {
 	// Create sales order
 	order := &models.SalesOrder{
 		ID:           uuid.New().String(),
-		OrderNumber:  generateOrderNumber(),
+		OrderNumber:  generateSalesOrderNumber(),
 		CustomerID:   &req.CustomerID,
 		OrderDate:    req.OrderDate,
 		Status:       "pending",
@@ -567,7 +567,7 @@ func (h *SalesHandler) GetAISalesForecast(c *gin.Context) {
 
 // ==================== HELPER FUNCTIONS ====================
 
-// generateOrderNumber generates a unique order number
-func generateOrderNumber() string {
+// generateSalesOrderNumber generates a unique sales order number
+func generateSalesOrderNumber() string {
 	return "SO-" + time.Now().Format("20060102") + "-" + uuid.New().String()[:8]
 }

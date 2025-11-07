@@ -1,0 +1,38 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "name": "super_admin",
+    "description": "Super Administrator with full system access",
+    "permissions": ["*"]
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "name": "admin",
+    "description": "Administrator with full access except system settings",
+    "permissions": ["users.read", "users.write", "products.read", "products.write", "orders.read", "orders.write", "reports.read"]
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "name": "doctor",
+    "description": "Doctor who can create prescriptions and view patients",
+    "permissions": ["customers.read", "prescriptions.read", "prescriptions.write", "products.read"]
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000004",
+    "name": "pharmacist",
+    "description": "Pharmacist who can manage inventory and fulfill orders",
+    "permissions": ["products.read", "products.write", "inventory.read", "inventory.write", "orders.read", "orders.write"]
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "name": "sales",
+    "description": "Sales representative who can create orders",
+    "permissions": ["customers.read", "customers.write", "products.read", "orders.read", "orders.write"]
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "name": "customer",
+    "description": "Customer who can view their orders and prescriptions",
+    "permissions": ["orders.read", "prescriptions.read", "profile.read", "profile.write"]
+  }
+]

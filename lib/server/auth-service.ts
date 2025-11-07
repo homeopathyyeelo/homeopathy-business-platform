@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-const AUTH_SERVICE_BASE = process.env.AUTH_SERVICE_URL || "http://localhost:3001"
+const AUTH_SERVICE_BASE = process.env.AUTH_SERVICE_URL || "http://localhost:3005/api/auth"
 
 export interface AuthServiceTokens {
   accessToken: string

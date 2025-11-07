@@ -3,6 +3,7 @@ package services
 import (
     "time"
 
+    "github.com/google/uuid"
     "gorm.io/gorm"
 
     "github.com/yeelo/homeopathy-erp/internal/database"
@@ -26,6 +27,7 @@ func (s *SessionService) CreateSession(token, userID string, expiresAt time.Time
     }
 
     session := &models.Session{
+        ID:        uuid.New().String(),
         UserID:    userID,
         Token:     token,
         ExpiresAt: expiresAt,

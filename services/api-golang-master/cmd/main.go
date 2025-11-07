@@ -79,6 +79,11 @@ func main() {
 	outboxEventHandler := handlers.NewOutboxEventHandler()
 	whatsappHandler := handlers.NewWhatsAppHandler(db)
 	rackHandler := handlers.NewRackHandler()
+	invoiceParserHandler := handlers.NewInvoiceParserHandler(db)
+	financeHandler := handlers.NewFinanceHandler(db)
+	orderHandler := handlers.NewOrderHandler(db)
+	paymentHandler := handlers.NewPaymentHandler(db)
+	campaignHandler := handlers.NewCampaignHandler(db)
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -160,7 +165,6 @@ func main() {
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
-			erp.GET("/dashboard/quick-actions", dashboardHandler.GetQuickActions)
 			erp.GET("/notifications/recent", notificationHandler.GetRecentNotifications)
 			erp.GET("/favicon.ico", func(c *gin.Context) {
 				c.File("favicon.ico")
@@ -509,6 +513,65 @@ func main() {
 			whatsapp.POST("/send", whatsappHandler.SendMessage)
 			whatsapp.GET("/templates", whatsappHandler.GetTemplates)
 			whatsapp.GET("/status/:messageId", whatsappHandler.GetMessageStatus)
+		}
+
+		// Invoice Parser
+		invoices := api.Group("/invoices", middleware.RequireAuth())
+		{
+			invoices.POST("/upload", invoiceParserHandler.UploadInvoice)
+			invoices.POST("/:id/parse", invoiceParserHandler.ParseInvoice)
+			invoices.POST("/:id/match", invoiceParserHandler.MatchProducts)
+			invoices.POST("/:id/reconcile", invoiceParserHandler.ReconcileInvoice)
+			invoices.GET("", invoiceParserHandler.GetParsedInvoices)
+		}
+
+		// Finance & Accounting
+		finance := api.Group("/finance", middleware.RequireAuth())
+		{
+			finance.GET("/ledgers", financeHandler.GetLedgers)
+			finance.POST("/ledgers", financeHandler.CreateLedger)
+			finance.GET("/journal-entries", financeHandler.GetJournalEntries)
+			finance.POST("/journal-entries", financeHandler.CreateJournalEntry)
+			finance.GET("/gst-reports", financeHandler.GetGSTReports)
+			finance.POST("/gst-reports/generate", financeHandler.GenerateGSTReport)
+			finance.GET("/profit-loss", financeHandler.GetProfitLoss)
+			finance.GET("/balance-sheet", financeHandler.GetBalanceSheet)
+		}
+
+		// Orders Management
+		orders := api.Group("/orders", middleware.RequireAuth())
+		{
+			orders.GET("", orderHandler.GetOrders)
+			orders.GET("/:id", orderHandler.GetOrder)
+			orders.POST("", orderHandler.CreateOrder)
+			orders.PUT("/:id", orderHandler.UpdateOrder)
+			orders.PUT("/:id/status", orderHandler.UpdateOrderStatus)
+			orders.POST("/:id/cancel", orderHandler.CancelOrder)
+		}
+
+		// Payments Gateway
+		payments := api.Group("/payments", middleware.RequireAuth())
+		{
+			payments.GET("", paymentHandler.GetPayments)
+			payments.GET("/:id", paymentHandler.GetPayment)
+			payments.POST("", paymentHandler.CreatePayment)
+			payments.POST("/:id/process", paymentHandler.ProcessPayment)
+			payments.POST("/:id/refund", paymentHandler.RefundPayment)
+			payments.GET("/:id/transactions", paymentHandler.GetPaymentTransactions)
+		}
+
+		// Marketing Campaigns
+		campaigns := api.Group("/campaigns", middleware.RequireAuth())
+		{
+			campaigns.GET("", campaignHandler.GetCampaigns)
+			campaigns.GET("/:id", campaignHandler.GetCampaign)
+			campaigns.POST("", campaignHandler.CreateCampaign)
+			campaigns.PUT("/:id", campaignHandler.UpdateCampaign)
+			campaigns.POST("/:id/schedule", campaignHandler.ScheduleCampaign)
+			campaigns.POST("/:id/send", campaignHandler.SendCampaign)
+			campaigns.GET("/:id/stats", campaignHandler.GetCampaignStats)
+			campaigns.GET("/templates", campaignHandler.GetTemplates)
+			campaigns.POST("/templates", campaignHandler.CreateTemplate)
 		}
 	}
 

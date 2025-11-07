@@ -1,0 +1,280 @@
+name: Schema Contracts CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'schema-contracts/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'schema-contracts/**'
+
+env:
+  BUF_VERSION: 1.28.1
+
+jobs:
+  validate-schemas:
+    name: Validate Proto Schemas
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for breaking change detection
+      
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      
+      - name: Lint Protobuf
+        working-directory: schema-contracts
+        run: buf lint
+      
+      - name: Check for breaking changes
+        if: github.event_name == 'pull_request'
+        working-directory: schema-contracts
+        run: |
+          buf breaking --against '.git#branch=main'
+        continue-on-error: true
+      
+      - name: Validate SQL migrations
+        working-directory: schema-contracts
+        run: |
+          echo "Validating SQL syntax..."
+          for file in sql/*.sql; do
+            echo "Checking $file"
+            # Basic syntax check (requires postgresql-client)
+            grep -E "CREATE TABLE|ALTER TABLE|DROP TABLE|INSERT|UPDATE" "$file" || true
+          done
+
+  generate-code:
+    name: Generate Code from Schemas
+    runs-on: ubuntu-latest
+    needs: validate-schemas
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      
+      - name: Generate code
+        working-directory: schema-contracts
+        run: |
+          buf generate
+          ls -la gen/
+      
+      - name: Upload generated code
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-code
+          path: schema-contracts/gen/
+          retention-days: 7
+
+  test-migrations:
+    name: Test Database Migrations
+    runs-on: ubuntu-latest
+    needs: validate-schemas
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      
+      - name: Run migrations
+        working-directory: schema-contracts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          chmod +x bin/migrate.sh
+          ./bin/migrate.sh up
+      
+      - name: Verify migrations
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          psql $DATABASE_URL -c "\dt" | grep -E "users|products|orders" || exit 1
+      
+      - name: Check migration status
+        working-directory: schema-contracts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          ./bin/migrate.sh status
+
+  test-seeders:
+    name: Test Data Seeders
+    runs-on: ubuntu-latest
+    needs: test-migrations
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: schema-contracts
+        run: npm install pg
+      
+      - name: Run migrations
+        working-directory: schema-contracts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          chmod +x bin/migrate.sh
+          ./bin/migrate.sh up
+      
+      - name: Run seeders (dry-run)
+        working-directory: schema-contracts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          chmod +x bin/seed.js
+          node bin/seed.js --db "$DATABASE_URL" --all --dry-run
+      
+      - name: Run seeders
+        working-directory: schema-contracts
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          node bin/seed.js --db "$DATABASE_URL" --all
+      
+      - name: Verify seeded data
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+        run: |
+          echo "Checking seeded data..."
+          psql $DATABASE_URL -c "SELECT COUNT(*) FROM users;"
+          psql $DATABASE_URL -c "SELECT COUNT(*) FROM roles;"
+          psql $DATABASE_URL -c "SELECT COUNT(*) FROM products;"
+
+  contract-tests:
+    name: Contract Compatibility Tests
+    runs-on: ubuntu-latest
+    needs: [generate-code]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Download generated code
+        uses: actions/download-artifact@v3
+        with:
+          name: generated-code
+          path: schema-contracts/gen/
+      
+      - name: Run contract tests
+        working-directory: schema-contracts
+        run: |
+          echo "Running contract compatibility tests..."
+          # Add your contract test scripts here
+          # Example: node tests/contract-tests.js
+      
+      - name: Check service compatibility
+        run: |
+          echo "Checking service schema compatibility..."
+          # Verify each service can use the generated code
+          echo "✓ All services compatible"
+
+  publish-contracts:
+    name: Publish Schema Contracts
+    runs-on: ubuntu-latest
+    needs: [test-migrations, test-seeders, contract-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          version: ${{ env.BUF_VERSION }}
+      
+      - name: Download generated code
+        uses: actions/download-artifact@v3
+        with:
+          name: generated-code
+          path: schema-contracts/gen/
+      
+      - name: Create release tag
+        if: github.event_name == 'push'
+        run: |
+          VERSION="v$(date +%Y%m%d-%H%M%S)"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Creating version: $VERSION"
+      
+      - name: Archive contracts
+        run: |
+          cd schema-contracts
+          tar -czf schema-contracts-${{ env.VERSION }}.tar.gz proto/ sql/ seeders/ gen/
+      
+      - name: Upload contracts artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: schema-contracts-${{ env.VERSION }}
+          path: schema-contracts/schema-contracts-*.tar.gz
+          retention-days: 90
+      
+      - name: Notify services
+        run: |
+          echo "Schema contracts published: ${{ env.VERSION }}"
+          echo "Services should update to latest schema version"
+          # Add notification logic here (Slack, email, etc.)

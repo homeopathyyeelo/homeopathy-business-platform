@@ -1,0 +1,37 @@
+[
+  {
+    "id": "30000000-0000-0000-0000-000000000001",
+    "name": "SBL",
+    "description": "SBL Pvt Ltd - Leading homeopathy manufacturer",
+    "logo_url": null,
+    "is_active": true
+  },
+  {
+    "id": "30000000-0000-0000-0000-000000000002",
+    "name": "Dr. Reckeweg",
+    "description": "Dr. Reckeweg & Co. GmbH",
+    "logo_url": null,
+    "is_active": true
+  },
+  {
+    "id": "30000000-0000-0000-0000-000000000003",
+    "name": "Schwabe",
+    "description": "Willmar Schwabe India",
+    "logo_url": null,
+    "is_active": true
+  },
+  {
+    "id": "30000000-0000-0000-0000-000000000004",
+    "name": "Bjain",
+    "description": "Bjain Pharmaceuticals",
+    "logo_url": null,
+    "is_active": true
+  },
+  {
+    "id": "30000000-0000-0000-0000-000000000005",
+    "name": "Hahnemann",
+    "description": "Hahnemann Scientific Laboratory",
+    "logo_url": null,
+    "is_active": true
+  }
+]

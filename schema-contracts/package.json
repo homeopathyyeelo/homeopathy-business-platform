@@ -1,0 +1,63 @@
+{
+  "name": "@homeopathy-platform/schema-contracts",
+  "version": "1.0.0",
+  "description": "Centralized schema definitions, migrations, and data contracts for Homeopathy Business Platform",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/contract-tests.js",
+    "test:contracts": "node tests/contract-tests.js",
+    "migrate:up": "./bin/migrate.sh up",
+    "migrate:status": "./bin/migrate.sh status",
+    "seed": "node bin/seed.js --db \"$DATABASE_URL\" --all",
+    "seed:dry-run": "node bin/seed.js --db \"$DATABASE_URL\" --all --dry-run",
+    "codegen": "./codegen/generate.sh all",
+    "codegen:go": "./codegen/generate.sh go",
+    "codegen:ts": "./codegen/generate.sh ts",
+    "codegen:python": "./codegen/generate.sh python",
+    "lint:proto": "buf lint",
+    "breaking:check": "buf breaking --against '.git#branch=main'",
+    "format:proto": "buf format -w",
+    "ci": "npm run test && npm run lint:proto"
+  },
+  "keywords": [
+    "schema",
+    "protobuf",
+    "migrations",
+    "microservices",
+    "contracts",
+    "homeopathy"
+  ],
+  "author": "Platform Team",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/homeopathy-platform/homeopathy-business-platform",
+    "directory": "schema-contracts"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@bufbuild/protobuf": "^1.5.1",
+    "@bufbuild/protoc-gen-es": "^1.5.1",
+    "ts-proto": "^1.165.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "files": [
+    "proto/",
+    "sql/",
+    "seeders/",
+    "bin/",
+    "codegen/",
+    "gen/",
+    "README.md",
+    "CONTRACTS.md",
+    "CHANGELOG.md",
+    "buf.yaml",
+    "buf.gen.yaml"
+  ]
+}

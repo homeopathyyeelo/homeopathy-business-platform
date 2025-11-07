@@ -49,3 +49,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Process IDs
+.backend.pid
+.frontend.pid
+
+# Logs
+logs/
+*.log
+
+# Go binaries
+services/api-golang-master/api-golang
+services/api-golang-master/main

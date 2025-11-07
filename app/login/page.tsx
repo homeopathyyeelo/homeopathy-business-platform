@@ -183,7 +183,7 @@ export default function LoginPage() {
         
         <div className="px-8 pb-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Admin Login: medicine@yeelohomeopathy.com / XXghosh@147
+            Super Admin: medicine@yeelohomeopathy.com / Medicine@2024
           </p>
         </div>
       </Card>
