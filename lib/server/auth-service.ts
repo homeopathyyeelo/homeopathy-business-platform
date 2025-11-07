@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const AUTH_SERVICE_BASE = process.env.AUTH_SERVICE_URL || "http://localhost:3005/api/auth"
 
@@ -77,7 +78,7 @@ export function clearAuthCookies(response: NextResponse) {
 
 export async function authServiceFetch(path: string, init?: RequestInit) {
   const url = `${getAuthServiceBase()}${path}`
-  return await fetch(url, {
+  return await authFetch(url, {
     ...init,
     headers: {
       "Content-Type": "application/json",

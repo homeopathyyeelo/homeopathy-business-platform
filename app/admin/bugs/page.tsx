@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertCircle, CheckCircle2, Clock, Search, Bug, Code, TrendingUp, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
 
@@ -61,7 +62,7 @@ export default function BugsAdminPage() {
       if (severityFilter !== 'all') params.append('severity', severityFilter)
       if (serviceFilter !== 'all') params.append('service', serviceFilter)
 
-      const response = await fetch(`${API_URL}/api/v1/system/bugs?${params}`)
+      const response = await authFetch(`${API_URL}/api/v1/system/bugs?${params}`)
       const data = await response.json()
       if (data.success) {
         setBugs(data.data || [])
@@ -75,7 +76,7 @@ export default function BugsAdminPage() {
 
   const fetchSummary = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/system/bugs/summary`)
+      const response = await authFetch(`${API_URL}/api/v1/system/bugs/summary`)
       const data = await response.json()
       if (data.success) {
         setSummary(data.data)

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, XCircle, AlertCircle, Activity } from 'lucide-react'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
 
@@ -36,7 +37,7 @@ export function ServiceHealthMonitor() {
 
   const fetchHealth = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/system/health`)
+      const response = await authFetch(`${API_URL}/api/v1/system/health`)
       const data = await response.json()
       if (data.success) {
         setHealth(data.data)

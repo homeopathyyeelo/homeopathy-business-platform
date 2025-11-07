@@ -46,7 +46,9 @@ interface ActivityItem {
   status: 'success' | 'warning' | 'error';
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+import { authSWRFetcher, authFetch } from '@/lib/api/fetch-utils';
+
+const fetcher = authSWRFetcher;
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -99,7 +101,7 @@ export default function DashboardPage() {
       const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
       
       // Fetch stats
-      const statsRes = await fetch(`${API_URL}/api/erp/dashboard/stats`);
+      const statsRes = await authFetch(`${API_URL}/api/erp/dashboard/stats`);
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         if (statsData.success && statsData.data) {
@@ -124,7 +126,7 @@ export default function DashboardPage() {
       }
 
       // Fetch activity
-      const activityRes = await fetch(`${API_URL}/api/erp/dashboard/activity?limit=5`);
+      const activityRes = await authFetch(`${API_URL}/api/erp/dashboard/activity?limit=5`);
       if (activityRes.ok) {
         const activityData = await activityRes.json();
         if (activityData.success && activityData.data) {
@@ -170,7 +172,7 @@ export default function DashboardPage() {
     const fetchChartData = async () => {
       try {
         const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-        const res = await fetch(`${API_URL}/api/erp/dashboard/revenue-chart?period=6m`);
+        const res = await authFetch(`${API_URL}/api/erp/dashboard/revenue-chart?period=6m`);
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.data) {
@@ -189,7 +191,7 @@ export default function DashboardPage() {
     const fetchHealth = async () => {
       try {
         const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-        const res = await fetch(`${API_URL}/api/v1/system/health`);
+        const res = await authFetch(`${API_URL}/api/v1/system/health`);
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.data) {

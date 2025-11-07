@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Upload, FileText, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function InvoiceUploadPage() {
   const router = useRouter()
@@ -53,7 +54,7 @@ export default function InvoiceUploadPage() {
     formData.append("source", "manual")
 
     try {
-      const response = await fetch("/api/invoices/upload", {
+      const response = await authFetch("/api/invoices/upload", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`

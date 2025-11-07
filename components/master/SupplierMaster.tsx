@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import SupplierForm from './supplier-form/SupplierForm';
 import SupplierDiscountDialog from './supplier-form/SupplierDiscountDialog';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const SupplierMaster = () => {
   const { getAll } = useDatabase();

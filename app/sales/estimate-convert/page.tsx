@@ -4,18 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DataTable from "@/components/common/DataTable";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function EstimateConvertPage() {
   const [estimates, setEstimates] = useState([]);
   
   useEffect(() => {
-    fetch('http://localhost:3005/api/erp/estimates?status=sent')
+    authFetch('http://localhost:3005/api/erp/estimates?status=sent')
       .then(r => r.json())
       .then(d => setEstimates(d.data || []));
   }, []);
 
   const handleConvert = async (id: string) => {
-    const res = await fetch(`http://localhost:3005/api/erp/estimates/${id}/convert`, { method: 'POST' });
+    const res = await authFetch(`http://localhost:3005/api/erp/estimates/${id}/convert`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
       window.location.href = `/sales/invoices/${data.data.id}`;

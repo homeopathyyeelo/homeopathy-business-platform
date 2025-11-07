@@ -9,6 +9,7 @@ import { PlusCircle, Search } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import CustomerForm from './customer-form/CustomerForm';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const CustomerMaster = () => {
   const { toast } = useToast();

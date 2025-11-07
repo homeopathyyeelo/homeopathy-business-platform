@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { CreditCard, Check, X } from 'lucide-react'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function PaymentIntegrationsPage() {
   const [gateways, setGateways] = useState([])
@@ -18,7 +19,7 @@ export default function PaymentIntegrationsPage() {
 
   const loadGateways = async () => {
     try {
-      const response = await fetch('http://localhost:3005/api/payments/gateways')
+      const response = await authFetch('http://localhost:3005/api/payments/gateways')
       const data = await response.json()
       setGateways(data.data || [])
     } catch (error) {
@@ -30,7 +31,7 @@ export default function PaymentIntegrationsPage() {
 
   const toggleGateway = async (id, isActive) => {
     try {
-      await fetch(`http://localhost:3005/api/payments/gateways/${id}`, {
+      await authFetch(`http://localhost:3005/api/payments/gateways/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_active: !isActive })

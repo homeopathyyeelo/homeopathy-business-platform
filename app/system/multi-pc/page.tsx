@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
+import { authFetch } from '@/lib/api/fetch-utils';
   Monitor,
   Users,
   Wifi,
@@ -47,7 +48,7 @@ export default function MultiPCSyncPage() {
   const fetchCountersData = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3005/api/erp/pos/counters');
+      const res = await authFetch('http://localhost:3005/api/erp/pos/counters');
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.data) {
@@ -97,7 +98,7 @@ export default function MultiPCSyncPage() {
     const name = prompt('Enter counter name:');
     if (name) {
       try {
-        await fetch('http://localhost:3005/api/erp/pos/counters/register', {
+        await authFetch('http://localhost:3005/api/erp/pos/counters/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name })

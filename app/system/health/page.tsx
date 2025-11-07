@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Server, Activity, Clock, AlertTriangle } from "lucide-react";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface ServiceHealth {
   service: string;
@@ -28,7 +29,7 @@ export default function SystemHealthPage() {
   const fetchHealthData = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3005/api/v1/system/health');
+      const res = await authFetch('http://localhost:3005/api/v1/system/health');
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.data) {

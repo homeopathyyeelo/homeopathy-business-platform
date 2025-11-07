@@ -2,6 +2,7 @@
 
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function ProfitAnalysisPage() {
   const [data, setData] = useState([]);

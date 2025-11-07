@@ -4,13 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function BulkUpdatePage() {
   const [ids, setIds] = useState("");
   const [updates, setUpdates] = useState({ mrp: "", price: "", hsn: "" });
 
   const handleBulkUpdate = async () => {
-    const res = await fetch('http://localhost:3005/api/erp/products/bulk-update', {
+    const res = await authFetch('http://localhost:3005/api/erp/products/bulk-update', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Activity, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import useSWR from 'swr';
+import { authFetch } from '@/lib/api/fetch-utils';
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => authFetch(url).then(res => res.json());
 
 interface ServiceHealth {
   name: string;

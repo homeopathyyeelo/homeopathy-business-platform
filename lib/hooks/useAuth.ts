@@ -17,9 +17,9 @@ export function useAuth() {
     try {
       const currentUser = authApi.getCurrentUser();
       if (currentUser) {
-        // Verify token is still valid
-        const userData = await authApi.me();
-        setUser(userData);
+        // Use cached user data instead of making API call
+        // This prevents infinite reload loops
+        setUser(currentUser);
       }
     } catch (error) {
       // Token invalid or expired

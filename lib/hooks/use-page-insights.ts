@@ -8,6 +8,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { api } from '@/lib/api/api-client-central';
 import { 
   getInsightsForPage, 
   getPrioritizedInsights, 
@@ -15,7 +16,7 @@ import {
   type PageInsightsConfig 
 } from '../insights/page-insights-config';
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => api.get(url);
 
 export interface InsightData {
   config: InsightConfig;
@@ -79,11 +80,8 @@ export function usePageInsights(maxInsights: number = 5): PageInsights {
             ? insightConfig.dataFetcher 
             : `http://localhost:3005${insightConfig.dataFetcher}`;
           
-          const response = await fetch(apiUrl);
-          if (!response.ok) {
-            throw new Error(`Request failed: ${response.status}`);
-          }
-          const data = await response.json();
+          // Use centralized API client (auth automatic!)
+          const data = await api.get(apiUrl);
 
           setInsightsData(prev => {
             const updated = [...prev];

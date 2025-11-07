@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { golangAPI, nestjsAPI } from '@/lib/api'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export function useVendors() {
   return useQuery({

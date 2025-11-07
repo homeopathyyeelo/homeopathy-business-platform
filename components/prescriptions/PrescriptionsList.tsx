@@ -37,6 +37,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import CustomerSelector from "@/components/shared/CustomerSelector";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const PrescriptionsList = () => {
   const { toast } = useToast();

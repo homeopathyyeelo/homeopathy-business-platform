@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function ImportExportEnrich({ parsedInvoiceId, shopId }: { parsedInvoiceId: string; shopId: string }) {
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ export default function ImportExportEnrich({ parsedInvoiceId, shopId }: { parsed
       const url = `http://localhost:3005/api/v1/enrich/invoice/${parsedInvoiceId}?shop_id=${encodeURIComponent(
         shopId
       )}&force_ai=${forceAI}`;
-      const res = await fetch(url, { method: "POST" });
+      const res = await authFetch(url, { method: "POST" });
       const json = await res.json();
       if (!res.ok) {
         setMessage(`Failed: ${json?.error || res.status}`);

@@ -2,19 +2,22 @@
 
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
+import { api } from '@/lib/api/api-client-central';
 
 export default function SalesInsightsPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/ai/sales-insights')
-      .then(res => res.json())
+    api.get('/api/ai/sales-insights')
       .then(data => {
         setData(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(err => {
+        console.error('Error loading sales insights:', err);
+        setLoading(false);
+      });
   }, []);
 
   const columns = [

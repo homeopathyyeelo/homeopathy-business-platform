@@ -10,6 +10,7 @@ import { AlertTriangle, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import DataTable from "@/components/common/DataTable";
 import { useToast } from "@/hooks/use-toast";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function DamagePage() {
   const { toast } = useToast();
@@ -31,7 +32,7 @@ export default function DamagePage() {
 
   const fetchDamages = async () => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/inventory/damages`);
+    const res = await authFetch(`${API_URL}/api/erp/inventory/damages`);
     if (res.ok) {
       const data = await res.json();
       setDamages(data.data || []);
@@ -40,7 +41,7 @@ export default function DamagePage() {
 
   const fetchSummary = async () => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/inventory/damages/summary`);
+    const res = await authFetch(`${API_URL}/api/erp/inventory/damages/summary`);
     if (res.ok) {
       const data = await res.json();
       setSummary(data.data);
@@ -49,7 +50,7 @@ export default function DamagePage() {
 
   const handleSubmit = async () => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/inventory/damages`, {
+    const res = await authFetch(`${API_URL}/api/erp/inventory/damages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)

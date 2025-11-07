@@ -45,7 +45,8 @@ func main() {
 	categoriesHandler := handlers.NewCategoryHandler(db)
 	customerGroupHandler := handlers.NewCustomerGroupHandler()
 	dashboardHandler := handlers.NewDashboardHandler(db)
-	expiryHandler := handlers.NewExpiryHandler(expiryService)
+	_ = expiryService  // TODO: Use when inventory module is ready
+	// expiryHandler := handlers.NewExpiryHandler(expiryService)
 	inventoryHandler := handlers.NewInventoryHandler(db)
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
@@ -99,7 +100,7 @@ func main() {
 
 	// CORS middleware - must be before routes
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:38477"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Request-ID"},
 		ExposeHeaders:    []string{"Content-Length", "X-Request-ID"},
@@ -165,6 +166,7 @@ func main() {
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
+			erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
 			erp.GET("/notifications/recent", notificationHandler.GetRecentNotifications)
 			erp.GET("/favicon.ico", func(c *gin.Context) {
 				c.File("favicon.ico")
@@ -358,7 +360,7 @@ func main() {
 
 			// Expiry Management (methods need implementation)
 			// erp.GET("/inventory/expiries", expiryHandler.GetExpiries) // TODO
-			erp.GET("/dashboard/expiry-summary", expiryHandler.GetExpirySummary)
+			// erp.GET("/inventory/expiry-summary", expiryHandler.GetExpirySummary)  // TODO: Requires shop_id
 			// erp.POST("/inventory/expiry-alert", expiryHandler.CreateExpiryAlert) // TODO
 
 			// Barcode Management

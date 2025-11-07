@@ -13,6 +13,7 @@
 
 import { db } from "./database"
 import type { Customer, Campaign, CampaignAnalytics } from "./types"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export class CampaignManager {
   /**
@@ -284,7 +285,7 @@ export class CampaignManager {
       throw new Error("WhatsApp API configuration missing")
     }
 
-    const response = await fetch(`${whatsappAPI}/messages`, {
+    const response = await authFetch(`${whatsappAPI}/messages`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -315,7 +316,7 @@ export class CampaignManager {
       throw new Error("SMS API configuration missing")
     }
 
-    const response = await fetch(smsAPI, {
+    const response = await authFetch(smsAPI, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${smsAPIKey}`,
@@ -345,7 +346,7 @@ export class CampaignManager {
       throw new Error("Email API configuration missing")
     }
 
-    const response = await fetch(`${emailAPI}/send`, {
+    const response = await authFetch(`${emailAPI}/send`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${emailAPIKey}`,

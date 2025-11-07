@@ -31,6 +31,7 @@ import {
   Loader2
 } from "lucide-react";
 import CustomerSelector from "@/components/shared/CustomerSelector";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const RefillReminders = () => {
   const { toast } = useToast();

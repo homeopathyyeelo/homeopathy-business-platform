@@ -15,6 +15,7 @@ import { ArrowLeft, Plus, Edit, Trash2, Search, Eye } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { golangAPI } from "@/lib/api"
 import { useMasterMutations } from "@/lib/hooks/masters"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export interface FieldConfig {
   key: string

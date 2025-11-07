@@ -12,11 +12,21 @@ export const apiClient = axios.create({
   },
 });
 
+// Helper to get cookie value
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
+
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   (config) => {
-    // Get token from localStorage or cookies
-    const token = typeof window \!== 'undefined' ? localStorage.getItem('auth_token') : null;
+    // Get token from cookie (primary) or localStorage (fallback)
+    const token = getCookie('auth-token') || 
+                  (typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null);
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -35,7 +45,7 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Unauthorized - clear auth and redirect to login
-      if (typeof window \!== 'undefined') {
+      if (typeof window !== 'undefined') {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user');
         window.location.href = '/login';

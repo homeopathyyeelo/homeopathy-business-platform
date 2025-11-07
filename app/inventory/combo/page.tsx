@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function ComboPage() {
   const [items, setItems] = useState([{ product_id: "", qty: 1 }]);
@@ -10,7 +11,7 @@ export default function ComboPage() {
   const addItem = () => setItems([...items, { product_id: "", qty: 1 }]);
   
   const createCombo = async () => {
-    await fetch('http://localhost:3005/api/erp/bundles', {
+    await authFetch('http://localhost:3005/api/erp/bundles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: "New Combo", items })

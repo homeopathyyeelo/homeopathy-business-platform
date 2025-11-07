@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface Employee {
   id: string;
@@ -125,7 +126,7 @@ export default function EmployeesPage() {
         })
       };
 
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
@@ -157,7 +158,7 @@ export default function EmployeesPage() {
     if (!confirm(`Are you sure you want to delete ${employeeName}?`)) return;
 
     try {
-      const response = await fetch(`/api/hr/employees/${employee.id}`, {
+      const response = await authFetch(`/api/hr/employees/${employee.id}`, {
         method: 'DELETE'
       });
 

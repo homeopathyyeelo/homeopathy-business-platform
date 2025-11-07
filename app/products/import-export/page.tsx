@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useProductMutations, useProducts } from "@/lib/hooks/products";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface LogMessage {
   type: 'progress' | 'log' | 'master' | 'error' | 'complete';
@@ -161,7 +162,7 @@ export default function ImportExportPage() {
       formData.append('file', file);
 
       // Start SSE connection
-      const response = await fetch('http://localhost:3005/api/erp/products/import/stream', {
+      const response = await authFetch('http://localhost:3005/api/erp/products/import/stream', {
         method: 'POST',
         body: formData,
       });
@@ -303,7 +304,7 @@ export default function ImportExportPage() {
   const downloadTemplate = async () => {
     try {
       // Download template from Go API
-      const response = await fetch('http://localhost:3005/api/erp/products/template');
+      const response = await authFetch('http://localhost:3005/api/erp/products/template');
       
       if (!response.ok) {
         throw new Error('Failed to download template');

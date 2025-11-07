@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle, XCircle, AlertCircle, Search, Check, X, Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface ParsedLine {
   line_id: string
@@ -49,7 +50,7 @@ export default function ReconciliationPage() {
 
   const fetchInvoice = async () => {
     try {
-      const response = await fetch(`/api/invoices/${invoiceId}/parsed`, {
+      const response = await authFetch(`/api/invoices/${invoiceId}/parsed`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -75,7 +76,7 @@ export default function ReconciliationPage() {
     if (query.length < 2) return
     
     try {
-      const response = await fetch(`/api/invoices/products/search?q=${encodeURIComponent(query)}`, {
+      const response = await authFetch(`/api/invoices/products/search?q=${encodeURIComponent(query)}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }
@@ -92,7 +93,7 @@ export default function ReconciliationPage() {
 
   const handleMatch = async (lineId: string, productId: string) => {
     try {
-      const response = await fetch(`/api/invoices/${invoiceId}/lines/${lineId}/match`, {
+      const response = await authFetch(`/api/invoices/${invoiceId}/lines/${lineId}/match`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +126,7 @@ export default function ReconciliationPage() {
 
   const handleAutoMatch = async () => {
     try {
-      const response = await fetch(`/api/invoices/${invoiceId}/auto-match`, {
+      const response = await authFetch(`/api/invoices/${invoiceId}/auto-match`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
@@ -152,7 +153,7 @@ export default function ReconciliationPage() {
   const handleConfirm = async () => {
     setConfirming(true)
     try {
-      const response = await fetch(`/api/invoices/${invoiceId}/confirm`, {
+      const response = await authFetch(`/api/invoices/${invoiceId}/confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

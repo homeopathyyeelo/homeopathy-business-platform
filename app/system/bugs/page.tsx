@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertCircle, CheckCircle2, Clock, Search, Filter, Bug, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface BugReport {
   id: string
@@ -56,7 +57,7 @@ export default function BugsPage() {
       if (statusFilter !== 'all') params.append('status', statusFilter)
       if (severityFilter !== 'all') params.append('severity', severityFilter)
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'}/api/v1/system/bugs?${params}`)
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'}/api/v1/system/bugs?${params}`)
       const data = await response.json()
       if (data.success) {
         setBugs(data.data || [])
@@ -70,7 +71,7 @@ export default function BugsPage() {
 
   const fetchSummary = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'}/api/v1/system/bugs/summary`)
+      const response = await authFetch(`${process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'}/api/v1/system/bugs/summary`)
       const data = await response.json()
       if (data.success) {
         setSummary(data.data)

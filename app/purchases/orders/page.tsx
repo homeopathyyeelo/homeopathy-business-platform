@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search, Eye, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface PurchaseOrder {
   id: string
@@ -30,7 +31,7 @@ export default function PurchaseOrdersPage() {
 
   const loadOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3001/purchase/orders')
+      const response = await authFetch('http://localhost:3001/purchase/orders')
       const data = await response.json()
       setOrders(data.purchaseOrders || [])
     } catch (error) {
@@ -42,7 +43,7 @@ export default function PurchaseOrdersPage() {
 
   const approveOrder = async (id: string) => {
     try {
-      await fetch(`http://localhost:3001/purchase/orders/${id}/status`, {
+      await authFetch(`http://localhost:3001/purchase/orders/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'APPROVED' })

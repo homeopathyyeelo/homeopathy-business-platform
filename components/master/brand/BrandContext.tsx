@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDatabase } from '@/lib/db-client';
 import { useToast } from '@/hooks/use-toast';
 import { Brand } from '@/types';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface BrandContextType {
   brands: Brand[];

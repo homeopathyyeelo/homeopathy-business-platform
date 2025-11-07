@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Upload, AlertTriangle, CheckCircle, RefreshCw, Download, FileText, Package } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
 
@@ -60,7 +61,7 @@ export default function ExpiryDashboardPage() {
 
   const handleRefresh = async () => {
     try {
-      const res = await fetch(`/api/v2/inventory/expiries/refresh?shop_id=${shopId}`, {
+      const res = await authFetch(`/api/v2/inventory/expiries/refresh?shop_id=${shopId}`, {
         method: "POST",
         headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
       })
@@ -441,7 +442,7 @@ function InvoiceUploadForm({ shopId, onSuccess }: { shopId: string, onSuccess: (
     formData.append("source", "expiry_dashboard")
 
     try {
-      const res = await fetch("/api/invoices/upload", {
+      const res = await authFetch("/api/invoices/upload", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`

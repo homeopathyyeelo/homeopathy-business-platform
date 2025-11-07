@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/common/DataTable";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function HoldBillsPage() {
   const [bills, setBills] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3005/api/erp/pos/held-bills')
+    authFetch('http://localhost:3005/api/erp/pos/held-bills')
       .then(r => r.json())
       .then(d => setBills(d.data || []));
   }, []);

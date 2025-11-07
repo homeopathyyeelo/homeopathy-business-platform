@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Pause, Play, Trash2, ShoppingCart, DollarSign } from 'lucide-react'
 import api from '@/lib/api-complete'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface POSSession {
   id: string
@@ -52,7 +53,7 @@ export default function DualPanelPOSPage() {
     setLoading(true)
     try {
       const userId = localStorage.getItem('user_id') || 'demo-user-id'
-      const response = await fetch('http://localhost:3005/api/pos/sessions', {
+      const response = await authFetch('http://localhost:3005/api/pos/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: userId })
@@ -71,7 +72,7 @@ export default function DualPanelPOSPage() {
 
   const pauseSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}/pause`, {
+      await authFetch(`http://localhost:3005/api/pos/sessions/${sessionId}/pause`, {
         method: 'POST'
       })
       await loadUserSessions()
@@ -82,7 +83,7 @@ export default function DualPanelPOSPage() {
 
   const resumeSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}/resume`, {
+      await authFetch(`http://localhost:3005/api/pos/sessions/${sessionId}/resume`, {
         method: 'POST'
       })
       setActiveSession(sessionId)
@@ -94,7 +95,7 @@ export default function DualPanelPOSPage() {
 
   const deleteSession = async (sessionId: string) => {
     try {
-      await fetch(`http://localhost:3005/api/pos/sessions/${sessionId}`, {
+      await authFetch(`http://localhost:3005/api/pos/sessions/${sessionId}`, {
         method: 'DELETE'
       })
       await loadUserSessions()

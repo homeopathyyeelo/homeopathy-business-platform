@@ -1,6 +1,7 @@
 // Expiry notification service
 import React from 'react';
 import { toast } from '@/hooks/use-toast';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export interface ExpiryAlert {
   id: string;
@@ -61,7 +62,7 @@ class ExpiryNotificationService {
       const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
 
       // Fetch expiry summary
-      const summaryRes = await fetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
+      const summaryRes = await authFetch(`${API_URL}/api/erp/dashboard/expiry-summary`);
       if (summaryRes.ok) {
         const summaryData = await summaryRes.json();
         if (summaryData.success && summaryData.data) {
@@ -70,7 +71,7 @@ class ExpiryNotificationService {
       }
 
       // Fetch detailed alerts
-      const alertsRes = await fetch(`${API_URL}/api/erp/inventory/expiries/alerts`);
+      const alertsRes = await authFetch(`${API_URL}/api/erp/inventory/expiries/alerts`);
       if (alertsRes.ok) {
         const alertsData = await alertsRes.json();
         if (alertsData.success && alertsData.data) {

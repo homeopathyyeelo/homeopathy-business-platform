@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function DoctorDashboardPage() {
   const [stats, setStats] = useState<any>(null);

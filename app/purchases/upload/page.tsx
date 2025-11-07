@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Upload, Download, CheckCircle2, AlertCircle, FileText, ShoppingCart, Loader2, TrendingUp, Package, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface ProcessingStep {
   step: string;

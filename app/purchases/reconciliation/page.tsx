@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function ReconciliationPage() {
   const [invoices, setInvoices] = useState([]);
@@ -25,7 +26,7 @@ export default function ReconciliationPage() {
   };
 
   const handleConfirm = async (id) => {
-    await fetch(`/api/v1/invoices/${id}/confirm`, { method: 'POST' });
+    await authFetch(`/api/v1/invoices/${id}/confirm`, { method: 'POST' });
     alert('Invoice confirmed!');
     loadInvoices();
   };

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Wifi, Database, Activity, Clock, Zap, X, Server, Monitor, RefreshCw, CheckCircle, AlertTriangle } from 'lucide-react';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface SystemHealth {
   services: Array<{
@@ -41,7 +42,7 @@ export default function BottomBar({ onClose }: BottomBarProps) {
       const healthTimeout = setTimeout(() => healthController.abort(), 5000);
       
       try {
-        const healthRes = await fetch('http://localhost:3005/api/v1/system/health', {
+        const healthRes = await authFetch('http://localhost:3005/api/v1/system/health', {
           signal: healthController.signal
         });
         clearTimeout(healthTimeout);
@@ -62,7 +63,7 @@ export default function BottomBar({ onClose }: BottomBarProps) {
       const countersTimeout = setTimeout(() => countersController.abort(), 5000);
       
       try {
-        const countersRes = await fetch('http://localhost:3005/api/erp/pos/counters', {
+        const countersRes = await authFetch('http://localhost:3005/api/erp/pos/counters', {
           signal: countersController.signal
         });
         clearTimeout(countersTimeout);

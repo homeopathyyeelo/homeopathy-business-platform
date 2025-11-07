@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Activity, AlertTriangle, CheckCircle, XCircle, Zap, Database, TrendingUp, Package, DollarSign, ShoppingCart, Brain, Bug, Server, Clock, AlertCircle, RefreshCw } from 'lucide-react'
 import useSWR from 'swr'
+import { authFetch } from '@/lib/api/fetch-utils';
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = (url: string) => authFetch(url).then(r => r.json())
 
 interface SystemMetrics {
   openBugs: number

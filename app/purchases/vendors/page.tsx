@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Search, Edit, Trash2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function VendorsPage() {
   const [vendors, setVendors] = useState<Vendor[]>([])
@@ -43,7 +44,7 @@ export default function VendorsPage() {
 
   const loadVendors = async () => {
     try {
-      const response = await fetch('http://localhost:3001/purchase/vendors')
+      const response = await authFetch('http://localhost:3001/purchase/vendors')
       const data = await response.json()
       setVendors(data.vendors || [])
     } catch (error) {
@@ -55,7 +56,7 @@ export default function VendorsPage() {
 
   const createVendor = async () => {
     try {
-      const response = await fetch('http://localhost:3001/purchase/vendors', {
+      const response = await authFetch('http://localhost:3001/purchase/vendors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

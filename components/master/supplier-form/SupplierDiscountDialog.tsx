@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, Plus } from 'lucide-react';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface SupplierDiscountDialogProps {
   open: boolean;

@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { CategoryForm } from "./category/CategoryForm";
 import { CategoryList } from "./category/CategoryList";
 import { CategoryHeader } from "./category/CategoryHeader";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const CategoryMaster = () => {
   const { getAll, create, update, delete: deleteRecord } = useDatabase();

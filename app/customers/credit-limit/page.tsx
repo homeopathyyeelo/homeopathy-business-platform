@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RefreshCw, Save, ArrowLeft } from 'lucide-react'
 import { useCustomers, useCustomerMutations } from '@/lib/hooks/customers'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function CustomerCreditLimitPage() {
   const router = useRouter()

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, LockKeyhole, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -63,7 +64,8 @@ export default function LoginPage() {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        credentials: 'include' // Important: include cookies
       });
 
       if (response.ok) {
@@ -91,9 +93,12 @@ export default function LoginPage() {
           description: "Welcome back!",
         });
         
+        // Small delay to ensure cookie is set
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Redirect to dashboard or intended page
         const redirectTo = searchParams.get('redirect') || '/dashboard';
-        router.push(redirectTo);
+        window.location.href = redirectTo; // Use hard redirect to ensure middleware runs
       } else {
         const errorData = await response.json();
         setError(errorData.error || "Invalid email or password");

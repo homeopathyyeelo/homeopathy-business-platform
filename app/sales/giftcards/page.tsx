@@ -4,13 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function GiftCardsPage() {
   const [amount, setAmount] = useState(0);
   const [code, setCode] = useState("");
 
   const generateCard = async () => {
-    const res = await fetch('http://localhost:3005/api/erp/giftcards', {
+    const res = await authFetch('http://localhost:3005/api/erp/giftcards', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount })

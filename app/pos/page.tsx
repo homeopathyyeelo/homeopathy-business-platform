@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useProducts, useProductStats } from '@/lib/hooks/products'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface Product {
   id: string
@@ -123,7 +124,7 @@ export default function POSPage() {
       }
 
       // Try to create order via API
-      const response = await fetch('http://localhost:3005/api/orders', {
+      const response = await authFetch('http://localhost:3005/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

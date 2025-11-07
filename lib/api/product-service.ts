@@ -1,4 +1,5 @@
 import { kafkaProducer } from '@/lib/kafka/producer';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const PRODUCT_SERVICE_URL = process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL || '/api';
 
@@ -107,7 +108,7 @@ class ProductServiceAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    const response = await fetch(url, {
+    const response = await authFetch(url, {
       ...options,
       headers: {
         ...this.getHeaders(),

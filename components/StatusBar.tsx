@@ -1,7 +1,8 @@
 "use client";
 import useSWR from "swr";
+import { authFetch } from '@/lib/api/fetch-utils';
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => authFetch(url).then(res => res.json());
 
 export default function StatusBar() {
   const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';

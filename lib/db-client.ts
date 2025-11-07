@@ -8,21 +8,21 @@ export const useDatabase = () => {
     // Get all records from a table
     async getAll(tableName: string, conditions?: Record<string, any>) {
       const params = conditions ? `?${new URLSearchParams(conditions).toString()}` : '';
-      const response = await fetch(`/api/master/${tableName}${params}`);
+      const response = await authFetch(`/api/master/${tableName}${params}`);
       if (!response.ok) throw new Error(`Failed to fetch ${tableName}`);
       return response.json();
     },
 
     // Get one record by ID
     async getById(tableName: string, id: string) {
-      const response = await fetch(`/api/master/${tableName}/${id}`);
+      const response = await authFetch(`/api/master/${tableName}/${id}`);
       if (!response.ok) throw new Error(`Failed to fetch ${tableName} with id ${id}`);
       return response.json();
     },
 
     // Insert a new record
     async insert(tableName: string, data: Record<string, any>) {
-      const response = await fetch(`/api/master/${tableName}`, {
+      const response = await authFetch(`/api/master/${tableName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -33,7 +33,7 @@ export const useDatabase = () => {
 
     // Update a record
     async update(tableName: string, id: string, data: Record<string, any>) {
-      const response = await fetch(`/api/master/${tableName}/${id}`, {
+      const response = await authFetch(`/api/master/${tableName}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -44,7 +44,7 @@ export const useDatabase = () => {
 
     // Delete a record
     async delete(tableName: string, id: string) {
-      const response = await fetch(`/api/master/${tableName}/${id}`, {
+      const response = await authFetch(`/api/master/${tableName}/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error(`Failed to delete ${tableName} with id ${id}`);
@@ -53,7 +53,7 @@ export const useDatabase = () => {
 
     // Custom query (use API endpoints for specific queries)
     async customQuery(endpoint: string, params?: any) {
-      const response = await fetch(endpoint, {
+      const response = await authFetch(endpoint, {
         method: params ? 'POST' : 'GET',
         headers: params ? { 'Content-Type': 'application/json' } : undefined,
         body: params ? JSON.stringify(params) : undefined,

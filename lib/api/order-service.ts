@@ -1,4 +1,5 @@
 import { kafkaProducer } from '@/lib/kafka/producer';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const ORDER_SERVICE_URL = process.env.NEXT_PUBLIC_ORDER_SERVICE_URL || '/api';
 
@@ -105,7 +106,7 @@ class OrderServiceAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    const response = await fetch(url, {
+    const response = await authFetch(url, {
       ...options,
       headers: {
         ...this.getHeaders(),
@@ -207,7 +208,7 @@ class OrderServiceAPI {
 
   async getInvoice(id: string): Promise<Blob> {
     const url = `${this.baseURL}/api/v1/orders/${id}/invoice/`;
-    const response = await fetch(url, {
+    const response = await authFetch(url, {
       headers: this.getHeaders(),
     });
 

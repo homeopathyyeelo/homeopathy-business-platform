@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, Users } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function CommissionPage() {
   const [reports, setReports] = useState([]);
@@ -18,7 +19,7 @@ export default function CommissionPage() {
   const fetchCommissionReport = async () => {
     setLoading(true);
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/commissions/report?period=current-month`);
+    const res = await authFetch(`${API_URL}/api/erp/commissions/report?period=current-month`);
     if (res.ok) {
       const data = await res.json();
       setReports(data.data || []);
@@ -28,7 +29,7 @@ export default function CommissionPage() {
 
   const handlePay = async (salesmanId: string, amount: number) => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    await fetch(`${API_URL}/api/erp/commissions/pay`, {
+    await authFetch(`${API_URL}/api/erp/commissions/pay`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ salesman_id: salesmanId, amount, payment_mode: 'bank' })

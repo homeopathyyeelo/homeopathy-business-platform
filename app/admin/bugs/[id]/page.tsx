@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AlertCircle, CheckCircle2, Code, GitBranch, Play, X, Zap } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
 
@@ -24,7 +25,7 @@ export default function BugDetailPage() {
 
   const fetchBug = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/system/bugs/${params.id}`)
+      const response = await authFetch(`${API_URL}/api/v1/system/bugs/${params.id}`)
       const data = await response.json()
       if (data.success) {
         setBug(data.data)
@@ -39,7 +40,7 @@ export default function BugDetailPage() {
   const handleApproveFix = async () => {
     setApplying(true)
     try {
-      const response = await fetch(`${API_URL}/api/v1/system/bugs/${params.id}/approve`, {
+      const response = await authFetch(`${API_URL}/api/v1/system/bugs/${params.id}/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ approved: true })

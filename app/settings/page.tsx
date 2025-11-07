@@ -11,6 +11,7 @@ import UserManagement from "@/components/settings/UserManagement";
 import EmailManagement from "@/components/settings/EmailManagement";
 import WhatsAppTemplates from "@/components/settings/WhatsAppTemplates";
 import { DatabaseSettings } from "@/components/settings/DatabaseSettings";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function SettingsPage() {
   const [config, setConfig] = useState({

@@ -1,4 +1,5 @@
 import { kafkaProducer } from '@/lib/kafka/producer';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const PAYMENT_SERVICE_URL = process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL || '/api';
 
@@ -75,7 +76,7 @@ class PaymentServiceAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    const response = await fetch(url, {
+    const response = await authFetch(url, {
       ...options,
       headers: {
         ...this.getHeaders(),

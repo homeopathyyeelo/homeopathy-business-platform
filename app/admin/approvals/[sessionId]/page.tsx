@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import {
+import { authFetch } from '@/lib/api/fetch-utils';
   ArrowLeft,
   CheckCircle2,
   XCircle,
@@ -39,7 +40,7 @@ export default function ApprovalDetailPage() {
   const fetchDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/uploads/session/${sessionId}`);
+      const response = await authFetch(`/api/uploads/session/${sessionId}`);
       const result = await response.json();
 
       if (!response.ok) {

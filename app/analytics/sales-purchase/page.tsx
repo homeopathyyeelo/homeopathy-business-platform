@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
+import { authFetch } from '@/lib/api/fetch-utils';
   TrendingUp, TrendingDown, ShoppingCart, ShoppingBag, DollarSign,
   Package, Calendar, Download, Search, Filter, Eye, ArrowUpRight, ArrowDownRight
 } from 'lucide-react'
@@ -30,10 +31,10 @@ export default function SalesPurchasePage() {
     setLoading(true)
     try {
       const [salesRes, purchaseRes, salesSumRes, purchaseSumRes] = await Promise.all([
-        fetch(`${API_URL}/api/erp/analytics/sales`),
-        fetch(`${API_URL}/api/erp/analytics/purchases`),
-        fetch(`${API_URL}/api/erp/analytics/sales-summary`),
-        fetch(`${API_URL}/api/erp/analytics/purchase-summary`)
+        authFetch(`${API_URL}/api/erp/analytics/sales`),
+        authFetch(`${API_URL}/api/erp/analytics/purchases`),
+        authFetch(`${API_URL}/api/erp/analytics/sales-summary`),
+        authFetch(`${API_URL}/api/erp/analytics/purchase-summary`)
       ])
 
       if (salesRes.ok) {

@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MarketingContact } from "@/types";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const ContactsList = () => {
   const { toast } = useToast();

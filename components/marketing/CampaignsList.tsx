@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Calendar, RefreshCw, Send } from "lucide-react";
 import { MarketingCampaign } from "@/types";
 import { format } from 'date-fns';
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const CampaignsList = () => {
   const { toast } = useToast();

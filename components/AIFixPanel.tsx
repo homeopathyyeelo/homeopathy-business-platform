@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Zap, Code, TrendingUp, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005'
 
@@ -31,7 +32,7 @@ export function AIFixPanel() {
 
   const fetchSuggestions = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/system/bugs?status=open&limit=5`)
+      const response = await authFetch(`${API_URL}/api/v1/system/bugs?status=open&limit=5`)
       const data = await response.json()
       if (data.success) {
         setSuggestions(data.data || [])

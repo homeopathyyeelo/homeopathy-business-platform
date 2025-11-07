@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { authFetch } from '@/lib/api/fetch-utils';
 
 interface ServiceStatus {
   name: string
@@ -30,7 +31,7 @@ export default function DashboardPage() {
       services.map(async (service) => {
         try {
           const start = Date.now()
-          const response = await fetch(service.url, {
+          const response = await authFetch(service.url, {
             mode: 'cors',
             cache: 'no-store',
           })

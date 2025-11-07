@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, Send, Users, Clock, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { authFetch } from '@/lib/api/fetch-utils';
 
 export default function WhatsAppPage() {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ export default function WhatsAppPage() {
 
   const handleBulkSend = async () => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/whatsapp/bulk-send`, {
+    const res = await authFetch(`${API_URL}/api/erp/whatsapp/bulk-send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -38,7 +39,7 @@ export default function WhatsAppPage() {
 
   const handleCreditReminder = async () => {
     const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
-    const res = await fetch(`${API_URL}/api/erp/whatsapp/credit-reminder`, {
+    const res = await authFetch(`${API_URL}/api/erp/whatsapp/credit-reminder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ min_due: 1000 })

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { 
+import { authFetch } from '@/lib/api/fetch-utils';
   TrendingUp, TrendingDown, Users, Package, ShoppingCart, AlertTriangle,
   DollarSign, Activity, BarChart3, Clock, CheckCircle, XCircle, Truck, Store
 } from 'lucide-react'
@@ -71,7 +72,7 @@ export default function StatsPage() {
     setError('')
     try {
       // Fetch stats
-      const statsRes = await fetch(`${API_URL}/api/erp/dashboard/stats`)
+      const statsRes = await authFetch(`${API_URL}/api/erp/dashboard/stats`)
       if (statsRes.ok) {
         const statsData = await statsRes.json()
         if (statsData.success && statsData.data) {
@@ -80,7 +81,7 @@ export default function StatsPage() {
       }
 
       // Fetch top products
-      const productsRes = await fetch(`${API_URL}/api/erp/dashboard/top-products?limit=5`)
+      const productsRes = await authFetch(`${API_URL}/api/erp/dashboard/top-products?limit=5`)
       if (productsRes.ok) {
         const productsData = await productsRes.json()
         if (productsData.success && productsData.data) {
@@ -89,7 +90,7 @@ export default function StatsPage() {
       }
 
       // Fetch recent sales
-      const salesRes = await fetch(`${API_URL}/api/erp/dashboard/recent-sales?limit=5`)
+      const salesRes = await authFetch(`${API_URL}/api/erp/dashboard/recent-sales?limit=5`)
       if (salesRes.ok) {
         const salesData = await salesRes.json()
         if (salesData.success && salesData.data) {
