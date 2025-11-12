@@ -17,11 +17,11 @@ import (
 
 // BarcodeHandler handles barcode operations
 type BarcodeHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
 // NewBarcodeHandler creates a new barcode handler
-func NewBarcodeHandler(db interface{}) *BarcodeHandler {
+func NewBarcodeHandler(db *gorm.DB) *BarcodeHandler {
 	return &BarcodeHandler{db: db}
 }
 
@@ -54,16 +54,16 @@ type BarcodeResponse struct {
 func (h *BarcodeHandler) GetBarcodes(c *gin.Context) {
 	var barcodes []BarcodeResponse
 
-	query := h.db.(*gorm.DB).Table("product_barcodes pb").
+	query := h.db.Table("product_barcodes pb").
 		Select(`
 			pb.id,
 			pb.product_id,
 			p.name as product_name,
 			p.sku,
-			p.potency,
-			p.form,
-			p.brand,
-			p.category,
+			
+			
+			
+			
 			pb.batch_id,
 			pb.batch_no,
 			pb.barcode,
@@ -71,7 +71,7 @@ func (h *BarcodeHandler) GetBarcodes(c *gin.Context) {
 			pb.mrp,
 			pb.exp_date,
 			pb.quantity,
-			COALESCE(w.name, 'Main Store') as warehouse,
+			'Main Store' as warehouse,
 			pb.generated_at,
 			pb.status,
 			CASE
@@ -80,11 +80,9 @@ func (h *BarcodeHandler) GetBarcodes(c *gin.Context) {
 				WHEN pb.exp_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'
 				ELSE 'fresh'
 			END as expiry_status,
-			u.name as created_by
+			'System' as created_by
 		`).
 		Joins("LEFT JOIN products p ON p.id = pb.product_id").
-		Joins("LEFT JOIN warehouses w ON w.id = pb.warehouse_id").
-		Joins("LEFT JOIN users u ON u.id = pb.created_by").
 		Order("pb.generated_at DESC")
 
 	// Apply search filter
@@ -135,7 +133,7 @@ func (h *BarcodeHandler) GetBarcodes(c *gin.Context) {
 
 	// Get total count
 	var total int64
-	countQuery := h.db.(*gorm.DB).Table("product_barcodes pb").
+	countQuery := h.db.Table("product_barcodes pb").
 		Joins("LEFT JOIN products p ON p.id = pb.product_id")
 
 	if search := c.Query("search"); search != "" {
@@ -197,7 +195,7 @@ func (h *BarcodeHandler) GenerateBarcode(c *gin.Context) {
 
 	// Get product details
 	var product models.Product
-	if err := h.db.(*gorm.DB).First(&product, req.ProductID).Error; err != nil {
+	if err := h.db.First(&product, req.ProductID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"success": false,
 			"error":   "Product not found",
@@ -212,7 +210,7 @@ func (h *BarcodeHandler) GenerateBarcode(c *gin.Context) {
 
 	if req.BatchID != nil {
 		var batch models.InventoryBatch
-		if err := h.db.(*gorm.DB).First(&batch, *req.BatchID).Error; err != nil {
+		if err := h.db.First(&batch, *req.BatchID).Error; err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
 				"success": false,
 				"error":   "Batch not found",
@@ -234,7 +232,7 @@ func (h *BarcodeHandler) GenerateBarcode(c *gin.Context) {
 	// Get current user (placeholder - should come from auth middleware)
 	currentUserID := uint(1)
 	var currentUser models.User
-	h.db.(*gorm.DB).First(&currentUser, currentUserID)
+	h.db.First(&currentUser, currentUserID)
 
 	// Create barcode record
 	barcodeRecord := models.ProductBarcode{
@@ -259,7 +257,7 @@ func (h *BarcodeHandler) GenerateBarcode(c *gin.Context) {
 		barcodeRecord.BatchID = &batchIDStr
 	}
 
-	if err := h.db.(*gorm.DB).Create(&barcodeRecord).Error; err != nil {
+	if err := h.db.Create(&barcodeRecord).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"error":   "Failed to generate barcode: " + err.Error(),
@@ -318,16 +316,16 @@ func (h *BarcodeHandler) PrintBarcodes(c *gin.Context) {
 
 	// Get barcode details
 	var barcodes []BarcodeResponse
-	query := h.db.(*gorm.DB).Table("product_barcodes pb").
+	query := h.db.Table("product_barcodes pb").
 		Select(`
 			pb.id,
 			pb.product_id,
 			p.name as product_name,
 			p.sku,
-			p.potency,
-			p.form,
-			p.brand,
-			p.category,
+			
+			
+			
+			
 			pb.batch_id,
 			pb.batch_no,
 			pb.barcode,
@@ -335,7 +333,7 @@ func (h *BarcodeHandler) PrintBarcodes(c *gin.Context) {
 			pb.mrp,
 			pb.exp_date,
 			pb.quantity,
-			COALESCE(w.name, 'Main Store') as warehouse,
+			'Main Store' as warehouse,
 			pb.generated_at,
 			pb.status,
 			CASE
@@ -344,11 +342,9 @@ func (h *BarcodeHandler) PrintBarcodes(c *gin.Context) {
 				WHEN pb.exp_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'
 				ELSE 'fresh'
 			END as expiry_status,
-			u.name as created_by
+			'System' as created_by
 		`).
 		Joins("LEFT JOIN products p ON p.id = pb.product_id").
-		Joins("LEFT JOIN warehouses w ON w.id = pb.warehouse_id").
-		Joins("LEFT JOIN users u ON u.id = pb.created_by").
 		Where("pb.id IN ?", req.BarcodeIDs)
 
 	if err := query.Find(&barcodes).Error; err != nil {
@@ -414,7 +410,7 @@ func (h *BarcodeHandler) UpdateBarcode(c *gin.Context) {
 		updates["notes"] = *req.Notes
 	}
 
-	result := h.db.(*gorm.DB).Model(&models.ProductBarcode{}).
+	result := h.db.Model(&models.ProductBarcode{}).
 		Where("id = ?", barcodeID).
 		Updates(updates)
 
@@ -445,7 +441,7 @@ func (h *BarcodeHandler) UpdateBarcode(c *gin.Context) {
 func (h *BarcodeHandler) DeleteBarcode(c *gin.Context) {
 	barcodeID := c.Param("id")
 
-	result := h.db.(*gorm.DB).Delete(&models.ProductBarcode{}, barcodeID)
+	result := h.db.Delete(&models.ProductBarcode{}, barcodeID)
 
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -483,7 +479,7 @@ func (h *BarcodeHandler) GetBarcodeStats(c *gin.Context) {
 	}
 
 	// Get overall statistics
-	h.db.(*gorm.DB).Raw(`
+	h.db.Raw(`
 		SELECT
 			COUNT(*) as total_barcodes,
 			COUNT(CASE WHEN status = 'active' THEN 1 END) as active_barcodes,

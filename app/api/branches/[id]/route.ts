@@ -5,10 +5,11 @@ let branches: any[] = [];
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const branch = branches.find(b => b.id === params.id);
+    const { id } = await context.params;
+    const branch = branches.find(b => b.id === id);
     
     if (!branch) {
       return NextResponse.json(

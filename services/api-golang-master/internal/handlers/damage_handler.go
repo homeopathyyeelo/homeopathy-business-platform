@@ -3,13 +3,14 @@ package handlers
 import (
 	"time"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type DamageHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
-type DamageEntry struct {
+type DamageEntry struct{
 	ID          string    `json:"id"`
 	ProductID   string    `json:"product_id"`
 	ProductName string    `json:"product_name"`
@@ -23,7 +24,7 @@ type DamageEntry struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-func NewDamageHandler(db interface{}) *DamageHandler {
+func NewDamageHandler(db *gorm.DB) *DamageHandler {
 	return &DamageHandler{db: db}
 }
 
@@ -38,12 +39,35 @@ func (h *DamageHandler) CreateDamageEntry(c *gin.Context) {
 	req.ID = "dmg-" + time.Now().Format("20060102150405")
 	req.CreatedAt = time.Now()
 	
-	// TODO: Insert to inventory_damages table
-	// TODO: Adjust stock: UPDATE inventory SET qty = qty - req.Quantity
+	tx := h.db.Begin()
 	
+	err := tx.Exec(`
+		INSERT INTO inventory_damages (id, product_id, batch_no, quantity, reason, reported_by, created_at)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
+	`, req.ID, req.ProductID, req.BatchNo, req.Quantity, req.Reason, "system", req.CreatedAt).Error
+	
+	if err != nil {
+		tx.Rollback()
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+	
+	err = tx.Exec(`
+		UPDATE inventory_batches 
+		SET quantity = quantity - ?
+		WHERE product_id = ? AND batch_no = ? AND deleted_at IS NULL
+	`, req.Quantity, req.ProductID, req.BatchNo).Error
+	
+	if err != nil {
+		tx.Rollback()
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+	
+	tx.Commit()
 	c.JSON(200, gin.H{
 		"success": true,
-		"data": req,
+		"id":      req.ID,
 	})
 }
 

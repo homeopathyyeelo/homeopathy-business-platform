@@ -18,7 +18,7 @@ echo ""
 # Check if Go is installed
 if ! command -v go &> /dev/null; then
     echo -e "${YELLOW}⚠️  Go is not installed${NC}"
-    echo "Please install Go 1.22 or higher"
+    echo "Please install Go 1.24 or higher"
     echo "Visit: https://golang.org/dl/"
     exit 1
 fi

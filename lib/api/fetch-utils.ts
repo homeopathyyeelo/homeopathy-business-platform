@@ -3,22 +3,10 @@
  * All API calls should use these to ensure proper authentication
  */
 
-// Helper to get cookie value
-function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-  return null;
-}
-
-// Get authentication token
+// Get authentication token (for non-HttpOnly cookies only)
 export function getAuthToken(): string | null {
-  // Primary: Get from cookie (server-side set, HttpOnly)
-  const cookieToken = getCookie('auth-token');
-  if (cookieToken) return cookieToken;
-  
-  // Fallback: Get from localStorage (legacy)
+  // Note: HttpOnly cookies are automatically sent with credentials: 'include'
+  // Only check localStorage for legacy tokens
   if (typeof window !== 'undefined') {
     return localStorage.getItem('auth_token');
   }
@@ -28,11 +16,13 @@ export function getAuthToken(): string | null {
 
 // Create authenticated fetch headers
 export function getAuthHeaders(): HeadersInit {
-  const token = getAuthToken();
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
   
+  // Only add Authorization header if we have a localStorage token (legacy)
+  // HttpOnly cookies are sent automatically via credentials: 'include'
+  const token = getAuthToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }

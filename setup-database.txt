@@ -1,0 +1,30 @@
+================================================
+  SETUP DATABASE: yeelo_homeopathy
+================================================
+
+Run these commands in your terminal:
+
+# 1. Create database
+sudo -u postgres psql -c "DROP DATABASE IF EXISTS yeelo_homeopathy;"
+sudo -u postgres psql -c "CREATE DATABASE yeelo_homeopathy;"
+
+# 2. Load schema and data
+sudo -u postgres psql -d yeelo_homeopathy -f /var/www/homeopathy-business-platform/database/migrations/001_init.sql
+
+# 3. Verify
+sudo -u postgres psql -d yeelo_homeopathy -c "SELECT COUNT(*) FROM users;"
+
+================================================
+
+OR use this one-liner:
+
+sudo -u postgres psql -c "DROP DATABASE IF EXISTS yeelo_homeopathy;" && sudo -u postgres psql -c "CREATE DATABASE yeelo_homeopathy;" && sudo -u postgres psql -d yeelo_homeopathy -f /var/www/homeopathy-business-platform/database/migrations/001_init.sql
+
+================================================
+
+After database is created, restart services:
+
+pkill -f backend-server && pkill -f 'next dev'
+cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 & npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+================================================

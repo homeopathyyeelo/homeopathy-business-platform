@@ -34,7 +34,7 @@ func main() {
 	expiryService := services.NewExpiryService(db)
 
 	// Initialize handlers (only ones we actually use)
-	authHandler := handlers.NewAuthHandler()
+	authHandler := handlers.NewAuthHandler(db)
 	aiModelHandler := handlers.NewAIModelHandler()
 	barcodeHandler := handlers.NewBarcodeHandler(db)
 	bugsHandler := handlers.NewBugHandler(bugService)
@@ -75,6 +75,7 @@ func main() {
 	outboxEventHandler := handlers.NewOutboxEventHandler()
 	whatsappHandler := handlers.NewWhatsAppHandler(db)
 	rackHandler := handlers.NewRackHandler()
+	productImportStreamingHandler := handlers.NewStreamingImportHandler(db)
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -113,7 +114,8 @@ func main() {
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
 			auth.POST("/refresh", authHandler.RefreshToken)
-			// auth.GET("/me", authHandler.GetMe) // TODO: Method doesn't exist yet
+			auth.POST("/validate", authHandler.ValidateToken)
+			auth.GET("/me", authHandler.Me)
 		}
 
 		// System routes (v1 API)
@@ -152,6 +154,8 @@ func main() {
 			erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
+			erp.GET("/dashboard/expiry-summary", expiryHandler.GetExpirySummary)
 
 			// Products
 			erp.GET("/products", productHandler.GetProducts)
@@ -160,9 +164,8 @@ func main() {
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
 
-			// Product Import (methods need to be implemented)
-			// erp.POST("/products/import", productImportHandler.ImportProducts) 
-			// erp.POST("/products/import/stream", streamingImportHandler.StreamImport)
+			// Product Import
+			erp.POST("/products/import/stream", productImportStreamingHandler.StreamingImport)
 
 			// Categories
 			erp.GET("/categories", categoriesHandler.GetCategories)
@@ -241,6 +244,7 @@ func main() {
 				inventory.GET("/transactions", enhancedInventoryHandler.GetStockTransactions)
 				inventory.GET("/alerts/low-stock", enhancedInventoryHandler.GetLowStockAlerts)
 				inventory.GET("/alerts/expiry", enhancedInventoryHandler.GetExpiryAlerts)
+				inventory.GET("/expiries/alerts", enhancedInventoryHandler.GetExpiryAlerts) // Duplicate route for compatibility
 				inventory.GET("/valuation", enhancedInventoryHandler.GetStockValuation)
 				inventory.GET("/reports/stock", enhancedInventoryHandler.GenerateStockReport)
 				inventory.PUT("/alerts/low-stock/:id/resolve", enhancedInventoryHandler.ResolveLowStockAlert)
@@ -339,16 +343,17 @@ func main() {
 			// erp.POST("/bugs", bugsHandler.CreateBugReport) // TODO
 			// erp.PUT("/bugs/:id/resolve", bugsHandler.ResolveBug) // TODO
 
-			// Expiry Management (methods need implementation)
+			// Expiry Management - /dashboard/expiry-summary registered above in dashboard routes
 			// erp.GET("/inventory/expiries", expiryHandler.GetExpiries) // TODO
-			erp.GET("/dashboard/expiry-summary", expiryHandler.GetExpirySummary)
 			// erp.POST("/inventory/expiry-alert", expiryHandler.CreateExpiryAlert) // TODO
 
 			// Barcode Management
-			erp.GET("/products/barcode", barcodeHandler.GetBarcodes)
-			erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
-			erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
-			erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
+			erp.GET("/barcodes", barcodeHandler.GetBarcodes)
+			erp.POST("/barcodes/generate", barcodeHandler.GenerateBarcode)
+			erp.POST("/barcodes/print", barcodeHandler.PrintBarcodes)
+			erp.PUT("/barcodes/:id", barcodeHandler.UpdateBarcode)
+			erp.DELETE("/barcodes/:id", barcodeHandler.DeleteBarcode)
+			erp.GET("/barcodes/stats", barcodeHandler.GetBarcodeStats)
 			erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
 			erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)
 
@@ -372,7 +377,7 @@ func main() {
 			erp.PUT("/branches/:id", branchHandler.UpdateBranch)
 			erp.DELETE("/branches/:id", branchHandler.DeleteBranch)
 
-			// Settings: Tax
+			// Tax & HSN Management
 			erp.GET("/tax/slabs", taxHandler.GetTaxSlabs)
 			erp.GET("/tax/slabs/:id", taxHandler.GetTaxSlab)
 			erp.POST("/tax/slabs", taxHandler.CreateTaxSlab)
@@ -383,6 +388,13 @@ func main() {
 			erp.POST("/tax/hsn-codes", taxHandler.CreateHSNCode)
 			erp.PUT("/tax/hsn-codes/:id", taxHandler.UpdateHSNCode)
 			erp.DELETE("/tax/hsn-codes/:id", taxHandler.DeleteHSNCode)
+
+			// HSN Codes - Direct route for frontend compatibility
+			erp.GET("/hsn-codes", taxHandler.GetHSNCodes)
+			erp.GET("/hsn-codes/:id", taxHandler.GetHSNCode)
+			erp.POST("/hsn-codes", taxHandler.CreateHSNCode)
+			erp.PUT("/hsn-codes/:id", taxHandler.UpdateHSNCode)
+			erp.DELETE("/hsn-codes/:id", taxHandler.DeleteHSNCode)
 
 			// Settings: RBAC
 			rbac := erp.Group("/rbac")

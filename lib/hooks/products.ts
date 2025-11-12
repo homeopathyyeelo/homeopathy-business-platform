@@ -61,10 +61,10 @@ export function useProductCategories() {
     queryKey: ['products', 'categories'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/erp/categories')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.categories || res.data?.categories || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
-    staleTime: 300_000, // 5 minutes
+    staleTime: 300_000,
   })
 }
 
@@ -73,8 +73,8 @@ export function useProductBrands() {
     queryKey: ['products', 'brands'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/erp/brands')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.brands || res.data?.brands || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     staleTime: 300_000,
   })
@@ -85,8 +85,8 @@ export function useProductBatches() {
     queryKey: ['products', 'batches'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/products/batches')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.batches || res.data?.batches || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     staleTime: 60_000,
   })
@@ -98,8 +98,8 @@ export function useProductVariants(productId?: string) {
     queryFn: async () => {
       if (!productId) return []
       const res = await golangAPI.get(`/api/products/${productId}/variants`)
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.variants || res.data?.variants || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     enabled: !!productId,
     staleTime: 60_000,
@@ -112,7 +112,8 @@ export function useProductImages(productId?: string) {
     queryFn: async () => {
       if (!productId) return []
       const res = await golangAPI.get(`/api/products/${productId}/images`)
-      return res.data || []
+      const data = res.data?.data?.images || res.data?.images || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     enabled: !!productId,
     staleTime: 300_000,
@@ -273,8 +274,8 @@ export function useProductPotencies() {
     queryKey: ['products', 'potencies'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/erp/potencies')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.potencies || res.data?.potencies || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     staleTime: 300_000,
   })
@@ -286,8 +287,8 @@ export function useProductForms() {
     queryKey: ['products', 'forms'],
     queryFn: async () => {
       const res = await golangAPI.get('/api/erp/forms')
-      const data = Array.isArray(res.data) ? res.data : (res.data?.data ?? [])
-      return data as any[]
+      const data = res.data?.data?.forms || res.data?.forms || res.data?.data || res.data || []
+      return Array.isArray(data) ? data : []
     },
     staleTime: 300_000,
   })

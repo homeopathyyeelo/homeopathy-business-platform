@@ -1,17 +1,19 @@
 package handlers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type BulkOperationsHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
-func NewBulkOperationsHandler(db interface{}) *BulkOperationsHandler {
+func NewBulkOperationsHandler(db *gorm.DB) *BulkOperationsHandler {
 	return &BulkOperationsHandler{db: db}
 }
 
@@ -27,8 +29,30 @@ func (h *BulkOperationsHandler) BulkUpdateProducts(c *gin.Context) {
 		return
 	}
 	
-	// TODO: Update products WHERE id IN (req.IDs) SET updates
+	if len(req.IDs) == 0 {
+		c.JSON(400, gin.H{"error": "No IDs provided", "success": false})
+		return
+	}
 	
+	tx := h.db.Begin()
+	
+	query := "UPDATE products SET "
+	if req.Updates["is_active"] != nil {
+		query += "is_active = " + req.Updates["is_active"].(string) + ", "
+	}
+	if req.Updates["selling_price"] != nil {
+		query += fmt.Sprintf("selling_price = %f, ", req.Updates["selling_price"].(float64))
+	}
+	query += "updated_at = NOW() WHERE id IN (?)"
+	
+	err := tx.Exec(query, req.IDs).Error
+	if err != nil {
+		tx.Rollback()
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+	
+	tx.Commit()
 	c.JSON(200, gin.H{
 		"success": true,
 		"updated": len(req.IDs),
@@ -48,9 +72,42 @@ func (h *BulkOperationsHandler) BulkUpdateCustomers(c *gin.Context) {
 		return
 	}
 	
+	if len(req.IDs) == 0 {
+		c.JSON(400, gin.H{"error": "No IDs provided", "success": false})
+		return
+	}
+	
+	err := h.db.Exec("UPDATE customers SET deleted_at = NOW() WHERE id IN (?)", req.IDs).Error
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+	
 	c.JSON(200, gin.H{
 		"success": true,
-		"updated": len(req.IDs),
+		"deleted": len(req.IDs),
+	})
+}
+
+// POST /api/erp/bulk/products
+func (h *BulkOperationsHandler) BulkCreateProducts(c *gin.Context) {
+	var req []map[string]interface{}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	ids := make([]string, 0, len(req))
+	for range req {
+		ids = append(ids, uuid.New().String())
+	}
+
+	c.JSON(201, gin.H{
+		"success":    true,
+		"created":    len(ids),
+		"product_ids": ids,
+		"processed_at": time.Now(),
+		"message":    "Bulk product creation completed",
 	})
 }
 
@@ -117,34 +174,21 @@ func (h *BulkOperationsHandler) BulkDelete(c *gin.Context) {
 		return
 	}
 	
-	// TODO: Soft delete WHERE id IN (req.IDs)
+	if len(req.IDs) == 0 {
+		c.JSON(400, gin.H{"error": "No IDs provided", "success": false})
+		return
+	}
+	
+	err := h.db.Exec("UPDATE "+req.Entity+" SET deleted_at = NOW() WHERE id IN (?)", req.IDs).Error
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
 	
 	c.JSON(200, gin.H{
 		"success": true,
 		"deleted": len(req.IDs),
 		"entity": req.Entity,
-	})
-}
-
-// POST /api/erp/bulk/products
-func (h *BulkOperationsHandler) BulkCreateProducts(c *gin.Context) {
-	var req []map[string]interface{}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	ids := make([]string, 0, len(req))
-	for range req {
-		ids = append(ids, uuid.New().String())
-	}
-
-	c.JSON(201, gin.H{
-		"success":    true,
-		"created":    len(ids),
-		"product_ids": ids,
-		"processed_at": time.Now(),
-		"message":    "Bulk product creation completed",
 	})
 }
 

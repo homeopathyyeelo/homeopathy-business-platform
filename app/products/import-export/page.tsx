@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, Download, FileText, FileSpreadsheet, AlertCircle, CheckCircle, Loader2, Zap } from "lucide-react";
@@ -11,7 +12,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { useProductMutations, useProducts } from "@/lib/hooks/products";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useProductMutations, useProducts, useProductBrands } from "@/lib/hooks/products";
 import { authFetch } from '@/lib/api/fetch-utils';
 
 interface LogMessage {
@@ -25,9 +27,10 @@ interface LogMessage {
 
 export default function ImportExportPage() {
   const { toast } = useToast();
-  const [importMode, setImportMode] = useState<'standard' | 'advanced'>('advanced');
   const [isImporting, setIsImporting] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
+  const [importMode, setImportMode] = useState<'standard' | 'advanced'>('advanced');
+  const [selectedBrandId, setSelectedBrandId] = useState<string>('');
   const [importResults, setImportResults] = useState<{
     success: number;
     failed: number;
@@ -45,6 +48,7 @@ export default function ImportExportPage() {
   const logsEndRef = useRef<HTMLDivElement>(null);
   const { importProducts } = useProductMutations();
   const { data: products = [] } = useProducts();
+  const { data: brands = [] } = useProductBrands();
 
   // Auto-scroll logs
   useEffect(() => {
@@ -160,11 +164,23 @@ export default function ImportExportPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      
+      // Add selected brand_id to form data
+      if (selectedBrandId) {
+        formData.append('brand_id', selectedBrandId);
+      }
 
-      // Start SSE connection
-      const response = await authFetch('http://localhost:3005/api/erp/products/import/stream', {
+      // Start SSE connection - use fetch directly for streaming, not authFetch
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      const headers: HeadersInit = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch('http://localhost:3005/api/erp/products/import/stream', {
         method: 'POST',
         body: formData,
+        headers,
       });
 
       if (!response.ok) {
@@ -381,32 +397,58 @@ export default function ImportExportPage() {
               </Alert>
 
               <div className="space-y-4">
-                <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-8 h-8 mb-4 text-gray-500" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click to upload</span> or drag and drop
-                      </p>
-                      <p className="text-xs text-gray-500">CSV or Excel files (MAX. 10MB)</p>
-                    </div>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      className="hidden"
-                      accept=".csv,.xlsx,.xls"
-                      onChange={handleFileUpload}
-                      disabled={isImporting}
-                    />
-                  </label>
+                {/* Brand Selection */}
+                <div>
+                  <Label htmlFor="brand-select" className="text-sm font-medium">
+                    Select Brand <span className="text-red-500">*</span>
+                  </Label>
+                  <Select value={selectedBrandId} onValueChange={setSelectedBrandId}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select a brand" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brands?.map((brand: any) => (
+                        <SelectItem key={brand.id} value={brand.id}>
+                          {brand.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {!selectedBrandId && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Please select a brand before uploading a file
+                    </p>
+                  )}
                 </div>
 
+                {/* File Upload */}
+                <div>
+                  <Label htmlFor="file-upload" className="text-sm font-medium">
+                    Upload File <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept=".csv,.xlsx,.xls"
+                    disabled={isImporting || !selectedBrandId}
+                    className="cursor-pointer mt-2"
+                  />
+                  {!selectedBrandId && (
+                    <p className="text-sm text-red-500 mt-1">
+                      Select a brand first
+                    </p>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
                 <div className="flex gap-4">
                   <Button variant="outline" onClick={downloadTemplate}>
                     <FileText className="w-4 h-4 mr-2" />
                     Download Template
                   </Button>
-                  <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                  <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={!selectedBrandId}>
                     <Upload className="w-4 h-4 mr-2" />
                     Select File
                   </Button>

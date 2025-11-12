@@ -2,10 +2,18 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Paths that don't require authentication
-const publicPaths = ['/login', '/register', '/forgot-password'];
+const publicPaths = ['/login', '/register', '/forgot-password', '/unauthorized'];
+
+// API routes that should not be redirected
+const apiPaths = ['/api'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Skip middleware for API routes
+  if (apiPaths.some(path => pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
 
   // Check if path is public
   const isPublicPath = publicPaths.some(path => pathname.startsWith(path));

@@ -122,6 +122,9 @@ func (h *StreamingImportHandler) StreamingImport(c *gin.Context) {
 		})
 		return
 	}
+	
+	// Get brand_id from form (optional)
+	brandID := c.PostForm("brand_id")
 
 	totalRows := len(rows) - 1 // exclude header
 	h.sendProgress(c, ProgressMessage{
@@ -132,11 +135,11 @@ func (h *StreamingImportHandler) StreamingImport(c *gin.Context) {
 	})
 
 	// Validate and process with streaming
-	h.streamingProcess(c, rows, totalRows)
+	h.streamingProcess(c, rows, totalRows, brandID)
 }
 
 // streamingProcess processes rows with real-time updates
-func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]string, totalRows int) {
+func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]string, totalRows int, brandID string) {
 	startTime := time.Now()
 	inserted := 0
 	updated := 0
@@ -202,6 +205,15 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 			})
 			continue
 		}
+		
+		// Override brand if brand_id was provided
+		if brandID != "" && product.Brand == "" {
+			// Look up brand name by ID
+			var brand models.Brand
+			if err := h.db.First(&brand, "id = ?", brandID).Error; err == nil {
+				product.Brand = brand.Name
+			}
+		}
 
 		// Auto-create masters with transaction
 		if err := h.ensureMasters(c, &product, lineNum); err != nil {
@@ -220,9 +232,10 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 		// Insert/Update product
 		isNew, err := h.upsertProduct(product)
 		if err != nil {
-			errors = append(errors, fmt.Sprintf("Row %d: %s", lineNum, err.Error()))
+			errors = append(errors, fmt.Sprintf("Row %d: %s", rowNum, err.Error()))
 			skipped++
 			h.sendProgress(c, ProgressMessage{
+// ...
 				Type:       "log",
 				Message:    fmt.Sprintf("❌ Row %d: %s - %s", lineNum, product.Name, err.Error()),
 				Percentage: percentage,
@@ -422,12 +435,13 @@ func (h *StreamingImportHandler) ensureMasters(c *gin.Context, product *ProductI
 	// Auto-create Form and get ID
 	if product.Form != "" {
 		var form models.Form
-		err := tx.Where("name = ?", product.Form).First(&form).Error
+		formCode := strings.ToUpper(strings.ReplaceAll(product.Form, " ", "_"))
+		err := tx.Where("name = ? OR code = ?", product.Form, formCode).First(&form).Error
 
 		if err == gorm.ErrRecordNotFound {
 			form.ID = uuid.New().String()
 			form.Name = product.Form
-			form.Code = strings.ToUpper(strings.ReplaceAll(product.Form, " ", "_"))
+			form.Code = formCode
 			form.FormType = "LIQUID" // Default type
 			form.IsActive = true
 			form.CreatedAt = time.Now()
@@ -497,15 +511,42 @@ func (h *StreamingImportHandler) parseRow(row []string, colIdx map[string]int, l
 		return ProductImportTemp{}, "Name is required"
 	}
 
+	// Get raw values from CSV
+	potency := getValue("potency")
+	size := getValue("size")
+	
+	// Auto-detect category and form from potency and size
+	category, form := autoDetectCategoryAndForm(potency, size)
+	
+	// Override with explicit values if provided in CSV
+	if csvCategory := getValue("category"); csvCategory != "" {
+		category = csvCategory
+	}
+	if csvForm := getValue("form"); csvForm != "" {
+		form = csvForm
+	}
+	
+	// Map Size column to PackSize
+	packSize := getValue("pack_size")
+	if packSize == "" {
+		packSize = size // Use Size if PackSize not provided
+	}
+	
+	// Map Qty column to CurrentStock
+	currentStock := parseInt(getValue("current_stock"))
+	if currentStock == 0 {
+		currentStock = parseInt(getValue("qty"))
+	}
+
 	product := ProductImportTemp{
 		SKU:          sku,
 		Name:         name,
-		Category:     getValue("category"),
+		Category:     category,
 		Type:         getValue("type"),
 		Brand:        getValue("brand"),
-		Potency:      getValue("potency"),
-		Form:         getValue("form"),
-		PackSize:     getValue("pack_size"),
+		Potency:      potency,
+		Form:         form,
+		PackSize:     packSize,
 		UOM:          getValue("uom"),
 		CostPrice:    parseFloat(getValue("cost_price")),
 		SellingPrice: parseFloat(getValue("selling_price")),
@@ -518,12 +559,71 @@ func (h *StreamingImportHandler) parseRow(row []string, colIdx map[string]int, l
 		ReorderLevel: parseInt(getValue("reorder_level")),
 		MinStock:     parseInt(getValue("min_stock")),
 		MaxStock:     parseInt(getValue("max_stock")),
-		CurrentStock: parseInt(getValue("current_stock")),
+		CurrentStock: currentStock,
 		IsActive:     parseBool(getValue("is_active")),
 		Tags:         getValue("tags"),
 	}
 
 	return product, ""
+}
+
+// autoDetectCategoryAndForm intelligently detects category and form from potency and size codes
+func autoDetectCategoryAndForm(potency, size string) (string, string) {
+	potency = strings.ToUpper(strings.TrimSpace(potency))
+	size = strings.ToLower(strings.TrimSpace(size))
+	
+	// Bio Combination: BC1, BC2, BC28, etc.
+	if strings.HasPrefix(potency, "BC") {
+		return "Bio Combination", "Tablet"
+	}
+	
+	// Mother Tincture: MT, Q
+	if potency == "MT" || potency == "Q" || potency == "Θ" {
+		return "Mother Tincture", "Liquid"
+	}
+	
+	// Dilutions: CM, CH, M, LM with ml
+	if (potency == "CM" || potency == "CH" || potency == "M" || potency == "LM" || strings.HasSuffix(potency, "C") || strings.HasSuffix(potency, "M")) && strings.Contains(size, "ml") {
+		return "Dilutions", "Liquid"
+	}
+	
+	// Bio Chemics / Biochemic Salts: Potencies with X and size with gm
+	if strings.Contains(potency, "X") && strings.Contains(size, "gm") {
+		return "Bio Chemics", "Tablet"
+	}
+	
+	// Drops: R1, R2, RN prefix
+	if strings.HasPrefix(potency, "R") {
+		return "Drops", "Liquid"
+	}
+	
+	// Syrup
+	if strings.Contains(strings.ToLower(potency), "syrup") || strings.Contains(size, "syrup") {
+		return "Syrup", "Liquid"
+	}
+	
+	// Spray
+	if strings.Contains(strings.ToLower(potency), "spray") || strings.Contains(size, "spray") {
+		return "Spray", "Liquid"
+	}
+	
+	// Ointment / Gel / Cream: LP or size indicators
+	if potency == "LP" || strings.Contains(size, "ointment") || strings.Contains(size, "gel") || strings.Contains(size, "cream") {
+		return "External", "Ointment"
+	}
+	
+	// Default: Dilutions with Liquid if contains ml
+	if strings.Contains(size, "ml") {
+		return "Dilutions", "Liquid"
+	}
+	
+	// Default: Bio Chemics with Tablet if contains gm
+	if strings.Contains(size, "gm") || strings.Contains(size, "g") {
+		return "Bio Chemics", "Tablet"
+	}
+	
+	// Final fallback
+	return "Dilutions", "Liquid"
 }
 
 // checkDBConnection verifies database connectivity
@@ -540,7 +640,7 @@ func (h *StreamingImportHandler) checkDBConnection() error {
 	return nil
 }
 
-// upsertProduct inserts or updates a product using the flat TEXT schema
+// upsertProduct inserts or updates a product using the Product model with foreign keys
 func (h *StreamingImportHandler) upsertProduct(productTemp ProductImportTemp) (bool, error) {
 	// Start transaction
 	tx := h.db.Begin()
@@ -550,74 +650,42 @@ func (h *StreamingImportHandler) upsertProduct(productTemp ProductImportTemp) (b
 		}
 	}()
 
-	// Build product map for flat schema (TEXT fields, not FKs)
-	productData := map[string]interface{}{
-		"sku":            productTemp.SKU,
-		"name":           productTemp.Name,
-		"category":       productTemp.Category,
-		"brand":          productTemp.Brand,
-		"potency":        productTemp.Potency,
-		"form":           productTemp.Form,
-		"pack_size":      productTemp.PackSize,
-		"uom":            productTemp.UOM,
-		"cost_price":     productTemp.CostPrice,
-		"selling_price":  productTemp.SellingPrice,
-		"mrp":            productTemp.MRP,
-		"tax_percent":    productTemp.TaxPercent,
-		"hsn_code":       productTemp.HSNCode,
-		"manufacturer":   productTemp.Manufacturer,
-		"current_stock":  productTemp.CurrentStock,
-		"min_stock":      productTemp.MinStock,
-		"max_stock":      productTemp.MaxStock,
-		"reorder_level":  productTemp.ReorderLevel,
-		"is_active":      productTemp.IsActive,
-		"updated_at":     time.Now(),
+	// Convert to Product model
+	product := h.convertToProduct(productTemp)
+	
+	// Lookup and set master IDs (category, brand, potency, form)
+	if err := h.lookupMasterIDs(tx, &product, productTemp); err != nil {
+		tx.Rollback()
+		return false, fmt.Errorf("master lookup failed: %v", err)
 	}
 
 	// Check if product exists
-	var count int64
-	tx.Table("products").Where("sku = ?", productTemp.SKU).Count(&count)
-
+	var existing models.Product
+	err := tx.Where("sku = ?", productTemp.SKU).First(&existing).Error
+	
 	var isNew bool
-
-	if count == 0 {
-		// Insert new product using raw SQL
-		productData["id"] = uuid.New().String()
-		productData["created_at"] = time.Now()
+	
+	if err == gorm.ErrRecordNotFound {
+		// Insert new product
+		product.ID = uuid.New().String()
+		product.CreatedAt = time.Now()
+		product.UpdatedAt = time.Now()
 		
-		err := tx.Exec(`
-			INSERT INTO products (id, sku, name, category, brand, potency, form, pack_size, uom, 
-				cost_price, selling_price, mrp, tax_percent, hsn_code, manufacturer, 
-				current_stock, min_stock, max_stock, reorder_level, is_active, created_at, updated_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		`, productData["id"], productData["sku"], productData["name"], productData["category"],
-			productData["brand"], productData["potency"], productData["form"], productData["pack_size"],
-			productData["uom"], productData["cost_price"], productData["selling_price"], productData["mrp"],
-			productData["tax_percent"], productData["hsn_code"], productData["manufacturer"],
-			productData["current_stock"], productData["min_stock"], productData["max_stock"],
-			productData["reorder_level"], productData["is_active"], productData["created_at"], productData["updated_at"]).Error
-
-		if err != nil {
+		if err := tx.Create(&product).Error; err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("insert failed: %v", err)
 		}
 		isNew = true
+	} else if err != nil {
+		tx.Rollback()
+		return false, fmt.Errorf("query failed: %v", err)
 	} else {
-		// Update existing product using raw SQL
-		err := tx.Exec(`
-			UPDATE products SET 
-				name = ?, category = ?, brand = ?, potency = ?, form = ?, pack_size = ?, uom = ?,
-				cost_price = ?, selling_price = ?, mrp = ?, tax_percent = ?, hsn_code = ?, manufacturer = ?,
-				current_stock = ?, min_stock = ?, max_stock = ?, reorder_level = ?, is_active = ?, updated_at = ?
-			WHERE sku = ?
-		`, productData["name"], productData["category"], productData["brand"], productData["potency"],
-			productData["form"], productData["pack_size"], productData["uom"], productData["cost_price"],
-			productData["selling_price"], productData["mrp"], productData["tax_percent"], productData["hsn_code"],
-			productData["manufacturer"], productData["current_stock"], productData["min_stock"],
-			productData["max_stock"], productData["reorder_level"], productData["is_active"],
-			productData["updated_at"], productData["sku"]).Error
-
-		if err != nil {
+		// Update existing product
+		product.ID = existing.ID
+		product.CreatedAt = existing.CreatedAt
+		product.UpdatedAt = time.Now()
+		
+		if err := tx.Model(&existing).Updates(&product).Error; err != nil {
 			tx.Rollback()
 			return false, fmt.Errorf("update failed: %v", err)
 		}

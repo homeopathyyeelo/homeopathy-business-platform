@@ -5,10 +5,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type DashboardHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
 type DashboardStats struct {
@@ -71,7 +72,7 @@ type QuickAction struct {
 	Priority    string `json:"priority"`
 }
 
-func NewDashboardHandler(db interface{}) *DashboardHandler {
+func NewDashboardHandler(db *gorm.DB) *DashboardHandler {
 	return &DashboardHandler{db: db}
 }
 
@@ -135,27 +136,54 @@ func (h *DashboardHandler) GetSystemHealth(c *gin.Context) {
 
 // GET /api/erp/dashboard/stats
 func (h *DashboardHandler) GetStats(c *gin.Context) {
-	_ = c.Query("shop_id") // TODO: use for filtering
+	var stats DashboardStats
 
-	// TODO: Query real data from database
-	stats := DashboardStats{
-		TotalSales:      524750.50,
-		TotalPurchases:  328920.00,
-		TotalCustomers:  1247,
-		TotalProducts:   3892,
-		LowStockItems:   23,
-		ExpiringItems:   15,
-		PendingOrders:   8,
-		TodayRevenue:    12450.00,
-		MonthRevenue:    245670.00,
-		YearRevenue:     2847520.00,
-		ActiveUsers:     12,
-		PendingInvoices: 5,
-	}
+	// Real sales query
+	h.db.Table("sales_invoices").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TotalSales)
+	
+	// Real purchases query
+	h.db.Table("purchase_orders").Where("status = 'COMPLETED'").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TotalPurchases)
+	
+	// Real customers count
+	var customerCount int64
+	h.db.Table("customers").Where("is_active = true").Count(&customerCount)
+	stats.TotalCustomers = int(customerCount)
+	
+	// Real products count
+	var productCount int64
+	h.db.Table("products").Where("is_active = true").Count(&productCount)
+	stats.TotalProducts = int(productCount)
+	
+	// Low stock items
+	h.db.Raw(`SELECT COUNT(*) FROM (SELECT p.id FROM products p LEFT JOIN inventory_batches ib ON ib.product_id = p.id WHERE p.is_active = true GROUP BY p.id, p.min_stock_level HAVING COALESCE(SUM(ib.available_quantity), 0) < p.min_stock_level) as low_stock`).Scan(&stats.LowStockItems)
+	
+	// Expiring items (next 90 days)
+	h.db.Raw(`SELECT COUNT(DISTINCT ib.id) FROM inventory_batches ib WHERE ib.expiry_date IS NOT NULL AND ib.expiry_date <= CURRENT_DATE + INTERVAL '90 days' AND ib.expiry_date >= CURRENT_DATE AND ib.available_quantity > 0 AND ib.is_active = true`).Scan(&stats.ExpiringItems)
+	
+	// Pending orders
+	h.db.Table("sales_orders").Where("status = 'PENDING'").Count(&customerCount)
+	stats.PendingOrders = int(customerCount)
+	
+	// Today revenue
+	h.db.Table("sales_invoices").Where("DATE(created_at) = CURRENT_DATE").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TodayRevenue)
+	
+	// Month revenue
+	h.db.Table("sales_invoices").Where("EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM created_at) = EXTRACT(MONTH FROM CURRENT_DATE)").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.MonthRevenue)
+	
+	// Year revenue
+	h.db.Table("sales_invoices").Where("EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.YearRevenue)
+	
+	// Active users
+	h.db.Table("users").Where("is_active = true").Count(&customerCount)
+	stats.ActiveUsers = int(customerCount)
+	
+	// Pending invoices
+	h.db.Table("sales_invoices").Where("payment_status = 'PENDING'").Count(&customerCount)
+	stats.PendingInvoices = int(customerCount)
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
 		"data":    stats,
+		"success": true,
 	})
 }
 

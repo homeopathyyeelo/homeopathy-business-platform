@@ -74,7 +74,7 @@ curl -sSL "https://github.com/bufbuild/buf/releases/download/v1.28.1/buf-$(uname
 
 ```bash
 # Set database URL
-export DATABASE_URL="postgresql://user:pass@localhost:5432/mydb"
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"
 
 # Apply all migrations
 ./bin/migrate.sh up

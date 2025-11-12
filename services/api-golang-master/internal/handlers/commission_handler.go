@@ -3,10 +3,11 @@ package handlers
 import (
 	"time"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type CommissionHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
 type CommissionRule struct {
@@ -31,7 +32,7 @@ type CommissionReport struct {
 	Pending      float64 `json:"pending"`
 }
 
-func NewCommissionHandler(db interface{}) *CommissionHandler {
+func NewCommissionHandler(db *gorm.DB) *CommissionHandler {
 	return &CommissionHandler{db: db}
 }
 
@@ -43,9 +44,18 @@ func (h *CommissionHandler) CreateRule(c *gin.Context) {
 		return
 	}
 	
-	// TODO: Insert to commission_rules table
 	req.ID = "comm-rule-" + time.Now().Format("20060102150405")
 	req.CreatedAt = time.Now()
+	
+	err := h.db.Exec(`
+		INSERT INTO commission_rules (id, salesman_id, rule_type, rate, created_at)
+		VALUES (?, ?, ?, ?, ?)
+	`, req.ID, req.SalesmanID, req.RuleType, req.Percentage, req.CreatedAt).Error
+	
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
 	
 	c.JSON(200, gin.H{
 		"success": true,
@@ -123,11 +133,23 @@ func (h *CommissionHandler) PayCommission(c *gin.Context) {
 		return
 	}
 	
-	// TODO: Insert to commission_payments table
+	paymentID := "comm-pay-" + time.Now().Format("20060102150405")
+	
+	err := h.db.Exec(`
+		INSERT INTO commission_payments (id, salesman_id, amount, status, payment_date, created_at)
+		VALUES (?, ?, ?, 'PAID', NOW(), NOW())
+	`, paymentID, req.SalesmanID, req.Amount).Error
+	
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+	
 	payment := gin.H{
-		"id": "comm-pay-" + time.Now().Format("20060102150405"),
+		"id": paymentID,
 		"salesman_id": req.SalesmanID,
 		"amount": req.Amount,
+		"status": "paid",
 		"payment_mode": req.PaymentMode,
 		"paid_at": time.Now(),
 		"notes": req.Notes,

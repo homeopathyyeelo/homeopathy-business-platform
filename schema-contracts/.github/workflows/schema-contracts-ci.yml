@@ -109,7 +109,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     
     steps:
       - name: Checkout code
@@ -123,21 +123,21 @@ jobs:
       - name: Run migrations
         working-directory: schema-contracts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           chmod +x bin/migrate.sh
           ./bin/migrate.sh up
       
       - name: Verify migrations
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           psql $DATABASE_URL -c "\dt" | grep -E "users|products|orders" || exit 1
       
       - name: Check migration status
         working-directory: schema-contracts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:543/yeelo_homeopathy
         run: |
           ./bin/migrate.sh status
 
@@ -158,7 +158,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5433
     
     steps:
       - name: Checkout code
@@ -176,7 +176,7 @@ jobs:
       - name: Run migrations
         working-directory: schema-contracts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           chmod +x bin/migrate.sh
           ./bin/migrate.sh up
@@ -184,7 +184,7 @@ jobs:
       - name: Run seeders (dry-run)
         working-directory: schema-contracts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           chmod +x bin/seed.js
           node bin/seed.js --db "$DATABASE_URL" --all --dry-run
@@ -192,13 +192,13 @@ jobs:
       - name: Run seeders
         working-directory: schema-contracts
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           node bin/seed.js --db "$DATABASE_URL" --all
       
       - name: Verify seeded data
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy
         run: |
           echo "Checking seeded data..."
           psql $DATABASE_URL -c "SELECT COUNT(*) FROM users;"
