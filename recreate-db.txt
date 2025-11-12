@@ -1,0 +1,15 @@
+================================================
+  RECREATE DATABASE - FIXED VERSION
+================================================
+
+Run this command in your terminal:
+
+sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'yeelo_homeopathy' AND pid <> pg_backend_pid();" && sudo -u postgres psql -c "DROP DATABASE IF EXISTS yeelo_homeopathy;" && sudo -u postgres psql -c "CREATE DATABASE yeelo_homeopathy;" && sudo -u postgres psql -d yeelo_homeopathy -f /var/www/homeopathy-business-platform/database/migrations/001_init.sql && echo "✅ Database created successfully!"
+
+================================================
+
+Then restart platform:
+
+cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 & npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+================================================

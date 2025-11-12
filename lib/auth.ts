@@ -801,3 +801,18 @@ export async function loadUserFromToken(token: string): Promise<User | null> {
   if (!authUser) return null
   return mapAuthenticatedUser(authUser)
 }
+
+// Token verification
+export async function verifyToken(token: string): Promise<any> {
+  try {
+    return await validateAccessToken(token);
+  } catch (error) {
+    return null;
+  }
+}
+
+// Change password function
+export async function changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
+  // This should be implemented in the auth service
+  return false;
+}

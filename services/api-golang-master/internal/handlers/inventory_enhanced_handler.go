@@ -13,11 +13,11 @@ import (
 
 // EnhancedInventoryHandler handles enhanced inventory operations
 type EnhancedInventoryHandler struct {
-	db interface{}
+	db *gorm.DB
 }
 
 // NewEnhancedInventoryHandler creates a new enhanced inventory handler
-func NewEnhancedInventoryHandler(db interface{}) *EnhancedInventoryHandler {
+func NewEnhancedInventoryHandler(db *gorm.DB) *EnhancedInventoryHandler {
 	return &EnhancedInventoryHandler{db: db}
 }
 
@@ -26,60 +26,61 @@ func NewEnhancedInventoryHandler(db interface{}) *EnhancedInventoryHandler {
 func (h *EnhancedInventoryHandler) GetEnhancedStockList(c *gin.Context) {
 	var stocks []models.StockSummaryResponse
 
-	query := h.db.(*gorm.DB).Table("inventory_stock is_").
+	query := h.db.Table("inventory_batches ib").
 		Select(`
 			p.name as product_name,
 			p.sku,
-			p.category,
-			p.brand,
-			is_.batch_no,
-			is_.qty_in,
-			is_.qty_out,
-			is_.balance,
-			is_.purchase_rate,
-			is_.mrp,
-			is_.mfg_date,
-			is_.exp_date,
-			w.name as warehouse_name,
-			is_.status,
-			is_.last_txn_date,
+			c.name as category,
+			b.name as brand,
+			ib.batch_number as batch_no,
+			ib.available_quantity as qty_in,
+			0 as qty_out,
+			ib.available_quantity as balance,
+			ib.unit_cost as purchase_rate,
+			ib.mrp,
+			ib.manufacturing_date as mfg_date,
+			ib.expiry_date as exp_date,
+			'Main Warehouse' as warehouse_name,
+			CASE WHEN ib.is_active THEN 'active' ELSE 'inactive' END as status,
+			ib.updated_at as last_txn_date,
 			CASE
-				WHEN is_.exp_date < CURRENT_DATE THEN 'expired'
-				WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'expiring_7d'
-				WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'
-				WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '90 days' THEN 'expiring_3m'
+				WHEN ib.expiry_date < CURRENT_DATE THEN 'expired'
+				WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'expiring_7d'
+				WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'
+				WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '90 days' THEN 'expiring_3m'
 				ELSE 'fresh'
 			END as expiry_status,
 			CASE
-				WHEN is_.purchase_rate > 0 AND is_.mrp > 0
-				THEN ROUND(((is_.mrp - is_.purchase_rate) / is_.purchase_rate * 100)::numeric, 2)
+				WHEN ib.unit_cost > 0 AND ib.mrp > 0
+				THEN ROUND(((ib.mrp - ib.unit_cost) / ib.unit_cost * 100)::numeric, 2)
 				ELSE 0
 			END as margin_percent
 		`).
-		Joins("LEFT JOIN products p ON p.id = is_.product_id").
-		Joins("LEFT JOIN warehouses w ON w.id = is_.warehouse_id").
-		Where("is_.balance > 0").
-		Order("is_.exp_date ASC NULLS LAST, is_.batch_no")
+		Joins("LEFT JOIN products p ON p.id = ib.product_id").
+		Joins("LEFT JOIN categories c ON c.id = p.category_id").
+		Joins("LEFT JOIN brands b ON b.id = p.brand_id").
+		Where("ib.available_quantity > 0 AND ib.is_active = true").
+		Order("ib.expiry_date ASC NULLS LAST, ib.batch_number")
 
 	// Apply filters
 	if productID := c.Query("product_id"); productID != "" {
-		query = query.Where("is_.product_id = ?", productID)
+		query = query.Where("ib.product_id = ?", productID)
 	}
 
 	if category := c.Query("category"); category != "" {
-		query = query.Where("p.category ILIKE ?", "%"+category+"%")
+		query = query.Where("c.name ILIKE ?", "%"+category+"%")
 	}
 
 	if batchNo := c.Query("batch_no"); batchNo != "" {
-		query = query.Where("is_.batch_no ILIKE ?", "%"+batchNo+"%")
+		query = query.Where("ib.batch_number ILIKE ?", "%"+batchNo+"%")
 	}
 
 	if expiryStatus := c.Query("expiry_status"); expiryStatus != "" {
 		query = query.Where("CASE\n"+
-			"WHEN is_.exp_date < CURRENT_DATE THEN 'expired'\n"+
-			"WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'expiring_7d'\n"+
-			"WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'\n"+
-			"WHEN is_.exp_date <= CURRENT_DATE + INTERVAL '90 days' THEN 'expiring_3m'\n"+
+			"WHEN ib.expiry_date < CURRENT_DATE THEN 'expired'\n"+
+			"WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'expiring_7d'\n"+
+			"WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_1m'\n"+
+			"WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '90 days' THEN 'expiring_3m'\n"+
 			"ELSE 'fresh'\n"+
 			"END = ?", expiryStatus)
 	}
@@ -113,7 +114,7 @@ func (h *EnhancedInventoryHandler) AddManualStock(c *gin.Context) {
 	}
 
 	// Start transaction
-	tx := h.db.(*gorm.DB).Begin()
+	tx := h.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -223,7 +224,7 @@ func (h *EnhancedInventoryHandler) AddManualStock(c *gin.Context) {
 func (h *EnhancedInventoryHandler) GetStockTransactions(c *gin.Context) {
 	var transactions []models.EnhancedStockTransaction
 
-	query := h.db.(*gorm.DB).Preload("Product").Preload("Batch").Preload("Warehouse").Preload("Creator")
+	query := h.db.Preload("Product").Preload("Batch").Preload("Warehouse").Preload("Creator")
 
 	// Apply filters
 	if productID := c.Query("product_id"); productID != "" {
@@ -278,7 +279,7 @@ func (h *EnhancedInventoryHandler) GetStockTransactions(c *gin.Context) {
 
 	// Get total count
 	var total int64
-	countQuery := h.db.(*gorm.DB).Model(&models.EnhancedStockTransaction{})
+	countQuery := h.db.Model(&models.EnhancedStockTransaction{})
 	if productID := c.Query("product_id"); productID != "" {
 		if pid, err := strconv.ParseUint(productID, 10, 32); err == nil {
 			countQuery = countQuery.Where("product_id = ?", pid)
@@ -298,51 +299,103 @@ func (h *EnhancedInventoryHandler) GetStockTransactions(c *gin.Context) {
 	})
 }
 
-// GetLowStockAlerts returns low stock alerts
-// GET /api/inventory/alerts/low-stock
 func (h *EnhancedInventoryHandler) GetLowStockAlerts(c *gin.Context) {
-	var alerts []models.EnhancedLowStockAlert
+	type AlertItem struct {
+		ProductID    string  `json:"product_id"`
+		ProductName  string  `json:"product_name"`
+		SKU          string  `json:"sku"`
+		CurrentStock float64 `json:"current_stock"`
+		MinStock     int     `json:"min_stock"`
+		Status       string  `json:"status"`
+	}
+	var alerts []AlertItem
 
-	query := h.db.(*gorm.DB).Preload("Product").Preload("Warehouse").
-		Where("is_resolved = ?", false).
-		Order("created_at DESC")
+	err := h.db.Raw(`
+		SELECT 
+			p.id as product_id,
+			p.name as product_name,
+			p.sku,
+			COALESCE(SUM(ib.available_quantity), 0) as current_stock,
+			p.min_stock as min_stock,
+			CASE 
+				WHEN COALESCE(SUM(ib.available_quantity), 0) = 0 THEN 'out_of_stock'
+				WHEN COALESCE(SUM(ib.available_quantity), 0) < p.min_stock * 0.5 THEN 'critical'
+				ELSE 'low'
+			END as status
+		FROM products p
+		LEFT JOIN inventory_batches ib ON ib.product_id = p.id AND ib.is_active = true
+		WHERE p.is_active = true
+		GROUP BY p.id, p.name, p.sku, p.min_stock
+		HAVING COALESCE(SUM(ib.available_quantity), 0) < p.min_stock
+		ORDER BY current_stock ASC
+		LIMIT 100
+	`).Scan(&alerts).Error
 
-	if err := query.Find(&alerts).Error; err != nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   err.Error(),
 			"success": false,
-			"error":   "Failed to fetch low stock alerts: " + err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
 		"data":    alerts,
-		"total":   len(alerts),
+		"success": true,
 	})
 }
 
 // GetExpiryAlerts returns expiry alerts
 // GET /api/inventory/alerts/expiry
 func (h *EnhancedInventoryHandler) GetExpiryAlerts(c *gin.Context) {
-	var alerts []models.EnhancedExpiryAlert
+	type AlertItem struct {
+		ProductID   string    `json:"product_id"`
+		ProductName string    `json:"product_name"`
+		SKU         string    `json:"sku"`
+		BatchNo     string    `json:"batch_no"`
+		ExpiryDate  time.Time `json:"expiry_date"`
+		Quantity    float64   `json:"quantity"`
+		DaysLeft    int       `json:"days_left"`
+		Status      string    `json:"status"`
+	}
+	var alerts []AlertItem
 
-	query := h.db.(*gorm.DB).Preload("Product").Preload("Warehouse").
-		Where("is_resolved = ?", false).
-		Order("days_until_expiry ASC")
+	err := h.db.Raw(`
+		SELECT 
+			p.id as product_id,
+			p.name as product_name,
+			p.sku,
+			ib.batch_number as batch_no,
+			ib.expiry_date,
+			ib.available_quantity as quantity,
+			EXTRACT(DAY FROM (ib.expiry_date - CURRENT_DATE))::integer as days_left,
+			CASE
+				WHEN ib.expiry_date < CURRENT_DATE THEN 'expired'
+				WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'critical'
+				WHEN ib.expiry_date <= CURRENT_DATE + INTERVAL '30 days' THEN 'warning'
+				ELSE 'normal'
+			END as status
+		FROM products p
+		INNER JOIN inventory_batches ib ON ib.product_id = p.id
+		WHERE ib.expiry_date IS NOT NULL
+			AND ib.expiry_date <= CURRENT_DATE + INTERVAL '90 days'
+			AND ib.available_quantity > 0
+			AND ib.is_active = true
+		ORDER BY ib.expiry_date ASC
+		LIMIT 100
+	`).Scan(&alerts).Error
 
-	if err := query.Find(&alerts).Error; err != nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   err.Error(),
 			"success": false,
-			"error":   "Failed to fetch expiry alerts: " + err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
 		"data":    alerts,
-		"total":   len(alerts),
+		"success": true,
 	})
 }
 
@@ -351,28 +404,30 @@ func (h *EnhancedInventoryHandler) GetExpiryAlerts(c *gin.Context) {
 func (h *EnhancedInventoryHandler) GetStockValuation(c *gin.Context) {
 	var valuations []gin.H
 
-	query := h.db.(*gorm.DB).Raw(`
+	query := h.db.Raw(`
 		SELECT
 			p.name as product_name,
-			p.category,
-			p.brand,
-			COUNT(DISTINCT is_.batch_no) as total_batches,
-			SUM(is_.qty_in) as total_qty_in,
-			SUM(is_.qty_out) as total_qty_out,
-			SUM(is_.balance) as current_balance,
-			AVG(is_.purchase_rate) as avg_purchase_rate,
-			AVG(is_.mrp) as avg_mrp,
-			SUM(is_.balance * is_.purchase_rate) as total_cost_value,
-			SUM(is_.balance * is_.mrp) as total_selling_value,
+			c.name as category,
+			b.name as brand,
+			COUNT(DISTINCT ib.batch_number) as total_batches,
+			SUM(ib.available_quantity) as total_qty_in,
+			0 as total_qty_out,
+			SUM(ib.available_quantity) as current_balance,
+			AVG(ib.unit_cost) as avg_purchase_rate,
+			AVG(ib.mrp) as avg_mrp,
+			SUM(ib.available_quantity * ib.unit_cost) as total_cost_value,
+			SUM(ib.available_quantity * ib.mrp) as total_selling_value,
 			CASE
-				WHEN SUM(is_.balance * is_.purchase_rate) > 0
-				THEN ROUND(((SUM(is_.balance * is_.mrp) - SUM(is_.balance * is_.purchase_rate)) / SUM(is_.balance * is_.purchase_rate) * 100)::numeric, 2)
+				WHEN SUM(ib.available_quantity * ib.unit_cost) > 0
+				THEN ROUND(((SUM(ib.available_quantity * ib.mrp) - SUM(ib.available_quantity * ib.unit_cost)) / SUM(ib.available_quantity * ib.unit_cost) * 100)::numeric, 2)
 				ELSE 0
 			END as overall_margin_percent
-		FROM inventory_stock is_
-		LEFT JOIN products p ON p.id = is_.product_id
-		WHERE is_.balance > 0
-		GROUP BY p.id, p.name, p.category, p.brand
+		FROM inventory_batches ib
+		LEFT JOIN products p ON p.id = ib.product_id
+		LEFT JOIN categories c ON c.id = p.category_id
+		LEFT JOIN brands b ON b.id = p.brand_id
+		WHERE ib.available_quantity > 0 AND ib.is_active = true
+		GROUP BY p.id, p.name, c.name, b.name
 		ORDER BY total_cost_value DESC
 	`)
 
@@ -417,7 +472,7 @@ func (h *EnhancedInventoryHandler) GetStockValuation(c *gin.Context) {
 func (h *EnhancedInventoryHandler) ResolveLowStockAlert(c *gin.Context) {
 	alertID := c.Param("id")
 
-	if err := h.db.(*gorm.DB).Model(&models.EnhancedLowStockAlert{}).
+	if err := h.db.Model(&models.EnhancedLowStockAlert{}).
 		Where("id = ?", alertID).
 		Updates(gin.H{
 			"is_resolved":  true,
@@ -442,12 +497,12 @@ func (h *EnhancedInventoryHandler) ResolveLowStockAlert(c *gin.Context) {
 func (h *EnhancedInventoryHandler) ResolveExpiryAlert(c *gin.Context) {
 	alertID := c.Param("id")
 
-	if err := h.db.(*gorm.DB).Model(&models.EnhancedExpiryAlert{}).
+	if err := h.db.Model(&models.EnhancedExpiryAlert{}).
 		Where("id = ?", alertID).
 		Updates(gin.H{
-			"is_resolved":  true,
-			"resolved_at":  time.Now(),
-			"updated_at":   time.Now(),
+			"is_resolved": true,
+			"resolved_at": time.Now(),
+			"updated_at":  time.Now(),
 		}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -487,59 +542,62 @@ func (h *EnhancedInventoryHandler) GenerateStockReport(c *gin.Context) {
 		ExpiringCount   int
 		ExpiredCount    int
 	}
-	h.db.(*gorm.DB).Raw(`
+	h.db.Raw(`
 		SELECT
 			COUNT(DISTINCT p.id) as total_products,
-			COUNT(DISTINCT is_.batch_no) as total_batches,
-			SUM(is_.balance * is_.purchase_rate) as total_value,
-			SUM(is_.balance * is_.mrp) as selling_value
-		FROM inventory_stock is_
-		LEFT JOIN products p ON p.id = is_.product_id
-		WHERE is_.balance > 0
+			COUNT(DISTINCT ib.batch_number) as total_batches,
+			COALESCE(SUM(ib.available_quantity * ib.unit_cost), 0) as total_value,
+			COALESCE(SUM(ib.available_quantity * ib.mrp), 0) as selling_value
+		FROM inventory_batches ib
+		LEFT JOIN products p ON p.id = ib.product_id
+		WHERE ib.available_quantity > 0 AND ib.is_active = true
 	`).Scan(&stats)
 
 	// Get top products
 	var topProducts []gin.H
-	h.db.(*gorm.DB).Raw(`
+	h.db.Raw(`
 		SELECT
 			p.name as product_name,
-			p.category,
-			p.brand,
-			COUNT(DISTINCT is_.batch_no) as total_batches,
-			SUM(is_.qty_in) as total_qty_in,
-			SUM(is_.qty_out) as total_qty_out,
-			SUM(is_.balance) as current_balance,
-			AVG(is_.purchase_rate) as avg_purchase_rate,
-			AVG(is_.mrp) as avg_mrp,
-			SUM(is_.balance * is_.purchase_rate) as total_cost_value,
-			SUM(is_.balance * is_.mrp) as total_selling_value,
+			c.name as category,
+			b.name as brand,
+			COUNT(DISTINCT ib.batch_number) as total_batches,
+			SUM(ib.available_quantity) as total_qty_in,
+			0 as total_qty_out,
+			SUM(ib.available_quantity) as current_balance,
+			AVG(ib.unit_cost) as avg_purchase_rate,
+			AVG(ib.mrp) as avg_mrp,
+			SUM(ib.available_quantity * ib.unit_cost) as total_cost_value,
+			SUM(ib.available_quantity * ib.mrp) as total_selling_value,
 			CASE
-				WHEN SUM(is_.balance * is_.purchase_rate) > 0
-				THEN ROUND(((SUM(is_.balance * is_.mrp) - SUM(is_.balance * is_.purchase_rate)) / SUM(is_.balance * is_.purchase_rate) * 100)::numeric, 2)
+				WHEN SUM(ib.available_quantity * ib.unit_cost) > 0
+				THEN ROUND(((SUM(ib.available_quantity * ib.mrp) - SUM(ib.available_quantity * ib.unit_cost)) / SUM(ib.available_quantity * ib.unit_cost) * 100)::numeric, 2)
 				ELSE 0
 			END as overall_margin_percent
-		FROM inventory_stock is_
-		LEFT JOIN products p ON p.id = is_.product_id
-		WHERE is_.balance > 0
-		GROUP BY p.id, p.name, p.category, p.brand
+		FROM inventory_batches ib
+		LEFT JOIN products p ON p.id = ib.product_id
+		LEFT JOIN categories c ON c.id = p.category_id
+		LEFT JOIN brands b ON b.id = p.brand_id
+		WHERE ib.available_quantity > 0 AND ib.is_active = true
+		GROUP BY p.id, p.name, c.name, b.name
 		ORDER BY total_cost_value DESC
 		LIMIT 10
 	`).Scan(&topProducts)
 
 	// Get category summary
 	var categorySummary []gin.H
-	h.db.(*gorm.DB).Raw(`
+	h.db.Raw(`
 		SELECT
-			p.category,
+			c.name as category,
 			COUNT(DISTINCT p.id) as products_count,
-			COUNT(DISTINCT is_.batch_no) as batches_count,
-			SUM(is_.balance) as total_quantity,
-			SUM(is_.balance * is_.purchase_rate) as total_cost_value,
-			SUM(is_.balance * is_.mrp) as total_selling_value
-		FROM inventory_stock is_
-		LEFT JOIN products p ON p.id = is_.product_id
-		WHERE is_.balance > 0
-		GROUP BY p.category
+			COUNT(DISTINCT ib.batch_number) as batches_count,
+			SUM(ib.available_quantity) as total_quantity,
+			SUM(ib.available_quantity * ib.unit_cost) as total_cost_value,
+			SUM(ib.available_quantity * ib.mrp) as total_selling_value
+		FROM inventory_batches ib
+		LEFT JOIN products p ON p.id = ib.product_id
+		LEFT JOIN categories c ON c.id = p.category_id
+		WHERE ib.available_quantity > 0 AND ib.is_active = true
+		GROUP BY c.name
 		ORDER BY total_cost_value DESC
 	`).Scan(&categorySummary)
 

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import useSWR from 'swr';
+import { authFetch } from '@/lib/api/fetch-utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,54 +25,13 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
-const mockBarcodes = [
-  {
-    id: '1',
-    product_name: 'Arnica Montana 30C',
-    sku: 'ARN-30C',
-    potency: '30C',
-    form: 'Dilution',
-    brand: 'SBL',
-    category: 'Single Remedies',
-    batch_no: 'ARN-2024-001',
-    barcode: '8901234567890',
-    barcode_type: 'EAN-13',
-    mrp: 85.00,
-    exp_date: '2026-12-31',
-    quantity: 100,
-    warehouse: 'Main Store',
-    status: 'active',
-    expiry_status: 'fresh',
-    generated_at: '2024-01-15T10:30:00Z',
-    created_by: 'Admin User'
-  },
-  {
-    id: '2',
-    product_name: 'Belladonna 200C',
-    sku: 'BEL-200C',
-    potency: '200C',
-    form: 'Dilution',
-    brand: 'Dr. Reckeweg',
-    category: 'Single Remedies',
-    batch_no: 'BEL-2024-002',
-    barcode: '8901234567891',
-    barcode_type: 'EAN-13',
-    mrp: 120.00,
-    exp_date: '2025-06-30',
-    quantity: 50,
-    warehouse: 'Main Store',
-    status: 'active',
-    expiry_status: 'expiring_1m',
-    generated_at: '2024-01-16T14:20:00Z',
-    created_by: 'Admin User'
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
 
-const mockProducts = [
-  { id: '1', name: 'Arnica Montana 30C', sku: 'ARN-30C' },
-  { id: '2', name: 'Belladonna 200C', sku: 'BEL-200C' },
-  { id: '3', name: 'Nux Vomica 30C', sku: 'NUX-30C' },
-];
+const fetcher = async (url: string) => {
+  const res = await authFetch(url);
+  if (!res.ok) throw new Error('Failed to fetch');
+  return res.json();
+};
 
 export default function BarcodePage() {
   const router = useRouter();
@@ -85,8 +46,24 @@ export default function BarcodePage() {
   const [genBatchNo, setGenBatchNo] = useState<string>('');
   const [barcodeType, setBarcodeType] = useState('ean13');
 
+  // Fetch live barcode data
+  const { data: barcodesData, error: barcodesError } = useSWR(
+    `${API_URL}/api/erp/products/barcode`,
+    fetcher,
+    { refreshInterval: 30000 }
+  );
+
+  // Fetch products list for dropdown
+  const { data: productsData } = useSWR(
+    `${API_URL}/api/erp/products?limit=1000`,
+    fetcher
+  );
+
+  const barcodes = barcodesData?.data || [];
+  const products = productsData?.data || [];
+
   // Filter barcodes based on search
-  const filteredBarcodes = mockBarcodes.filter(barcode =>
+  const filteredBarcodes = barcodes.filter((barcode: any) =>
     barcode.product_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     barcode.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     barcode.batch_no?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,12 +72,12 @@ export default function BarcodePage() {
 
   // Statistics
   const stats = {
-    total: mockBarcodes.length,
-    active: mockBarcodes.filter(b => b.status === 'active').length,
-    expiring: mockBarcodes.filter(b => b.expiry_status === 'expiring_1m' || b.expiry_status === 'expiring_7d').length,
-    expired: mockBarcodes.filter(b => b.expiry_status === 'expired').length,
-    batches: new Set(mockBarcodes.map(b => b.batch_no)).size,
-    products: new Set(mockBarcodes.map(b => b.product_id)).size,
+    total: barcodes.length,
+    active: barcodes.filter((b: any) => b.status === 'active').length,
+    expiring: barcodes.filter((b: any) => b.expiry_status === 'expiring_1m' || b.expiry_status === 'expiring_7d').length,
+    expired: barcodes.filter((b: any) => b.expiry_status === 'expired').length,
+    batches: new Set(barcodes.map((b: any) => b.batch_no)).size,
+    products: new Set(barcodes.map((b: any) => b.product_id)).size,
   };
 
   const copyToClipboard = async (text: string) => {
@@ -389,7 +366,7 @@ export default function BarcodePage() {
                   <SelectValue placeholder="Select product" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockProducts.map((product) => (
+                  {products.map((product: any) => (
                     <SelectItem key={product.id} value={product.id}>
                       {product.name} ({product.sku})
                     </SelectItem>

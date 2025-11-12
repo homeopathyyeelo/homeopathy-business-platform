@@ -58,7 +58,7 @@ func (h *ProductHandlerEnhanced) CreateProductValidated(c *gin.Context) {
 		Description:  req.Description,
 		SellingPrice: req.Price,
 		MRP:          req.MRP,
-		CurrentStock: req.Stock,
+		CurrentStock: float64(req.Stock),
 		Category:     req.CategoryID, // Store as category string for now
 		Brand:        req.BrandID,    // Store as brand string for now
 		UOM:          req.UnitID,
@@ -135,7 +135,7 @@ func (h *ProductHandlerEnhanced) UpdateProductValidated(c *gin.Context) {
 		product.MRP = req.MRP
 	}
 	if req.Stock >= 0 {
-		product.CurrentStock = req.Stock
+		product.CurrentStock = float64(req.Stock)
 	}
 	if req.CategoryID != "" {
 		product.Category = req.CategoryID

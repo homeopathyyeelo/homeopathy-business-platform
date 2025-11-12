@@ -42,7 +42,7 @@ type Product struct {
 	ReorderLevel int       `json:"reorderLevel" gorm:"column:reorder_level"`
 	MinStock     int       `json:"minStock" gorm:"column:min_stock"`
 	MaxStock     int       `json:"maxStock" gorm:"column:max_stock"`
-	CurrentStock int       `json:"currentStock" gorm:"column:current_stock"`
+	CurrentStock float64   `json:"currentStock" gorm:"column:current_stock"`
 	IsActive     bool      `json:"isActive" gorm:"column:is_active"`
 	Tags         string    `json:"tags"`
 	CreatedAt    time.Time `json:"createdAt" gorm:"column:created_at"`
@@ -379,7 +379,7 @@ type Subcategory struct {
 	ID          string    `json:"id" gorm:"primaryKey;type:uuid"`
 	Name        string    `json:"name"`
 	Code        string    `json:"code"`
-	CategoryID  string    `json:"category_id" gorm:"column:category_id;type:uuid"`
+	CategoryID  string    `json:"category_id" gorm:"column:parent_id;type:uuid"`
 	Description string    `json:"description"`
 	IsActive    bool      `json:"is_active" gorm:"column:is_active"`
 	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at"`
@@ -390,10 +390,10 @@ type Subcategory struct {
 func (h *ProductHandler) GetSubcategories(c *gin.Context) {
 	categoryID := c.Query("category_id")
 
-	query := h.db.Table("subcategories").Order("name ASC")
+	query := h.db.Table("categories").Where("parent_id IS NOT NULL").Order("name ASC")
 
 	if categoryID != "" {
-		query = query.Where("category_id = ?", categoryID)
+		query = query.Where("parent_id = ?", categoryID)
 	}
 
 	var subcategories []Subcategory
@@ -1247,18 +1247,43 @@ func (h *ProductHandler) CreatePayment(c *gin.Context) {
 	req.ID = uuid.New().String()
 	req.CreatedAt = time.Now()
 	req.UpdatedAt = time.Now()
-	req.UpdatedBy = "system" // TODO: Get from auth context
+	req.UpdatedBy = "system"
 	req.Status = "COMPLETED"
 
-	if err := h.db.Table("payments").Create(&req).Error; err != nil {
+	tx := h.db.Begin()
+	
+	if err := tx.Table("payments").Create(&req).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create payment",
 			"success": false,
-			"error":   "Failed to create payment: " + err.Error(),
 		})
 		return
 	}
-
-	c.JSON(http.StatusCreated, gin.H{
+	
+	err := tx.Exec(`
+		UPDATE sales_invoices 
+		SET payment_status = CASE 
+				WHEN (total_amount - COALESCE(paid_amount, 0) - ?) <= 0 THEN 'PAID'
+				WHEN COALESCE(paid_amount, 0) > 0 THEN 'PARTIAL'
+				ELSE 'PENDING'
+			END,
+			paid_amount = COALESCE(paid_amount, 0) + ?,
+			updated_at = NOW()
+		WHERE id = ? AND deleted_at IS NULL
+	`, req.Amount, req.Amount, req.ID).Error
+	
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to update invoice",
+			"success": false,
+		})
+		return
+	}
+	
+	tx.Commit()
+	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    req,
 		"message": "Payment created successfully",

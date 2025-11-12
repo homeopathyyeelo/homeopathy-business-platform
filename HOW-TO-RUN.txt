@@ -1,0 +1,61 @@
+========================================
+  HOMEOPATHY PLATFORM - HOW TO RUN
+========================================
+
+🚀 PLATFORM IS ALREADY RUNNING!
+
+Frontend: http://localhost:3000
+Backend:  http://localhost:3005
+
+Login: medicine@yeelohomeopathy.com / Medicine@2024
+
+========================================
+  COMMANDS
+========================================
+
+▶ START BACKEND:
+cd /var/www/homeopathy-business-platform
+./backend-server > logs/backend.log 2>&1 &
+
+▶ START FRONTEND:
+cd /var/www/homeopathy-business-platform
+npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+▶ STOP ALL:
+pkill -f backend-server
+pkill -f 'next dev'
+
+▶ VIEW LOGS:
+tail -f logs/backend.log
+tail -f logs/frontend.log
+
+▶ CHECK STATUS:
+curl http://localhost:3005/health
+curl -I http://localhost:3000
+
+========================================
+  REBUILD BACKEND
+========================================
+
+cd services/api-golang-master
+go build -o ../../backend-server cmd/api/main.go
+
+========================================
+  DATABASE
+========================================
+
+Connect:
+psql -h localhost -U postgres -d yeelo_homeopathy
+
+Reset:
+psql -h localhost -U postgres -c "DROP DATABASE yeelo_homeopathy;"
+psql -h localhost -U postgres -c "CREATE DATABASE yeelo_homeopathy;"
+psql -h localhost -U postgres -d yeelo_homeopathy -f database/migrations/001_init.sql
+
+========================================
+
+Status: ✅ All Docker files removed!
+        ✅ Running natively on Ubuntu
+        ✅ No shell scripts needed
+
+========================================

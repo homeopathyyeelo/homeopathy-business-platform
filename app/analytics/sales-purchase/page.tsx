@@ -6,8 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
 import { authFetch } from '@/lib/api/fetch-utils';
+import {
   TrendingUp, TrendingDown, ShoppingCart, ShoppingBag, DollarSign,
   Package, Calendar, Download, Search, Filter, Eye, ArrowUpRight, ArrowDownRight
 } from 'lucide-react'

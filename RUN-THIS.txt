@@ -1,0 +1,23 @@
+================================================
+  RUN THIS COMMAND IN YOUR TERMINAL
+================================================
+
+Copy and paste this one command:
+
+sudo -u postgres psql -c "DROP DATABASE IF EXISTS yeelo_homeopathy;" && sudo -u postgres psql -c "CREATE DATABASE yeelo_homeopathy;" && sudo -u postgres psql -d yeelo_homeopathy -f /var/www/homeopathy-business-platform/database/migrations/001_init.sql && echo "✅ Database yeelo_homeopathy created successfully!"
+
+================================================
+
+After database is created, restart platform:
+
+pkill -f backend-server && pkill -f 'next dev' && cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 & npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+================================================
+
+Then check:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3005
+
+Login: medicine@yeelohomeopathy.com / Medicine@2024
+
+================================================

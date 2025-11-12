@@ -23,13 +23,14 @@ type TaxSlab struct {
 
 type HSNCode struct {
 	ID          string    `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	HSNCode     string    `json:"hsn_code" gorm:"size:20;uniqueIndex;not null"`
+	HSNCode     string    `json:"code" gorm:"column:code;size:20;uniqueIndex;not null"`
 	Description string    `json:"description" gorm:"type:text"`
-	GSTRate     float64   `json:"gst_rate" gorm:"type:decimal(5,2)"`
-	CessRate    float64   `json:"cess_rate" gorm:"type:decimal(5,2);default:0"`
-	IsActive    bool      `json:"is_active" gorm:"default:true"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	GSTRate     float64   `json:"gst_rate" gorm:"column:gst_rate;type:decimal(5,2)"`
+	CessRate    float64   `json:"cess_rate" gorm:"column:cess_rate;type:decimal(5,2);default:0"`
+	IsActive    bool      `json:"is_active" gorm:"column:is_active;default:true"`
+	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at"`
+	Tags        string    `json:"tags" gorm:"column:tags"`
 }
 
 func (TaxSlab) TableName() string { return "tax_slabs" }
@@ -142,7 +143,7 @@ func (h *TaxHandler) GetHSNCodes(c *gin.Context) {
 	var total int64
 	q := h.db.WithContext(ctx).Model(&HSNCode{})
 	if search := c.Query("search"); search != "" {
-		q = q.Where("hsn_code ILIKE ? OR description ILIKE ?", "%"+search+"%", "%"+search+"%")
+		q = q.Where("code ILIKE ? OR description ILIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 	if status := c.Query("is_active"); status != "" {
 		q = q.Where("is_active = ?", status == "true")
@@ -153,7 +154,7 @@ func (h *TaxHandler) GetHSNCodes(c *gin.Context) {
 	}
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
-	if err := q.Limit(limit).Offset(offset).Order("hsn_code ASC").Find(&items).Error; err != nil {
+	if err := q.Limit(limit).Offset(offset).Order("code ASC").Find(&items).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "query failed"})
 		return
 	}

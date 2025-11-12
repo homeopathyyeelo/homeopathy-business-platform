@@ -1,0 +1,175 @@
+========================================
+  DIRECT COMMANDS - NO SCRIPTS
+========================================
+
+🚀 START PLATFORM
+========================================
+
+# Start Backend
+cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 &
+
+# Start Frontend
+cd /var/www/homeopathy-business-platform && npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+# Start Both (One Command)
+cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 & npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+
+🛑 STOP PLATFORM
+========================================
+
+# Stop All
+pkill -f backend-server && pkill -f 'next dev'
+
+# Stop Backend Only
+pkill -f backend-server
+
+# Stop Frontend Only
+pkill -f 'next dev'
+
+
+📊 CHECK STATUS
+========================================
+
+# Backend Health
+curl http://localhost:3005/health
+
+# Frontend Status
+curl -I http://localhost:3000
+
+# Check Processes
+ps aux | grep -E "backend-server|next dev" | grep -v grep
+
+# Check Ports
+lsof -i :3000 -i :3005
+
+
+📝 VIEW LOGS
+========================================
+
+# Backend Logs (Live)
+tail -f /var/www/homeopathy-business-platform/logs/backend.log
+
+# Frontend Logs (Live)
+tail -f /var/www/homeopathy-business-platform/logs/frontend.log
+
+# Both Logs
+tail -f /var/www/homeopathy-business-platform/logs/*.log
+
+# Last 50 Lines
+tail -50 /var/www/homeopathy-business-platform/logs/backend.log
+tail -50 /var/www/homeopathy-business-platform/logs/frontend.log
+
+
+🔨 REBUILD BACKEND
+========================================
+
+# Rebuild Go Binary
+cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/api/main.go
+
+# Rebuild and Restart
+cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/api/main.go && cd ../.. && pkill -f backend-server && ./backend-server > logs/backend.log 2>&1 &
+
+
+🗄️ DATABASE
+========================================
+
+# Connect to Database
+psql -h localhost -U postgres -d yeelo_homeopathy
+
+# Check Tables
+psql -h localhost -U postgres -d yeelo_homeopathy -c "\dt"
+
+# Check Users
+psql -h localhost -U postgres -d yeelo_homeopathy -c "SELECT email, first_name, is_super_admin FROM users;"
+
+# Check Products
+psql -h localhost -U postgres -d yeelo_homeopathy -c "SELECT name, brand_id, potency_id FROM products LIMIT 5;"
+
+# Reset Database
+psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS yeelo_homeopathy;" && psql -h localhost -U postgres -c "CREATE DATABASE yeelo_homeopathy;" && psql -h localhost -U postgres -d yeelo_homeopathy -f /var/www/homeopathy-business-platform/database/migrations/001_init.sql
+
+
+🔧 SERVICES
+========================================
+
+# Start PostgreSQL
+sudo systemctl start postgresql
+
+# Start Redis
+sudo systemctl start redis-server
+
+# Check PostgreSQL
+pg_isready -h localhost
+
+# Check Redis
+redis-cli ping
+
+# Service Status
+sudo systemctl status postgresql
+sudo systemctl status redis-server
+
+
+📦 INSTALL DEPENDENCIES
+========================================
+
+# Install Redis
+sudo apt update && sudo apt install -y redis-server && sudo systemctl enable redis-server && sudo systemctl start redis-server
+
+# Install PostgreSQL
+sudo apt install -y postgresql postgresql-contrib && sudo systemctl enable postgresql && sudo systemctl start postgresql
+
+# Install Node Packages
+cd /var/www/homeopathy-business-platform && npm install --legacy-peer-deps
+
+
+🔍 TROUBLESHOOTING
+========================================
+
+# Kill All Node Processes
+pkill -9 node
+
+# Kill All Go Processes
+pkill -9 backend-server
+
+# Check What's Using Port 3000
+lsof -i :3000
+
+# Check What's Using Port 3005
+lsof -i :3005
+
+# Free Up Port 3000
+kill $(lsof -t -i:3000)
+
+# Free Up Port 3005
+kill $(lsof -t -i:3005)
+
+
+🌐 ACCESS
+========================================
+
+Frontend:  http://localhost:3000
+Backend:   http://localhost:3005
+Health:    http://localhost:3005/health
+
+Login:     medicine@yeelohomeopathy.com
+Password:  Medicine@2024
+
+
+========================================
+  MOST COMMON COMMANDS
+========================================
+
+1. START EVERYTHING:
+   cd /var/www/homeopathy-business-platform && ./backend-server > logs/backend.log 2>&1 & npx next dev -p 3000 > logs/frontend.log 2>&1 &
+
+2. STOP EVERYTHING:
+   pkill -f backend-server && pkill -f 'next dev'
+
+3. CHECK STATUS:
+   curl http://localhost:3005/health && curl -I http://localhost:3000
+
+4. VIEW LOGS:
+   tail -f /var/www/homeopathy-business-platform/logs/*.log
+
+========================================

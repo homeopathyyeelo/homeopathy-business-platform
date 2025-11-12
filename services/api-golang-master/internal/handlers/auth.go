@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
@@ -17,12 +18,14 @@ import (
 type AuthHandler struct {
 	userService    *services.UserService
 	sessionService *services.SessionService
+	db             *gorm.DB
 }
 
-func NewAuthHandler() *AuthHandler {
+func NewAuthHandler(db *gorm.DB) *AuthHandler {
 	return &AuthHandler{
 		userService:    services.NewUserService(),
 		sessionService: services.NewSessionService(),
+		db:             db,
 	}
 }
 
@@ -89,15 +92,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"token":     token,
+			"accessToken": token,
 			"expiresAt": expiresAt,
 			"user": gin.H{
-				"id":          "superadmin-1",
-				"email":       "medicine@yeelohomeopathy.com",
-				"displayName": "Super Admin",
-				"firstName":   "Super",
-				"lastName":    "Admin",
-				"role":        "SUPERADMIN",
+				"id":           "superadmin-1",
+				"email":        "medicine@yeelohomeopathy.com",
+				"name":         "Super Admin",
+				"displayName":  "Super Admin",
+				"firstName":    "Super",
+				"lastName":     "Admin",
+				"role":         "SUPER_ADMIN",
 				"isSuperAdmin": true,
+				"isActive":     true,
+				"permissions":  []string{},
 			},
 		})
 		return
@@ -139,14 +146,20 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	_ = h.userService.UpdateLastLogin(user.ID)
 
 	c.JSON(http.StatusOK, gin.H{
-		"token":     token,
-		"expiresAt": expiresAt,
+		"token":       token,
+		"accessToken": token,
+		"expiresAt":   expiresAt,
 		"user": gin.H{
 			"id":          user.ID,
 			"email":       user.Email,
+			"name":        user.DisplayName,
 			"displayName": user.DisplayName,
 			"firstName":   user.FirstName,
 			"lastName":    user.LastName,
+			"role":        getUserRole(user, h.db),
+			"isActive":    user.IsActive,
+			"isSuperAdmin": false,
+			"permissions": []string{},
 		},
 	})
 }
@@ -172,8 +185,9 @@ func (h *AuthHandler) generateDemoToken() (string, time.Time, error) {
 	claims := &jwt.MapClaims{
 		"user_id":      "superadmin-1",
 		"email":        "medicine@yeelohomeopathy.com",
+		"name":         "Super Admin",
 		"displayName":  "Super Admin",
-		"role":         "SUPERADMIN",
+		"role":         "SUPER_ADMIN",
 		"isSuperAdmin": true,
 		"exp":          time.Now().Add(24 * time.Hour).Unix(),
 		"iat":          time.Now().Unix(),
@@ -183,6 +197,26 @@ func (h *AuthHandler) generateDemoToken() (string, time.Time, error) {
 	expiry := time.Now().Add(24 * time.Hour)
 	signed, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	return signed, expiry, err
+}
+
+func getUserRole(user *models.User, db *gorm.DB) string {
+	var role struct {
+		Code string
+	}
+	
+	err := db.Table("user_roles").
+		Select("roles.code").
+		Joins("LEFT JOIN roles ON roles.id = user_roles.role_id").
+		Where("user_roles.user_id = ?", user.ID).
+		Where("roles.is_active = ?", true).
+		Order("roles.level DESC").
+		First(&role).Error
+	
+	if err != nil || role.Code == "" {
+		return "STAFF" // Default role
+	}
+	
+	return role.Code
 }
 
 // RefreshToken handles token refresh
@@ -219,6 +253,54 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		"displayName": user.DisplayName,
 		"firstName":   user.FirstName,
 		"lastName":    user.LastName,
+	})
+}
+
+// ValidateToken validates a JWT token and returns user info
+func (h *AuthHandler) ValidateToken(c *gin.Context) {
+	var req struct {
+		Token string `json:"token" binding:"required"`
+	}
+	
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is required"})
+		return
+	}
+
+	// Parse JWT token
+	token, err := jwt.Parse(req.Token, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		return
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	// Check expiry
+	exp, ok := claims["exp"].(float64)
+	if !ok || time.Now().Unix() > int64(exp) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
+		return
+	}
+
+	// Return user info from claims
+	c.JSON(http.StatusOK, gin.H{
+		"valid": true,
+		"user": gin.H{
+			"id":           claims["user_id"],
+			"email":        claims["email"],
+			"name":         claims["displayName"],
+			"displayName":  claims["displayName"],
+			"role":         claims["role"],
+			"isSuperAdmin": claims["isSuperAdmin"],
+		},
 	})
 }
 
