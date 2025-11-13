@@ -75,6 +75,7 @@ func main() {
 	outboxEventHandler := handlers.NewOutboxEventHandler()
 	whatsappHandler := handlers.NewWhatsAppHandler(db)
 	rackHandler := handlers.NewRackHandler()
+	productImportHandler := handlers.NewProductImportHandler(db)
 	productImportStreamingHandler := handlers.NewStreamingImportHandler(db)
 
 	// Initialize Gin with Recovery middleware
@@ -157,15 +158,21 @@ func main() {
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
 			erp.GET("/dashboard/expiry-summary", expiryHandler.GetExpirySummary)
 
-			// Products
+			// Products - order matters! Specific routes before :id
 			erp.GET("/products", productHandler.GetProducts)
+			erp.GET("/products/template", productImportHandler.DownloadTemplate) // Must be before /:id
+			erp.GET("/products/stats", productHandler.GetProductStats) // Must be before /:id
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
 
-			// Product Import
-			erp.POST("/products/import/stream", productImportStreamingHandler.StreamingImport)
+			// Product Import (no timeout for streaming)
+			erp.POST("/products/import/stream", func(c *gin.Context) {
+				// Remove timeout for streaming import
+				c.Set("no_timeout", true)
+				productImportStreamingHandler.StreamingImport(c)
+			})
 
 			// Categories
 			erp.GET("/categories", categoriesHandler.GetCategories)
@@ -197,6 +204,17 @@ func main() {
 			erp.POST("/units", productHandler.CreateUnit)
 			erp.PUT("/units/:id", productHandler.UpdateUnit)
 			erp.DELETE("/units/:id", productHandler.DeleteUnit)
+
+			// HSN Codes (handled by TaxHandler below to avoid duplicate)
+			// erp.GET("/hsn-codes", productHandler.GetHSNCodes)
+			// erp.POST("/hsn-codes", productHandler.CreateHSNCode)
+			// erp.PUT("/hsn-codes/:id", productHandler.UpdateHSNCode)
+			// erp.DELETE("/hsn-codes/:id", productHandler.DeleteHSNCode)
+
+			// POS Counters (moved to avoid duplicate with SystemHandler below)
+			// erp.GET("/pos/counters", productHandler.GetPOSCounters)
+			// erp.POST("/pos/counters", productHandler.CreatePOSCounter)
+			// erp.PUT("/pos/counters/:id", productHandler.UpdatePOSCounter)
 
 			// Sales Management
 			erp.GET("/sales/orders", salesHandler.GetSalesOrders)

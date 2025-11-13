@@ -122,23 +122,39 @@ echo -e "${BLUE}  🚀 STARTING SERVICES${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════${NC}"
 echo ""
 
-# Start Backend
+# Start Backend using dedicated script
 echo -e "${BLUE}📦 Starting Backend (Golang API)...${NC}"
 cd /var/www/homeopathy-business-platform
+
+# Kill any existing backend
+pkill -9 backend-server 2>/dev/null
+lsof -ti:3005 | xargs kill -9 2>/dev/null
+sleep 2
+
+# Build and start
+cd services/api-golang-master
+go mod tidy
+go build -o ../../backend-server cmd/api/main.go
+cd /var/www/homeopathy-business-platform
+
+if [ ! -f "backend-server" ]; then
+    echo -e "${RED}❌ Backend build failed${NC}"
+    exit 1
+fi
+
 ./backend-server > logs/backend.log 2>&1 &
-BACKEND_PID=$\!
+BACKEND_PID=$!
 echo -e "${GREEN}✅ Backend started (PID: $BACKEND_PID)${NC}"
 echo "   Logs: logs/backend.log"
 echo "   API: http://localhost:3005"
 
 # Wait for backend to be ready
-sleep 4
+sleep 5
 
 # Check backend health
 BACKEND_STATUS=$(curl -s http://localhost:3005/health | grep -o "healthy" || echo "failed")
 if [ "$BACKEND_STATUS" == "healthy" ]; then
     echo -e "${GREEN}✅ Backend is healthy${NC}"
-else
     echo -e "${YELLOW}⚠️  Backend health check failed${NC}"
 fi
 

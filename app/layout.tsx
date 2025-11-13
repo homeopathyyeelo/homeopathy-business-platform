@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { SWRBroadcastProvider } from '@/lib/contexts/swr-broadcast-provider'
 import { AuthProvider } from '@/hooks/useAuth'
 import DynamicLayout from '@/components/layout/DynamicLayout'
 import { QueryProvider } from '@/components/providers/QueryProvider'
@@ -26,15 +27,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.className}`} suppressHydrationWarning>
-        <QueryProvider>
-          <AuthProvider>
-            <PageLoader />
-            <DynamicLayout>
-              {children}
-            </DynamicLayout>
-            <Toaster />
-          </AuthProvider>
-        </QueryProvider>
+        <SWRBroadcastProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <PageLoader />
+              <DynamicLayout>
+                {children}
+              </DynamicLayout>
+              <Toaster />
+            </AuthProvider>
+          </QueryProvider>
+        </SWRBroadcastProvider>
       </body>
     </html>
   )
