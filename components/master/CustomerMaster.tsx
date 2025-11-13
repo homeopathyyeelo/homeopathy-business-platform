@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import CustomerForm from './customer-form/CustomerForm';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 const CustomerMaster = () => {
   const { toast } = useToast();
@@ -21,7 +22,7 @@ const CustomerMaster = () => {
   const { data: customers = [], isLoading, refetch } = useQuery({
     queryKey: ['customers'],
     queryFn: async () => {
-      const response = await fetch('/api/master/customers');
+      const response = await apiFetch('/api/master/customers');
       if (!response.ok) throw new Error('Failed to fetch customers');
       return response.json();
     }

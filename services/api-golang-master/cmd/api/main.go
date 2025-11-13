@@ -77,6 +77,7 @@ func main() {
 	rackHandler := handlers.NewRackHandler()
 	productImportHandler := handlers.NewProductImportHandler(db)
 	productImportStreamingHandler := handlers.NewStreamingImportHandler(db)
+	uploadsHandler := handlers.NewUploadsHandler(db)
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -96,6 +97,10 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	// Stub handler for unimplemented endpoints - provides graceful fallback
+	// This must be added at the end of middleware chain, AFTER routes are defined
+	// We'll add it later with r.NoRoute()
 
 	// Health endpoint
 	r.GET("/health", func(c *gin.Context) {
@@ -495,6 +500,15 @@ func main() {
 			}
 		}
 
+		// Uploads & Approvals
+		uploads := api.Group("/uploads")
+		{
+			uploads.GET("/purchase", uploadsHandler.GetPurchaseSessions)
+			uploads.GET("/inventory", uploadsHandler.GetInventorySessions)
+			uploads.GET("/session/:sessionId", uploadsHandler.GetSessionDetails)
+			uploads.POST("/approve", uploadsHandler.ApproveOrRejectUpload)
+		}
+
 		// Legacy routes
 		masters := api.Group("/masters")
 		{
@@ -525,6 +539,46 @@ func main() {
 		api.GET("/whatsapp/templates", whatsappHandler.GetTemplates)
 		api.GET("/whatsapp/status/:messageId", whatsappHandler.GetMessageStatus)
 	}
+
+	// Handle 404 for unimplemented API endpoints with graceful stub responses
+	r.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		
+		// List of API prefixes that should get stub responses
+		stubPrefixes := []string{
+			"/api/ai/",
+			"/api/crm/",
+			"/api/finance/",
+			"/api/hr/",
+			"/api/marketing/",
+			"/api/analytics/",
+			"/api/reports/",
+			"/api/prescriptions/",
+		}
+
+		isStubAPI := false
+		for _, prefix := range stubPrefixes {
+			if len(path) >= len(prefix) && path[:len(prefix)] == prefix {
+				isStubAPI = true
+				break
+			}
+		}
+
+		if isStubAPI {
+			c.JSON(200, gin.H{
+				"success": true,
+				"data":    []interface{}{},
+				"message": "Feature coming soon - endpoint not yet implemented",
+				"stub":    true,
+			})
+			return
+		}
+
+		c.JSON(404, gin.H{
+			"success": false,
+			"error":   "Endpoint not found",
+		})
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {

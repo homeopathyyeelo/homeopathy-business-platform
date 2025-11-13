@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { User, UserRole } from '@/lib/auth'
+import { apiFetch } from '@/lib/utils/api-fetch'
 
 interface AuthContextType {
   user: User | null
@@ -29,7 +30,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me', {
+      const response = await apiFetch('/api/auth/me', {
         credentials: 'include'
       })
       
@@ -49,7 +50,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = async (): Promise<void> => {
     try {
-      await fetch('/api/auth/logout', {
+      await apiFetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       })
@@ -89,17 +90,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const hasRole = (role: UserRole): boolean => {
     if (!user) return false
     
-    const roleHierarchy = {
+    const roleHierarchy: Record<UserRole, number> = {
+      [UserRole.SUPER_ADMIN]: 10,
       [UserRole.ADMIN]: 7,
       [UserRole.MANAGER]: 6,
       [UserRole.DOCTOR]: 5,
       [UserRole.PHARMACIST]: 4,
       [UserRole.MARKETER]: 3,
       [UserRole.STAFF]: 2,
-      [UserRole.CASHIER]: 1
+      [UserRole.CASHIER]: 1,
+      [UserRole.CUSTOMER]: 0
     }
     
-    return roleHierarchy[user.role] >= roleHierarchy[role]
+    return (roleHierarchy[user.role] || 0) >= (roleHierarchy[role] || 0)
   }
 
   const hasAnyRole = (roles: UserRole[]): boolean => {

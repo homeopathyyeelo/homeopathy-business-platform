@@ -3,13 +3,14 @@
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function POGeneratorPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/ai/po-generator')
+    apiFetch('/api/ai/po-generator')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

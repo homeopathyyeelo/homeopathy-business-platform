@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
+
 import {
   ArrowLeft,
   CheckCircle2,
@@ -62,7 +64,7 @@ export default function ApprovalDetailPage() {
 
     try {
       setActionLoading(true);
-      const response = await fetch('/api/uploads/approve', {
+      const response = await apiFetch('/api/uploads/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId, action: 'approve' }),
@@ -89,7 +91,7 @@ export default function ApprovalDetailPage() {
 
     try {
       setActionLoading(true);
-      const response = await fetch('/api/uploads/approve', {
+      const response = await apiFetch('/api/uploads/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId, action: 'reject', reason }),

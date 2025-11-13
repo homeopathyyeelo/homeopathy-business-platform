@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { AlertCircle, LockKeyhole, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -61,7 +62,7 @@ export default function LoginPage() {
 
     try {
       // Call login API
-      const response = await fetch('/api/auth/login', {
+      const response = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

@@ -3,13 +3,14 @@
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function ModelComparisonsPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/ai-lab/models')
+    apiFetch('/api/ai-lab/models')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

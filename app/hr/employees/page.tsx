@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Eye, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface Employee {
   id: string;
@@ -46,7 +47,7 @@ export default function EmployeesPage() {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/hr/employees');
+      const response = await apiFetch('/api/hr/employees');
       const data = await response.json();
       setEmployees(Array.isArray(data) ? data : data.data || []);
     } catch (error) {

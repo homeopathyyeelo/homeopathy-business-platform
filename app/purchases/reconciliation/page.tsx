@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function ReconciliationPage() {
   const [invoices, setInvoices] = useState([]);
@@ -17,7 +18,7 @@ export default function ReconciliationPage() {
 
   const loadInvoices = async () => {
     try {
-      const res = await fetch('/api/v1/invoices/pending');
+      const res = await apiFetch('/api/v1/invoices/pending');
       const data = await res.json();
       setInvoices(data.invoices || []);
     } catch (error) {

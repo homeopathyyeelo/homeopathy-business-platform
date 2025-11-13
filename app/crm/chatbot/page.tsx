@@ -3,13 +3,14 @@
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function AIChatbotPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/crm/chatbot')
+    apiFetch('/api/crm/chatbot')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

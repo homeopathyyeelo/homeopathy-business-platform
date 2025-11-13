@@ -3,13 +3,14 @@
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function BBSalesPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/sales/b2b')
+    apiFetch('/api/sales/b2b')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

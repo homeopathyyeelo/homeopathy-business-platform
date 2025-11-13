@@ -12,6 +12,7 @@ import EmailManagement from "@/components/settings/EmailManagement";
 import WhatsAppTemplates from "@/components/settings/WhatsAppTemplates";
 import { DatabaseSettings } from "@/components/settings/DatabaseSettings";
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function SettingsPage() {
   const [config, setConfig] = useState({
@@ -35,7 +36,7 @@ export default function SettingsPage() {
 
   const loadConfiguration = async () => {
     try {
-      const response = await fetch('/api/settings/company');
+      const response = await apiFetch('/api/settings/company');
       if (!response.ok) throw new Error('Failed to load configuration');
       
       const data = await response.json();
@@ -53,7 +54,7 @@ export default function SettingsPage() {
   const handleSaveConfig = async () => {
     setSaving(true);
     try {
-      const response = await fetch('/api/settings/company', {
+      const response = await apiFetch('/api/settings/company', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config)

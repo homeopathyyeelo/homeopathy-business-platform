@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
+
 import {
   CheckCircle2,
   XCircle,
@@ -53,10 +55,10 @@ export default function ApprovalsPage() {
   const fetchSessions = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/uploads/purchase?status=pending');
+      const response = await apiFetch('/api/uploads/purchase?status=pending');
       const data = await response.json();
       
-      const inventoryResponse = await fetch('/api/uploads/inventory?status=pending');
+      const inventoryResponse = await apiFetch('/api/uploads/inventory?status=pending');
       const inventoryData = await inventoryResponse.json();
 
       const allSessions = [...(data.sessions || []), ...(inventoryData.sessions || [])];
@@ -80,7 +82,7 @@ export default function ApprovalsPage() {
 
     try {
       setActionLoading(sessionId);
-      const response = await fetch('/api/uploads/approve', {
+      const response = await apiFetch('/api/uploads/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId, action: 'approve' }),
@@ -107,7 +109,7 @@ export default function ApprovalsPage() {
 
     try {
       setActionLoading(sessionId);
-      const response = await fetch('/api/uploads/approve', {
+      const response = await apiFetch('/api/uploads/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId, action: 'reject', reason }),

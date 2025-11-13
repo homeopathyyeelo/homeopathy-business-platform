@@ -1,0 +1,234 @@
+===============================================================================
+API ENDPOINT AUDIT REPORT - Homeopathy Business Platform
+Generated: 2025-11-13
+===============================================================================
+
+CRITICAL ISSUE IDENTIFIED:
+Frontend is calling many API endpoints that DO NOT EXIST in Golang backend!
+
+===============================================================================
+SUMMARY:
+===============================================================================
+
+✅ WORKING ENDPOINTS (Golang Backend - Port 3005):
+- /api/auth/* (login, register, me, logout)
+- /api/erp/products/* (full CRUD + import)
+- /api/erp/categories/* (full CRUD)
+- /api/erp/brands/* (full CRUD)
+- /api/erp/potencies/* (full CRUD)
+- /api/erp/forms/* (full CRUD)
+- /api/erp/units/* (full CRUD)
+- /api/erp/customers/* (full CRUD)
+- /api/erp/customer-groups/* (full CRUD)
+- /api/erp/vendors/* (full CRUD)
+- /api/erp/inventory/* (stock, adjustments, transfers, alerts)
+- /api/erp/sales/orders/* (full CRUD)
+- /api/erp/sales/invoices/* (GET, POST)
+- /api/erp/dashboard/* (stats, activity, charts)
+- /api/erp/racks/* (full CRUD)
+- /api/erp/branches/* (full CRUD)
+- /api/erp/tax/* (hsn-codes, slabs)
+- /api/erp/price-lists/* (full CRUD)
+- /api/erp/barcodes/* (full CRUD)
+- /api/v1/customers/* (loyalty, outstanding, feedback, etc.)
+- /api/v1/purchases/* (orders, invoices, receipts)
+
+===============================================================================
+❌ MISSING ENDPOINTS (Frontend is calling but backend doesn't have):
+===============================================================================
+
+AI & MACHINE LEARNING:
+- /api/ai/chat
+- /api/ai/content
+- /api/ai/forecasting
+- /api/ai/health
+- /api/ai/po-generator
+- /api/ai/pricing
+- /api/ai/product-suggestions
+- /api/ai/segmentation
+- /api/ai/automation
+- /api/ai-campaigns/*
+- /api/ai-insights/*
+- /api/ai-lab/*
+
+CRM:
+- /api/crm/appointments
+- /api/crm/chat
+- /api/crm/chatbot
+- /api/crm/feedback
+- /api/crm/history
+- /api/crm/reminders
+- /api/crm/tickets
+
+CUSTOMERS (Additional):
+- /api/customers/addresses
+- /api/customers/communication
+- /api/customers/contacts
+- /api/customers/feedback
+- /api/customers/groups
+- /api/customers/gst
+- /api/customers/history
+
+VENDORS (Additional):
+- /api/vendors/credit
+- /api/vendors/ledger
+- /api/vendors/payments
+
+FINANCE:
+- /api/finance/balance-sheet
+- /api/finance/bankbook
+- /api/finance/bank-reconciliation
+- /api/finance/cashbook
+- /api/finance/expenses
+- /api/finance/gst
+- /api/finance/payment-vouchers
+- /api/finance/petty-cash
+- /api/finance/pl (Profit & Loss)
+- /api/finance/purchase-ledger
+- /api/finance/receipt-vouchers
+- /api/finance/sales-ledger
+- /api/finance/trial-balance
+
+HR:
+- /api/hr/activity
+- /api/hr/attendance
+- /api/hr/employees
+- /api/hr/incentives
+- /api/hr/leaves
+- /api/hr/payroll
+- /api/hr/performance
+- /api/hr/roles
+- /api/hr/shifts
+
+INVENTORY (Additional):
+- /api/inventory/dead-stock
+- /api/inventory/history
+- /api/inventory/low-stock
+- /api/inventory/reconciliation
+- /api/inventory/valuation
+- /api/inventory/upload
+
+MARKETING:
+- /api/marketing/announcements
+- /api/marketing/email
+- /api/marketing/festival
+- /api/marketing/followup
+- /api/marketing/offers
+- /api/marketing/segments
+- /api/marketing/sms
+- /api/marketing/templates
+- /api/marketing/whatsapp
+
+ANALYTICS:
+- /api/analytics/branches
+- /api/analytics/expense-profit
+- /api/analytics/forecasting
+- /api/analytics/kpi
+- /api/analytics/ltv
+- /api/analytics/marketing-roi
+- /api/analytics/products
+
+REPORTS:
+- /api/reports/customers
+- /api/reports/custom
+- /api/reports/financial
+- /api/reports/gst
+- /api/reports/profit
+- /api/reports/purchase
+- /api/reports/sales
+- /api/reports/stock
+- /api/reports/vendors
+
+UPLOADS/APPROVALS:
+- /api/uploads/approve
+- /api/uploads/inventory
+- /api/uploads/purchase
+- /api/uploads/session/:id
+
+PRODUCTS (Additional):
+- /api/products/bulk
+- /api/products/tax
+- /api/products/variants
+
+PRESCRIPTIONS:
+- /api/prescriptions/*
+- /api/prescriptions/doctor-dashboard
+
+SETTINGS:
+- /api/settings/*
+
+OTHER:
+- /api/loyalty
+- /api/pos/*
+- /api/warehouse/*
+
+===============================================================================
+RECOMMENDED ACTIONS:
+===============================================================================
+
+OPTION 1: Return Mock/Stub Data (Quick Fix)
+--------------------------------------------
+Create a middleware that intercepts missing endpoints and returns empty arrays
+or default responses. This allows the UI to work without errors.
+
+OPTION 2: Implement Missing Endpoints (Proper Solution)
+-------------------------------------------------------
+Systematically implement each missing endpoint in Golang backend.
+Priority order:
+1. Core business: Inventory, Finance, Reports
+2. Customer features: CRM, Communication
+3. Advanced: AI, Analytics, ML
+
+OPTION 3: Hybrid Approach (Recommended)
+---------------------------------------
+1. Implement critical endpoints immediately:
+   - /api/uploads/* (for approval system)
+   - /api/inventory/* (enhanced features)
+   - /api/finance/* (basic ledgers)
+   - /api/reports/* (basic reports)
+
+2. Add stub middleware for non-critical features:
+   - AI features (can be placeholder)
+   - Advanced analytics (can show "Coming Soon")
+   - Marketing automation (future feature)
+
+3. Gradually implement remaining endpoints based on priority
+
+===============================================================================
+IMMEDIATE CRITICAL ISSUES:
+===============================================================================
+
+1. ❌ /api/uploads/* - Approval system pages are broken!
+   Pages affected:
+   - /admin/approvals
+   - /admin/approvals/[sessionId]
+
+2. ❌ /api/customers/* - Many customer pages will fail
+   Pages affected:
+   - /customers/feedback
+   - /customers/contacts
+   - /customers/communication
+   - /customers/addresses
+
+3. ❌ /api/inventory/* - Advanced inventory features missing
+   Pages affected:
+   - /inventory/upload
+   - /inventory/reconciliation
+   - /inventory/valuation
+   - /inventory/low-stock
+   - /inventory/dead-stock
+
+4. ❌ /api/finance/* - Entire finance module missing
+   All finance pages will fail
+
+5. ❌ /api/reports/* - Entire reports module missing
+   All report pages will fail
+
+===============================================================================
+STATUS: REQUIRES IMMEDIATE ATTENTION
+===============================================================================
+
+The application will have many broken pages until missing endpoints are
+implemented or proper error handling is added.
+
+Recommendation: Implement Option 3 (Hybrid Approach) immediately.
