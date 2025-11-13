@@ -16,15 +16,19 @@ func NewExpiryHandler(s *services.ExpiryService) *ExpiryHandler {
 	return &ExpiryHandler{Service: s}
 }
 
-// GET /api/v2/inventory/expiries?shop_id=...
+// GET /api/v2/inventory/expiries?shop_id=... or /api/erp/dashboard/expiry-summary
 func (h *ExpiryHandler) GetExpirySummary(c *gin.Context) {
 	shopID := c.Query("shop_id")
+	// Make shop_id optional for backwards compatibility
+	if shopID == "" {
+		shopID = "default" // Use default shop if not specified
+	}
 	rows, err := h.Service.ComputeSummary(c, shopID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(500, gin.H{"error": err.Error(), "success": false})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": rows})
+	c.JSON(200, gin.H{"summary": rows, "success": true})
 }
 
 // POST /api/v2/inventory/expiries/refresh?shop_id=...

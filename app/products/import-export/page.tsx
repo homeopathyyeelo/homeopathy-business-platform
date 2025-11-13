@@ -156,19 +156,24 @@ export default function ImportExportPage() {
   };
 
   const handleAdvancedImport = async (file: File) => {
+    console.log('🚀 Starting import...', file.name);
     setIsImporting(true);
     setProgress(0);
     setLogs([]);
     setFinalResults(null);
 
     try {
+      if (!file) {
+        throw new Error('No file selected');
+      }
+
       const formData = new FormData();
       formData.append('file', file);
-      
-      // Add selected brand_id to form data
       if (selectedBrandId) {
         formData.append('brand_id', selectedBrandId);
       }
+
+      console.log('📤 Uploading file:', file.name, 'Size:', file.size, 'bytes');
 
       // Start SSE connection - use fetch directly for streaming, not authFetch
       const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
@@ -195,9 +200,13 @@ export default function ImportExportPage() {
       }
 
       // Read stream
+      let streamComplete = false;
       while (true) {
         const { value, done } = await reader.read();
-        if (done) break;
+        if (done) {
+          console.log('Stream ended');
+          break;
+        }
 
         const chunk = decoder.decode(value);
         const lines = chunk.split('\n');
@@ -218,7 +227,11 @@ export default function ImportExportPage() {
 
               // Handle completion
               if (msg.type === 'complete' && msg.data) {
+                console.log('✅ IMPORT COMPLETE - Setting finalResults:', msg.data);
+                console.log('Category wise:', msg.data.category_wise);
+                console.log('Brand wise:', msg.data.brand_wise);
                 setFinalResults(msg.data);
+                streamComplete = true;
                 toast({
                   title: "Import Complete!",
                   description: `${msg.data.inserted} inserted, ${msg.data.updated} updated`
@@ -234,10 +247,17 @@ export default function ImportExportPage() {
                 });
               }
             } catch (e) {
-              console.error('Parse error:', e);
+              console.error('Parse error:', e, 'Line:', line);
             }
+          } else if (line.startsWith('event: done')) {
+            console.log('✅ Received done event');
+            streamComplete = true;
           }
         }
+      }
+      
+      if (!streamComplete) {
+        console.warn('Stream ended without complete event');
       }
     } catch (error: any) {
       toast({
@@ -545,33 +565,92 @@ export default function ImportExportPage() {
 
               {/* Advanced Mode Final Results */}
               {importMode === 'advanced' && finalResults && (
-                <div className="space-y-2 p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-semibold text-green-800 flex items-center">
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Import Complete
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                    <div>
-                      <span className="text-gray-600">Inserted:</span>
-                      <span className="ml-2 font-bold text-green-600">{finalResults.inserted}</span>
+                <Card className="border-green-200 bg-green-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center text-green-800">
+                      <CheckCircle className="w-5 h-5 mr-2" />
+                      Import Complete - Summary Report
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Overall Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="text-2xl font-bold text-gray-700">{finalResults.total_rows}</div>
+                        <div className="text-xs text-gray-500">Total Rows</div>
+                      </div>
+                      <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="text-2xl font-bold text-green-600">{finalResults.inserted}</div>
+                        <div className="text-xs text-gray-500">Inserted</div>
+                      </div>
+                      <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="text-2xl font-bold text-blue-600">{finalResults.updated}</div>
+                        <div className="text-xs text-gray-500">Updated</div>
+                      </div>
+                      <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="text-2xl font-bold text-red-600">{finalResults.skipped}</div>
+                        <div className="text-xs text-gray-500">Skipped</div>
+                      </div>
+                      <div className="text-center p-3 bg-white rounded-lg shadow-sm">
+                        <div className="text-2xl font-bold text-green-600">{finalResults.success_rate?.toFixed(1)}%</div>
+                        <div className="text-xs text-gray-500">Success Rate</div>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Updated:</span>
-                      <span className="ml-2 font-bold text-blue-600">{finalResults.updated}</span>
+
+                    {/* Category & Brand Analytics */}
+                    {(finalResults.category_wise || finalResults.brand_wise) && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {finalResults.category_wise && Object.keys(finalResults.category_wise).length > 0 && (
+                          <div className="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 className="font-semibold text-sm mb-3 text-gray-700">📊 Category Wise</h5>
+                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                              {Object.entries(finalResults.category_wise).map(([category, count]: [string, any]) => (
+                                <div key={category} className="flex justify-between items-center text-sm">
+                                  <span className="text-gray-600">{category}</span>
+                                  <Badge variant="outline" className="font-mono">{count}</Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {finalResults.brand_wise && Object.keys(finalResults.brand_wise).length > 0 && (
+                          <div className="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 className="font-semibold text-sm mb-3 text-gray-700">🏢 Brand Wise</h5>
+                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                              {Object.entries(finalResults.brand_wise).map(([brand, count]: [string, any]) => (
+                                <div key={brand} className="flex justify-between items-center text-sm">
+                                  <span className="text-gray-600">{brand}</span>
+                                  <Badge variant="outline" className="font-mono">{count}</Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Errors List */}
+                    {finalResults.errors && finalResults.errors.length > 0 && (
+                      <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <h5 className="font-semibold text-sm mb-2 text-red-800">❌ Validation Errors ({finalResults.errors.length})</h5>
+                        <ScrollArea className="h-24">
+                          <div className="space-y-1 text-xs text-red-700">
+                            {finalResults.errors.slice(0, 10).map((error: string, idx: number) => (
+                              <div key={idx}>• {error}</div>
+                            ))}
+                            {finalResults.errors.length > 10 && (
+                              <div className="text-gray-500 italic">...and {finalResults.errors.length - 10} more errors</div>
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </div>
+                    )}
+
+                    <div className="text-xs text-gray-500 pt-2 border-t">
+                      ⏱️ Process Time: {finalResults.process_time}
                     </div>
-                    <div>
-                      <span className="text-gray-600">Skipped:</span>
-                      <span className="ml-2 font-bold text-red-600">{finalResults.skipped}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Success:</span>
-                      <span className="ml-2 font-bold text-green-600">{finalResults.success_rate?.toFixed(1)}%</span>
-                    </div>
-                  </div>
-                  <div className="text-xs text-gray-500 mt-2">
-                    Time: {finalResults.process_time}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )}
 
               {/* Standard Mode Results */}

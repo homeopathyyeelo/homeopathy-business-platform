@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -88,6 +89,37 @@ func (Product) TableName() string {
 	return "products"
 }
 
+// ProductResponse includes product data with joined master data names
+type ProductResponse struct {
+	ID           string    `json:"id" gorm:"column:id"`
+	SKU          string    `json:"sku" gorm:"column:sku"`
+	Name         string    `json:"name" gorm:"column:name"`
+	Category     string    `json:"category" gorm:"column:category"`
+	Brand        string    `json:"brand" gorm:"column:brand"`
+	Potency      string    `json:"potency" gorm:"column:potency"`
+	Form         string    `json:"form" gorm:"column:form"`
+	PackSize     string    `json:"packSize" gorm:"column:pack_size"`
+	UOM          string    `json:"uom" gorm:"column:uom"`
+	CostPrice    float64   `json:"costPrice" gorm:"column:cost_price"`
+	SellingPrice float64   `json:"sellingPrice" gorm:"column:selling_price"`
+	MRP          float64   `json:"mrp" gorm:"column:mrp"`
+	TaxPercent   float64   `json:"taxPercent" gorm:"column:tax_percent"`
+	HSNCode      string    `json:"hsnCode" gorm:"column:hsn_code"`
+	Manufacturer string    `json:"manufacturer" gorm:"column:manufacturer"`
+	Description  string    `json:"description" gorm:"column:description"`
+	Barcode      string    `json:"barcode" gorm:"column:barcode"`
+	ReorderLevel int       `json:"reorderLevel" gorm:"column:reorder_level"`
+	MinStock     int       `json:"minStock" gorm:"column:min_stock"`
+	MaxStock     int       `json:"maxStock" gorm:"column:max_stock"`
+	CurrentStock float64   `json:"currentStock" gorm:"column:current_stock"`
+	StockQty     float64   `json:"stock_qty" gorm:"column:stock_qty"`      // Alias for frontend
+	UnitPrice    float64   `json:"unit_price" gorm:"column:unit_price"`     // Alias for frontend
+	IsActive     bool      `json:"isActive" gorm:"column:is_active"`
+	Tags         string    `json:"tags" gorm:"column:tags"`
+	CreatedAt    time.Time `json:"createdAt" gorm:"column:created_at"`
+	UpdatedAt    time.Time `json:"updatedAt" gorm:"column:updated_at"`
+}
+
 // GET /api/erp/products - List all products
 func (h *ProductHandler) GetProducts(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "50")
@@ -95,6 +127,8 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	search := c.Query("search")
 	category := c.Query("category")
 	brand := c.Query("brand")
+	potency := c.Query("potency")
+	form := c.Query("form")
 
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
@@ -107,35 +141,144 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 
 	offset := (page - 1) * limit
 
-	// Build query from public schema (where products were actually imported)
-	query := h.db.Table("products")
-
-	// Apply filters
+	// Build WHERE clause with PostgreSQL placeholders
+	whereClause := ""
+	var args []interface{}
+	paramCount := 1
+	
 	if search != "" {
 		searchPattern := "%" + strings.ToLower(search) + "%"
-		query = query.Where("LOWER(name) LIKE ? OR LOWER(sku) LIKE ?", searchPattern, searchPattern)
+		whereClause += fmt.Sprintf(" AND (LOWER(p.name) LIKE $%d OR LOWER(p.sku) LIKE $%d)", paramCount, paramCount+1)
+		args = append(args, searchPattern, searchPattern)
+		paramCount += 2
 	}
 	if category != "" {
-		query = query.Where("LOWER(category) = ?", strings.ToLower(category))
+		whereClause += fmt.Sprintf(" AND LOWER(c.name) = $%d", paramCount)
+		args = append(args, strings.ToLower(category))
+		paramCount++
 	}
 	if brand != "" {
-		query = query.Where("LOWER(brand) = ?", strings.ToLower(brand))
+		whereClause += fmt.Sprintf(" AND LOWER(b.name) = $%d", paramCount)
+		args = append(args, strings.ToLower(brand))
+		paramCount++
+	}
+	if potency != "" {
+		whereClause += fmt.Sprintf(" AND LOWER(pot.code) = $%d", paramCount)
+		args = append(args, strings.ToLower(potency))
+		paramCount++
+	}
+	if form != "" {
+		whereClause += fmt.Sprintf(" AND LOWER(f.name) = $%d", paramCount)
+		args = append(args, strings.ToLower(form))
+		paramCount++
 	}
 
-	// Get total count
-	var total int64
-	query.Count(&total)
-
-	// Fetch products
-	var products []Product
-	result := query.Limit(limit).Offset(offset).Order("created_at DESC").Find(&products)
-
-	if result.Error != nil {
+	// Get total count using sql.DB directly
+	sqlDB, dbErr := h.db.DB()
+	if dbErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   "Failed to fetch products: " + result.Error.Error(),
+			"error":   "Database connection error: " + dbErr.Error(),
 		})
 		return
+	}
+	
+	var total int64
+	countSQL := "SELECT COUNT(*) FROM products p LEFT JOIN categories c ON p.category_id = c.id LEFT JOIN brands b ON p.brand_id = b.id LEFT JOIN potencies pot ON p.potency_id = pot.id LEFT JOIN forms f ON p.form_id = f.id WHERE 1=1" + whereClause
+	sqlDB.QueryRow(countSQL, args...).Scan(&total)
+
+	// Fetch products with master data using Raw SQL with PostgreSQL placeholders
+	sql := fmt.Sprintf(`
+		SELECT 
+			p.id, p.sku, p.name,
+			COALESCE(c.name, '') as category,
+			COALESCE(b.name, '') as brand,
+			COALESCE(pot.code, '') as potency,
+			COALESCE(f.name, '') as form,
+			COALESCE(u.code, '') as uom,
+			p.pack_size, p.cost_price, p.selling_price, p.mrp, p.tax_rate as tax_percent,
+			COALESCE(h.code, '') as hsn_code,
+			p.manufacturer, p.description, p.barcode,
+			p.reorder_level, p.min_stock, p.max_stock, p.current_stock,
+			p.is_active, p.tags, p.created_at, p.updated_at
+		FROM products p
+		LEFT JOIN categories c ON p.category_id = c.id
+		LEFT JOIN brands b ON p.brand_id = b.id
+		LEFT JOIN potencies pot ON p.potency_id = pot.id
+		LEFT JOIN forms f ON p.form_id = f.id
+		LEFT JOIN units u ON p.unit_id = u.id
+		LEFT JOIN hsn_codes h ON p.hsn_code_id = h.id
+		WHERE 1=1%s
+		ORDER BY p.created_at DESC
+		LIMIT $%d OFFSET $%d
+	`, whereClause, paramCount, paramCount+1)
+	args = append(args, limit, offset)
+	
+	// Execute query with sql.DB directly (already obtained above)
+	rows, err := sqlDB.Query(sql, args...)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch products: " + err.Error(),
+		})
+		return
+	}
+	defer rows.Close()
+	
+	var products []gin.H
+	for rows.Next() {
+		var (
+			productID, sku, name, category, brand, potency, form, uom string
+			packSize, hsnCode, manufacturer, description, barcode, tags string
+			costPrice, sellingPrice, mrp, taxPercent, currentStock float64
+			reorderLevel, minStock, maxStock int
+			isActive bool
+			createdAt, updatedAt time.Time
+		)
+		
+		err := rows.Scan(
+			&productID, &sku, &name, &category, &brand, &potency, &form, &uom,
+			&packSize, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCode,
+			&manufacturer, &description, &barcode,
+			&reorderLevel, &minStock, &maxStock, &currentStock,
+			&isActive, &tags, &createdAt, &updatedAt,
+		)
+		
+		if err != nil {
+			continue
+		}
+		
+		product := gin.H{
+			"id":           productID,
+			"sku":          sku,
+			"name":         name,
+			"category":     category,
+			"brand":        brand,
+			"potency":      potency,
+			"form":         form,
+			"uom":          uom,
+			"packSize":     packSize,
+			"costPrice":    costPrice,
+			"sellingPrice": sellingPrice,
+			"mrp":          mrp,
+			"taxPercent":   taxPercent,
+			"hsnCode":      hsnCode,
+			"manufacturer": manufacturer,
+			"description":  description,
+			"barcode":      barcode,
+			"reorderLevel": reorderLevel,
+			"minStock":     minStock,
+			"maxStock":     maxStock,
+			"currentStock": currentStock,
+			"stock_qty":    currentStock,
+			"unit_price":   sellingPrice,
+			"isActive":     isActive,
+			"tags":         tags,
+			"createdAt":    createdAt,
+			"updatedAt":    updatedAt,
+		}
+		
+		products = append(products, product)
 	}
 
 	// Calculate total pages (only if using pagination)
@@ -163,22 +306,94 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 func (h *ProductHandler) GetProduct(c *gin.Context) {
 	id := c.Param("id")
 
-	var product Product
-	result := h.db.Table("products").Where("id = ? OR sku = ?", id, id).First(&product)
-
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{
-				"success": false,
-				"error":   "Product not found",
-			})
-			return
-		}
+	// Use underlying sql.DB for direct query execution
+	sqlDB, err := h.db.DB()
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"error":   "Failed to fetch product: " + result.Error.Error(),
+			"error":   "Database connection error: " + err.Error(),
 		})
 		return
+	}
+
+	sql := `
+		SELECT 
+			p.id, p.sku, p.name,
+			COALESCE(c.name, '') as category,
+			COALESCE(b.name, '') as brand,
+			COALESCE(pot.code, '') as potency,
+			COALESCE(f.name, '') as form,
+			COALESCE(u.code, '') as uom,
+			p.pack_size, p.cost_price, p.selling_price, p.mrp, p.tax_rate,
+			COALESCE(h.code, '') as hsn_code,
+			p.manufacturer, p.description, p.barcode,
+			p.reorder_level, p.min_stock, p.max_stock, p.current_stock,
+			p.is_active, p.tags, p.created_at, p.updated_at
+		FROM products p
+		LEFT JOIN categories c ON p.category_id = c.id
+		LEFT JOIN brands b ON p.brand_id = b.id
+		LEFT JOIN potencies pot ON p.potency_id = pot.id
+		LEFT JOIN forms f ON p.form_id = f.id
+		LEFT JOIN units u ON p.unit_id = u.id
+		LEFT JOIN hsn_codes h ON p.hsn_code_id = h.id
+		WHERE p.id = $1 OR p.sku = $2
+		LIMIT 1
+	`
+	
+	var (
+		productID, sku, name, category, brand, potency, form, uom string
+		packSize, hsnCode, manufacturer, description, barcode, tags string
+		costPrice, sellingPrice, mrp, taxPercent, currentStock float64
+		reorderLevel, minStock, maxStock int
+		isActive bool
+		createdAt, updatedAt time.Time
+	)
+	
+	// Use sql.DB directly instead of GORM wrapper
+	err = sqlDB.QueryRow(sql, id, id).Scan(
+		&productID, &sku, &name, &category, &brand, &potency, &form, &uom,
+		&packSize, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCode,
+		&manufacturer, &description, &barcode,
+		&reorderLevel, &minStock, &maxStock, &currentStock,
+		&isActive, &tags, &createdAt, &updatedAt,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch product: " + err.Error(),
+		})
+		return
+	}
+
+	product := gin.H{
+		"id":           productID,
+		"sku":          sku,
+		"name":         name,
+		"category":     category,
+		"brand":        brand,
+		"potency":      potency,
+		"form":         form,
+		"uom":          uom,
+		"packSize":     packSize,
+		"costPrice":    costPrice,
+		"sellingPrice": sellingPrice,
+		"mrp":          mrp,
+		"taxPercent":   taxPercent,
+		"hsnCode":      hsnCode,
+		"manufacturer": manufacturer,
+		"description":  description,
+		"barcode":      barcode,
+		"reorderLevel": reorderLevel,
+		"minStock":     minStock,
+		"maxStock":     maxStock,
+		"currentStock": currentStock,
+		"stock_qty":    currentStock,
+		"unit_price":   sellingPrice,
+		"isActive":     isActive,
+		"tags":         tags,
+		"createdAt":    createdAt,
+		"updatedAt":    updatedAt,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -234,6 +449,41 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 		"success": true,
 		"message": "Product deleted successfully",
 		"id":      id,
+	})
+}
+
+// GET /api/erp/products/stats - Get product statistics
+func (h *ProductHandler) GetProductStats(c *gin.Context) {
+	var total int64
+	var active int64
+	var lowStock int64
+
+	// Get total products
+	h.db.Table("products").Count(&total)
+	
+	// Get active products
+	h.db.Table("products").Where("is_active = ?", true).Count(&active)
+	
+	// Get low stock products (stock < 10)
+	h.db.Table("products").Where("current_stock < ?", 10).Count(&lowStock)
+	
+	// Calculate total stock value
+	type StockValue struct {
+		TotalValue float64
+	}
+	var stockValue StockValue
+	h.db.Table("products").
+		Select("SUM(current_stock * selling_price) as total_value").
+		Scan(&stockValue)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"total":      total,
+			"active":     active,
+			"lowStock":   lowStock,
+			"totalValue": stockValue.TotalValue,
+		},
 	})
 }
 
@@ -601,62 +851,6 @@ func (h *ProductHandler) DeleteForm(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Form deleted"})
-}
-
-// ==================== HSN CODES ====================
-
-// GET /api/erp/hsn-codes - Get all HSN codes
-func (h *ProductHandler) GetHSNCodes(c *gin.Context) {
-	var hsnCodes []MasterData
-	if err := h.db.Table("hsn_codes").Find(&hsnCodes).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "data": hsnCodes})
-}
-
-// POST /api/erp/hsn-codes - Create HSN code
-func (h *ProductHandler) CreateHSNCode(c *gin.Context) {
-	var req MasterData
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	req.ID = uuid.New().String()
-	req.CreatedAt = time.Now()
-	req.UpdatedAt = time.Now()
-	req.IsActive = true
-	if err := h.db.Table("hsn_codes").Create(&req).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, gin.H{"success": true, "data": req, "message": "HSN code created"})
-}
-
-// PUT /api/erp/hsn-codes/:id - Update HSN code
-func (h *ProductHandler) UpdateHSNCode(c *gin.Context) {
-	id := c.Param("id")
-	var req MasterData
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	req.UpdatedAt = time.Now()
-	if err := h.db.Table("hsn_codes").Where("id = ?", id).Updates(&req).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "HSN code updated"})
-}
-
-// DELETE /api/erp/hsn-codes/:id - Delete HSN code
-func (h *ProductHandler) DeleteHSNCode(c *gin.Context) {
-	id := c.Param("id")
-	if err := h.db.Table("hsn_codes").Where("id = ?", id).Delete(&MasterData{}).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"success": true, "message": "HSN code deleted"})
 }
 
 // ==================== UNITS ====================

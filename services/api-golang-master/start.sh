@@ -55,4 +55,4 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 # Run the server
-go run .
+go run ./cmd/api/main.go

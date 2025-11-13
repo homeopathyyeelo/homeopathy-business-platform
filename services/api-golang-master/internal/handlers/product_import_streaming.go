@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +31,7 @@ type MasterRecord struct {
 type StreamingImportHandler struct {
 	db *gorm.DB
 	importHandler *ProductImportHandler
+	clientDisconnected bool
 }
 
 func NewStreamingImportHandler(db *gorm.DB) *StreamingImportHandler {
@@ -51,25 +53,33 @@ type ProgressMessage struct {
 
 // POST /api/erp/products/import/stream - Streaming import with live updates
 func (h *StreamingImportHandler) StreamingImport(c *gin.Context) {
+	// Reset disconnection flag
+	h.clientDisconnected = false
+	
 	// Set headers for Server-Sent Events
 	c.Header("Content-Type", "text/event-stream")
 	c.Header("Cache-Control", "no-cache")
 	c.Header("Connection", "keep-alive")
 	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("X-Accel-Buffering", "no") // Disable nginx buffering
 
-	// Get uploaded file
-	file, err := c.FormFile("file")
+	// Get file from form (Gin handles multipart parsing automatically)
+	file, header, err := c.Request.FormFile("file")
 	if err != nil {
+		log.Printf("❌ Form file error: %v", err)
 		h.sendProgress(c, ProgressMessage{
 			Type:      "error",
-			Message:   "File upload failed: " + err.Error(),
+			Message:   "No file uploaded: " + err.Error(),
 			Timestamp: time.Now().Format(time.RFC3339),
 		})
 		return
 	}
+	defer file.Close()
+	
+	log.Printf("📁 File received: %s (size: %d bytes)", header.Filename, header.Size)
 
 	// Validate file size
-	if file.Size > 10*1024*1024 {
+	if header.Size > 10*1024*1024 {
 		h.sendProgress(c, ProgressMessage{
 			Type:      "error",
 			Message:   "File too large (max 10MB)",
@@ -79,8 +89,34 @@ func (h *StreamingImportHandler) StreamingImport(c *gin.Context) {
 	}
 
 	// Save temp file
-	tmpPath := filepath.Join(os.TempDir(), fmt.Sprintf("stream_import_%s_%s", uuid.New().String()[:8], filepath.Base(file.Filename)))
-	if err := c.SaveUploadedFile(file, tmpPath); err != nil {
+	tmpPath := filepath.Join(os.TempDir(), fmt.Sprintf("stream_import_%s_%s", uuid.New().String()[:8], filepath.Base(header.Filename)))
+	
+	// Open and save the file
+	src, err := header.Open()
+	if err != nil {
+		log.Printf("❌ Failed to open file: %v", err)
+		h.sendProgress(c, ProgressMessage{
+			Type:      "error",
+			Message:   "Failed to open file",
+			Timestamp: time.Now().Format(time.RFC3339),
+		})
+		return
+	}
+	defer src.Close()
+	
+	dst, err := os.Create(tmpPath)
+	if err != nil {
+		log.Printf("❌ Failed to create temp file: %v", err)
+		h.sendProgress(c, ProgressMessage{
+			Type:      "error",
+			Message:   "Failed to save file",
+			Timestamp: time.Now().Format(time.RFC3339),
+		})
+		return
+	}
+	defer dst.Close()
+	
+	if _, err = dst.ReadFrom(src); err != nil {
 		h.sendProgress(c, ProgressMessage{
 			Type:      "error",
 			Message:   "Failed to save file",
@@ -264,8 +300,16 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 			}
 		}
 
-		// Small delay for visual effect
-		time.Sleep(50 * time.Millisecond)
+		// Check if client disconnected
+		if h.clientDisconnected {
+			log.Printf("⚠️  Client disconnected, stopping import")
+			return
+		}
+		
+		// Small delay for visual effect (reduced to speed up import)
+		if rowNum%10 == 0 { // Only delay every 10 rows
+			time.Sleep(10 * time.Millisecond)
+		}
 	}
 
 	// Send completion
@@ -275,26 +319,64 @@ func (h *StreamingImportHandler) streamingProcess(c *gin.Context, rows [][]strin
 		successRate = float64(inserted+updated) / float64(totalRows) * 100
 	}
 
+	// Calculate category and brand wise stats
+	categoryStats := make(map[string]int)
+	brandStats := make(map[string]int)
+	
+	for rowNum, row := range rows[1:] {
+		if rowNum >= len(rows)-1 {
+			break
+		}
+		product, _ := h.parseRow(row, colIdx, rowNum+2)
+		if product.Category != "" {
+			categoryStats[product.Category]++
+		}
+		if product.Brand != "" {
+			brandStats[product.Brand]++
+		}
+	}
+
+	finalData := map[string]interface{}{
+		"total_rows":      totalRows,
+		"inserted":        inserted,
+		"updated":         updated,
+		"skipped":         skipped,
+		"errors":          errors,
+		"process_time":    processTime,
+		"success_rate":    successRate,
+		"category_wise":   categoryStats,
+		"brand_wise":      brandStats,
+		"validation_pass": inserted + updated,
+		"validation_fail": skipped,
+	}
+	
+	log.Printf("📊 Sending FINAL SUMMARY: total=%d, inserted=%d, updated=%d, categories=%d, brands=%d", 
+		totalRows, inserted, updated, len(categoryStats), len(brandStats))
+	
 	h.sendProgress(c, ProgressMessage{
 		Type:       "complete",
 		Message:    "🎉 Import completed successfully!",
 		Percentage: 100,
 		Timestamp:  time.Now().Format(time.RFC3339),
-		Data: map[string]interface{}{
-			"total_rows":   totalRows,
-			"inserted":     inserted,
-			"updated":      updated,
-			"skipped":      skipped,
-			"errors":       errors,
-			"process_time": processTime,
-			"success_rate": successRate,
-		},
+		Data:       finalData,
 	})
 	
-	// Send final "done" event to signal completion
-	fmt.Fprintf(c.Writer, "event: done\ndata: {\"status\":\"complete\"}\n\n")
-	if flusher, ok := c.Writer.(http.Flusher); ok {
-		flusher.Flush()
+	// Only send completion if client is still connected
+	if !h.clientDisconnected {
+		log.Printf("📤 Sending final completion events...")
+		
+		// Send final "done" event to signal completion
+		fmt.Fprintf(c.Writer, "event: done\ndata: {\"status\":\"complete\"}\n\n")
+		if flusher, ok := c.Writer.(http.Flusher); ok {
+			flusher.Flush()
+		}
+		
+		// Wait to ensure all data is transmitted before closing connection
+		time.Sleep(1 * time.Second)
+		
+		log.Printf("✅ Import stream completed and flushed")
+	} else {
+		log.Printf("⚠️  Client disconnected before completion")
 	}
 }
 
@@ -729,7 +811,7 @@ func (h *StreamingImportHandler) convertToProduct(temp ProductImportTemp) models
 	}
 }
 
-// lookupMasterIDs looks up and sets master data IDs for the product
+// lookupMasterIDs looks up and sets master data IDs for the product with intelligent tax rate detection
 func (h *StreamingImportHandler) lookupMasterIDs(tx *gorm.DB, product *models.Product, temp ProductImportTemp) error {
 	// Lookup Category ID
 	if product.CategoryID == nil && temp.Category != "" {
@@ -771,11 +853,73 @@ func (h *StreamingImportHandler) lookupMasterIDs(tx *gorm.DB, product *models.Pr
 		}
 	}
 
-	// Lookup HSN Code ID
-	if product.HSNCodeID == nil && temp.HSNCode != "" {
-		var hsnCode models.HSNCode
-		if err := tx.Where("code = ?", temp.HSNCode).First(&hsnCode).Error; err == nil {
-			product.HSNCodeID = &hsnCode.ID
+	// 🔍 INTELLIGENT HSN CODE & TAX RATE MATCHING
+	// Try to find HSN code from hsn_codes master table
+	var hsnCodeRecord models.HSNCode
+	hsnFound := false
+	
+	if temp.HSNCode != "" {
+		// First try exact match by code
+		if err := tx.Where("code = ?", temp.HSNCode).First(&hsnCodeRecord).Error; err == nil {
+			product.HSNCodeID = &hsnCodeRecord.ID
+			hsnFound = true
+			
+			// If tax rate not provided in CSV, use HSN's GST rate
+			if temp.TaxPercent == 0 && hsnCodeRecord.GSTRate > 0 {
+				product.TaxRate = hsnCodeRecord.GSTRate
+			}
+		}
+	}
+	
+	// If HSN not found or not provided, apply intelligent defaults based on category
+	if !hsnFound || temp.TaxPercent == 0 {
+		categoryName := strings.ToLower(temp.Category)
+		
+		// Homeopathy medicines: 5% GST (HSN: 3003 or 3004)
+		isHomeopathyMedicine := strings.Contains(categoryName, "dilution") ||
+			strings.Contains(categoryName, "mother tincture") ||
+			strings.Contains(categoryName, "bio combination") ||
+			strings.Contains(categoryName, "bio chemic") ||
+			strings.Contains(categoryName, "drop") ||
+			strings.Contains(categoryName, "tablet") ||
+			strings.Contains(categoryName, "syrup")
+		
+		// Cosmetics/External: 18% GST (HSN: 3304 or 3307)
+		isCosmetic := strings.Contains(categoryName, "external") ||
+			strings.Contains(categoryName, "ointment") ||
+			strings.Contains(categoryName, "cream") ||
+			strings.Contains(categoryName, "gel") ||
+			strings.Contains(categoryName, "lotion") ||
+			strings.Contains(categoryName, "cosmetic")
+		
+		// Auto-assign tax rate if not provided
+		if temp.TaxPercent == 0 {
+			if isHomeopathyMedicine {
+				product.TaxRate = 5.0  // 5% for medicines
+			} else if isCosmetic {
+				product.TaxRate = 18.0 // 18% for cosmetics
+			} else {
+				product.TaxRate = 5.0  // Default to 5% for homeopathy products
+			}
+		}
+		
+		// Auto-assign HSN code if not found
+		if !hsnFound {
+			var defaultHSN models.HSNCode
+			var hsnCode string
+			
+			if isHomeopathyMedicine {
+				hsnCode = "3003" // Medicaments
+			} else if isCosmetic {
+				hsnCode = "3304" // Beauty/makeup preparations
+			} else {
+				hsnCode = "3003" // Default to medicaments
+			}
+			
+			// Try to find this default HSN in table
+			if err := tx.Where("code = ?", hsnCode).First(&defaultHSN).Error; err == nil {
+				product.HSNCodeID = &defaultHSN.ID
+			}
 		}
 	}
 
@@ -784,10 +928,54 @@ func (h *StreamingImportHandler) lookupMasterIDs(tx *gorm.DB, product *models.Pr
 
 // sendProgress sends a progress message via SSE
 func (h *StreamingImportHandler) sendProgress(c *gin.Context, msg ProgressMessage) {
-	data, _ := json.Marshal(msg)
-	fmt.Fprintf(c.Writer, "data: %s\n\n", data)
+	// If already disconnected, don't try to send
+	if h.clientDisconnected {
+		return
+	}
 	
-	// Flush if the writer supports it
+	// Check if writer is still valid
+	if c.Writer == nil {
+		log.Printf("⚠️  Writer is nil, marking client as disconnected")
+		h.clientDisconnected = true
+		return
+	}
+	
+	// Check if client closed connection
+	if c.Request != nil && c.Request.Context().Err() != nil {
+		log.Printf("⚠️  Client context cancelled: %v", c.Request.Context().Err())
+		h.clientDisconnected = true
+		return
+	}
+	
+	// Try to send with error handling
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("⚠️  Panic in sendProgress (client likely disconnected): %v", r)
+			h.clientDisconnected = true
+		}
+	}()
+	
+	data, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("⚠️  Failed to marshal message: %v", err)
+		return
+	}
+	
+	// Try to write
+	n, err := fmt.Fprintf(c.Writer, "data: %s\n\n", data)
+	if err != nil {
+		log.Printf("⚠️  Failed to write to client: %v (client disconnected)", err)
+		h.clientDisconnected = true
+		return
+	}
+	
+	if n == 0 {
+		log.Printf("⚠️  Wrote 0 bytes (client disconnected)")
+		h.clientDisconnected = true
+		return
+	}
+	
+	// Flush immediately
 	if flusher, ok := c.Writer.(http.Flusher); ok {
 		flusher.Flush()
 	}

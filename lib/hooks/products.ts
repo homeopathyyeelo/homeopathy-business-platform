@@ -5,6 +5,10 @@ interface ProductsQueryParams {
   page?: number
   perPage?: number
   search?: string
+  category?: string
+  brand?: string
+  potency?: string
+  form?: string
 }
 
 interface PaginatedProducts {
@@ -14,30 +18,40 @@ interface PaginatedProducts {
   perPage: number
 }
 
-export function useProducts({ page = 1, perPage = 100, search }: ProductsQueryParams = {}): UseQueryResult<PaginatedProducts> {
+export function useProducts({ page = 1, perPage = 100, search, category, brand, potency, form }: ProductsQueryParams = {}): UseQueryResult<PaginatedProducts> {
   return useQuery<PaginatedProducts>({
-    queryKey: ['products', 'list', page, perPage, search],
+    queryKey: ['products', 'list', page, perPage, search, category, brand, potency, form],
     queryFn: async () => {
       const params = new URLSearchParams()
       params.set('limit', String(perPage))
-      params.set('offset', String((page - 1) * perPage))
+      params.set('page', String(page))  // Use page instead of offset
       if (search) {
         params.set('search', search)
+      }
+      if (category) {
+        params.set('category', category)
+      }
+      if (brand) {
+        params.set('brand', brand)
+      }
+      if (potency) {
+        params.set('potency', potency)
+      }
+      if (form) {
+        params.set('form', form)
       }
 
       const res = await golangAPI.get(`/api/erp/products?${params.toString()}`)
 
-      const products = Array.isArray(res.data)
-        ? res.data
-        : res.data?.products ?? res.data?.data ?? []
-
+      // Backend returns { success, data: [], pagination: {} }
+      const products = res.data?.data ?? res.data?.products ?? (Array.isArray(res.data) ? res.data : [])
       const pagination = res.data?.pagination || {}
 
       return {
-        items: products,
-        total: typeof pagination.total === 'number' ? pagination.total : products.length,
-        page,
-        perPage,
+        items: Array.isArray(products) ? products : [],
+        total: typeof pagination.total === 'number' ? pagination.total : (Array.isArray(products) ? products.length : 0),
+        page: pagination.page ?? page,
+        perPage: pagination.limit ?? perPage,
       }
     },
     staleTime: 60_000,
@@ -120,29 +134,24 @@ export function useProductImages(productId?: string) {
   })
 }
 
-export function useProductStats(products: any) {
-  // Normalize to array from various shapes: array | {items}|{data}
-  const list: any[] = Array.isArray(products)
-    ? products
-    : (Array.isArray(products?.items) ? products.items
-      : (Array.isArray(products?.data) ? products.data : []))
-
-  if (!Array.isArray(list) || list.length === 0) {
-    return { total: 0, active: 0, lowStock: 0, totalValue: 0, categories: 0, brands: 0 }
-  }
-
-  const total = list.length
-  const active = list.filter((p: any) => (p?.isActive ?? p?.is_active ?? true) === true).length
-  const lowStock = list.filter((p: any) => Number(p?.stock ?? p?.stock_qty ?? 0) < 10).length
-  const totalValue = list.reduce((sum: number, p: any) => {
-    const qty = Number(p?.stock ?? p?.stock_qty ?? 0)
-    const price = Number(p?.unit_price ?? p?.price ?? 0)
-    return sum + (qty * price)
-  }, 0)
-  const categories = new Set(list.map((p: any) => p?.category).filter(Boolean)).size
-  const brands = new Set(list.map((p: any) => p?.brand).filter(Boolean)).size
-
-  return { total, active, lowStock, totalValue, categories, brands }
+// Get stats from API instead of calculating from client-side data
+export function useProductStats() {
+  return useQuery({
+    queryKey: ['products', 'stats'],
+    queryFn: async () => {
+      const res = await golangAPI.get('/api/erp/products/stats')
+      const data = res.data?.data || {}
+      return {
+        total: data.total ?? 0,
+        active: data.active ?? 0,
+        lowStock: data.lowStock ?? 0,
+        totalValue: data.totalValue ?? 0,
+        categories: data.categories ?? 0,
+        brands: data.brands ?? 0,
+      }
+    },
+    staleTime: 60_000,
+  })
 }
 
 export function useProductMutations() {

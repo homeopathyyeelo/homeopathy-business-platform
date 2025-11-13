@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import { authFetch } from '@/lib/api/fetch-utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +20,7 @@ import {
 import {
   Plus, Search, Printer, Download, Barcode as BarcodeIcon,
   Package, Calendar, TrendingUp, QrCode, AlertCircle, CheckCircle,
-  Info, FileText, Zap, Store, Copy
+  Info, FileText, Zap, Store, Copy, Loader2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -53,14 +53,39 @@ export default function BarcodePage() {
     { refreshInterval: 30000 }
   );
 
-  // Fetch products list for dropdown
-  const { data: productsData } = useSWR(
-    `${API_URL}/api/erp/products?limit=1000`,
-    fetcher
-  );
+  // State for async product search
+  const [productSearchQuery, setProductSearchQuery] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   const barcodes = barcodesData?.data || [];
-  const products = productsData?.data || [];
+
+  // Debounced product search
+  useEffect(() => {
+    if (isGenerateDialogOpen && productSearchQuery.length >= 2) {
+      const delayTimer = setTimeout(async () => {
+        setSearchLoading(true);
+        try {
+          const res = await authFetch(
+            `${API_URL}/api/erp/products?search=${encodeURIComponent(productSearchQuery)}&limit=20`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            setSearchResults(data.data || []);
+          }
+        } catch (error) {
+          console.error('Product search failed:', error);
+          setSearchResults([]);
+        } finally {
+          setSearchLoading(false);
+        }
+      }, 300); // 300ms debounce
+
+      return () => clearTimeout(delayTimer);
+    } else {
+      setSearchResults([]);
+    }
+  }, [productSearchQuery, isGenerateDialogOpen]);
 
   // Filter barcodes based on search
   const filteredBarcodes = barcodes.filter((barcode: any) =>
@@ -360,19 +385,48 @@ export default function BarcodePage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Product</Label>
-              <Select value={genProductId} onValueChange={setGenProductId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product: any) => (
-                    <SelectItem key={product.id} value={product.id}>
-                      {product.name} ({product.sku})
-                    </SelectItem>
+              <Label>Product (Type to search)</Label>
+              <div className="relative">
+                <Input
+                  placeholder="Type product name or SKU (min 2 characters)..."
+                  value={productSearchQuery}
+                  onChange={(e) => setProductSearchQuery(e.target.value)}
+                  className="pr-10"
+                />
+                {searchLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+                  </div>
+                )}
+              </div>
+              
+              {/* Search Results Dropdown */}
+              {productSearchQuery.length >= 2 && searchResults.length > 0 && (
+                <div className="mt-2 border rounded-md max-h-48 overflow-y-auto bg-white shadow-lg">
+                  {searchResults.map((product: any) => (
+                    <div
+                      key={product.id}
+                      onClick={() => {
+                        setGenProductId(product.id);
+                        setProductSearchQuery(product.name);
+                        setSearchResults([]);
+                      }}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                    >
+                      <span className="font-medium">{product.name}</span>
+                      <Badge variant="outline" className="text-xs">{product.sku}</Badge>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              )}
+              
+              {productSearchQuery.length >= 2 && !searchLoading && searchResults.length === 0 && (
+                <p className="text-sm text-gray-500 mt-2">No products found. Try a different search.</p>
+              )}
+              
+              {productSearchQuery.length > 0 && productSearchQuery.length < 2 && (
+                <p className="text-sm text-gray-400 mt-2">Type at least 2 characters to search...</p>
+              )}
             </div>
 
             <div className="space-y-2">
