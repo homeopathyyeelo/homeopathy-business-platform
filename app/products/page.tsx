@@ -30,6 +30,12 @@ export default function ProductListPage() {
   const [potenciesLoading, setPotenciesLoading] = useState(false);
   const [formsLoading, setFormsLoading] = useState(false);
   
+  // Search states for each filter
+  const [categorySearch, setCategorySearch] = useState('');
+  const [brandSearch, setBrandSearch] = useState('');
+  const [potencySearch, setPotencySearch] = useState('');
+  const [formSearch, setFormSearch] = useState('');
+  
   // Lazy load functions - called when dropdown opens
   const loadCategories = useCallback(() => {
     if (categories.length > 0 || categoriesLoading) return;
@@ -66,6 +72,39 @@ export default function ProductListPage() {
       .catch(console.error)
       .finally(() => setFormsLoading(false));
   }, [forms.length, formsLoading]);
+  
+  // Background prefetch all filter options silently on mount
+  useEffect(() => {
+    const prefetchFilters = async () => {
+      try {
+        // Load all filters in parallel without showing loaders
+        await Promise.all([
+          golangAPI.get('/api/erp/categories').then((res) =>
+            setCategories(res.data?.data?.categories || [])
+          ),
+          golangAPI.get('/api/erp/brands').then((res) =>
+            setBrands(Array.isArray(res.data?.data) ? res.data.data : [])
+          ),
+          golangAPI.get('/api/erp/potencies').then((res) =>
+            setPotencies(Array.isArray(res.data?.data) ? res.data.data : [])
+          ),
+          golangAPI.get('/api/erp/forms').then((res) =>
+            setForms(Array.isArray(res.data?.data) ? res.data.data : [])
+          ),
+        ]);
+      } catch (error) {
+        // Silently fail — filters will load on demand if needed
+        console.debug('Background filter prefetch failed:', error);
+      }
+    };
+
+    // Prefetch after 1 second to avoid blocking initial page render
+    //const timer = setTimeout(prefetchFilters, 1000);
+    //return () => clearTimeout(timer);
+  }, []);
+  
+  // ⚡ PURE LAZY LOADING: Filters load ONLY when user clicks/focuses input
+  // No background prefetch - lighter page load, data fetched on-demand
 
   const { data, isLoading } = useProducts({ 
     page, 
@@ -271,109 +310,279 @@ export default function ProductListPage() {
             {/* Category Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category
+                Category {categories.length > 0 && <span className="text-xs text-gray-500">({categories.length})</span>}
               </label>
               <div className="relative">
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
+                <input
+                  type="text"
+                  placeholder={categoriesLoading ? "Loading..." : `🔍 Search ${categories.length || ''} categories...`}
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
                   onFocus={loadCategories}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((cat: any) => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                />
                 {categoriesLoading && (
-                  <div className="absolute inset-y-0 right-8 flex items-center">
+                  <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                     <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
                   </div>
                 )}
               </div>
+              {categorySearch && (
+                <div className="mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-md bg-white shadow-lg">
+                  <div 
+                    className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b"
+                    onClick={() => { setCategoryFilter(''); setCategorySearch(''); setPage(1); }}
+                  >
+                    <span className="text-gray-600">✕ Clear filter</span>
+                  </div>
+                  {categories
+                    .filter((cat: any) => 
+                      cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+                    )
+                    .map((cat: any) => (
+                      <div
+                        key={cat.id}
+                        className={`px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm ${
+                          categoryFilter === cat.name ? 'bg-blue-100 font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setCategoryFilter(cat.name);
+                          setCategorySearch('');
+                          setPage(1);
+                        }}
+                      >
+                        {cat.name}
+                      </div>
+                    ))}
+                  {categories.filter((cat: any) => 
+                    cat.name.toLowerCase().includes(categorySearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500">No results found</div>
+                  )}
+                </div>
+              )}
+              {categoryFilter && !categorySearch && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {categoryFilter}
+                    <button
+                      onClick={() => { setCategoryFilter(''); setPage(1); }}
+                      className="ml-1 hover:text-blue-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Brand Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Brand
+                Brand {brands.length > 0 && <span className="text-xs text-gray-500">({brands.length})</span>}
               </label>
               <div className="relative">
-                <select
-                  value={brandFilter}
-                  onChange={(e) => { setBrandFilter(e.target.value); setPage(1); }}
+                <input
+                  type="text"
+                  placeholder={brandsLoading ? "Loading..." : `🔍 Search ${brands.length || ''} brands...`}
+                  value={brandSearch}
+                  onChange={(e) => setBrandSearch(e.target.value)}
                   onFocus={loadBrands}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Brands</option>
-                  {brands.map((brand: any) => (
-                    <option key={brand.id} value={brand.name}>
-                      {brand.name}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                />
                 {brandsLoading && (
-                  <div className="absolute inset-y-0 right-8 flex items-center">
+                  <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                     <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
                   </div>
                 )}
               </div>
+              {brandSearch && (
+                <div className="mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-md bg-white shadow-lg">
+                  <div 
+                    className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b"
+                    onClick={() => { setBrandFilter(''); setBrandSearch(''); setPage(1); }}
+                  >
+                    <span className="text-gray-600">✕ Clear filter</span>
+                  </div>
+                  {brands
+                    .filter((brand: any) => 
+                      brand.name.toLowerCase().includes(brandSearch.toLowerCase())
+                    )
+                    .map((brand: any) => (
+                      <div
+                        key={brand.id}
+                        className={`px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm ${
+                          brandFilter === brand.name ? 'bg-blue-100 font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setBrandFilter(brand.name);
+                          setBrandSearch('');
+                          setPage(1);
+                        }}
+                      >
+                        {brand.name}
+                      </div>
+                    ))}
+                  {brands.filter((brand: any) => 
+                    brand.name.toLowerCase().includes(brandSearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500">No results found</div>
+                  )}
+                </div>
+              )}
+              {brandFilter && !brandSearch && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {brandFilter}
+                    <button
+                      onClick={() => { setBrandFilter(''); setPage(1); }}
+                      className="ml-1 hover:text-blue-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Potency Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Potency
+                Potency {potencies.length > 0 && <span className="text-xs text-gray-500">({potencies.length})</span>}
               </label>
               <div className="relative">
-                <select
-                  value={potencyFilter}
-                  onChange={(e) => { setPotencyFilter(e.target.value); setPage(1); }}
+                <input
+                  type="text"
+                  placeholder={potenciesLoading ? "Loading..." : `🔍 Search ${potencies.length || ''} potencies...`}
+                  value={potencySearch}
+                  onChange={(e) => setPotencySearch(e.target.value)}
                   onFocus={loadPotencies}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Potencies</option>
-                  {potencies.map((pot: any) => (
-                    <option key={pot.id} value={pot.code}>
-                      {pot.code} - {pot.name}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                />
                 {potenciesLoading && (
-                  <div className="absolute inset-y-0 right-8 flex items-center">
+                  <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                     <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
                   </div>
                 )}
               </div>
+              {potencySearch && (
+                <div className="mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-md bg-white shadow-lg">
+                  <div 
+                    className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b"
+                    onClick={() => { setPotencyFilter(''); setPotencySearch(''); setPage(1); }}
+                  >
+                    <span className="text-gray-600">✕ Clear filter</span>
+                  </div>
+                  {potencies
+                    .filter((pot: any) => 
+                      pot.code.toLowerCase().includes(potencySearch.toLowerCase()) ||
+                      pot.name.toLowerCase().includes(potencySearch.toLowerCase())
+                    )
+                    .map((pot: any) => (
+                      <div
+                        key={pot.id}
+                        className={`px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm ${
+                          potencyFilter === pot.code ? 'bg-blue-100 font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setPotencyFilter(pot.code);
+                          setPotencySearch('');
+                          setPage(1);
+                        }}
+                      >
+                        {pot.code} - {pot.name}
+                      </div>
+                    ))}
+                  {potencies.filter((pot: any) => 
+                    pot.code.toLowerCase().includes(potencySearch.toLowerCase()) ||
+                    pot.name.toLowerCase().includes(potencySearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500">No results found</div>
+                  )}
+                </div>
+              )}
+              {potencyFilter && !potencySearch && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {potencyFilter}
+                    <button
+                      onClick={() => { setPotencyFilter(''); setPage(1); }}
+                      className="ml-1 hover:text-blue-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Form Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Form
+                Form {forms.length > 0 && <span className="text-xs text-gray-500">({forms.length})</span>}
               </label>
               <div className="relative">
-                <select
-                  value={formFilter}
-                  onChange={(e) => { setFormFilter(e.target.value); setPage(1); }}
+                <input
+                  type="text"
+                  placeholder={formsLoading ? "Loading..." : `🔍 Search ${forms.length || ''} forms...`}
+                  value={formSearch}
+                  onChange={(e) => setFormSearch(e.target.value)}
                   onFocus={loadForms}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Forms</option>
-                  {forms.map((form: any) => (
-                    <option key={form.id} value={form.name}>
-                      {form.name}
-                    </option>
-                  ))}
-                </select>
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                />
                 {formsLoading && (
-                  <div className="absolute inset-y-0 right-8 flex items-center">
+                  <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
                     <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
                   </div>
                 )}
               </div>
+              {formSearch && (
+                <div className="mt-1 max-h-48 overflow-y-auto border border-gray-200 rounded-md bg-white shadow-lg">
+                  <div 
+                    className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b"
+                    onClick={() => { setFormFilter(''); setFormSearch(''); setPage(1); }}
+                  >
+                    <span className="text-gray-600">✕ Clear filter</span>
+                  </div>
+                  {forms
+                    .filter((form: any) => 
+                      form.name.toLowerCase().includes(formSearch.toLowerCase())
+                    )
+                    .map((form: any) => (
+                      <div
+                        key={form.id}
+                        className={`px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm ${
+                          formFilter === form.name ? 'bg-blue-100 font-semibold' : ''
+                        }`}
+                        onClick={() => {
+                          setFormFilter(form.name);
+                          setFormSearch('');
+                          setPage(1);
+                        }}
+                      >
+                        {form.name}
+                      </div>
+                    ))}
+                  {forms.filter((form: any) => 
+                    form.name.toLowerCase().includes(formSearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="px-3 py-2 text-sm text-gray-500">No results found</div>
+                  )}
+                </div>
+              )}
+              {formFilter && !formSearch && (
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {formFilter}
+                    <button
+                      onClick={() => { setFormFilter(''); setPage(1); }}
+                      className="ml-1 hover:text-blue-600"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}

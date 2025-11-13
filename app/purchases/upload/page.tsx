@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Upload, Download, CheckCircle2, AlertCircle, FileText, ShoppingCart, Loader2, TrendingUp, Package, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface ProcessingStep {
   step: string;
@@ -75,7 +76,7 @@ export default function PurchaseUploadPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/uploads/purchase', {
+      const response = await apiFetch('/api/uploads/purchase', {
         method: 'POST',
         body: formData,
       });

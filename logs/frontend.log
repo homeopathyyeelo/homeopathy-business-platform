@@ -326,3 +326,175 @@
  GET /products 200 in 388ms
  GET /products 200 in 525ms
  GET /api/auth/me 401 in 223ms
+ GET /products 200 in 375ms
+ GET /api/auth/me 401 in 259ms
+ ✓ Compiled in 1074ms (602 modules)
+ ✓ Compiled in 1054ms (602 modules)
+ GET /products 200 in 664ms
+ GET /products 200 in 287ms
+ ✓ Compiled in 432ms (602 modules)
+ ✓ Compiled in 603ms (602 modules)
+ GET /products 200 in 341ms
+ GET /products 200 in 216ms
+ ✓ Compiled in 1120ms (602 modules)
+ GET /products 200 in 285ms
+ ✓ Compiled in 548ms (602 modules)
+ GET /products 200 in 395ms
+ ✓ Compiled in 762ms (602 modules)
+ GET /products 200 in 374ms
+ ✓ Compiled in 493ms (602 modules)
+ ✓ Compiled in 1437ms (602 modules)
+ GET /products 200 in 480ms
+ GET /products 200 in 571ms
+ ✓ Compiled in 646ms (602 modules)
+ GET /products 200 in 252ms
+ ✓ Compiled in 1042ms (602 modules)
+ GET /products 200 in 529ms
+ ✓ Compiled in 492ms (602 modules)
+ GET /products 200 in 287ms
+ ✓ Compiled in 407ms (602 modules)
+ GET /products 200 in 135ms
+ ✓ Compiled in 1210ms (602 modules)
+ ✓ Compiled in 827ms (602 modules)
+ GET /products 200 in 474ms
+ GET /products 200 in 214ms
+ ✓ Compiled in 678ms (602 modules)
+ GET /products 200 in 570ms
+ ✓ Compiled in 713ms (602 modules)
+ GET /products 200 in 336ms
+ ✓ Compiled in 1724ms (602 modules)
+ GET /products 200 in 285ms
+ ✓ Compiled in 454ms (602 modules)
+ GET /products 200 in 199ms
+ ✓ Compiled in 454ms (602 modules)
+ GET /products 200 in 334ms
+ ✓ Compiled in 1439ms (602 modules)
+ GET /products 200 in 762ms
+ ✓ Compiled in 534ms (602 modules)
+ GET /products 200 in 266ms
+ ✓ Compiled in 561ms (602 modules)
+ GET /products 200 in 199ms
+ ✓ Compiled in 683ms (602 modules)
+ GET /products 200 in 437ms
+ GET /products 200 in 657ms
+ GET /api/auth/me 401 in 266ms
+ ✓ Compiled in 3.9s (1438 modules)
+ GET /products 200 in 1928ms
+ GET /products 200 in 743ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 653ms (857 modules)
+ GET /api/auth/me 401 in 2042ms
+ GET /products 200 in 628ms
+ GET /api/auth/me 401 in 163ms
+ ✓ Compiled in 2.3s (1438 modules)
+ GET /products 200 in 439ms
+ ✓ Compiled in 930ms (1438 modules)
+ GET /products 200 in 487ms
+ GET /products 200 in 507ms
+ ○ Compiling /api/auth/me ...
+ ✓ Compiled /api/auth/me in 819ms (857 modules)
+ GET /api/auth/me 401 in 1157ms
+ GET /products 200 in 491ms
+ GET /api/auth/me 401 in 126ms
+ GET /products 200 in 230ms
+ GET /api/auth/me 401 in 199ms
+ GET /products 200 in 246ms
+ GET /api/auth/me 401 in 157ms
+ GET /products 200 in 239ms
+ GET /api/auth/me 401 in 179ms
+ GET /products 200 in 239ms
+ GET /api/auth/me 401 in 187ms
+ ✓ Compiled in 2.2s (1438 modules)
+ GET /products 200 in 585ms
+ ✓ Compiled in 1057ms (1438 modules)
+ GET /products 200 in 450ms
+ ✓ Compiled in 931ms (1438 modules)
+ GET /products 200 in 154ms
+ GET /products 200 in 472ms
+ ✓ Compiled /api/auth/me in 425ms (857 modules)
+ GET /api/auth/me 401 in 818ms
+ GET /products 200 in 505ms
+ GET /api/auth/me 401 in 155ms
+ ✓ Compiled in 3.8s (1440 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products 200 in 1977ms
+ GET /products 200 in 2393ms
+ ✓ Compiled in 1515ms (1440 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products 200 in 774ms
+ GET /products 200 in 651ms
+ ✓ Compiled in 922ms (1440 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products 200 in 623ms
+ GET /products 200 in 852ms
+ ✓ Compiled in 540ms (603 modules)
+ GET /products 200 in 244ms
+ ✓ Compiled in 403ms (603 modules)
+ GET /products 200 in 246ms
+ GET /products 200 in 297ms
+ GET /products 200 in 277ms
+ ○ Compiling /products/add ...
+ ✓ Compiled /products/add in 1119ms (843 modules)
+ GET /products/add 200 in 1394ms
+ GET /products 200 in 155ms
+ ✓ Compiled in 1492ms (603 modules)
+ ✓ Compiled in 809ms (603 modules)
+ GET /products 200 in 438ms
+ GET /products 200 in 302ms
+ ✓ Compiled in 320ms (603 modules)
+ GET /products 200 in 182ms
+ GET /products 200 in 657ms
+ GET /products 200 in 369ms
+ ✓ Compiled in 772ms (603 modules)
+ GET /products 200 in 254ms
+ ✓ Compiled in 466ms (603 modules)
+ GET /products 200 in 240ms
+ ✓ Compiled in 516ms (603 modules)
+ GET /products 200 in 168ms
+ ○ Compiling /admin/approvals ...
+ ✓ Compiled /admin/approvals in 2.1s (1446 modules)
+ GET /admin/approvals 200 in 2370ms
+ ✓ Compiled in 401ms (608 modules)
+ GET /admin/approvals 200 in 198ms
+ ✓ Compiled in 426ms (608 modules)
+ ✓ Compiled in 1013ms (608 modules)
+ GET /admin/approvals 200 in 738ms
+ GET /admin/approvals 200 in 165ms
+ GET /products/import-export 200 in 219ms
+ GET /products/import-export 200 in 765ms
+ GET /products/import-export 200 in 337ms
+ GET /products 200 in 213ms
+ ✓ Compiled in 1316ms (608 modules)
+ GET /products 200 in 869ms
+ ✓ Compiled in 969ms (608 modules)
+ GET /products 200 in 350ms
+ ✓ Compiled in 321ms (608 modules)
+ GET /products 200 in 193ms
+ ✓ Compiled in 550ms (608 modules)
+ GET /products 200 in 783ms
+ ✓ Compiled in 886ms (608 modules)
+ GET /products 200 in 261ms
+ ✓ Compiled in 525ms (608 modules)
+ GET /products 200 in 338ms
+ ✓ Compiled in 360ms (608 modules)
+ GET /products 200 in 507ms
+ ✓ Compiled in 497ms (608 modules)
+ GET /products 200 in 183ms
+ ✓ Compiled in 474ms (608 modules)
+ GET /products 200 in 178ms
+ ✓ Compiled in 514ms (608 modules)
+ GET /products 200 in 487ms
+ ✓ Compiled in 902ms (608 modules)
+ GET /products 200 in 185ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1081ms (855 modules)
+ GET / 200 in 1611ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 8.9s (2376 modules)
+ GET /dashboard 200 in 9357ms
+ GET /dashboard 200 in 183ms
+ ○ Compiling /api/vendors ...
+ ✓ Compiled /api/vendors in 3s (2396 modules)
+ GET /api/vendors 200 in 4287ms
+ GET /api/customers 200 in 4317ms
+ GET /products 200 in 199ms

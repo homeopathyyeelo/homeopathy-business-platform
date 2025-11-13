@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface LineItem {
   id: string;
@@ -53,7 +54,7 @@ export default function PurchaseOrderCreatePage() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/purchases/orders', {
+      const res = await apiFetch('/api/purchases/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vendorId, orderDate, lines, status }),

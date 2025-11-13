@@ -3,13 +3,14 @@
 import DataTable from '@/components/common/DataTable';
 import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function BankReconciliationPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/finance/bank-reconciliation')
+    apiFetch('/api/finance/bank-reconciliation')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

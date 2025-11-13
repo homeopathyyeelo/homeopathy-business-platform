@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Upload, Download, CheckCircle2, AlertCircle, FileText, Package, Loader2, TrendingUp, Box } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface ProcessingStep {
   step: string;
@@ -70,7 +71,7 @@ export default function InventoryUploadPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/uploads/inventory', {
+      const response = await apiFetch('/api/uploads/inventory', {
         method: 'POST',
         body: formData,
       });

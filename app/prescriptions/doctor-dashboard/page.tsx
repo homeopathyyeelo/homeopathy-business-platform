@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function DoctorDashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/prescriptions/stats')
+    apiFetch('/api/prescriptions/stats')
       .then(res => res.json())
       .then(data => {
         if (data.success) setStats(data.data);

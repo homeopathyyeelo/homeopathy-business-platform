@@ -90,6 +90,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			return
 		}
 
+		// Set auth-token cookie
+		c.SetCookie(
+			"auth-token",
+			token,
+			86400,  // 24 hours
+			"/",
+			"",
+			false, // secure (set to true in production)
+			true,  // httpOnly
+		)
+
 		c.JSON(http.StatusOK, gin.H{
 			"token":     token,
 			"accessToken": token,
@@ -239,20 +250,59 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 
 // Me returns current user info
 func (h *AuthHandler) Me(c *gin.Context) {
-	// Get user from JWT token
-	userID := c.GetString("user_id")
-	user, err := h.userService.GetUserByID(userID)
+	// Try to get token from cookie first
+	tokenString, err := c.Cookie("auth-token")
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		// Fallback to Authorization header
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"success": false,
+				"error": "No authentication token provided",
+			})
+			return
+		}
+		tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+
+	// Parse JWT token
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "your-secret-key-change-in-production"
+	}
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(jwtSecret), nil
+	})
+
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error": "Invalid or expired token",
+		})
 		return
 	}
 
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error": "Invalid token claims",
+		})
+		return
+	}
+
+	// Return user info from JWT claims
 	c.JSON(http.StatusOK, gin.H{
-		"id":          user.ID,
-		"email":       user.Email,
-		"displayName": user.DisplayName,
-		"firstName":   user.FirstName,
-		"lastName":    user.LastName,
+		"success": true,
+		"user": gin.H{
+			"user_id":       claims["user_id"],
+			"email":         claims["email"],
+			"name":          claims["name"],
+			"displayName":   claims["displayName"],
+			"role":          claims["role"],
+			"isSuperAdmin":  claims["isSuperAdmin"],
+		},
 	})
 }
 

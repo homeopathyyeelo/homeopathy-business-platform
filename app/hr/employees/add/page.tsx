@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save } from 'lucide-react';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 export default function AddEmployeePage() {
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function AddEmployeePage() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/hr/employees', {
+      const response = await apiFetch('/api/hr/employees', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

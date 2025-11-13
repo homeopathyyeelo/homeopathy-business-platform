@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api/fetch-utils';
+import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface Medicine {
   id: string;
@@ -37,7 +38,7 @@ export default function PrescriptionCreatePage() {
 
   useEffect(() => {
     // Load templates
-    fetch('/api/prescriptions/templates')
+    apiFetch('/api/prescriptions/templates')
       .then(res => res.json())
       .then(data => {
         if (data.success) setTemplates(data.data || []);
@@ -82,7 +83,7 @@ export default function PrescriptionCreatePage() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/prescriptions/ai-suggestions', {
+      const res = await apiFetch('/api/prescriptions/ai-suggestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ symptoms, diagnosis }),
@@ -119,7 +120,7 @@ export default function PrescriptionCreatePage() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/prescriptions', {
+      const res = await apiFetch('/api/prescriptions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
