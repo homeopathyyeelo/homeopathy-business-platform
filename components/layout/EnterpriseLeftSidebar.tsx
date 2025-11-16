@@ -71,6 +71,7 @@ const menuItems: MenuItem[] = [
     path: '/inventory',
     color: 'from-purple-500 to-purple-600',
     submenus: [
+      { label: 'Purchase Upload', path: '/purchases/upload' },
       { label: 'Inventory Upload', path: '/inventory/upload' },
       { label: 'Current Stock', path: '/inventory/stock' },
       { label: 'Stock Adjustments', path: '/inventory/adjustments' },
@@ -107,6 +108,7 @@ const menuItems: MenuItem[] = [
     path: '/purchases',
     color: 'from-pink-500 to-pink-600',
     submenus: [
+      { label: 'Purchase Upload', path: '/purchases/upload' },
       { label: 'Purchase Orders', path: '/purchases/orders' },
       { label: 'GRN', path: '/purchases/grn' },
       { label: 'Purchase Bills', path: '/purchases/bills' },

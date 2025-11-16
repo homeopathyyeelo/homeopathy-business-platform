@@ -38,9 +38,21 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    await authApi.logout();
-    setUser(null);
-    router.push('/login');
+    try {
+      await authApi.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Always clear local data and redirect
+      setUser(null);
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+      // Clear any session cookies if they exist
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+      router.push('/login');
+    }
   };
 
   const hasPermission = (permission: string): boolean => {

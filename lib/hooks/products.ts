@@ -142,12 +142,16 @@ export function useProductStats() {
       const res = await golangAPI.get('/api/erp/products/stats')
       const data = res.data?.data || {}
       return {
-        total: data.total ?? 0,
-        active: data.active ?? 0,
-        lowStock: data.lowStock ?? 0,
-        totalValue: data.totalValue ?? 0,
-        categories: data.categories ?? 0,
-        brands: data.brands ?? 0,
+        total: data.total_products ?? 0,
+        active: data.active_products ?? 0,
+        lowStock: data.low_stock_count ?? 0,
+        outOfStock: data.out_of_stock_count ?? 0,
+        totalValue: data.total_inventory_value ?? 0,
+        avgCost: data.avg_cost_price ?? 0,
+        avgSelling: data.avg_selling_price ?? 0,
+        categories: data.total_categories ?? 0,
+        brands: data.total_brands ?? 0,
+        highValue: data.high_value_products ?? 0,
       }
     },
     staleTime: 60_000,

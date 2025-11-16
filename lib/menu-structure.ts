@@ -21,7 +21,7 @@ export const MENU_STRUCTURE = {
         { title: 'Categories', path: '/products/categories', desc: 'Manage categories' },
         { title: 'Brands', path: '/products/brands', desc: 'Manage brands' },
         { title: 'Batches', path: '/products/batches', desc: 'Batch management' },
-        { title: 'Barcodes', path: '/products/barcodes', desc: 'Generate barcodes' },
+        { title: 'Barcodes', path: '/products/barcode', desc: 'Generate barcodes' },
         { title: 'Price Management', path: '/products/pricing', desc: 'Manage prices' },
         { title: 'Tax Settings', path: '/products/tax', desc: 'GST configuration' },
         { title: 'Variants', path: '/products/variants', desc: 'Size, potency' },

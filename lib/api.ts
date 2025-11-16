@@ -13,9 +13,12 @@ const createAPIClient = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
+    withCredentials: true, // Always send cookies
   })
 
   client.interceptors.request.use((config) => {
+    // Cookies are sent automatically via withCredentials
+    // Only add Bearer token as fallback from localStorage
     const token = getToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -28,8 +31,10 @@ const createAPIClient = (baseURL: string): AxiosInstance => {
     (error) => {
       if (error.response?.status === 401) {
         if (typeof window !== 'undefined') {
+          // Clear stale token but DON'T redirect
+          // Let components handle 401 errors gracefully
           localStorage.removeItem('token')
-          window.location.href = '/login'
+          console.warn('API returned 401:', error.config?.url)
         }
       }
       return Promise.reject(error)

@@ -253,6 +253,13 @@ func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.Product
 			continue
 		}
 
+		// Get or auto-generate barcode
+		barcode := getValue(row, "barcode")
+		if barcode == "" {
+			// Auto-generate from SKU
+			barcode = strings.ToUpper(strings.ReplaceAll(sku, " ", ""))
+		}
+
 		product := models.Product{
 			SKU:          sku,
 			Name:         name,
@@ -260,7 +267,7 @@ func (h *ProductImportHandler) mapAndValidate(rows [][]string) ([]models.Product
 			SellingPrice: parseFloat(getValue(row, "selling_price")),
 			MRP:          parseFloat(getValue(row, "mrp")),
 			PackSize:     getValue(row, "pack_size"),
-			Barcode:      getValue(row, "barcode"),
+			Barcode:      barcode,
 			Description:  getValue(row, "description"),
 			Manufacturer: getValue(row, "manufacturer"),
 			ReorderLevel: parseInt(getValue(row, "reorder_level")),
@@ -303,10 +310,66 @@ func (h *ProductImportHandler) upsertProducts(products []models.Product) (insert
 		existingSKUMap[sku] = true
 	}
 
+	// Get default HSN code ID for homeopathy medicines (30049014 - 5% GST)
+	var defaultMedicineHSNID string
+	h.db.Table("hsn_codes").Select("id").Where("code = ?", "30049014").Scan(&defaultMedicineHSNID)
+	if defaultMedicineHSNID == "" {
+		// Create if not exists
+		defaultMedicineHSNID = uuid.New().String()
+		h.db.Table("hsn_codes").Create(map[string]interface{}{
+			"id":          defaultMedicineHSNID,
+			"code":        "30049014",
+			"description": "Homeopathic medicaments (retail pack)",
+			"gst_rate":    5.0,
+			"is_active":   true,
+			"created_at":  time.Now(),
+			"updated_at":  time.Now(),
+		})
+	}
+
+	// Get cosmetic HSN code ID (330499 - 18% GST)
+	var cosmeticHSNID string
+	h.db.Table("hsn_codes").Select("id").Where("code = ?", "330499").Scan(&cosmeticHSNID)
+	if cosmeticHSNID == "" {
+		// Create if not exists
+		cosmeticHSNID = uuid.New().String()
+		h.db.Table("hsn_codes").Create(map[string]interface{}{
+			"id":          cosmeticHSNID,
+			"code":        "330499",
+			"description": "Skin-care (not medicinal)",
+			"gst_rate":    18.0,
+			"is_active":   true,
+			"created_at":  time.Now(),
+			"updated_at":  time.Now(),
+		})
+	}
+
 	// Process each product
 	for _, product := range products {
 		// Set timestamps
 		now := time.Now()
+		
+		// Set HSN code ID if not provided - auto-detect based on product type
+		if product.HSNCodeID == nil {
+			// Check if cosmetic/personal care product
+			productName := strings.ToLower(product.Name)
+			isCosmetic := strings.Contains(productName, "shampoo") ||
+				strings.Contains(productName, "soap") ||
+				strings.Contains(productName, "toothpaste") ||
+				strings.Contains(productName, "facewash") ||
+				strings.Contains(productName, "face wash") ||
+				strings.Contains(productName, "hair oil") ||
+				strings.Contains(productName, "lotion") ||
+				strings.Contains(productName, "cream") ||
+				strings.Contains(productName, "cosmetic")
+			
+			if isCosmetic {
+				product.HSNCodeID = &cosmeticHSNID // 18% GST
+			} else {
+				product.HSNCodeID = &defaultMedicineHSNID // 5% GST
+			}
+		}
+		
 		if existingSKUMap[product.SKU] {
 			// Update existing
 			product.UpdatedAt = now
@@ -324,6 +387,7 @@ func (h *ProductImportHandler) upsertProducts(products []models.Product) (insert
 			}
 		} else {
 			// Insert new
+			product.ID = uuid.New().String()
 			product.CreatedAt = now
 			product.UpdatedAt = now
 			if err := h.db.Create(&product).Error; err != nil {

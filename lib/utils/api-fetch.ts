@@ -109,6 +109,9 @@ export async function apiFetch(
     };
   }
 
+  // Always include credentials (cookies) for authenticated requests
+  requestInit.credentials = requestInit.credentials || 'include';
+
   return fetch(url, requestInit);
 }
 

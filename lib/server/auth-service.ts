@@ -54,11 +54,14 @@ export function mapAuthServiceUser(data: AuthServiceUserPayload): AuthenticatedU
 
 export function attachAuthCookies(response: NextResponse, tokens: AuthServiceTokens) {
   const secure = process.env.NODE_ENV === "production"
+  const domain = process.env.NODE_ENV === "production" ? undefined : "localhost"
+  
   response.cookies.set("auth-token", tokens.accessToken, {
     httpOnly: true,
     secure,
     sameSite: "lax",
     path: "/",
+    domain, // Share cookie across all localhost ports in development
   })
 
   if (tokens.refreshToken) {
@@ -67,6 +70,7 @@ export function attachAuthCookies(response: NextResponse, tokens: AuthServiceTok
       secure,
       sameSite: "lax",
       path: "/",
+      domain, // Share cookie across all localhost ports in development
     })
   }
 }

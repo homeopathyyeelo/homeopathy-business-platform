@@ -186,9 +186,15 @@ export default function ProductListPage() {
       render: (val: any) => <span className="text-sm text-gray-600">{val || '-'}</span>
     },
     { 
-      key: 'hsnCode', 
-      title: 'HSN Code', 
+      key: 'barcode', 
+      title: 'Barcode', 
       sortable: true,
+      render: (val: any) => <span className="text-xs font-mono text-gray-500">{val || '-'}</span>
+    },
+    { 
+      key: 'hsnCode', 
+      title: 'HSN', 
+      sortable: false,
       render: (val: any) => <span className="text-xs font-mono text-gray-500">{val || '-'}</span>
     },
     { 
@@ -205,9 +211,15 @@ export default function ProductListPage() {
     },
     { 
       key: 'sellingPrice', 
-      title: 'Price', 
+      title: 'MRP', 
       sortable: true,
       render: (val: any) => <span className="font-semibold">₹{(val ?? 0).toLocaleString()}</span>
+    },
+    { 
+      key: 'taxPercent', 
+      title: 'GST', 
+      sortable: false,
+      render: (val: any) => <span className="text-xs text-gray-600">{val ? `${val}%` : '5%'}</span>
     },
     { 
       key: 'isActive', 

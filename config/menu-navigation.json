@@ -77,7 +77,7 @@
         {
           "id": "products-barcodes",
           "label": "Barcode Manager",
-          "path": "/app/products/barcodes",
+          "path": "/app/products/barcode",
           "roles": ["SUPER_ADMIN", "INVENTORY_MANAGER"]
         },
         {

@@ -26,9 +26,11 @@ class ExpiryNotificationService {
   private subscribers: Array<(alerts: ExpiryAlert[]) => void> = [];
   private summarySubscribers: Array<(summary: ExpirySummary) => void> = [];
   private intervalId: NodeJS.Timeout | null = null;
+  private isPolling: boolean = false;
 
   constructor() {
-    this.startPolling();
+    // Don't auto-start polling - let the hook start it when component mounts
+    // this.startPolling();
   }
 
   // Subscribe to expiry alerts
@@ -48,13 +50,25 @@ class ExpiryNotificationService {
   }
 
   // Start polling for expiry data
-  private startPolling() {
+  startPolling() {
+    if (this.isPolling) return; // Already polling
+    
+    this.isPolling = true;
     this.intervalId = setInterval(() => {
       this.fetchExpiryData();
     }, 60000); // Every minute
 
     // Initial fetch
     this.fetchExpiryData();
+  }
+
+  // Stop polling
+  stopPolling() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+      this.isPolling = false;
+    }
   }
 
   private async fetchExpiryData() {
@@ -68,15 +82,23 @@ class ExpiryNotificationService {
         if (summaryData.success && summaryData.data) {
           this.notifySummary(summaryData.data);
         }
+      } else if (summaryRes.status === 401) {
+        // Stop polling if unauthorized
+        this.stopPolling();
+        return;
       }
 
-      // Fetch detailed alerts
-      const alertsRes = await authFetch(`${API_URL}/api/erp/inventory/expiries/alerts`);
+      // Fetch detailed alerts - use correct endpoint path
+      const alertsRes = await authFetch(`${API_URL}/api/erp/inventory/alerts/expiry`);
       if (alertsRes.ok) {
         const alertsData = await alertsRes.json();
         if (alertsData.success && alertsData.data) {
           this.notifyAlerts(alertsData.data);
         }
+      } else if (alertsRes.status === 401) {
+        // Stop polling if unauthorized
+        this.stopPolling();
+        return;
       }
     } catch (error) {
       console.error('Error fetching expiry data:', error);
@@ -154,10 +176,14 @@ export function useExpiryNotifications() {
   React.useEffect(() => {
     const unsubscribeAlerts = expiryNotificationService.subscribe(setAlerts);
     const unsubscribeSummary = expiryNotificationService.subscribeToSummary(setSummary);
+    
+    // Start polling when component mounts (user is authenticated)
+    expiryNotificationService.startPolling();
 
     return () => {
       unsubscribeAlerts();
       unsubscribeSummary();
+      // Don't stop polling on unmount - let it continue for other components
     };
   }, []);
 
