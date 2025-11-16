@@ -38,7 +38,7 @@ func main() {
 	expiryService := services.NewExpiryService(db)
 
 	// Initialize handlers (only ones we actually use)
-	authHandler := handlers.NewAuthHandler()
+	authHandler := handlers.NewAuthHandler(db)
 	aiModelHandler := handlers.NewAIModelHandler()
 	barcodeHandler := handlers.NewBarcodeHandler(db)
 	bugsHandler := handlers.NewBugHandler(bugService)
@@ -51,6 +51,10 @@ func main() {
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
 	productHandler := handlers.NewProductHandler(db)
+	productStatsHandler := handlers.NewProductStatsHandler(db)
+	quickActionsHandler := handlers.NewQuickActionsHandler(db)
+	batchBarcodeHandler := handlers.NewBatchBarcodeHandler(db)
+	barcodeLabelHandler := handlers.NewBarcodeLabelHandler(db)
 	enhancedPurchaseHandler := handlers.NewEnhancedPurchaseHandler(db)
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
@@ -126,7 +130,8 @@ func main() {
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
 			auth.POST("/refresh", authHandler.RefreshToken)
-			// auth.GET("/me", authHandler.GetMe) // TODO: Method doesn't exist yet
+			auth.GET("/me", authHandler.Me) // Get current user info
+			auth.POST("/validate", authHandler.ValidateToken) // Validate token
 		}
 
 		// System routes (v1 API)
@@ -167,17 +172,32 @@ func main() {
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
 			erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
+			erp.GET("/dashboard/quick-actions", quickActionsHandler.GetQuickActions) // Smart insights quick actions
 			erp.GET("/notifications/recent", notificationHandler.GetRecentNotifications)
 			erp.GET("/favicon.ico", func(c *gin.Context) {
 				c.File("favicon.ico")
 			})
 
 			// Products
+			erp.GET("/products/stats", productStatsHandler.GetProductStats) // MUST be before /:id
+			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes) // MUST be before /:id
+			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct) // MUST be before /:id
+			erp.GET("/products/:id/barcode-image", barcodeLabelHandler.GenerateBarcodeImage) // Generate barcode image for single product
 			erp.GET("/products", productHandler.GetProducts)
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
+			
+			// Barcode Label Generation
+			erp.GET("/barcode/generate", barcodeLabelHandler.GenerateBarcodeByString) // Generate barcode by string
+			erp.GET("/barcode/labels/all", barcodeLabelHandler.GenerateAllBarcodeLabels) // Bulk generate all
+			erp.POST("/barcode/labels/print", barcodeLabelHandler.PrintBarcodeLabels) // Print selected labels
+			
+			// Batch Management
+			erp.POST("/inventory/batches", batchBarcodeHandler.CreateBatch)
+			erp.POST("/inventory/batches/allocate", batchBarcodeHandler.AllocateBatch)
+			erp.GET("/inventory/batches/expiring", batchBarcodeHandler.GetExpiringBatches)
 
 			// Product Import (methods need to be implemented)
 			// erp.POST("/products/import", productImportHandler.ImportProducts) 
@@ -315,6 +335,7 @@ func main() {
 			erp.DELETE("/price-lists/:id/products/:productId", priceListHandler.RemoveProductFromPriceList)
 
 			// User Management
+			erp.GET("/users/me", userHandler.GetMe) // Get current authenticated user (must be before /:id)
 			erp.GET("/users", userHandler.GetUsers)
 			erp.GET("/users/:id", userHandler.GetUser)
 			erp.POST("/users", userHandler.CreateUser)
@@ -335,7 +356,7 @@ func main() {
 				ai.POST("/segmentation/customers", productHandler.GetAICustomerSegmentation)
 				// ai.POST("/optimization/inventory", inventoryHandler.GetAIInventoryOptimization) // TODO
 				// ai.GET("/optimization/alerts", inventoryHandler.GetAIInventoryAlerts) // TODO
-				ai.POST("/fraud/check", productHandler.GetAIFraudDetection)
+				ai.POST("/fraud/check", productHandler.AIFraudDetection)
 				ai.GET("/insights/business", dashboardHandler.GetAIBusinessInsights)
 				ai.GET("/insights/customers", productHandler.GetAICustomerInsights)
 				ai.POST("/chatbot", aiModelHandler.GetAIChatbotResponse)
@@ -363,8 +384,8 @@ func main() {
 			// erp.GET("/inventory/expiry-summary", expiryHandler.GetExpirySummary)  // TODO: Requires shop_id
 			// erp.POST("/inventory/expiry-alert", expiryHandler.CreateExpiryAlert) // TODO
 
-			// Barcode Management
-			erp.GET("/products/barcode", barcodeHandler.GetBarcodes)
+			// Barcode Management (commented out - using product handler instead)
+			// erp.GET("/products/barcode", barcodeHandler.GetBarcodes)
 			erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
 			erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
 			erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)

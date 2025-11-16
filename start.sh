@@ -28,14 +28,52 @@ if \! dpkg -l | grep -q libpq-dev; then
     echo "⚠️  Continuing anyway (may fail if not installed)..."
 fi
 
-# Kill existing processes
-echo -e "${YELLOW}�� Stopping existing servers...${NC}"
-pkill -9 backend-server 2>/dev/null
-pkill -9 node 2>/dev/null
-sleep 2
+# Kill existing processes - AGGRESSIVE MODE
+echo -e "${YELLOW}🛑 Stopping existing servers...${NC}"
+
+# Kill backend
+pkill -9 -f backend-server 2>/dev/null || true
+lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+
+# Kill frontend - multiple methods to ensure all processes die
+echo "  → Killing Next.js processes..."
+pkill -9 -f 'node.*next' 2>/dev/null || true
+pkill -9 -f 'next dev' 2>/dev/null || true
+pkill -9 -f 'next-server' 2>/dev/null || true
+
+# Kill by port (most reliable)
+for i in {1..3}; do
+  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  sleep 1
+  if ! lsof -ti:3000 >/dev/null 2>&1; then
+    break
+  fi
+done
+
+# Final check
+if lsof -ti:3000 >/dev/null 2>&1; then
+  echo -e "${YELLOW}  ⚠️  Port 3000 still in use, forcing kill...${NC}"
+  fuser -k 3000/tcp 2>/dev/null || true
+  sleep 2
+fi
+
+echo "  ✓ All processes stopped"
+sleep 1
 
 # Create logs directory
 mkdir -p logs
+
+# Always clean Next.js cache (even without --fresh)
+echo -e "${BLUE}🧹 Cleaning Next.js cache...${NC}"
+if [ -d ".next/cache" ]; then
+  echo "  → Removing .next/cache..."
+  rm -rf .next/cache
+fi
+if [ -d ".next/trace" ]; then
+  echo "  → Removing .next/trace..."
+  rm -rf .next/trace
+fi
+echo "  ✓ Cache cleaned"
 
 # Fresh install mode - clean everything
 if [ "$FRESH_INSTALL" = true ]; then
@@ -127,14 +165,14 @@ echo -e "${BLUE}📦 Starting Backend (Golang API)...${NC}"
 cd /var/www/homeopathy-business-platform
 
 # Kill any existing backend
-pkill -9 backend-server 2>/dev/null
-lsof -ti:3005 | xargs kill -9 2>/dev/null
-sleep 2
+pkill -9 -f backend-server 2>/dev/null || true
+lsof -ti:3005 | xargs kill -9 2>/dev/null || true
+sleep 1
 
 # Build and start
 cd services/api-golang-master
-go mod tidy
-go build -o ../../backend-server cmd/api/main.go
+go mod tidy 2>&1 | grep -v "warning" || true
+go build -o ../../backend-server cmd/main.go
 cd /var/www/homeopathy-business-platform
 
 if [ ! -f "backend-server" ]; then
@@ -142,7 +180,7 @@ if [ ! -f "backend-server" ]; then
     exit 1
 fi
 
-./backend-server > logs/backend.log 2>&1 &
+PORT=3005 JWT_SECRET=your-secret-key-change-in-production ./backend-server > logs/backend.log 2>&1 &
 BACKEND_PID=$!
 echo -e "${GREEN}✅ Backend started (PID: $BACKEND_PID)${NC}"
 echo "   Logs: logs/backend.log"
@@ -163,11 +201,24 @@ echo ""
 # Start Frontend
 echo -e "${BLUE}🎨 Starting Frontend (Next.js)...${NC}"
 cd /var/www/homeopathy-business-platform
+
+# Ensure port is free before starting
+if lsof -ti:3000 >/dev/null 2>&1; then
+  echo -e "${RED}❌ Port 3000 still in use! Force killing...${NC}"
+  lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+  sleep 2
+fi
+
+# Clear any stale PID files
+rm -f .next/server/next-server.sock 2>/dev/null || true
+
+# Start Next.js
 npx next dev > logs/frontend.log 2>&1 &
-FRONTEND_PID=$\!
+FRONTEND_PID=$!
 echo -e "${GREEN}✅ Frontend started (PID: $FRONTEND_PID)${NC}"
 echo "   Logs: logs/frontend.log"
 echo "   App: http://localhost:3000"
+echo "   PID: $FRONTEND_PID (to kill: kill -9 $FRONTEND_PID)"
 
 # Wait for frontend to be ready
 sleep 6
@@ -195,7 +246,7 @@ echo "   Backend:  tail -f logs/backend.log"
 echo "   Frontend: tail -f logs/frontend.log"
 echo ""
 echo "🛑 To stop all services:"
-echo "   pkill -9 backend-server && pkill -9 node"
+echo "   pkill -9 -f backend-server && pkill -9 -f 'node.*next' && lsof -ti:3000,3005 | xargs kill -9"
 echo ""
 echo "💡 Tips:"
 echo "   Fresh rebuild: ./start.sh --fresh"

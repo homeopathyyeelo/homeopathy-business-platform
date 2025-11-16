@@ -1,0 +1,4 @@
+sku,barcode,name,brand,category,potency,form,pack_size,qty,batch_no,expiry_date,mrp,gst,hsn,remarks
+SKU001,8901234567890,Sulphur 30C Tablet,SBL,Dilution,30C,Tablet,30tabs,100,BATCH-A,2027-08-01,120,5,3004,initial stock
+SKU002,,BC-12 Tablet,Generic,BioCombination,,Tablet,20tabs,50,BC12-001,2026-04-12,45,5,3004,initial
+SKU003,8901234567899,Calendula Ointment,Schwabe,Topical,,Ointment,25g,30,OT-01,2028-01-01,85,18,3307,import

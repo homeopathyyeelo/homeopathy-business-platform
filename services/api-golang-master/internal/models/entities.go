@@ -251,9 +251,10 @@ type InventoryBatch struct {
 	RackNumber             string `json:"rackNumber"`
 	BinNumber              string `json:"binNumber"`
 
-	// Supplier
+	// Supplier & Source
 	SupplierID             *string `json:"supplierId" gorm:"type:uuid"`
 	PurchaseOrderID        string  `json:"purchaseOrderId"`
+	StockSource            string  `json:"stockSource" gorm:"default:'purchase'"` // purchase, inventory, adjustment, transfer, return
 
 	IsExpired              bool      `json:"isExpired" gorm:"default:false"`
 	IsActive               bool      `json:"isActive" gorm:"default:true"`
@@ -548,7 +549,11 @@ type User struct {
 	// Status
 	IsActive               bool      `json:"isActive" gorm:"default:true"`
 	IsVerified             bool      `json:"isVerified" gorm:"default:false"`
+	IsSuperAdmin           bool      `json:"isSuperAdmin" gorm:"default:false"`
 	LastLoginAt            *time.Time `json:"lastLoginAt"`
+	LastLogin              *time.Time `json:"lastLogin"`
+	LoginAttempts          int        `json:"-" gorm:"default:0"`
+	LockedUntil            *time.Time `json:"-"`
 
 	// 2FA
 	TwoFactorEnabled       bool   `json:"twoFactorEnabled" gorm:"default:false"`
@@ -1160,3 +1165,50 @@ type EnhancedExpiryAlert struct {
 }
 
 func (EnhancedExpiryAlert) TableName() string { return "expiry_alerts" }
+
+// ============================================================================
+// PRODUCT IMPORT MODELS (for normalization system)
+// ============================================================================
+
+// ProductImportSession tracks bulk import progress
+type ProductImportSession struct {
+	ID            string     `json:"id" gorm:"type:uuid;primaryKey"`
+	FileName      string     `json:"fileName"`
+	UploadedBy    string     `json:"uploadedBy" gorm:"type:uuid;not null"`
+	TotalRows     int        `json:"totalRows" gorm:"default:0"`
+	ProcessedRows int        `json:"processedRows" gorm:"default:0"`
+	SuccessRows   int        `json:"successRows" gorm:"default:0"`
+	ErrorRows     int        `json:"errorRows" gorm:"default:0"`
+	PendingReview int        `json:"pendingReview" gorm:"default:0"`
+	Status        string     `json:"status" gorm:"default:'processing';index"` // processing, completed, failed
+	StartedAt     time.Time  `json:"startedAt"`
+	CompletedAt   *time.Time `json:"completedAt"`
+	CreatedAt     time.Time  `json:"createdAt"`
+	UpdatedAt     time.Time  `json:"updatedAt"`
+}
+
+// ProductImportStaging holds products pending review
+type ProductImportStaging struct {
+	ID                  string     `json:"id" gorm:"type:uuid;primaryKey"`
+	SessionID           string     `json:"sessionId" gorm:"type:uuid;not null;index"`
+	RawData             string     `json:"rawData" gorm:"type:jsonb"`
+	ProductName         string     `json:"productName" gorm:"type:varchar(500);not null"`
+	BrandName           string     `json:"brandName"`
+	Barcode             string     `json:"barcode"`
+	HSNCode             string     `json:"hsnCode"`
+	MRP                 float64    `json:"mrp"`
+	ParsedSubstance     string     `json:"parsedSubstance"`
+	ParsedPotency       string     `json:"parsedPotency"`
+	ParsedScale         string     `json:"parsedScale"`
+	ParsedForm          string     `json:"parsedForm"`
+	MatchedProductID    *string    `json:"matchedProductId" gorm:"type:uuid"`
+	MatchConfidence     float64    `json:"matchConfidence" gorm:"default:0"`
+	MatchMethod         string     `json:"matchMethod"`
+	Status              string     `json:"status" gorm:"default:'pending';index"`
+	ErrorMessage        string     `json:"errorMessage" gorm:"type:text"`
+	ReviewNotes         string     `json:"reviewNotes" gorm:"type:text"`
+	ReviewedBy          *string    `json:"reviewedBy" gorm:"type:uuid"`
+	ReviewedAt          *time.Time `json:"reviewedAt"`
+	CreatedAt           time.Time  `json:"createdAt"`
+	UpdatedAt           time.Time  `json:"updatedAt"`
+}

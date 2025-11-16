@@ -1,0 +1,521 @@
+package handlers
+
+import (
+	"encoding/csv"
+	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
+	"gorm.io/gorm"
+
+	"github.com/yeelo/homeopathy-erp/internal/models"
+	"github.com/yeelo/homeopathy-erp/internal/services"
+)
+
+type ProductNormalizationHandler struct {
+	db         *gorm.DB
+	normalizer *services.ProductNormalizer
+}
+
+func NewProductNormalizationHandler(db *gorm.DB) *ProductNormalizationHandler {
+	return &ProductNormalizationHandler{
+		db:         db,
+		normalizer: services.NewProductNormalizer(db),
+	}
+}
+
+// ============================================================================
+// IMPORT WITH INTELLIGENT MATCHING
+// ============================================================================
+
+// POST /api/erp/products/import/smart - Intelligent import with substance matching
+func (h *ProductNormalizationHandler) SmartImport(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+
+	// Get uploaded file
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file required", "success": false})
+		return
+	}
+
+	// Create import session
+	session := &models.ProductImportSession{
+		FileName:   file.Filename,
+		UploadedBy: userID.(string),
+		StartedAt:  time.Now(),
+		Status:     "processing",
+	}
+	if err := h.db.Create(session).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create session", "success": false})
+		return
+	}
+
+	// Save file temporarily
+	tmpPath := filepath.Join(os.TempDir(), fmt.Sprintf("import_%s_%s", session.ID[:8], filepath.Base(file.Filename)))
+	if err := c.SaveUploadedFile(file, tmpPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save file", "success": false})
+		return
+	}
+	defer os.Remove(tmpPath)
+
+	// Parse file
+	rows, err := h.parseFile(tmpPath)
+	if err != nil {
+		h.updateSessionStatus(session.ID, "failed")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	// Process rows asynchronously (or synchronously for small files)
+	go h.processImportRows(session.ID, rows)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"session_id":  session.ID,
+			"total_rows":  len(rows) - 1,
+			"status":      "processing",
+			"message":     "Import started. Use GET /api/erp/products/import/sessions/:id to check progress",
+		},
+	})
+}
+
+// processImportRows - Process all rows in background
+func (h *ProductNormalizationHandler) processImportRows(sessionID string, rows [][]string) {
+	if len(rows) < 2 {
+		h.updateSessionStatus(sessionID, "failed")
+		return
+	}
+
+	header := rows[0]
+	dataRows := rows[1:]
+
+	totalRows := len(dataRows)
+	successCount := 0
+	errorCount := 0
+	pendingReview := 0
+
+	for _, row := range dataRows {
+		// Convert row to map
+		rowMap := make(map[string]interface{})
+		for i, value := range row {
+			if i < len(header) {
+				rowMap[strings.ToLower(header[i])] = value
+			}
+		}
+
+		// Process row
+		staging, err := h.normalizer.ProcessImportRow(sessionID, rowMap)
+		if err != nil {
+			errorCount++
+			continue
+		}
+
+		// Count by status
+		if staging.Status == "pending_review" {
+			pendingReview++
+		} else if staging.MatchConfidence >= 90 {
+			successCount++
+		} else {
+			errorCount++
+		}
+	}
+
+	// Update session
+	h.db.Model(&models.ProductImportSession{}).
+		Where("id = ?", sessionID).
+		Updates(map[string]interface{}{
+			"total_rows":     totalRows,
+			"processed_rows": totalRows,
+			"success_rows":   successCount,
+			"error_rows":     errorCount,
+			"pending_review": pendingReview,
+			"status":         "completed",
+			"completed_at":   time.Now(),
+		})
+}
+
+// GET /api/erp/products/import/sessions/:id - Get import session status
+func (h *ProductNormalizationHandler) GetSessionStatus(c *gin.Context) {
+	sessionID := c.Param("id")
+
+	var session models.ProductImportSession
+	if err := h.db.Where("id = ?", sessionID).First(&session).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "session not found", "success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    session,
+	})
+}
+
+// GET /api/erp/products/import/sessions/:id/review - Get staging records for review
+func (h *ProductNormalizationHandler) GetReviewRecords(c *gin.Context) {
+	sessionID := c.Param("id")
+	status := c.DefaultQuery("status", "pending_review")
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+
+	var records []models.ProductImportStaging
+	query := h.db.Where("session_id = ?", sessionID)
+
+	if status != "all" {
+		query = query.Where("status = ?", status)
+	}
+
+	var total int64
+	query.Model(&models.ProductImportStaging{}).Count(&total)
+
+	err := query.Limit(limit).Offset(offset).
+		Order("created_at DESC").
+		Find(&records).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"records": records,
+			"total":   total,
+			"limit":   limit,
+			"offset":  offset,
+		},
+	})
+}
+
+// POST /api/erp/products/import/review/:id - Review single staging record
+func (h *ProductNormalizationHandler) ReviewRecord(c *gin.Context) {
+	recordID := c.Param("id")
+	userID, _ := c.Get("user_id")
+
+	var req struct {
+		Action       string  `json:"action"` // approve, reject, edit
+		SubstanceID  *string `json:"substance_id"`
+		CreateNew    bool    `json:"create_new"`
+		ReviewNotes  string  `json:"review_notes"`
+		ProductName  string  `json:"product_name"`
+		Potency      string  `json:"potency"`
+		Form         string  `json:"form"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	var staging models.ProductImportStaging
+	if err := h.db.Where("id = ?", recordID).First(&staging).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "record not found", "success": false})
+		return
+	}
+
+	now := time.Now()
+	userIDStr := userID.(string)
+
+	switch req.Action {
+	case "approve":
+		// Create product from staging
+		if err := h.createProductFromStaging(&staging, req.SubstanceID); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+			return
+		}
+		staging.Status = "approved"
+
+	case "reject":
+		staging.Status = "rejected"
+
+	case "edit":
+		// Update parsed values
+		if req.ProductName != "" {
+			staging.ProductName = req.ProductName
+		}
+		if req.Potency != "" {
+			staging.ParsedPotency = req.Potency
+		}
+		if req.Form != "" {
+			staging.ParsedForm = req.Form
+		}
+		if req.SubstanceID != nil {
+			staging.MatchedSubstanceID = req.SubstanceID
+		}
+		staging.Status = "pending"
+
+	case "create_new":
+		// Create new substance
+		substance := &models.Substance{
+			Name:   staging.ParsedSubstance,
+			Type:   "homeopathy_medicine",
+			IsActive: true,
+		}
+		if err := h.db.Create(substance).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create substance", "success": false})
+			return
+		}
+		staging.MatchedSubstanceID = &substance.ID
+		staging.MatchConfidence = 100.0
+		staging.MatchMethod = "created"
+		staging.Status = "pending"
+	}
+
+	staging.ReviewNotes = req.ReviewNotes
+	staging.ReviewedBy = &userIDStr
+	staging.ReviewedAt = &now
+
+	if err := h.db.Save(&staging).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    staging,
+		"message": fmt.Sprintf("Record %s successfully", req.Action),
+	})
+}
+
+// POST /api/erp/products/import/sessions/:id/approve-all - Batch approve high confidence matches
+func (h *ProductNormalizationHandler) BatchApprove(c *gin.Context) {
+	sessionID := c.Param("id")
+	minConfidence := 90.0
+
+	var records []models.ProductImportStaging
+	err := h.db.Where("session_id = ? AND status = ? AND match_confidence >= ?",
+		sessionID, "pending", minConfidence).
+		Find(&records).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	approvedCount := 0
+	for _, record := range records {
+		if err := h.createProductFromStaging(&record, nil); err == nil {
+			h.db.Model(&record).Updates(map[string]interface{}{
+				"status": "approved",
+			})
+			approvedCount++
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"approved": approvedCount,
+			"total":    len(records),
+		},
+		"message": fmt.Sprintf("Approved %d high-confidence matches", approvedCount),
+	})
+}
+
+// ============================================================================
+// SUBSTANCE MANAGEMENT
+// ============================================================================
+
+// GET /api/erp/substances - List all substances
+func (h *ProductNormalizationHandler) ListSubstances(c *gin.Context) {
+	search := c.Query("search")
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
+	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "0"))
+
+	var substances []models.Substance
+	query := h.db.Where("is_active = ?", true)
+
+	if search != "" {
+		// Fuzzy search using pg_trgm
+		query = query.Where("name ILIKE ?", "%"+search+"%").
+			Order("name ASC")
+	} else {
+		query = query.Order("name ASC")
+	}
+
+	var total int64
+	query.Model(&models.Substance{}).Count(&total)
+
+	err := query.Preload("Aliases").
+		Limit(limit).Offset(offset).
+		Find(&substances).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": gin.H{
+			"substances": substances,
+			"total":      total,
+		},
+	})
+}
+
+// POST /api/erp/substances - Create new substance
+func (h *ProductNormalizationHandler) CreateSubstance(c *gin.Context) {
+	var req struct {
+		Name        string   `json:"name" binding:"required"`
+		Type        string   `json:"type"`
+		Description string   `json:"description"`
+		Aliases     []string `json:"aliases"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	substance := &models.Substance{
+		Name:        req.Name,
+		Type:        req.Type,
+		Description: req.Description,
+		IsActive:    true,
+	}
+
+	if err := h.db.Create(substance).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "success": false})
+		return
+	}
+
+	// Create aliases
+	for _, alias := range req.Aliases {
+		if alias != "" {
+			aliasModel := &models.SubstanceAlias{
+				SubstanceID: substance.ID,
+				Alias:       alias,
+			}
+			h.db.Create(aliasModel)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    substance,
+		"message": "Substance created successfully",
+	})
+}
+
+// ============================================================================
+// HELPER METHODS
+// ============================================================================
+
+func (h *ProductNormalizationHandler) parseFile(path string) ([][]string, error) {
+	ext := strings.ToLower(filepath.Ext(path))
+
+	if ext == ".csv" {
+		return h.parseCSV(path)
+	} else if ext == ".xlsx" || ext == ".xls" {
+		return h.parseExcel(path)
+	}
+
+	return nil, fmt.Errorf("unsupported file format: %s", ext)
+}
+
+func (h *ProductNormalizationHandler) parseCSV(path string) ([][]string, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	rows, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+func (h *ProductNormalizationHandler) parseExcel(path string) ([][]string, error) {
+	f, err := excelize.OpenFile(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	sheetName := f.GetSheetName(0)
+	rows, err := f.GetRows(sheetName)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}
+
+func (h *ProductNormalizationHandler) updateSessionStatus(sessionID string, status string) {
+	h.db.Model(&models.ProductImportSession{}).
+		Where("id = ?", sessionID).
+		Updates(map[string]interface{}{
+			"status":       status,
+			"completed_at": time.Now(),
+		})
+}
+
+func (h *ProductNormalizationHandler) createProductFromStaging(staging *models.ProductImportStaging, substanceID *string) error {
+	// Use provided substance ID or the matched one
+	finalSubstanceID := substanceID
+	if finalSubstanceID == nil {
+		finalSubstanceID = staging.MatchedSubstanceID
+	}
+
+	if finalSubstanceID == nil {
+		return fmt.Errorf("no substance ID provided")
+	}
+
+	// Get substance to determine GST
+	var substance models.Substance
+	if err := h.db.Where("id = ?", *finalSubstanceID).First(&substance).Error; err != nil {
+		return err
+	}
+
+	// Create or find product master
+	productMaster := &models.ProductMaster{
+		Name:               staging.ProductName,
+		PrimarySubstanceID: finalSubstanceID,
+		Type:               "single",
+		IsActive:           true,
+	}
+
+	// Apply GST rules
+	sgst, cgst, igst := h.normalizer.DetermineGST(&substance, staging.ParsedForm)
+	productMaster.GSTSGST = sgst
+	productMaster.GSTCGST = cgst
+	productMaster.GSTIGST = igst
+
+	if err := h.db.Create(productMaster).Error; err != nil {
+		return err
+	}
+
+	// Create product variant
+	variant := &models.ProductVariant{
+		ProductMasterID: productMaster.ID,
+		Barcode:         staging.Barcode,
+		Potency:         staging.ParsedPotency,
+		PotencyScale:    staging.ParsedScale,
+		Form:            staging.ParsedForm,
+		MRP:             staging.MRP,
+		IsActive:        true,
+	}
+
+	if err := h.db.Create(variant).Error; err != nil {
+		return err
+	}
+
+	// Update staging with created IDs
+	staging.MatchedProductID = &productMaster.ID
+	staging.MatchedVariantID = &variant.ID
+
+	return nil
+}

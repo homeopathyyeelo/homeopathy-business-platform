@@ -46,6 +46,7 @@ func main() {
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
 	productHandler := handlers.NewProductHandler(db)
+	groupedProductsHandler := handlers.NewGroupedProductsHandler(db)
 	enhancedPurchaseHandler := handlers.NewEnhancedPurchaseHandler(db)
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
@@ -167,6 +168,8 @@ func main() {
 			erp.GET("/products", productHandler.GetProducts)
 			erp.GET("/products/template", productImportHandler.DownloadTemplate) // Must be before /:id
 			erp.GET("/products/stats", productHandler.GetProductStats) // Must be before /:id
+			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts) // Grouped view
+			erp.GET("/products/grouped/:baseName/variants", groupedProductsHandler.GetGroupVariants) // Variants for group
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)

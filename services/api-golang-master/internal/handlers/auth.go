@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -12,7 +15,6 @@ import (
 
 	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
-	"os"
 )
 
 type AuthHandler struct {
@@ -82,79 +84,68 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Super Admin mode: hardcoded credentials
-	if req.Email == "medicine@yeelohomeopathy.com" && req.Password == "Medicine@2024" {
-		token, expiresAt, err := h.generateDemoToken()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-			return
-		}
-
-		// Set auth-token cookie
-		c.SetCookie(
-			"auth-token",
-			token,
-			86400,  // 24 hours
-			"/",
-			"",
-			false, // secure (set to true in production)
-			true,  // httpOnly
-		)
-
-		c.JSON(http.StatusOK, gin.H{
-			"token":     token,
-			"accessToken": token,
-			"expiresAt": expiresAt,
-			"user": gin.H{
-				"id":           "superadmin-1",
-				"email":        "medicine@yeelohomeopathy.com",
-				"name":         "Super Admin",
-				"displayName":  "Super Admin",
-				"firstName":    "Super",
-				"lastName":     "Admin",
-				"role":         "SUPER_ADMIN",
-				"isSuperAdmin": true,
-				"isActive":     true,
-				"permissions":  []string{},
-			},
-		})
+	// Find user by email from database
+	var user models.User
+	if err := h.db.Where("email = ?", req.Email).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
 
-	user, err := h.userService.GetUserByEmail(req.Email)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+	// Check if account is locked
+	if user.LockedUntil != nil && user.LockedUntil.After(time.Now()) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Account is locked. Please try again later."})
 		return
 	}
 
+	// Check if user is active
 	if !user.IsActive {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Account is disabled"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Account is deactivated"})
 		return
 	}
 
+	// Verify password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		// Increment failed login attempts
+		user.LoginAttempts++
+		if user.LoginAttempts >= 5 {
+			lockUntil := time.Now().Add(15 * time.Minute)
+			user.LockedUntil = &lockUntil
+		}
+		h.db.Save(&user)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
+
+	// Reset login attempts on successful login
+	user.LoginAttempts = 0
+	user.LockedUntil = nil
+	lastLogin := time.Now()
+	user.LastLogin = &lastLogin
+	h.db.Save(&user)
 
 	// Generate JWT token
-	token, expiresAt, err := h.generateToken(user)
+	token, expiresAt, err := h.generateToken(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	if err := h.sessionService.DeleteSessionsForUser(user.ID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to prepare session"})
+	// Create session record
+	if err := h.createSession(&user, token, c.ClientIP(), c.GetHeader("User-Agent"), expiresAt); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create session"})
 		return
 	}
 
-	if err := h.sessionService.CreateSession(token, user.ID, expiresAt); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to persist session"})
-		return
-	}
-
-	_ = h.userService.UpdateLastLogin(user.ID)
+	// Set auth-token cookie
+	c.SetCookie(
+		"auth-token",
+		token,
+		86400,
+		"/",
+		"localhost",
+		false,
+		true,
+	)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":       token,
@@ -167,67 +158,92 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			"displayName": user.DisplayName,
 			"firstName":   user.FirstName,
 			"lastName":    user.LastName,
-			"role":        getUserRole(user, h.db),
+			"role":        getUserRole(&user, h.db),
 			"isActive":    user.IsActive,
-			"isSuperAdmin": false,
+			"isSuperAdmin": user.IsSuperAdmin,
 			"permissions": []string{},
 		},
 	})
 }
 
+// createSession creates a new session in the database
+func (h *AuthHandler) createSession(user *models.User, token string, ipAddress string, userAgent string, expiresAt time.Time) error {
+	// Hash the token for storage using SHA256
+	hash := sha256.Sum256([]byte(token))
+	tokenHash := fmt.Sprintf("%x", hash)
+	
+	session := map[string]interface{}{
+		"user_id":    user.ID,
+		"token_hash": tokenHash,
+		"ip_address": ipAddress,
+		"user_agent": userAgent,
+		"expires_at": expiresAt,
+		"created_at": time.Now(),
+		"updated_at": time.Now(),
+	}
+	
+	return h.db.Table("user_sessions").Create(session).Error
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 
 
 func (h *AuthHandler) generateToken(user *models.User) (string, time.Time, error) {
-	claims := &jwt.MapClaims{
-		"user_id":     user.ID,
-		"email":       user.Email,
-		"displayName": user.DisplayName,
-		"exp":         time.Now().Add(24 * time.Hour).Unix(),
-		"iat":         time.Now().Unix(),
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "your-secret-key-change-in-production"
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	expiry := time.Now().Add(24 * time.Hour)
-	signed, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	return signed, expiry, err
-}
-
-func (h *AuthHandler) generateDemoToken() (string, time.Time, error) {
+	role := getUserRole(user, h.db)
+	
 	claims := &jwt.MapClaims{
-		"user_id":      "superadmin-1",
-		"email":        "medicine@yeelohomeopathy.com",
-		"name":         "Super Admin",
-		"displayName":  "Super Admin",
-		"role":         "SUPER_ADMIN",
-		"isSuperAdmin": true,
+		"user_id":      user.ID,
+		"email":        user.Email,
+		"name":         user.DisplayName,
+		"displayName":  user.DisplayName,
+		"firstName":    user.FirstName,
+		"lastName":     user.LastName,
+		"role":         role,
+		"isSuperAdmin": user.IsSuperAdmin,
 		"exp":          time.Now().Add(24 * time.Hour).Unix(),
 		"iat":          time.Now().Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	expiry := time.Now().Add(24 * time.Hour)
-	signed, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	signed, err := token.SignedString([]byte(jwtSecret))
 	return signed, expiry, err
 }
 
 func getUserRole(user *models.User, db *gorm.DB) string {
-	var role struct {
+	var result struct {
 		Code string
 	}
 	
 	err := db.Table("user_roles").
-		Select("roles.code").
+		Select("roles.code, roles.level").
 		Joins("LEFT JOIN roles ON roles.id = user_roles.role_id").
 		Where("user_roles.user_id = ?", user.ID).
 		Where("roles.is_active = ?", true).
 		Order("roles.level DESC").
-		First(&role).Error
+		Limit(1).
+		Scan(&result).Error
 	
-	if err != nil || role.Code == "" {
-		return "STAFF" // Default role
+	if err != nil || result.Code == "" {
+		// If user has no role or is super admin, return super admin or default
+		if user.IsSuperAdmin {
+			return "SUPER_ADMIN"
+		}
+		return "STAFF"
 	}
 	
-	return role.Code
+	return result.Code
 }
 
 // RefreshToken handles token refresh
@@ -292,16 +308,20 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		return
 	}
 
-	// Return user info from JWT claims
+	// Return user info from JWT claims (matching login response format)
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"user": gin.H{
-			"user_id":       claims["user_id"],
+			"id":            claims["user_id"],
 			"email":         claims["email"],
-			"name":          claims["name"],
+			"name":          claims["displayName"],
 			"displayName":   claims["displayName"],
-			"role":          claims["role"],
-			"isSuperAdmin":  claims["isSuperAdmin"],
+			"firstName":     getClaimString(claims, "firstName", "User"),
+			"lastName":      getClaimString(claims, "lastName", ""),
+			"role":          getClaimString(claims, "role", "STAFF"),
+			"isActive":      true,
+			"isSuperAdmin":  getClaimBool(claims, "isSuperAdmin", false),
+			"permissions":   []string{},
 		},
 	})
 }
@@ -318,8 +338,13 @@ func (h *AuthHandler) ValidateToken(c *gin.Context) {
 	}
 
 	// Parse JWT token
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "your-secret-key-change-in-production"
+	}
+	
 	token, err := jwt.Parse(req.Token, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(jwtSecret), nil
 	})
 
 	if err != nil || !token.Valid {
@@ -374,4 +399,23 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
+// Helper functions for JWT claims
+func getClaimString(claims jwt.MapClaims, key string, defaultValue string) string {
+	if val, ok := claims[key]; ok {
+		if str, ok := val.(string); ok {
+			return str
+		}
+	}
+	return defaultValue
+}
+
+func getClaimBool(claims jwt.MapClaims, key string, defaultValue bool) bool {
+	if val, ok := claims[key]; ok {
+		if b, ok := val.(bool); ok {
+			return b
+		}
+	}
+	return defaultValue
 }

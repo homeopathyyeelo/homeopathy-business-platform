@@ -53,9 +53,15 @@ export const authApi = {
   logout: async (): Promise<void> => {
     try {
       await apiClient.post('/auth/logout');
+    } catch (error) {
+      console.error('Logout API error:', error);
     } finally {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
+      // Clear session cookies
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
     }
   },
 
@@ -67,13 +73,13 @@ export const authApi = {
 
   // Check if user has permission
   hasPermission: (user: User | null, permission: string): boolean => {
-    if (\!user || \!user.permissions) return false;
+    if (!user || !user.permissions) return false;
     return user.permissions.includes(permission);
   },
 
   // Check if user has role
   hasRole: (user: User | null, role: string): boolean => {
-    if (\!user || \!user.roles) return false;
+    if (!user || !user.roles) return false;
     return user.roles.includes(role);
   },
 

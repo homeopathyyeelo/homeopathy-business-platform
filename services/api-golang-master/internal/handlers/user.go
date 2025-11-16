@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -125,6 +126,81 @@ func (h *UserHandler) DeactivateUser(c *gin.Context) {
 // GetUsers is an alias for ListUsers
 func (h *UserHandler) GetUsers(c *gin.Context) {
 	h.ListUsers(c)
+}
+
+// GetMe returns the currently authenticated user's information
+func (h *UserHandler) GetMe(c *gin.Context) {
+	// Get user ID from context (set by auth middleware)
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   "User not authenticated - no user_id in context",
+		})
+		return
+	}
+
+	// Debug: Log the actual userID value and type
+	userIDStr, ok := userID.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   "Invalid user ID type in context",
+			"debug":   map[string]interface{}{"userID": userID, "type": fmt.Sprintf("%T", userID)},
+		})
+		return
+	}
+
+	// Handle super admin case
+	if userIDStr == "superadmin-1" {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"user": gin.H{
+				"id":            "superadmin-1",
+				"email":         "medicine@yeelohomeopathy.com",
+				"name":          "Super Admin",
+				"displayName":   "Super Admin",
+				"firstName":     "Super",
+				"lastName":      "Admin",
+				"role":          "SUPER_ADMIN",
+				"isActive":      true,
+				"isSuperAdmin":  true,
+				"permissions":   []string{},
+			},
+		})
+		return
+	}
+
+	// Get regular user from database
+	user, err := h.userService.GetUserByID(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"success": false,
+			"error":   "User not found in database",
+			"debug":   map[string]interface{}{"userID": userIDStr, "dbError": err.Error()},
+		})
+		return
+	}
+
+	// Get user email and role from context
+	userEmail, _ := c.Get("user_email")
+	userRole, _ := c.Get("user_role")
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"user": gin.H{
+			"id":           user.ID,
+			"email":        userEmail,
+			"name":         user.DisplayName,
+			"displayName":  user.DisplayName,
+			"firstName":    user.FirstName,
+			"lastName":     user.LastName,
+			"role":         userRole,
+			"isActive":     user.IsActive,
+			"isSuperAdmin": false,
+			"permissions":  []string{},
+		},
+	})
 }
 
 // GetRoles returns all roles

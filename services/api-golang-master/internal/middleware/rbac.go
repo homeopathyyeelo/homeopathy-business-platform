@@ -21,6 +21,65 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// RequireAuth is a simple wrapper that returns an auth middleware without db dependency
+// For routes that just need authentication but don't use RBAC features
+func RequireAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Try cookie first, then Authorization header
+		tokenString, err := c.Cookie("auth-token")
+		if err != nil {
+			authHeader := c.GetHeader("Authorization")
+			if authHeader == "" {
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"success": false,
+					"error":   "No authentication token provided",
+				})
+				c.Abort()
+				return
+			}
+			tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+		}
+
+		// Parse and validate JWT
+		jwtSecret := os.Getenv("JWT_SECRET")
+		if jwtSecret == "" {
+			jwtSecret = "your-secret-key-change-in-production"
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(jwtSecret), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"success": false,
+				"error":   "Invalid or expired token",
+			})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*Claims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"success": false,
+				"error":   "Invalid token claims",
+			})
+			c.Abort()
+			return
+		}
+
+		// Set user context
+		c.Set("user_id", claims.UserID)
+		c.Set("user_email", claims.Email)
+		c.Set("user_role", claims.Role)
+		c.Set("user_permissions", claims.Permissions)
+		c.Set("is_super_admin", claims.IsSuperAdmin)
+
+		c.Next()
+	}
+}
+
 // RBACMiddleware validates JWT and extracts user context
 func RBACMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

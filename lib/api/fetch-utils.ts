@@ -43,16 +43,14 @@ export async function authFetch(url: string, options: RequestInit = {}): Promise
     credentials: 'include', // Include cookies
   });
   
-  // Handle 401 errors
+  // Handle 401 errors - clear stale localStorage but DON'T redirect
+  // Let middleware and auth context handle redirects to prevent loops
   if (response.status === 401) {
-    // Clear auth and redirect to login
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user');
-      // Don't redirect if already on login page
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
-      }
+      // Only log out if truly unauthorized, not just missing middleware
+      console.warn('API returned 401:', url);
     }
   }
   
