@@ -30,6 +30,11 @@ const API_ROUTES = {
     '/api/ai/',
     '/api/ml/',
   ],
+  // Next.js API routes (stay with frontend)
+  nextjs: [
+    '/api/uploads/',
+    '/api/inventory/',
+  ],
 };
 
 const BACKEND_PORTS = {
@@ -38,6 +43,7 @@ const BACKEND_PORTS = {
   fastify: process.env.NEXT_PUBLIC_FASTIFY_API_URL || 'http://localhost:3002',
   express: process.env.NEXT_PUBLIC_EXPRESS_API_URL || 'http://localhost:3003',
   python: process.env.NEXT_PUBLIC_PYTHON_AI_URL || 'http://localhost:8001',
+  nextjs: '', // Stay with Next.js frontend (port 3000)
 };
 
 /**
@@ -101,8 +107,8 @@ export async function apiFetch(
     }
   }
 
-  // Add Content-Type if not set and body exists
-  if (requestInit.body && !requestInit.headers?.hasOwnProperty('Content-Type')) {
+  // Add Content-Type if not set and body exists (but not for FormData)
+  if (requestInit.body && !requestInit.headers?.hasOwnProperty('Content-Type') && !(requestInit.body instanceof FormData)) {
     requestInit.headers = {
       ...requestInit.headers,
       'Content-Type': 'application/json',
