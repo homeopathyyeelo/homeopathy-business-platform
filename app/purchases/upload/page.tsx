@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Upload, Download, CheckCircle2, AlertCircle, FileText, ShoppingCart, Loader2, TrendingUp, Package, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { authFetch } from '@/lib/api/fetch-utils';
 import { apiFetch } from '@/lib/utils/api-fetch';
 
 interface ProcessingStep {
@@ -160,7 +159,7 @@ export default function PurchaseUploadPage() {
           <p className="text-gray-600 mt-2">Upload purchase invoices via CSV file</p>
         </div>
         <button
-          onClick={() => router.push('/purchases/approvals')}
+          onClick={() => router.push('/admin/approvals')}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <CheckCircle2 className="w-4 h-4" />

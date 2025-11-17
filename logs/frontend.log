@@ -4,48 +4,58 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2.6s
+ ✓ Ready in 3.8s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 745ms (159 modules)
- ○ Compiling /login ...
- ✓ Compiled /login in 8.2s (1255 modules)
- GET /login?redirect=%2Fproducts 200 in 8880ms
- ○ Compiling /products ...
- ✓ Compiled /products in 902ms (1277 modules)
- GET /products 200 in 1699ms
- GET /products 200 in 258ms
+ ✓ Compiled /middleware in 1025ms (159 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 9.9s (1255 modules)
+ GET / 200 in 10667ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 3.7s (2302 modules)
- GET /dashboard 200 in 4158ms
+ ✓ Compiled /dashboard in 4s (2291 modules)
+ GET /dashboard 200 in 4272ms
+ GET /dashboard 200 in 124ms
  ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 1267ms (2323 modules)
- GET /api/vendors 200 in 1563ms
- GET /api/customers 200 in 1647ms
- ○ Compiling /purchases/orders ...
- ✓ Compiled /purchases/orders in 1493ms (2332 modules)
- GET /purchases/orders 200 in 1979ms
- ○ Compiling /purchases/bills ...
- ✓ Compiled /purchases/bills in 984ms (2321 modules)
- GET /purchases/bills 200 in 1335ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 536ms (2324 modules)
- GET /purchases/import 404 in 974ms
- ○ Compiling /products/import-export ...
- ✓ Compiled /products/import-export in 1197ms (2349 modules)
- GET /products/import-export 200 in 1828ms
- GET /purchases/import-export 404 in 165ms
- ○ Compiling /purchases/upload ...
- ✓ Compiled /purchases/upload in 808ms (2352 modules)
- GET /purchases/upload 200 in 1448ms
- GET /inventory%20/import 404 in 162ms
- ○ Compiling /inventory/upload ...
- ✓ Compiled /inventory/upload in 756ms (2356 modules)
- GET /inventory/upload 200 in 1185ms
- ✓ Compiled in 2.5s (1901 modules)
- GET /products/import-export 200 in 573ms
- GET /inventory/upload 200 in 573ms
- GET /purchases/upload 200 in 574ms
- ✓ Compiled in 741ms (1901 modules)
- GET /inventory/upload 200 in 521ms
- GET /purchases/upload 200 in 522ms
- GET /products/import-export 200 in 524ms
+ ✓ Compiled /api/vendors in 971ms (2298 modules)
+ GET /api/vendors 200 in 1311ms
+ GET /api/customers 200 in 1324ms
+ ○ Compiling /admin/approvals ...
+ ✓ Compiled /admin/approvals in 1047ms (2280 modules)
+ GET /admin/approvals 200 in 1345ms
+ ○ Compiling /api/uploads/purchase ...
+ ✓ Compiled /api/uploads/purchase in 652ms (2301 modules)
+ GET /api/uploads/purchase?status=pending 200 in 1035ms
+ GET /api/uploads/purchase?status=pending 200 in 240ms
+ ○ Compiling /api/uploads/inventory ...
+ ✓ Compiled /api/uploads/inventory in 523ms (2306 modules)
+ GET /api/uploads/inventory?status=pending 401 in 817ms
+ GET /api/uploads/inventory?status=pending 401 in 110ms
+ ○ Compiling /admin/approvals/[sessionId] ...
+ ✓ Compiled /admin/approvals/[sessionId] in 1622ms (2321 modules)
+ GET /admin/approvals/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 2438ms
+ ✓ Compiled /api/uploads/session/[sessionId] in 473ms (2323 modules)
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 1308ms
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 208ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1740ms (2318 modules)
+ GET /products 200 in 2454ms
+ GET /products 200 in 324ms
+ GET /products 200 in 327ms
+ GET /products 200 in 342ms

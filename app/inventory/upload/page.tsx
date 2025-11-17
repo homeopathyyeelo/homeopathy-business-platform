@@ -144,7 +144,7 @@ export default function InventoryUploadPage() {
           <p className="text-gray-600 mt-2">Upload inventory data via CSV file</p>
         </div>
         <button
-          onClick={() => router.push('/inventory/approvals')}
+          onClick={() => router.push('/admin/approvals')}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
           <CheckCircle2 className="w-4 h-4" />

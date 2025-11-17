@@ -283,6 +283,85 @@ export default function ApprovalDetailPage() {
         </div>
       </div>
 
+      {/* Product Matching Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <CheckCircle2 className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">Matched Products</h3>
+              <p className="text-2xl font-bold text-green-600">
+                {items.filter(item => item.matched_product_id).length}
+              </p>
+              <p className="text-sm text-gray-600">
+                Found in database
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">Will Create</h3>
+              <p className="text-2xl font-bold text-blue-600">
+                {items.filter(item => !item.matched_product_id).length}
+              </p>
+              <p className="text-sm text-gray-600">
+                New products to create
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <DollarSign className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">Total Value</h3>
+              <p className="text-2xl font-bold text-gray-900">
+                ₹{items.reduce((sum, item) => sum + parseFloat(item.total_amount || 0), 0).toLocaleString()}
+              </p>
+              <p className="text-sm text-gray-600">
+                Purchase invoice value
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Warning for New Products */}
+      {items.filter(item => !item.matched_product_id).length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-2">
+                New Products Will Be Created
+              </h3>
+              <p className="text-blue-800 text-sm mb-3">
+                {items.filter(item => !item.matched_product_id).length} product(s) from this upload are not found in the database. 
+                When you approve this upload, these products will be automatically created with:
+              </p>
+              <ul className="text-blue-800 text-sm space-y-1">
+                <li>• Auto-generated SKU and barcode from product code</li>
+                <li>• Appropriate HSN code and GST rate (5% for medicines, 18% for cosmetics)</li>
+                <li>• Brand and category auto-creation if needed</li>
+                <li>• Inventory batch creation with stock updates</li>
+                <li>• Purchase order creation and invoice processing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Items Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
         <div className="p-4 bg-gray-50 border-b">
@@ -303,6 +382,7 @@ export default function ApprovalDetailPage() {
                 <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Tax Amt</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Total</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700">Margin</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -348,6 +428,19 @@ export default function ApprovalDetailPage() {
                     </td>
                     <td className={`px-4 py-3 text-sm text-right font-semibold ${itemMargin > 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {itemMargin}%
+                    </td>
+                    <td className="px-4 py-3 text-sm text-center">
+                      {item.matched_product_id ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Matched
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                          <AlertCircle className="w-3 h-3" />
+                          Will Create
+                        </span>
+                      )}
                     </td>
                   </tr>
                 );

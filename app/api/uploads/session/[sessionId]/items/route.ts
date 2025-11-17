@@ -29,9 +29,9 @@ export async function GET(
 
     const sessionId = params.sessionId;
 
-    // Get session
+    // Verify session exists
     const sessionResult = await query(
-      `SELECT * FROM upload_sessions WHERE id = $1`,
+      `SELECT id FROM upload_sessions WHERE id = $1`,
       [sessionId]
     );
 
@@ -39,36 +39,33 @@ export async function GET(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    const session = sessionResult.rows[0];
-
-    // Get purchase upload details
-    const purchaseResult = await query(
-      `SELECT * FROM purchase_uploads WHERE session_id = $1 LIMIT 1`,
-      [sessionId]
-    );
-
-    const purchase = purchaseResult.rows[0] || null;
-
-    // Get upload items
+    // Get upload items with match status
     const itemsResult = await query(
-      `SELECT * FROM upload_items 
-       WHERE session_id = $1 
-       ORDER BY row_number ASC`,
+      `SELECT 
+         ui.*,
+         CASE WHEN ui.matched_product_id IS NOT NULL THEN true ELSE false END as is_matched
+       FROM upload_items ui 
+       WHERE ui.session_id = $1 
+       ORDER BY ui.row_number ASC`,
       [sessionId]
     );
 
     const items = itemsResult.rows;
 
     return NextResponse.json({
-      session,
-      purchase,
+      success: true,
       items,
+      summary: {
+        total: items.length,
+        matched: items.filter(item => item.matched_product_id).length,
+        unmatched: items.filter(item => !item.matched_product_id).length,
+      }
     });
 
   } catch (error: any) {
-    console.error('Fetch session error:', error);
+    console.error('Fetch session items error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch session details' },
+      { error: error.message || 'Failed to fetch session items' },
       { status: 500 }
     );
   }
