@@ -2,6 +2,10 @@
  * AI Automation System
  * Handles intelligent automation for business processes
  * 
+ * ⚠️ DEPRECATED: This module is temporarily disabled to avoid OpenAI API key conflicts.
+ * The new AI product parser (lib/ai/product-parser.ts) is now being used for purchase uploads.
+ * To re-enable this module, ensure it uses a different OpenAI key or implement proper key rotation.
+ * 
  * Features:
  * - Demand forecasting using ML models
  * - Dynamic pricing optimization
@@ -11,9 +15,13 @@
  * - Business intelligence insights
  */
 
-import { db } from "./database"
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
+// TEMPORARILY DISABLED - see deprecation notice above
+// import { db } from "./database"
+// import { generateText } from "ai"
+// import { openai } from "@ai-sdk/openai"
+
+// NOTE: Function implementations below will have TypeScript errors until this module is re-enabled.
+// This is intentional - the entire module is deprecated in favor of lib/ai/product-parser.ts
 
 export interface DemandForecast {
   product_id: string

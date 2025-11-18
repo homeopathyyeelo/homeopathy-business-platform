@@ -4,58 +4,50 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 3.8s
+ ✓ Ready in 2.2s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 1025ms (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 9.9s (1255 modules)
- GET / 200 in 10667ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 4s (2291 modules)
- GET /dashboard 200 in 4272ms
- GET /dashboard 200 in 124ms
- ○ Compiling /api/vendors ...
- ✓ Compiled /api/vendors in 971ms (2298 modules)
- GET /api/vendors 200 in 1311ms
- GET /api/customers 200 in 1324ms
- ○ Compiling /admin/approvals ...
- ✓ Compiled /admin/approvals in 1047ms (2280 modules)
- GET /admin/approvals 200 in 1345ms
- ○ Compiling /api/uploads/purchase ...
- ✓ Compiled /api/uploads/purchase in 652ms (2301 modules)
- GET /api/uploads/purchase?status=pending 200 in 1035ms
- GET /api/uploads/purchase?status=pending 200 in 240ms
- ○ Compiling /api/uploads/inventory ...
- ✓ Compiled /api/uploads/inventory in 523ms (2306 modules)
- GET /api/uploads/inventory?status=pending 401 in 817ms
- GET /api/uploads/inventory?status=pending 401 in 110ms
- ○ Compiling /admin/approvals/[sessionId] ...
- ✓ Compiled /admin/approvals/[sessionId] in 1622ms (2321 modules)
- GET /admin/approvals/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 2438ms
- ✓ Compiled /api/uploads/session/[sessionId] in 473ms (2323 modules)
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 1308ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/97216e02-a714-4171-ab23-4f6e7dafa6b2 200 in 208ms
- ○ Compiling /products ...
- ✓ Compiled /products in 1740ms (2318 modules)
- GET /products 200 in 2454ms
- GET /products 200 in 324ms
- GET /products 200 in 327ms
- GET /products 200 in 342ms
+ ✓ Compiled /middleware in 858ms (159 modules)
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /inventory/stock in 13.2s (1381 modules)
+ GET /inventory/stock 200 in 6206ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 14442ms
+ GET /inventory/stock 200 in 306ms
+ GET /inventory/stock 200 in 538ms
+ ✓ Compiled in 743ms (570 modules)
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 432ms
+ GET /inventory/stock 200 in 529ms
+ ✓ Compiled in 1998ms (570 modules)
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/products/8ae68c4e-79e9-40b1-be54-e4bf9eede335'
+}
+ GET /inventory/stock 200 in 1219ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 6.9s (1714 modules)
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 500 in 7020ms
+ GET /inventory/stock 200 in 530ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 411ms
+ GET /inventory/stock 200 in 306ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 393ms
+ GET /inventory/stock 200 in 271ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 304ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 851ms
+ GET /inventory/stock 200 in 467ms
+ GET /inventory/stock 200 in 384ms
+ GET /inventory/stock 200 in 358ms
+ GET /inventory/stock 200 in 463ms
+ ✓ Compiled in 2.2s (727 modules)
+ ✓ Compiled in 944ms (727 modules)
+ GET /inventory/stock 200 in 531ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 455ms
+ GET /inventory/stock 200 in 543ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 469ms
+ GET /inventory/stock 200 in 517ms
+ GET /inventory/stock 200 in 302ms
+ GET /inventory/stock 200 in 262ms
+ GET /inventory/stock 200 in 257ms
+ GET /inventory/stock 200 in 354ms
+ GET /inventory/stock 200 in 263ms
+ ✓ Compiled in 4.1s (1635 modules)
+ GET /inventory/stock 200 in 889ms
+ GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 783ms

@@ -1,0 +1,827 @@
+openapi: 3.0.3
+info:
+  title: Yeelo Homeopathy ERP API
+  description: |
+    Complete REST API for Yeelo Homeopathy Enterprise Resource Planning System.
+    
+    ## Features
+    - Product & Inventory Management
+    - Sales & Purchase Orders
+    - Customer & Vendor Management
+    - Financial Accounting
+    - HR & Payroll
+    - AI-Powered Analytics
+    - MeiliSearch Integration
+    - Multi-branch Support
+    
+    ## Authentication
+    All endpoints require JWT token in Authorization header:
+    ```
+    Authorization: Bearer <token>
+    ```
+  version: 2.1.0
+  contact:
+    name: Yeelo Support
+    email: support@yeelo.com
+  license:
+    name: Proprietary
+    
+servers:
+  - url: http://localhost:3005/api/erp
+    description: Development server
+  - url: https://api.yeelo.com/api/erp
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+    description: User authentication & authorization
+  - name: Products
+    description: Product catalog management
+  - name: Inventory
+    description: Stock & warehouse management
+  - name: Sales
+    description: Sales orders & invoices
+  - name: Purchases
+    description: Purchase orders & receipts
+  - name: Customers
+    description: Customer relationship management
+  - name: Vendors
+    description: Supplier management
+  - name: Finance
+    description: Accounting & financial reports
+  - name: HR
+    description: Human resources management
+  - name: Reports
+    description: Business intelligence & reporting
+  - name: Analytics
+    description: AI-powered analytics
+  - name: Marketing
+    description: Campaign management
+  - name: AI
+    description: AI assistant & automation
+  - name: Search
+    description: Central search engine
+  - name: Settings
+    description: System configuration
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Error message"
+        code:
+          type: string
+          example: "ERR_NOT_FOUND"
+          
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 150
+        pages:
+          type: integer
+          example: 8
+          
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Sulphur 200C"
+        sku:
+          type: string
+          example: "SULPH-200-DIL"
+        barcode:
+          type: string
+          example: "SULPH200DIL"
+        brand:
+          type: string
+          example: "Schwabe India"
+        category:
+          type: string
+          example: "Dilutions"
+        potency:
+          type: string
+          example: "200C"
+        form:
+          type: string
+          example: "Dilution"
+        mrp:
+          type: number
+          format: float
+          example: 120.00
+        selling_price:
+          type: number
+          format: float
+          example: 100.00
+        current_stock:
+          type: integer
+          example: 45
+        min_stock_level:
+          type: integer
+          example: 10
+        hsn_code:
+          type: string
+          example: "30049014"
+        gst_rate:
+          type: number
+          format: float
+          example: 5.0
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        address:
+          type: string
+        gstin:
+          type: string
+        customer_type:
+          type: string
+          enum: [retail, wholesale]
+        credit_limit:
+          type: number
+        outstanding:
+          type: number
+        loyalty_points:
+          type: integer
+          
+    SalesOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        order_number:
+          type: string
+        customer_id:
+          type: string
+          format: uuid
+        order_date:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [draft, confirmed, delivered, cancelled]
+        subtotal:
+          type: number
+        tax_amount:
+          type: number
+        total_amount:
+          type: number
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              product_id:
+                type: string
+              quantity:
+                type: integer
+              unit_price:
+                type: number
+              total:
+                type: number
+                
+    SearchResult:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [product, customer, vendor, document]
+        category:
+          type: string
+        brand:
+          type: string
+        sku:
+          type: string
+        description:
+          type: string
+
+paths:
+  # Authentication
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    
+  # Products
+  /products:
+    get:
+      tags: [Products]
+      summary: List all products
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Products list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                    
+    post:
+      tags: [Products]
+      summary: Create new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Product'
+                    
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Product'
+                    
+    put:
+      tags: [Products]
+      summary: Update product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated
+          
+    delete:
+      tags: [Products]
+      summary: Delete product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product deleted
+          
+  # Inventory
+  /inventory/stock:
+    get:
+      tags: [Inventory]
+      summary: Get stock levels
+      parameters:
+        - name: product_id
+          in: query
+          schema:
+            type: string
+        - name: low_stock
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Stock data
+          
+    post:
+      tags: [Inventory]
+      summary: Add manual stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                batch_number:
+                  type: string
+                quantity:
+                  type: integer
+                unit_cost:
+                  type: number
+                expiry_date:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Stock added
+          
+  /inventory/adjustments:
+    post:
+      tags: [Inventory]
+      summary: Adjust stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                adjustment_type:
+                  type: string
+                  enum: [add, remove, damage, return]
+                quantity:
+                  type: integer
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Stock adjusted
+          
+  # Sales
+  /sales/orders:
+    get:
+      tags: [Sales]
+      summary: List sales orders
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: customer_id
+          in: query
+          schema:
+            type: string
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Sales orders list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SalesOrder'
+                      
+    post:
+      tags: [Sales]
+      summary: Create sales order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesOrder'
+      responses:
+        '201':
+          description: Order created
+          
+  # Purchases
+  /purchases/orders:
+    get:
+      tags: [Purchases]
+      summary: List purchase orders
+      responses:
+        '200':
+          description: Purchase orders list
+          
+    post:
+      tags: [Purchases]
+      summary: Create purchase order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vendor_id:
+                  type: string
+                order_date:
+                  type: string
+                  format: date
+                items:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '201':
+          description: PO created
+          
+  /purchases/upload:
+    post:
+      tags: [Purchases]
+      summary: Upload purchase CSV
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload successful
+          
+  # Customers
+  /customers:
+    get:
+      tags: [Customers]
+      summary: List customers
+      responses:
+        '200':
+          description: Customers list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+                      
+    post:
+      tags: [Customers]
+      summary: Create customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '201':
+          description: Customer created
+          
+  # Search (MeiliSearch)
+  /search:
+    get:
+      tags: [Search]
+      summary: Global search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [all, products, customers, vendors]
+            default: all
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  hits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                  total:
+                    type: integer
+                  query:
+                    type: string
+                    
+  /search/products:
+    get:
+      tags: [Search]
+      summary: Product-specific search
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: potency
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product search results
+          
+  # AI Assistant
+  /ai/chat:
+    post:
+      tags: [AI]
+      summary: Chat with AI assistant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                thread_id:
+                  type: string
+                assistant_type:
+                  type: string
+                  enum: [erp, forecast, prescription, marketing]
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  response:
+                    type: string
+                  thread_id:
+                    type: string
+                    
+  /ai/forecasting:
+    post:
+      tags: [AI]
+      summary: Demand forecasting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: string
+                forecast_days:
+                  type: integer
+                  default: 30
+      responses:
+        '200':
+          description: Forecast results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  forecast:
+                    type: object
+                    properties:
+                      avg_daily_demand:
+                        type: number
+                      total_forecast:
+                        type: number
+                      recommended_stock:
+                        type: integer
+                      confidence:
+                        type: integer
+                        
+  # Analytics
+  /analytics/sales-purchase:
+    get:
+      tags: [Analytics]
+      summary: Sales vs Purchase analytics
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Comparative analytics
+          
+  # Reports
+  /reports/sales:
+    get:
+      tags: [Reports]
+      summary: Sales report
+      parameters:
+        - name: from_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: day
+      responses:
+        '200':
+          description: Sales report data
+          
+  # Settings
+  /settings/company:
+    get:
+      tags: [Settings]
+      summary: Get company profile
+      responses:
+        '200':
+          description: Company details
+          
+    put:
+      tags: [Settings]
+      summary: Update company profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                gstin:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Company updated

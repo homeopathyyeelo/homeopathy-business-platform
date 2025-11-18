@@ -1,4 +1,6 @@
 // AI & Analytics API Service
+// ⚠️ DEPRECATED: This module may conflict with new AI product parser.
+// New AI features should use lib/ai/product-parser.ts for product attribute extraction.
 import { api } from '../api-client';
 
 export interface ChatMessage {

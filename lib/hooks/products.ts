@@ -43,13 +43,50 @@ export function useProducts({ page = 1, perPage = 100, search, category, brand, 
 
       const res = await golangAPI.get(`/api/erp/products?${params.toString()}`)
 
-      // Backend returns { success, data: [], pagination: {} }
-      const products = res.data?.data ?? res.data?.products ?? (Array.isArray(res.data) ? res.data : [])
+      // Primary backend response
+      let products = res.data?.data ?? res.data?.products ?? (Array.isArray(res.data) ? res.data : [])
       const pagination = res.data?.pagination || {}
 
+      // If API reports products in DB (total > 0) but sends null/empty data,
+      // fall back to the barcode products endpoint and normalise fields.
+      if ((!Array.isArray(products) || products.length === 0) && (pagination.total ?? 0) > 0) {
+        const barcodeRes = await golangAPI.get(`/api/erp/products/barcode?${params.toString()}`)
+        const barcodeProducts = barcodeRes.data?.data ?? barcodeRes.data?.products ?? (Array.isArray(barcodeRes.data) ? barcodeRes.data : [])
+        const barcodePagination = barcodeRes.data?.pagination || pagination
+
+        if (Array.isArray(barcodeProducts)) {
+          products = barcodeProducts.map((p: any) => ({
+            ...p,
+            // Normalise fields expected by the table
+            name: p.name ?? p.product_name ?? '',
+            category: p.category ?? '',
+            brand: p.brand ?? '',
+            potency: p.potency ?? '',
+            form: p.form ?? '',
+            packSize: p.packSize ?? p.pack_size ?? '',
+            barcode: p.barcode ?? '',
+            hsnCode: p.hsnCode ?? p.hsn_code ?? '',
+            currentStock: p.currentStock ?? p.quantity ?? 0,
+            sellingPrice: p.sellingPrice ?? p.mrp ?? 0,
+            taxPercent: p.taxPercent ?? p.gst_rate ?? 5,
+            isActive: typeof p.isActive === 'boolean' ? p.isActive : (p.status ? p.status !== 'inactive' : true),
+          }))
+
+          // Override pagination with barcode pagination if present
+          if (barcodePagination) {
+            (pagination as any).total = barcodePagination.total ?? pagination.total
+            ;(pagination as any).page = barcodePagination.page ?? pagination.page
+            ;(pagination as any).limit = barcodePagination.limit ?? pagination.limit
+          }
+        }
+      }
+
+      const items = Array.isArray(products) ? products : []
+      const total = typeof pagination.total === 'number' ? pagination.total : items.length
+
       return {
-        items: Array.isArray(products) ? products : [],
-        total: typeof pagination.total === 'number' ? pagination.total : (Array.isArray(products) ? products.length : 0),
+        items,
+        total,
         page: pagination.page ?? page,
         perPage: pagination.limit ?? perPage,
       }

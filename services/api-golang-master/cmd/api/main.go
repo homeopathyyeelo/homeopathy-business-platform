@@ -51,7 +51,7 @@ func main() {
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
 	userHandler := handlers.NewUserHandler()
-	
+
 	// Settings handlers
 	branchHandler := handlers.NewBranchHandler(db)
 	taxHandler := handlers.NewTaxHandler(db)
@@ -79,6 +79,11 @@ func main() {
 	productImportHandler := handlers.NewProductImportHandler(db)
 	productImportStreamingHandler := handlers.NewStreamingImportHandler(db)
 	uploadsHandler := handlers.NewUploadsHandler(db)
+	enhancedUploadsHandler := handlers.NewEnhancedUploadsHandler(db)
+	purchaseUploadHandler := handlers.NewPurchaseUploadHandler(db)
+	approveUploadHandler := handlers.NewApproveUploadHandler(db)
+	inventoryUploadHandler := handlers.NewInventoryUploadHandler(db)
+	marketingHandler := handlers.NewMarketingHandler(db)
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -86,8 +91,8 @@ func main() {
 	r.Use(gin.Logger())
 
 	// Add custom middleware
-	r.Use(middleware.RequestIDMiddleware())   // Add request ID to all requests
-	r.Use(middleware.DefaultTimeout())        // Add 30s timeout to all requests
+	r.Use(middleware.RequestIDMiddleware()) // Add request ID to all requests
+	r.Use(middleware.DefaultTimeout())      // Add 30s timeout to all requests
 
 	// CORS middleware - must be before routes
 	r.Use(cors.New(cors.Config{
@@ -166,9 +171,9 @@ func main() {
 
 			// Products - order matters! Specific routes before :id
 			erp.GET("/products", productHandler.GetProducts)
-			erp.GET("/products/template", productImportHandler.DownloadTemplate) // Must be before /:id
-			erp.GET("/products/stats", productHandler.GetProductStats) // Must be before /:id
-			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts) // Grouped view
+			erp.GET("/products/template", productImportHandler.DownloadTemplate)                     // Must be before /:id
+			erp.GET("/products/stats", productHandler.GetProductStats)                               // Must be before /:id
+			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts)                  // Grouped view
 			erp.GET("/products/grouped/:baseName/variants", groupedProductsHandler.GetGroupVariants) // Variants for group
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
@@ -346,7 +351,7 @@ func main() {
 				ai.POST("/segmentation/customers", productHandler.GetAICustomerSegmentation)
 				// ai.POST("/optimization/inventory", inventoryHandler.GetAIInventoryOptimization) // TODO
 				// ai.GET("/optimization/alerts", inventoryHandler.GetAIInventoryAlerts) // TODO
-				ai.POST("/fraud/check", productHandler.GetAIFraudDetection)
+				// ai.POST("/fraud/check", productHandler.GetAIFraudDetection) // TODO: Implement
 				ai.GET("/insights/business", dashboardHandler.GetAIBusinessInsights)
 				ai.GET("/insights/customers", productHandler.GetAICustomerInsights)
 				ai.POST("/chatbot", aiModelHandler.GetAIChatbotResponse)
@@ -382,6 +387,7 @@ func main() {
 			erp.GET("/barcodes/stats", barcodeHandler.GetBarcodeStats)
 			erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
 			erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)
+			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)
 
 			// Loyalty Management
 			erp.GET("/loyalty/points", loyaltyHandler.GetLoyaltyPoints)
@@ -506,11 +512,30 @@ func main() {
 		// Uploads & Approvals
 		uploads := api.Group("/uploads")
 		{
-			uploads.GET("/purchase", uploadsHandler.GetPurchaseSessions)
+			// Full TypeScript-compatible upload handlers
+			uploads.POST("/purchase", purchaseUploadHandler.UploadPurchase)
+			uploads.POST("/approve", approveUploadHandler.ApproveSession)
+			uploads.POST("/inventory", inventoryUploadHandler.UploadCSV)
+
 			uploads.GET("/inventory", uploadsHandler.GetInventorySessions)
 			uploads.GET("/session/:sessionId", uploadsHandler.GetSessionDetails)
-			uploads.POST("/approve", uploadsHandler.ApproveOrRejectUpload)
+			uploads.POST("/approve/simple", uploadsHandler.ApproveOrRejectUpload)
+
+			// Enhanced upload endpoints
+			uploads.POST("/parse", enhancedUploadsHandler.ParseUploadFile)
+			uploads.POST("/process/purchase", enhancedUploadsHandler.ProcessPurchaseUpload)
+			uploads.POST("/process/inventory", enhancedUploadsHandler.ProcessInventoryUpload)
 		}
+
+		// Marketing routes
+		erp.GET("/marketing/campaigns", marketingHandler.GetCampaigns)
+		erp.POST("/marketing/campaigns", marketingHandler.CreateCampaign)
+		erp.GET("/marketing/campaigns/:id", marketingHandler.GetCampaign)
+		erp.PUT("/marketing/campaigns/:id", marketingHandler.UpdateCampaign)
+		erp.DELETE("/marketing/campaigns/:id", marketingHandler.DeleteCampaign)
+		erp.GET("/marketing/stats", marketingHandler.GetStats)
+		erp.GET("/marketing/templates", marketingHandler.GetTemplates)
+		erp.POST("/marketing/templates", marketingHandler.CreateTemplate)
 
 		// Legacy routes
 		masters := api.Group("/masters")
@@ -546,7 +571,7 @@ func main() {
 	// Handle 404 for unimplemented API endpoints with graceful stub responses
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
-		
+
 		// List of API prefixes that should get stub responses
 		stubPrefixes := []string{
 			"/api/ai/",

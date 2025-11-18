@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,6 +16,13 @@ import (
 
 type ProductHandler struct {
 	db *gorm.DB
+}
+
+func nullString(ns sql.NullString) string {
+	if ns.Valid {
+		return ns.String
+	}
+	return ""
 }
 
 func NewProductHandler(db *gorm.DB) *ProductHandler {
@@ -68,16 +76,16 @@ type AICustomerSegmentationRequest struct {
 }
 
 type AIInventoryOptimizationRequest struct {
-	ProductIDs         []string `json:"product_ids" binding:"required"`
-	OptimizationType   string   `json:"optimization_type" default:"both"`
+	ProductIDs       []string `json:"product_ids" binding:"required"`
+	OptimizationType string   `json:"optimization_type" default:"both"`
 }
 
 type AIFraudCheckRequest struct {
-	TransactionID   string            `json:"transaction_id" binding:"required"`
-	UserID          string            `json:"user_id" binding:"required"`
-	Amount          float64           `json:"amount" binding:"required"`
-	PaymentMethod   string            `json:"payment_method" binding:"required"`
-	UserBehavior    map[string]interface{} `json:"user_behavior"`
+	TransactionID string                 `json:"transaction_id" binding:"required"`
+	UserID        string                 `json:"user_id" binding:"required"`
+	Amount        float64                `json:"amount" binding:"required"`
+	PaymentMethod string                 `json:"payment_method" binding:"required"`
+	UserBehavior  map[string]interface{} `json:"user_behavior"`
 }
 
 type AIBatchRecommendationRequest struct {
@@ -112,8 +120,8 @@ type ProductResponse struct {
 	MinStock     int       `json:"minStock" gorm:"column:min_stock"`
 	MaxStock     int       `json:"maxStock" gorm:"column:max_stock"`
 	CurrentStock float64   `json:"currentStock" gorm:"column:current_stock"`
-	StockQty     float64   `json:"stock_qty" gorm:"column:stock_qty"`      // Alias for frontend
-	UnitPrice    float64   `json:"unit_price" gorm:"column:unit_price"`     // Alias for frontend
+	StockQty     float64   `json:"stock_qty" gorm:"column:stock_qty"`   // Alias for frontend
+	UnitPrice    float64   `json:"unit_price" gorm:"column:unit_price"` // Alias for frontend
 	IsActive     bool      `json:"isActive" gorm:"column:is_active"`
 	Tags         string    `json:"tags" gorm:"column:tags"`
 	CreatedAt    time.Time `json:"createdAt" gorm:"column:created_at"`
@@ -145,7 +153,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	whereClause := ""
 	var args []interface{}
 	paramCount := 1
-	
+
 	if search != "" {
 		searchPattern := "%" + strings.ToLower(search) + "%"
 		whereClause += fmt.Sprintf(" AND (LOWER(p.name) LIKE $%d OR LOWER(p.sku) LIKE $%d)", paramCount, paramCount+1)
@@ -182,7 +190,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	var total int64
 	countSQL := "SELECT COUNT(*) FROM products p LEFT JOIN categories c ON p.category_id = c.id LEFT JOIN brands b ON p.brand_id = b.id LEFT JOIN potencies pot ON p.potency_id = pot.id LEFT JOIN forms f ON p.form_id = f.id WHERE 1=1" + whereClause
 	sqlDB.QueryRow(countSQL, args...).Scan(&total)
@@ -213,7 +221,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		LIMIT $%d OFFSET $%d
 	`, whereClause, paramCount, paramCount+1)
 	args = append(args, limit, offset)
-	
+
 	// Execute query with sql.DB directly (already obtained above)
 	rows, err := sqlDB.Query(sql, args...)
 	if err != nil {
@@ -224,18 +232,18 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		return
 	}
 	defer rows.Close()
-	
+
 	var products []gin.H
 	for rows.Next() {
 		var (
-			productID, sku, name, category, brand, potency, form, uom string
+			productID, sku, name, category, brand, potency, form, uom   string
 			packSize, hsnCode, manufacturer, description, barcode, tags string
-			costPrice, sellingPrice, mrp, taxPercent, currentStock float64
-			reorderLevel, minStock, maxStock int
-			isActive bool
-			createdAt, updatedAt time.Time
+			costPrice, sellingPrice, mrp, taxPercent, currentStock      float64
+			reorderLevel, minStock, maxStock                            int
+			isActive                                                    bool
+			createdAt, updatedAt                                        time.Time
 		)
-		
+
 		err := rows.Scan(
 			&productID, &sku, &name, &category, &brand, &potency, &form, &uom,
 			&packSize, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCode,
@@ -243,11 +251,11 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 			&reorderLevel, &minStock, &maxStock, &currentStock,
 			&isActive, &tags, &createdAt, &updatedAt,
 		)
-		
+
 		if err != nil {
 			continue
 		}
-		
+
 		product := gin.H{
 			"id":           productID,
 			"sku":          sku,
@@ -277,7 +285,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 			"createdAt":    createdAt,
 			"updatedAt":    updatedAt,
 		}
-		
+
 		products = append(products, product)
 	}
 
@@ -491,7 +499,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
-	sql := `
+	query := `
 		SELECT 
 			p.id, p.sku, p.name,
 			COALESCE(c.name, '') as category,
@@ -514,23 +522,25 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		WHERE p.id = $1 OR p.sku = $2
 		LIMIT 1
 	`
-	
+
 	var (
-		productID, sku, name, category, brand, potency, form, uom string
-		packSize, hsnCode, manufacturer, description, barcode, tags string
-		costPrice, sellingPrice, mrp, taxPercent, currentStock float64
-		reorderLevel, minStock, maxStock int
-		isActive bool
-		createdAt, updatedAt time.Time
+		productID, sku, name                                                    string
+		categoryNS, brandNS, potencyNS, formNS, uomNS                           sql.NullString
+		packSizeNS, hsnCodeNS, manufacturerNS, descriptionNS, barcodeNS, tagsNS sql.NullString
+		costPrice, sellingPrice, mrp, taxPercent, currentStock                  float64
+		reorderLevel, minStock, maxStock                                        int
+		isActive                                                                bool
+		createdAt, updatedAt                                                    time.Time
 	)
-	
+
 	// Use sql.DB directly instead of GORM wrapper
-	err = sqlDB.QueryRow(sql, id, id).Scan(
-		&productID, &sku, &name, &category, &brand, &potency, &form, &uom,
-		&packSize, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCode,
-		&manufacturer, &description, &barcode,
+	err = sqlDB.QueryRow(query, id, id).Scan(
+		&productID, &sku, &name,
+		&categoryNS, &brandNS, &potencyNS, &formNS, &uomNS,
+		&packSizeNS, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCodeNS,
+		&manufacturerNS, &descriptionNS, &barcodeNS,
 		&reorderLevel, &minStock, &maxStock, &currentStock,
-		&isActive, &tags, &createdAt, &updatedAt,
+		&isActive, &tagsNS, &createdAt, &updatedAt,
 	)
 
 	if err != nil {
@@ -541,24 +551,37 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		return
 	}
 
+	// Basic batches list for this product (used by Batches section)
+	var batches []map[string]interface{}
+	if err := h.db.Table("inventory_batches").
+		Where("product_id = ?", productID).
+		Order("expiry_date ASC").
+		Find(&batches).Error; err != nil {
+		batches = []map[string]interface{}{}
+	}
+
+	// TODO: purchaseHistory and salesHistory can be expanded with joins; keep empty arrays for now
+	purchaseHistory := []map[string]interface{}{}
+	salesHistory := []map[string]interface{}{}
+
 	product := gin.H{
 		"id":           productID,
 		"sku":          sku,
 		"name":         name,
-		"category":     category,
-		"brand":        brand,
-		"potency":      potency,
-		"form":         form,
-		"uom":          uom,
-		"packSize":     packSize,
+		"category":     nullString(categoryNS),
+		"brand":        nullString(brandNS),
+		"potency":      nullString(potencyNS),
+		"form":         nullString(formNS),
+		"uom":          nullString(uomNS),
+		"packSize":     nullString(packSizeNS),
 		"costPrice":    costPrice,
 		"sellingPrice": sellingPrice,
 		"mrp":          mrp,
 		"taxPercent":   taxPercent,
-		"hsnCode":      hsnCode,
-		"manufacturer": manufacturer,
-		"description":  description,
-		"barcode":      barcode,
+		"hsnCode":      nullString(hsnCodeNS),
+		"manufacturer": nullString(manufacturerNS),
+		"description":  nullString(descriptionNS),
+		"barcode":      nullString(barcodeNS),
 		"reorderLevel": reorderLevel,
 		"minStock":     minStock,
 		"maxStock":     maxStock,
@@ -566,9 +589,25 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 		"stock_qty":    currentStock,
 		"unit_price":   sellingPrice,
 		"isActive":     isActive,
-		"tags":         tags,
+		"tags":         nullString(tagsNS),
 		"createdAt":    createdAt,
 		"updatedAt":    updatedAt,
+		"pricing": gin.H{
+			"costPrice":    costPrice,
+			"sellingPrice": sellingPrice,
+			"mrp":          mrp,
+			"taxPercent":   taxPercent,
+		},
+		"additionalDetails": gin.H{
+			"packSize":     nullString(packSizeNS),
+			"uom":          nullString(uomNS),
+			"manufacturer": nullString(manufacturerNS),
+			"hsnCode":      nullString(hsnCodeNS),
+			"tags":         nullString(tagsNS),
+		},
+		"batches":         batches,
+		"purchaseHistory": purchaseHistory,
+		"salesHistory":    salesHistory,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -688,10 +727,10 @@ func (h *ProductHandler) detectProductTypeAndHSN(req map[string]interface{}) (st
 	form := strings.ToLower(fmt.Sprintf("%v", req["form"]))
 	category := strings.ToLower(fmt.Sprintf("%v", req["category"]))
 	description := strings.ToLower(fmt.Sprintf("%v", req["description"]))
-	
+
 	// Combine all text for checking
 	allText := name + " " + form + " " + category + " " + description
-	
+
 	// COSMETICS (18% GST) - Beauty/Personal Care Keywords
 	cosmeticKeywords := []string{
 		"shampoo", "hair oil", "soap", "toothpaste", "facewash", "face wash",
@@ -699,20 +738,20 @@ func (h *ProductHandler) detectProductTypeAndHSN(req map[string]interface{}) (st
 		"perfume", "hair color", "hair dye", "cosmetic", "beauty",
 		"skin care", "skincare", "face cream", "moisturizer", "conditioner",
 	}
-	
+
 	for _, keyword := range cosmeticKeywords {
 		if strings.Contains(allText, keyword) {
 			// Cosmetic product - HSN 330499 (18% GST)
 			return "330499", 18.0
 		}
 	}
-	
+
 	// MEDICINES (5% GST) - Default for homeopathy
 	// Check if it's bulk/non-retail
 	if strings.Contains(allText, "bulk") || strings.Contains(allText, "unmeasured") {
 		return "30039014", 5.0 // Bulk medicaments
 	}
-	
+
 	// Default: Retail homeopathic medicine (5% GST)
 	return "30049014", 5.0
 }
@@ -729,7 +768,7 @@ func (h *ProductHandler) getHSNDetails(hsnCode string) (string, float64) {
 		return "Homeopathic medicaments (retail pack)", 5.0
 	case "3003":
 		return "Homeopathic medicaments (bulk / not measured dose)", 5.0
-	
+
 	// COSMETICS (18%)
 	case "330499":
 		return "Skin-care (not medicinal)", 18.0
@@ -751,7 +790,7 @@ func (h *ProductHandler) getHSNDetails(hsnCode string) (string, float64) {
 		return "Shampoo", 18.0
 	case "33059000":
 		return "Hair oils (cosmetic)", 18.0
-	
+
 	default:
 		// Default to medicine
 		return "Homeopathic medicaments (retail pack)", 5.0
@@ -826,13 +865,13 @@ func (h *ProductHandler) GetProductStats(c *gin.Context) {
 
 	// Get total products
 	h.db.Table("products").Count(&total)
-	
+
 	// Get active products
 	h.db.Table("products").Where("is_active = ?", true).Count(&active)
-	
+
 	// Get low stock products (stock < 10)
 	h.db.Table("products").Where("current_stock < ?", 10).Count(&lowStock)
-	
+
 	// Calculate total stock value
 	type StockValue struct {
 		TotalValue float64
@@ -1811,7 +1850,7 @@ func (h *ProductHandler) CreatePayment(c *gin.Context) {
 	req.Status = "COMPLETED"
 
 	tx := h.db.Begin()
-	
+
 	if err := tx.Table("payments").Create(&req).Error; err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -1820,7 +1859,7 @@ func (h *ProductHandler) CreatePayment(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	err := tx.Exec(`
 		UPDATE sales_invoices 
 		SET payment_status = CASE 
@@ -1832,7 +1871,7 @@ func (h *ProductHandler) CreatePayment(c *gin.Context) {
 			updated_at = NOW()
 		WHERE id = ? AND deleted_at IS NULL
 	`, req.Amount, req.Amount, req.ID).Error
-	
+
 	if err != nil {
 		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -1841,7 +1880,7 @@ func (h *ProductHandler) CreatePayment(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	tx.Commit()
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -2097,9 +2136,9 @@ func (h *ProductHandler) GetAIProductRecommendations(c *gin.Context) {
 	// Call AI service
 	endpoint := "/v2/recommendations/product"
 	payload := map[string]interface{}{
-		"product_id": req.ProductID,
-		"customer_id": req.CustomerID,
-		"top_n": req.Limit,
+		"product_id":          req.ProductID,
+		"customer_id":         req.CustomerID,
+		"top_n":               req.Limit,
 		"recommendation_type": "hybrid",
 	}
 
@@ -2113,8 +2152,8 @@ func (h *ProductHandler) GetAIProductRecommendations(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"data":    aiResponse,
+		"success":      true,
+		"data":         aiResponse,
 		"generated_at": time.Now(),
 	})
 }
@@ -2137,9 +2176,9 @@ func (h *ProductHandler) GetAIProductRecommendationsByCustomer(c *gin.Context) {
 	// Call AI service with customer context
 	endpoint := "/v2/recommendations/customer"
 	payload := map[string]interface{}{
-		"customer_id": customerID,
+		"customer_id":     customerID,
 		"recent_products": recentProducts,
-		"limit": 10,
+		"limit":           10,
 	}
 
 	aiResponse, err := callAIService(endpoint, payload)
@@ -2152,9 +2191,9 @@ func (h *ProductHandler) GetAIProductRecommendationsByCustomer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
+		"success":         true,
 		"recommendations": aiResponse,
-		"generated_at": time.Now(),
+		"generated_at":    time.Now(),
 	})
 }
 
@@ -2172,7 +2211,7 @@ func (h *ProductHandler) GetAICustomerSegmentation(c *gin.Context) {
 	// Call AI service
 	endpoint := "/v2/segmentation/customer"
 	payload := map[string]interface{}{
-		"customer_id": req.CustomerID,
+		"customer_id":      req.CustomerID,
 		"include_features": req.IncludeFeatures,
 	}
 
@@ -2186,8 +2225,8 @@ func (h *ProductHandler) GetAICustomerSegmentation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"segment": aiResponse,
+		"success":      true,
+		"segment":      aiResponse,
 		"generated_at": time.Now(),
 	})
 }
@@ -2207,7 +2246,7 @@ func (h *ProductHandler) GetAIBatchRecommendations(c *gin.Context) {
 	endpoint := "/v2/recommendations/batch"
 	payload := map[string]interface{}{
 		"customer_ids": req.CustomerIDs,
-		"limit": req.Limit,
+		"limit":        req.Limit,
 	}
 
 	aiResponse, err := callAIService(endpoint, payload)
@@ -2220,7 +2259,7 @@ func (h *ProductHandler) GetAIBatchRecommendations(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
+		"success":               true,
 		"batch_recommendations": aiResponse,
 	})
 }
@@ -2268,8 +2307,8 @@ func (h *ProductHandler) GetAICustomerInsights(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
+		"success":           true,
 		"customer_insights": aiResponse,
-		"generated_at": time.Now(),
+		"generated_at":      time.Now(),
 	})
 }

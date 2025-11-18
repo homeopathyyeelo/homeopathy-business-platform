@@ -28,16 +28,17 @@ func (h *EnhancedInventoryHandler) GetEnhancedStockList(c *gin.Context) {
 
 	query := h.db.Table("inventory_batches ib").
 		Select(`
+			ib.product_id as product_id,
 			p.name as product_name,
-			p.sku,
-			c.name as category,
-			b.name as brand,
+			p.sku as sku,
+			COALESCE(c.name, '') as category,
+			COALESCE(b.name, '') as brand,
 			ib.batch_number as batch_no,
-			ib.available_quantity as qty_in,
-			0 as qty_out,
+			ib.quantity as qty_in,
+			(ib.quantity - ib.available_quantity) as qty_out,
 			ib.available_quantity as balance,
 			ib.unit_cost as purchase_rate,
-			ib.mrp,
+			ib.mrp as mrp,
 			ib.manufacturing_date as mfg_date,
 			ib.expiry_date as exp_date,
 			'Main Warehouse' as warehouse_name,
@@ -475,9 +476,9 @@ func (h *EnhancedInventoryHandler) ResolveLowStockAlert(c *gin.Context) {
 	if err := h.db.Model(&models.EnhancedLowStockAlert{}).
 		Where("id = ?", alertID).
 		Updates(gin.H{
-			"is_resolved":  true,
-			"resolved_at":  time.Now(),
-			"updated_at":   time.Now(),
+			"is_resolved": true,
+			"resolved_at": time.Now(),
+			"updated_at":  time.Now(),
 		}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -534,13 +535,13 @@ func (h *EnhancedInventoryHandler) GenerateStockReport(c *gin.Context) {
 
 	// Get overall statistics
 	var stats struct {
-		TotalProducts   int
-		TotalBatches    int
-		TotalValue      float64
-		SellingValue    float64
-		LowStockCount   int
-		ExpiringCount   int
-		ExpiredCount    int
+		TotalProducts int
+		TotalBatches  int
+		TotalValue    float64
+		SellingValue  float64
+		LowStockCount int
+		ExpiringCount int
+		ExpiredCount  int
 	}
 	h.db.Raw(`
 		SELECT

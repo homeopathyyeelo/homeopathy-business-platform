@@ -65,6 +65,15 @@ export default function StockListPage() {
     setFilters(prev => ({ ...prev, [key]: mapped }));
   };
 
+  const handleResetFilters = () => {
+    setFilters({
+      product_id: '',
+      category: '',
+      batch_no: '',
+      expiry_status: '',
+    });
+  };
+
   const getExpiryStatusBadge = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       'fresh': 'default',
@@ -231,7 +240,7 @@ export default function StockListPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Actions</label>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleResetFilters}>
                   <Filter className="h-4 w-4 mr-2" />
                   Reset
                 </Button>
@@ -263,6 +272,8 @@ export default function StockListPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Brand</TableHead>
                     <TableHead>SKU</TableHead>
                     <TableHead>Batch No</TableHead>
                     <TableHead>Qty In</TableHead>
@@ -278,10 +289,26 @@ export default function StockListPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {stock.map((item: any) => (
-                    <TableRow key={`${item.product_id}-${item.batch_no}`}>
+                  {stock.map((item: any, index: number) => (
+                    <TableRow
+                      key={
+                        item.product_id && item.batch_no
+                          ? `${item.product_id}-${item.batch_no}`
+                          : index
+                      }
+                    >
                       <TableCell className="font-medium">{item.product_name}</TableCell>
-                      <TableCell>{item.sku}</TableCell>
+                      <TableCell>{item.category || '-'}</TableCell>
+                      <TableCell>{item.brand || '-'}</TableCell>
+                      <TableCell>
+                        <button
+                          type="button"
+                          onClick={() => item.product_id && router.push(`/products/${item.product_id}`)}
+                          className="text-primary underline underline-offset-2 hover:opacity-80"
+                        >
+                          {item.sku}
+                        </button>
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline">{item.batch_no}</Badge>
                       </TableCell>
@@ -310,8 +337,8 @@ export default function StockListPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getExpiryStatusBadge(item.expiry_status)}>
-                          {item.expiry_status.replace('_', ' ').toUpperCase()}
+                        <Badge variant={getExpiryStatusBadge(item.expiry_status || 'fresh')}>
+                          {(item.expiry_status || 'fresh').replace('_', ' ').toUpperCase()}
                         </Badge>
                       </TableCell>
                       <TableCell>{item.warehouse_name}</TableCell>
@@ -332,19 +359,27 @@ export default function StockListPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
-              {report.category_summary.map((category: any) => (
-                <div key={category.category} className="p-4 border rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-medium">{category.category}</h3>
-                    <Badge variant="outline">{category.products_count} products</Badge>
+              {report.category_summary.map((category: any, index: number) => {
+                const categoryName = category?.category || 'Uncategorized';
+                const batchesCount = category?.batches_count ?? 0;
+                const productsCount = category?.products_count ?? 0;
+                const totalQuantity = category?.total_quantity ?? 0;
+                const totalValue = category?.total_selling_value ?? 0;
+
+                return (
+                  <div key={`${categoryName}-${index}`} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-medium">{categoryName}</h3>
+                      <Badge variant="outline">{productsCount} products</Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <p>Batches: {batchesCount}</p>
+                      <p>Quantity: {totalQuantity}</p>
+                      <p>Value: ₹{totalValue.toLocaleString()}</p>
+                    </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    <p>Batches: {category.batches_count}</p>
-                    <p>Quantity: {category.total_quantity}</p>
-                    <p>Value: ₹{category.total_selling_value.toLocaleString()}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
