@@ -51,7 +51,7 @@ func main() {
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
 	inventoryAlertsHandler := handlers.NewInventoryAlertsHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
-	searchHandler := handlers.NewSearchHandler()
+	searchHandler := handlers.NewSearchHandler(db)
 	productHandler := handlers.NewProductHandler(db)
 	productStatsHandler := handlers.NewProductStatsHandler(db)
 	quickActionsHandler := handlers.NewQuickActionsHandler(db)
@@ -209,6 +209,7 @@ func main() {
 			erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
 			erp.GET("/dashboard/revenue-chart", dashboardHandler.GetRevenueChart)
+			erp.GET("/dashboard/category-stats", dashboardHandler.GetCategoryStats)
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
 			erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
 			erp.GET("/dashboard/quick-actions", quickActionsHandler.GetQuickActions) // Smart insights quick actions

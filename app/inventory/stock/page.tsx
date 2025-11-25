@@ -35,7 +35,11 @@ export default function StockListPage() {
       : (Array.isArray((productsData as any)?.data) ? (productsData as any).data : []));
 
   const { data: stockResponse, isLoading } = useEnhancedInventory(filters);
-  const stock = stockResponse?.data || [];
+  const stock = Array.isArray(stockResponse?.data) 
+    ? stockResponse.data 
+    : (Array.isArray((stockResponse?.data as any)?.items) 
+      ? (stockResponse?.data as any).items 
+      : []);
 
   const { data: reportResponse } = useStockReport();
   const report = reportResponse?.data

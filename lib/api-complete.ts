@@ -17,7 +17,7 @@ const createServiceClient = (baseURL: string): AxiosInstance => {
   
   // Request interceptor - Add JWT token
   client.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('auth_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -29,7 +29,7 @@ const createServiceClient = (baseURL: string): AxiosInstance => {
     (response) => response,
     (error) => {
       if (error.response?.status === 401) {
-        localStorage.removeItem('token')
+        localStorage.removeItem('auth_token')
         window.location.href = '/login'
       }
       return Promise.reject(error)

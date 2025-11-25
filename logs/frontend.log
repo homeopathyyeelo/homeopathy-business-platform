@@ -4,8 +4,497 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2.8s
+ ✓ Ready in 1931ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 948ms (159 modules)
+ ✓ Compiled /middleware in 761ms (159 modules)
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 17.7s (2281 modules)
+ ✓ Compiled /dashboard in 10.2s (2189 modules)
+ GET /dashboard 200 in 11880ms
+ ✓ Compiled in 1261ms (971 modules)
+ GET /dashboard 200 in 701ms
+ ✓ Compiled in 6.5s (971 modules)
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/dashboard'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 10.7s (2513 modules)
+ GET /dashboard 500 in 10638ms
+ GET /dashboard 200 in 508ms
+ GET /dashboard 200 in 297ms
+ GET /dashboard 200 in 608ms
+ GET /dashboard 200 in 862ms
+ ✓ Compiled in 686ms (1129 modules)
+ GET /dashboard 200 in 352ms
+ ✓ Compiled in 704ms (1129 modules)
+ GET /dashboard 200 in 267ms
+ ✓ Compiled in 1720ms (1128 modules)
+ GET /dashboard 200 in 322ms
+ ✓ Compiled in 702ms (1128 modules)
+ GET /dashboard 200 in 329ms
+ ✓ Compiled in 678ms (1128 modules)
+ GET /dashboard 200 in 539ms
+ ✓ Compiled in 1617ms (1128 modules)
+ GET /dashboard 200 in 278ms
+ ✓ Compiled in 706ms (1128 modules)
+ GET /dashboard 200 in 246ms
+ ✓ Compiled in 448ms (1128 modules)
+ GET /dashboard 200 in 237ms
+ ✓ Compiled in 669ms (1128 modules)
+ GET /dashboard 200 in 329ms
+ ✓ Compiled in 1485ms (1128 modules)
+ ✓ Compiled in 721ms (1128 modules)
+ GET /dashboard 200 in 412ms
+ GET /dashboard 200 in 358ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 2.1s (2443 modules)
+ GET /products/86f3701e-1b5c-40f2-a66b-f433f435a192 200 in 3321ms
+ GET /products/86f3701e-1b5c-40f2-a66b-f433f435a192 200 in 696ms
+ GET /products/d07e1fca-7fef-459c-b9e3-2f915cdec812 200 in 175ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 1653ms (2468 modules)
+ GET /products 200 in 1968ms
+ GET /products 200 in 114ms
+ ○ Compiling /purchases/upload ...
+ ✓ Compiled /purchases/upload in 1777ms (2483 modules)
+ GET /purchases/upload 200 in 2095ms
+ ○ Compiling /purchases/orders ...
+ ✓ Compiled /purchases/orders in 1077ms (2494 modules)
+ GET /purchases/orders 200 in 1328ms
+ ○ Compiling /purchases/bills ...
+ ✓ Compiled /purchases/bills in 564ms (2503 modules)
+ GET /purchases/bills 200 in 813ms
+ GET /purchases/upload 200 in 174ms
+ ○ Compiling /inventory/upload ...
+ ✓ Compiled /inventory/upload in 824ms (2514 modules)
+ GET /inventory/upload 200 in 1128ms
+ ○ Compiling /inventory/stock ...
+ ✓ Compiled /inventory/stock in 1859ms (2162 modules)
+ GET /inventory/stock 200 in 2091ms
+ GET /inventory/stock 200 in 558ms
+ GET /inventory/stock 200 in 317ms
+ ○ Compiling /sales/pos ...
+ ✓ Compiled /sales/pos in 2.3s (2163 modules)
+ GET /sales/pos 200 in 3007ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /inventory/stock 200 in 373ms
+ ✓ Compiled /dashboard in 381ms (1411 modules)
+ GET /dashboard 200 in 585ms
+ GET /sales/pos 200 in 151ms
+ ✓ Compiled /products in 303ms (1411 modules)
+ GET /products 200 in 513ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 505ms (1417 modules)
+ GET /products/70ccf742-ab6e-432f-afa4-f4bdd4c90f5d 200 in 896ms
+ GET /products/70ccf742-ab6e-432f-afa4-f4bdd4c90f5d 200 in 151ms
+ ○ Compiling /admin/approvals ...
+ ✓ Compiled /admin/approvals in 1649ms (2638 modules)
+ GET /admin/approvals 200 in 1936ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /api/uploads/purchase ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /dashboard/activity in 2.9s (2672 modules)
+ GET /inventory/stock 200 in 4049ms
+ GET /dashboard/activity 200 in 2809ms
+ GET /api/uploads/purchase?status=pending 200 in 4029ms
+ GET /api/uploads/purchase?status=pending 200 in 364ms
+ ○ Compiling /api/ai/activity ...
+ ✓ Compiled /api/dashboard/activity-feed in 2.7s (2687 modules)
+ GET /api/dashboard/metrics 200 in 2806ms
+ GET /api/system/health 200 in 2708ms
+ GET /api/ai/activity 200 in 2632ms
+ GET /api/system/bugs 200 in 2463ms
+ GET /api/dashboard/activity-feed 200 in 1304ms
+ GET /api/uploads/inventory?status=pending 401 in 3058ms
+ GET /api/uploads/inventory?status=pending 401 in 233ms
+ GET /dashboard/activity 200 in 1495ms
+ GET /inventory/stock 200 in 1409ms
+ GET /api/dashboard/metrics 200 in 917ms
+ GET /api/system/health 200 in 1002ms
+ GET /api/ai/activity 200 in 859ms
+ GET /api/system/bugs 200 in 871ms
+ GET /api/dashboard/activity-feed 200 in 863ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 4.9s (2683 modules)
+ GET /dashboard/stats 200 in 5277ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /inventory/stock 200 in 1037ms
+ ○ Compiling /inventory/transfers ...
+ ✓ Compiled /inventory/transfers in 741ms (2210 modules)
+ GET /inventory/transfers 200 in 968ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /inventory/stock 200 in 587ms
+ ○ Compiling /inventory/valuation ...
+ ✓ Compiled /inventory/valuation in 570ms (2211 modules)
+ GET /inventory/valuation 200 in 768ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ○ Compiling /api/inventory/valuation ...
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /api/inventory/valuation in 1083ms (2213 modules)
+ GET /api/inventory/valuation 200 in 1668ms
+ GET /inventory/stock 200 in 1806ms
+ GET /api/inventory/valuation 200 in 141ms
+ ○ Compiling /sales/b2b ...
+ ✓ Compiled /sales/b2b in 1037ms (2208 modules)
+ GET /sales/b2b 200 in 1254ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /inventory/stock 200 in 551ms
+ ✓ Compiled in 623ms (1241 modules)
+ GET /inventory/stock 200 in 500ms
+ ○ Compiling /products/[id] ...
+ ✓ Compiled /products/[id] in 1249ms (942 modules)
+ GET /products/barcode-labels 200 in 5595ms
+ ✓ Compiled in 7.1s (2197 modules)
+ GET /sales/b2b 200 in 359ms
+ ✓ Compiled in 671ms (1255 modules)
+ GET /sales/b2b 200 in 1233ms
+ GET /products/barcode-labels 200 in 1118ms
+ ✓ Compiled in 1658ms (1255 modules)
+ GET /sales/b2b 200 in 955ms
+ GET /products/barcode-labels 200 in 2881ms
+ ✓ Compiled in 2.4s (2197 modules)
+ GET /sales/b2b 200 in 579ms
+ GET /products/barcode-labels 200 in 500ms
+ ✓ Compiled in 853ms (1255 modules)
+ GET /sales/b2b 200 in 785ms
+ GET /products/barcode-labels 200 in 596ms
+ ✓ Compiled in 793ms (1255 modules)
+ GET /sales/b2b 200 in 604ms
+ GET /products/barcode-labels 200 in 373ms
+ ✓ Compiled in 572ms (1255 modules)
+ GET /sales/b2b 200 in 1563ms
+ GET /products/barcode-labels 200 in 754ms
+ GET /inventory/stock 200 in 182ms
+ GET /inventory/stock 200 in 650ms
+ GET /inventory/stock 200 in 371ms
+ ○ Compiling /purchases/upload ...
+ ✓ Compiled /purchases/upload in 2.6s (943 modules)
+ GET /purchases/upload 200 in 2984ms
+ ○ Compiling /api/uploads/purchase ...
+ ✓ Compiled /api/uploads/purchase in 3.4s (2212 modules)
+Detected Marg ERP format: 42 items
+Slow query detected (183ms): INSERT INTO upload_sessions (
+          upload_type, file_name, file_size, total_rows, status, uploaded_by,
+          supplier_name, invoice_number, invoice_date, total_amount, total_items
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        RETURNING *
+Slow query detected (126ms): UPDATE products SET 
+        mrp = $1,
+        selling_price = $1,
+        gst_rate = $2,
+        updated_at = NOW()
+       WHERE id = $3
+Slow query detected (146ms): INSERT INTO upload_items (
+            session_id, row_number, product_code, product_name, brand, potency, size, form,
+            hsn_code, batch_number, expiry_date, quantity, unit_price, mrp, 
+            discount_percent, discount_amount, tax_percent, tax_amount, total_amount,
+            matched_product_id, match_type, match_confidence, raw_data, status
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+ GET /purchases/upload 200 in 601ms
+ GET /products/barcode-labels 200 in 505ms
+ POST /api/uploads/purchase 200 in 3246ms
+ ○ Compiling /admin/approvals ...
+ ✓ Compiled /admin/approvals in 889ms (965 modules)
+ GET /admin/approvals 200 in 1168ms
+ GET /api/uploads/purchase?status=pending 200 in 419ms
+ GET /api/uploads/purchase?status=pending 200 in 410ms
+ ✓ Compiled /api/uploads/inventory in 433ms (970 modules)
+ GET /api/uploads/inventory?status=pending 401 in 536ms
+ GET /api/uploads/inventory?status=pending 401 in 604ms
+ ○ Compiling /admin/approvals/[sessionId] ...
+ ✓ Compiled /admin/approvals/[sessionId] in 3s (2222 modules)
+ GET /admin/approvals/ef56f46e-4fcd-4f5c-a041-3cc8454a4673 200 in 4008ms
+ ○ Compiling /api/uploads/session/[sessionId] ...
+ ✓ Compiled /api/uploads/session/[sessionId] in 737ms (2224 modules)
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/ef56f46e-4fcd-4f5c-a041-3cc8454a4673 200 in 1979ms
+ GET /api/uploads/session/ef56f46e-4fcd-4f5c-a041-3cc8454a4673 200 in 1839ms
+ ○ Compiling /api/uploads/approve ...
+ ✓ Compiled /api/uploads/approve in 1913ms (2202 modules)
+ POST /api/uploads/approve 200 in 2308ms
+ GET /admin/approvals 200 in 230ms
+ ✓ Compiled /api/uploads/purchase in 392ms (959 modules)
+ GET /api/uploads/purchase?status=pending 200 in 616ms
+ GET /api/uploads/purchase?status=pending 200 in 164ms
+ ✓ Compiled /api/uploads/inventory in 356ms (964 modules)
+ GET /api/uploads/inventory?status=pending 401 in 626ms
+ GET /api/uploads/inventory?status=pending 401 in 136ms
+ GET /purchases/upload 200 in 189ms
+Detected Marg ERP format: 4 items
+ POST /api/uploads/purchase 200 in 165ms
+ GET /admin/approvals 200 in 155ms
+ GET /api/uploads/purchase?status=pending 200 in 170ms
+ GET /api/uploads/purchase?status=pending 200 in 270ms
+ GET /api/uploads/inventory?status=pending 401 in 199ms
+ GET /api/uploads/inventory?status=pending 401 in 126ms
+ GET /admin/approvals/e12e0e33-387e-4d66-9d0c-7b3aaf06e5e2 200 in 197ms
+ ○ Compiling /api/uploads/session/[sessionId] ...
+ ✓ Compiled /api/uploads/session/[sessionId] in 1185ms (964 modules)
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/e12e0e33-387e-4d66-9d0c-7b3aaf06e5e2 200 in 1536ms
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/e12e0e33-387e-4d66-9d0c-7b3aaf06e5e2 200 in 182ms
+ ✓ Compiled /api/uploads/approve in 302ms (966 modules)
+ POST /api/uploads/approve 200 in 517ms
+ GET /admin/approvals 200 in 167ms
+ GET /api/uploads/purchase?status=pending 200 in 148ms
+ GET /api/uploads/purchase?status=pending 200 in 235ms
+ GET /api/uploads/inventory?status=pending 401 in 189ms
+ GET /api/uploads/inventory?status=pending 401 in 115ms
+ GET /purchases/upload 200 in 147ms
+Detected Marg ERP format: 206 items
+ POST /api/uploads/purchase 200 in 1261ms
+ GET /admin/approvals 200 in 134ms
+ GET /api/uploads/purchase?status=pending 200 in 169ms
+ GET /api/uploads/purchase?status=pending 200 in 265ms
+ GET /api/uploads/inventory?status=pending 401 in 224ms
+ GET /api/uploads/inventory?status=pending 401 in 128ms
+ GET /admin/approvals/88b85d1a-fe1e-4aca-a31b-c381f446d814 200 in 787ms
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/88b85d1a-fe1e-4aca-a31b-c381f446d814 200 in 352ms
+Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
+  28 |     userId = userId && userId !== '0' ? userId : null;
+  29 |
+> 30 |     const sessionId = params.sessionId;
+     |                              ^
+  31 |
+  32 |     // Get session
+  33 |     const sessionResult = await query(
+ GET /api/uploads/session/88b85d1a-fe1e-4aca-a31b-c381f446d814 200 in 264ms
+ POST /api/uploads/approve 200 in 431ms
+ GET /admin/approvals 200 in 132ms
+ GET /api/uploads/purchase?status=pending 200 in 187ms
+ GET /api/uploads/purchase?status=pending 200 in 241ms
+ GET /api/uploads/inventory?status=pending 401 in 187ms
+ GET /api/uploads/inventory?status=pending 401 in 111ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 2.1s (977 modules)
+ GET /products 200 in 2350ms
+ GET /products 200 in 635ms
+ GET /inventory/stock 200 in 158ms
+ GET /purchases/upload 200 in 288ms
+ GET /inventory/stock 200 in 135ms
+ ○ Compiling /inventory/low-stock ...
+ ✓ Compiled /inventory/low-stock in 4.5s (2211 modules)
+ GET /inventory/low-stock 200 in 4892ms
+ GET /products/barcode-labels 200 in 454ms
+ GET /inventory/low-stock 200 in 338ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1001ms (2200 modules)
+ GET /api/inventory/low-stock-alerts 404 in 1476ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /api/inventory/low-stock-alerts 404 in 231ms
+ GET /inventory/low-stock 200 in 314ms
+ GET /api/inventory/low-stock-alerts 404 in 170ms
+ GET /inventory/stock 200 in 286ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1651ms (1423 modules)
+ GET /dashboard 200 in 2008ms
+ GET /dashboard 200 in 714ms
+ GET /dashboard 200 in 222ms
+ ✓ Compiled in 2.6s (1263 modules)
+ GET /dashboard 200 in 825ms
+ GET /products/barcode-labels 200 in 726ms
+ ✓ Compiled in 1217ms (1263 modules)
+ GET /dashboard 200 in 410ms
+ GET /products/barcode-labels 200 in 315ms
+ GET /inventory/stock 200 in 684ms
+ GET /inventory/stock 200 in 491ms
+ ✓ Compiled in 1619ms (1263 modules)
+ GET /inventory/stock 200 in 271ms
+ GET /inventory/stock 200 in 334ms
+ GET /dashboard 200 in 392ms
+ ✓ Compiled in 2.4s (1263 modules)
+ GET /dashboard 200 in 573ms
+ GET /inventory/stock 200 in 439ms
+ ✓ Compiled in 901ms (1263 modules)
+ GET /inventory/stock 200 in 177ms
+ GET /products 200 in 303ms
+ GET /products 200 in 236ms
+ GET /products 200 in 360ms
+ GET /products 200 in 252ms
+ ✓ Compiled in 685ms (1263 modules)
+ GET /products 200 in 1358ms
+ GET /dashboard 200 in 1364ms
+ GET /inventory/stock 200 in 1365ms
+ GET /products 200 in 277ms
+ ✓ Compiled in 1389ms (1263 modules)
+ GET /dashboard 200 in 1572ms
+ GET /products 200 in 1585ms
+ GET /inventory/stock 200 in 1597ms
+ ✓ Compiled in 1722ms (1263 modules)
+ GET /inventory/stock 200 in 498ms
+ GET /dashboard 200 in 498ms
+ GET /products 200 in 501ms
+ ✓ Compiled in 1825ms (1263 modules)
+ GET /dashboard 200 in 458ms
+ GET /products 200 in 463ms
+ GET /inventory/stock 200 in 467ms
+ GET /products 200 in 289ms
+ GET /products 200 in 375ms
+ GET /products 200 in 275ms
+ ✓ Compiled in 853ms (1263 modules)
+ GET /inventory/stock 200 in 884ms
+ GET /dashboard 200 in 892ms
+ GET /products 200 in 894ms
+ GET /products 200 in 289ms
+ ✓ Compiled in 1912ms (1263 modules)
+ GET /inventory/stock 200 in 1363ms
+ ✓ Compiled in 1809ms (1263 modules)
+ GET /products 200 in 1441ms
+ GET /dashboard 200 in 1447ms
+ GET /products 200 in 1162ms
+ GET /inventory/stock 200 in 584ms
+ GET /dashboard 200 in 433ms
+ GET /dashboard 200 in 491ms
+ GET /inventory/stock 200 in 344ms
+ ✓ Compiled in 2s (1263 modules)
+ GET /inventory/stock 200 in 480ms
+ GET /inventory/stock 200 in 1259ms
+ GET /products 200 in 874ms
+ GET /dashboard 200 in 874ms
+ ✓ Compiled in 1608ms (1263 modules)
+ GET /products 200 in 1096ms
+ GET /dashboard 200 in 1114ms
+ GET /inventory/stock 200 in 1119ms
+ ✓ Compiled in 1243ms (1263 modules)
+ GET /inventory/stock 200 in 566ms
+ GET /inventory/stock 200 in 947ms
+ GET /products 200 in 961ms
+ GET /dashboard 200 in 801ms
+ ✓ Compiled in 700ms (1263 modules)
+ GET /products 200 in 815ms
+ GET /dashboard 200 in 821ms
+ GET /inventory/stock 200 in 830ms
+ GET /inventory/stock 200 in 312ms
+ ✓ Compiled in 1574ms (1263 modules)
+ GET /products 200 in 822ms
+ GET /dashboard 200 in 852ms
+ ✓ Compiled in 1199ms (1263 modules)
+ GET /inventory/stock 200 in 1245ms
+ GET /inventory/stock 200 in 436ms
+ GET /dashboard 200 in 438ms
+ GET /products 200 in 439ms
+ GET /products 200 in 287ms
+ GET /dashboard 200 in 280ms
+ GET /inventory/stock 200 in 268ms
+ ✓ Compiled in 1911ms (1263 modules)
+ GET /inventory/stock 200 in 671ms
+ GET /dashboard 200 in 670ms
+ GET /products 200 in 672ms
+ ✓ Compiled in 1615ms (1263 modules)
+ GET /inventory/stock 200 in 597ms
+ GET /dashboard 200 in 613ms
+ GET /products 200 in 614ms
+ ✓ Compiled in 918ms (1263 modules)
+ GET /products 200 in 439ms
+ GET /dashboard 200 in 442ms
+ GET /inventory/stock 200 in 443ms
+ ✓ Compiled in 660ms (1263 modules)
+ GET /dashboard 200 in 963ms
+ GET /products 200 in 989ms
+ GET /inventory/stock 200 in 999ms
+ ✓ Compiled in 727ms (1263 modules)
+ GET /inventory/stock 200 in 497ms
+ GET /dashboard 200 in 494ms
+ GET /products 200 in 494ms
+ ✓ Compiled in 1517ms (1263 modules)
+ GET /dashboard 200 in 599ms
+ GET /products 200 in 619ms
+ GET /inventory/stock 200 in 624ms
+ ✓ Compiled in 926ms (1263 modules)
+ GET /inventory/stock 200 in 470ms
+ GET /products 200 in 472ms
+ GET /dashboard 200 in 329ms
+ ✓ Compiled in 494ms (1263 modules)
+ GET /inventory/stock 200 in 1637ms
+ GET /products 200 in 1640ms
+ GET /dashboard 200 in 1642ms
+ GET /inventory/stock 200 in 493ms
+ ✓ Compiled in 713ms (1263 modules)
+ GET /inventory/stock 200 in 432ms
+ GET /products 200 in 432ms
+ GET /dashboard 200 in 434ms
+ GET /inventory/stock 200 in 286ms
+ ✓ Compiled in 1370ms (1263 modules)
+ GET /dashboard 200 in 522ms
+ GET /products 200 in 539ms
+ GET /inventory/stock 200 in 543ms
+ ✓ Compiled in 822ms (1263 modules)
+ GET /inventory/stock 200 in 465ms
+ GET /dashboard 200 in 519ms
+ GET /products 200 in 405ms
+ GET /inventory/stock 200 in 368ms
+ GET /inventory/stock 200 in 238ms
+ GET /inventory/stock 200 in 357ms
+ GET /inventory/stock 200 in 287ms
+ ✓ Compiled in 741ms (1263 modules)
+ GET /inventory/stock 200 in 1193ms
+ GET /products 200 in 1195ms
+ GET /dashboard 200 in 1196ms
+ GET /inventory/stock 200 in 282ms
+ GET /inventory/stock 200 in 297ms
+ GET /inventory/stock 200 in 310ms
+ GET /inventory/stock 200 in 287ms
+ GET /inventory/stock 200 in 348ms
+ GET /inventory/stock 200 in 299ms
+ ✓ Compiled in 1477ms (1263 modules)
+ GET /dashboard 200 in 618ms
+ GET /products 200 in 633ms
+ ✓ Compiled in 929ms (1263 modules)
+ GET /inventory/stock 200 in 658ms
+ GET /products 200 in 446ms
+ GET /dashboard 200 in 376ms
+ GET /inventory/stock 200 in 451ms
+ ✓ Compiled in 1967ms (1263 modules)
+ GET /inventory/stock 200 in 1049ms
+ GET /products 200 in 1055ms
+ GET /dashboard 200 in 1056ms
+ ✓ Compiled in 1576ms (1263 modules)
+ GET /dashboard 200 in 480ms
+ GET /products 200 in 480ms
+ GET /inventory/stock 200 in 482ms
+ GET /inventory/stock 200 in 368ms

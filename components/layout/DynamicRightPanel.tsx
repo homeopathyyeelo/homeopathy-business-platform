@@ -231,12 +231,76 @@ function InsightContent({ data, title }: { data: any; title: string }) {
     );
   }
 
-  // Fallback: display raw data as JSON
+  // Handle dashboard stats response (nested data object)
+  if (data.data && typeof data.data === 'object') {
+    const stats = data.data;
+    
+    // Handle stats with multiple fields
+    if (stats.total_sales !== undefined || stats.total_products !== undefined) {
+      return (
+        <div className="space-y-2">
+          {stats.total_sales !== undefined && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Sales</span>
+              <span className="font-bold text-green-600">₹{Number(stats.total_sales || 0).toLocaleString()}</span>
+            </div>
+          )}
+          {stats.total_purchases !== undefined && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Purchases</span>
+              <span className="font-bold text-orange-600">₹{Number(stats.total_purchases || 0).toLocaleString()}</span>
+            </div>
+          )}
+          {stats.total_products !== undefined && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm">Products</span>
+              <span className="font-bold text-blue-600">{stats.total_products}</span>
+            </div>
+          )}
+          {stats.low_stock_items !== undefined && stats.low_stock_items > 0 && (
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-red-600">Low Stock</span>
+              <span className="font-bold text-red-600">{stats.low_stock_items}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Handle expiry alerts array
+    if (stats.alerts && Array.isArray(stats.alerts)) {
+      return (
+        <div className="space-y-2">
+          {stats.alerts.slice(0, 3).map((alert: any, idx: number) => (
+            <div key={idx} className="p-2 bg-amber-50 rounded border border-amber-200">
+              <p className="text-sm font-medium truncate">{alert.productName}</p>
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>{alert.batchNo}</span>
+                <span className="text-red-600 font-medium">{alert.daysLeft}d left</span>
+              </div>
+            </div>
+          ))}
+          {stats.alerts.length === 0 && (
+            <p className="text-sm text-muted-foreground">No items expiring soon</p>
+          )}
+        </div>
+      );
+    }
+  }
+
+  // Fallback: Check if it's just an empty object or error
+  if (!data || Object.keys(data).length === 0) {
+    return (
+      <div className="text-sm text-muted-foreground text-center py-4">
+        <p>No data available</p>
+      </div>
+    );
+  }
+
+  // Last resort: show clean error message instead of JSON
   return (
-    <div className="text-xs text-muted-foreground font-mono">
-      <pre className="whitespace-pre-wrap">
-        {JSON.stringify(data, null, 2).slice(0, 200)}
-      </pre>
+    <div className="text-sm text-muted-foreground">
+      <p>Unable to display data</p>
     </div>
   );
 }

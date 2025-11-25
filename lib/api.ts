@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios'
 
 const getToken = () => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('token')
+    return localStorage.getItem('auth_token')
   }
   return null
 }
@@ -33,7 +33,7 @@ const createAPIClient = (baseURL: string): AxiosInstance => {
         if (typeof window !== 'undefined') {
           // Clear stale token but DON'T redirect
           // Let components handle 401 errors gracefully
-          localStorage.removeItem('token')
+          localStorage.removeItem('auth_token')
           console.warn('API returned 401:', error.config?.url)
         }
       }

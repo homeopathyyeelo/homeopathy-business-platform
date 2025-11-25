@@ -196,7 +196,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	sqlDB.QueryRow(countSQL, args...).Scan(&total)
 
 	// Fetch products with master data using Raw SQL with PostgreSQL placeholders
-	sql := fmt.Sprintf(`
+	query := fmt.Sprintf(`
 		SELECT 
 			p.id, p.sku, p.name,
 			COALESCE(c.name, '') as category,
@@ -223,7 +223,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	args = append(args, limit, offset)
 
 	// Execute query with sql.DB directly (already obtained above)
-	rows, err := sqlDB.Query(sql, args...)
+	rows, err := sqlDB.Query(query, args...)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -236,8 +236,9 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var products []gin.H
 	for rows.Next() {
 		var (
-			productID, sku, name, category, brand, potency, form, uom   string
-			packSize, hsnCode, manufacturer, description, barcode, tags string
+			productID, sku, name                                        string
+			category, brand, potency, form, uom                         sql.NullString
+			packSize, hsnCode, manufacturer, description, barcode, tags sql.NullString
 			costPrice, sellingPrice, mrp, taxPercent, currentStock      float64
 			reorderLevel, minStock, maxStock                            int
 			isActive                                                    bool
@@ -253,6 +254,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		)
 
 		if err != nil {
+			fmt.Printf("❌ Error scanning row: %v\n", err)
 			continue
 		}
 
@@ -260,20 +262,20 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 			"id":           productID,
 			"sku":          sku,
 			"name":         name,
-			"category":     category,
-			"brand":        brand,
-			"potency":      potency,
-			"form":         form,
-			"uom":          uom,
-			"packSize":     packSize,
+			"category":     nullString(category),
+			"brand":        nullString(brand),
+			"potency":      nullString(potency),
+			"form":         nullString(form),
+			"uom":          nullString(uom),
+			"packSize":     nullString(packSize),
 			"costPrice":    costPrice,
 			"sellingPrice": sellingPrice,
 			"mrp":          mrp,
 			"taxPercent":   taxPercent,
-			"hsnCode":      hsnCode,
-			"manufacturer": manufacturer,
-			"description":  description,
-			"barcode":      barcode,
+			"hsnCode":      nullString(hsnCode),
+			"manufacturer": nullString(manufacturer),
+			"description":  nullString(description),
+			"barcode":      nullString(barcode),
 			"reorderLevel": reorderLevel,
 			"minStock":     minStock,
 			"maxStock":     maxStock,
@@ -281,7 +283,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 			"stock_qty":    currentStock,
 			"unit_price":   sellingPrice,
 			"isActive":     isActive,
-			"tags":         tags,
+			"tags":         nullString(tags),
 			"createdAt":    createdAt,
 			"updatedAt":    updatedAt,
 		}
@@ -300,7 +302,9 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    products,
+		"items":   products,
+		"total":   total,
+		"data":    products, // Keep for backward compatibility
 		"pagination": gin.H{
 			"page":       page,
 			"limit":      limit,

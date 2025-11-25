@@ -18,6 +18,7 @@ import { Search, Bell, User, Settings, LogOut, Package, Users, Loader2 } from "l
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import { golangAPI } from "@/lib/api";
 
 interface SearchResult {
   id: string;
@@ -56,10 +57,13 @@ const Header = () => {
 
   // Debounced search
   useEffect(() => {
+    console.log('🔄 useEffect triggered with query:', searchQuery);
     const delayDebounceFn = setTimeout(() => {
+      console.log('⏰ Debounce timeout finished. Query length:', searchQuery.trim().length);
       if (searchQuery.trim().length >= 2) {
         performSearch(searchQuery.trim());
       } else {
+        console.log('🧹 Clearing results (query too short)');
         setSearchResults([]);
         setShowResults(false);
       }
@@ -69,26 +73,21 @@ const Header = () => {
   }, [searchQuery]);
 
   const performSearch = async (query: string) => {
+    console.log('🔍 Performing search for:', query);
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `${API_URL}/api/erp/search?q=${encodeURIComponent(query)}&type=all&limit=10`,
-        {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-          },
-        }
-      );
+      const response = await golangAPI.get(`/api/erp/search?q=${encodeURIComponent(query)}&type=all&limit=10`);
+      console.log('✅ Search response:', response);
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.hits) {
-          setSearchResults(data.hits);
-          setShowResults(true);
-        }
+      if (response.data && response.data.success && response.data.hits) {
+        console.log('📈 Hits found:', response.data.hits.length);
+        setSearchResults(response.data.hits);
+        setShowResults(true);
+      } else {
+        console.warn('⚠️ Unexpected response structure:', response);
       }
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('❌ Search error:', error);
     } finally {
       setIsSearching(false);
     }
@@ -140,8 +139,14 @@ const Header = () => {
             placeholder="Search: SBL Mother Tincture, product name, customer..." 
             className="pl-10 pr-10 w-full max-w-md"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => searchResults.length > 0 && setShowResults(true)}
+            onChange={(e) => {
+              console.log('⌨️ Input change:', e.target.value);
+              setSearchQuery(e.target.value);
+            }}
+            onFocus={() => {
+              console.log('👀 Input focused');
+              if (searchResults.length > 0) setShowResults(true);
+            }}
           />
           
           {/* Search Results Dropdown */}

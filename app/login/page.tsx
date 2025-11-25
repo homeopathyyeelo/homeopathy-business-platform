@@ -73,8 +73,10 @@ export default function LoginPage() {
         const data = await response.json();
         const user = data.user;
 
-        // The API sets the cookie, so we don't need to store in localStorage
-        // localStorage.setItem('auth_token', data.token);
+        // Store token in localStorage for API client
+        if (data.token) {
+          localStorage.setItem('auth_token', data.token);
+        }
 
         // Remember email if checked
         if (rememberMe) {

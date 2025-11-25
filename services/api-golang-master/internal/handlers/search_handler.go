@@ -13,17 +13,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sashabaranov/go-openai"
+	"gorm.io/gorm"
 )
 
 type SearchHandler struct {
 	OpenAIClient *openai.Client
+	db           *gorm.DB
 }
 
 // NewSearchHandler creates a new search handler with OpenAI client
-func NewSearchHandler() *SearchHandler {
+func NewSearchHandler(db *gorm.DB) *SearchHandler {
 	openAIKey := os.Getenv("OPENAI_API_KEY")
 	return &SearchHandler{
 		OpenAIClient: openai.NewClient(openAIKey),
+		db:           db,
 	}
 }
 
@@ -66,9 +69,9 @@ type EnhancedSearchRequest struct {
 type SearchIntent struct {
 	IntentType  string            `json:"intentType"` // product, customer, order, etc.
 	SearchQuery string            `json:"searchQuery"`
-	Filters     map[string]string `json:ilters"`
-	IsNatural  bool    `json:"isNatural"`
-	Confidence float64 `json:"confidence"`
+	Filters     map[string]string `json:"filters"`
+	IsNatural   bool              `json:"isNatural"`
+	Confidence  float64           `json:"confidence"`
 }
 
 // detectSearchIntent uses simple pattern matching to understand search intent
@@ -152,10 +155,89 @@ func (h *SearchHandler) detectSearchIntent(query, context string) (*SearchIntent
 	return intent, nil
 }
 
+// enhanceSearchWithAI uses OpenAI to understand natural language queries and extract search terms
+// Only called when database returns 0 results to minimize API costs
+func (h *SearchHandler) enhanceSearchWithAI(c *gin.Context, query string, originalResults int) ([]string, error) {
+	// Only use AI if:
+	// 1. OpenAI client is configured
+	// 2. Query is longer than 10 characters (likely natural language)
+	// 3. Original search returned 0 results
+	if h.OpenAIClient == nil || len(query) < 10 || originalResults > 0 {
+		return nil, fmt.Errorf("AI enhancement not needed")
+	}
+
+	openAIKey := os.Getenv("OPENAI_API_KEY")
+	if openAIKey == "" {
+		return nil, fmt.Errorf("OpenAI API key not configured")
+	}
+
+	fmt.Printf("🤖 AI Enhancement triggered for query: '%s'\n", query)
+
+	// Create a prompt to extract product search terms
+	prompt := fmt.Sprintf(`You are a homeopathy product search assistant. Extract the most relevant product search terms from this query: "%s"
+
+Return ONLY a JSON array of 2-3 alternative search terms that might match homeopathy products. Focus on:
+- Product names (e.g., "Nux Vomica", "Arnica Montana")
+- Brand names (e.g., "SBL", "Reckeweg", "Schwabe")
+- Categories (e.g., "Mother Tincture", "Dilution", "Biochemic")
+- Potencies (e.g., "30C", "200C", "1M")
+
+Example response: ["Nux Vomica", "Mother Tincture", "SBL"]
+
+Query: "%s"
+JSON array:`, query, query)
+
+	ctx := c.Request.Context()
+	resp, err := h.OpenAIClient.CreateChatCompletion(
+		ctx,
+		openai.ChatCompletionRequest{
+			Model: openai.GPT3Dot5Turbo,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: "You are a helpful assistant that extracts search terms from natural language queries about homeopathy products. Always respond with valid JSON arrays only.",
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: prompt,
+				},
+			},
+			MaxTokens:   100,
+			Temperature: 0.3,
+		},
+	)
+
+	if err != nil {
+		fmt.Printf("❌ OpenAI API Error: %v\n", err)
+		return nil, err
+	}
+
+	if len(resp.Choices) == 0 {
+		return nil, fmt.Errorf("no response from OpenAI")
+	}
+
+	content := strings.TrimSpace(resp.Choices[0].Message.Content)
+	fmt.Printf("🤖 AI Response: %s\n", content)
+
+	// Parse JSON array
+	var searchTerms []string
+	if err := json.Unmarshal([]byte(content), &searchTerms); err != nil {
+		// Try to extract terms manually if JSON parsing fails
+		content = strings.Trim(content, "[]\"' \n")
+		searchTerms = strings.Split(content, "\",\"")
+		for i := range searchTerms {
+			searchTerms[i] = strings.Trim(searchTerms[i], "\"' ")
+		}
+	}
+
+	return searchTerms, nil
+}
+
 // GlobalSearch - Central AI-powered search endpoint
 // GET /api/erp/search?q=calc+carb&type=products&limit=20
 func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 	query := c.Query("q")
+	fmt.Printf("🔍 GlobalSearch called with query: '%s'\n", query)
 	if query == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -187,6 +269,7 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 	if intent.IntentType == "all" {
 		searchType = c.DefaultQuery("type", "all")
 	}
+	fmt.Printf("🔍 Intent type: '%s', Final searchType: '%s'\n", intent.IntentType, searchType)
 
 	limit := c.DefaultQuery("limit", "20")
 
@@ -209,7 +292,8 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 	var totalHits int
 
 	// Search products with AI-enhanced query and filters
-	if searchType == "all" || searchType == "products" {
+	if searchType == "all" || searchType == "products" || searchType == "product" {
+		fmt.Printf("🔍 Starting product search for query: '%s', searchType: '%s'\n", query, searchType)
 		// Build filters from AI intent
 		var filters []string
 		for key, value := range intent.Filters {
@@ -232,6 +316,116 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 			productResults, total = searchMeiliSearchWithFilters(meiliURL, meiliAPIKey, "products", searchQuery, filters, limit)
 		} else {
 			productResults, total = searchMeiliSearch(meiliURL, meiliAPIKey, "products", searchQuery, limit)
+		}
+
+		fmt.Printf("🔍 MeiliSearch returned: %d products for query: '%s'\n", len(productResults), searchQuery)
+		fmt.Printf("🔍 Database connection available: %v\n", h.db != nil)
+
+		// FALLBACK 1: Try Semantic Search (if embeddings exist)
+		if len(productResults) == 0 && h.db != nil && h.HasEmbeddings() && h.OpenAIClient != nil {
+			fmt.Printf("🤖 Trying Semantic Search for query: '%s'\n", searchQuery)
+			semanticResults, err := h.SemanticSearch(searchQuery, 20)
+			if err == nil && len(semanticResults) > 0 {
+				results = append(results, semanticResults...)
+				totalHits += len(semanticResults)
+				fmt.Printf("✅ Semantic Search found: %d products\n", len(semanticResults))
+			}
+		}
+
+		// FALLBACK 2: If still no results, try SQL Database
+		if len(productResults) == 0 && len(results) == 0 && h.db != nil {
+			fmt.Printf("🔄 Triggering SQL Fallback for query: '%s'\n", searchQuery)
+			type ProductWithRelations struct {
+				ID           string  `gorm:"column:id"`
+				Name         string  `gorm:"column:name"`
+				SKU          string  `gorm:"column:sku"`
+				Barcode      string  `gorm:"column:barcode"`
+				Description  string  `gorm:"column:description"`
+				MRP          float64 `gorm:"column:mrp"`
+				CurrentStock float64 `gorm:"column:current_stock"`
+				BrandName    string  `gorm:"column:brand_name"`
+				CategoryName string  `gorm:"column:category_name"`
+				PotencyName  string  `gorm:"column:potency_name"`
+				Form         string  `gorm:"column:form"`
+			}
+			var products []ProductWithRelations
+
+			// Advanced SQL query with JOINs to search across related tables
+			sqlQuery := h.db.Table("products p").
+				Select(`p.id, p.name, p.sku, p.barcode, p.description, p.mrp, p.current_stock, p.form,
+					b.name as brand_name, 
+					c.name as category_name, 
+					pot.name as potency_name`).
+				Joins("LEFT JOIN brands b ON p.brand_id = b.id").
+				Joins("LEFT JOIN categories c ON p.category_id = c.id").
+				Joins("LEFT JOIN potencies pot ON p.potency_id = pot.id")
+
+			// Search across product name, SKU, barcode, brand name, category name, potency, form
+			searchPattern := "%" + searchQuery + "%"
+			sqlQuery = sqlQuery.Where(
+				`p.name ILIKE ? OR 
+				 p.sku ILIKE ? OR 
+				 p.barcode ILIKE ? OR 
+				 b.name ILIKE ? OR 
+				 c.name ILIKE ? OR 
+				 pot.name ILIKE ? OR
+				 p.form ILIKE ? OR
+				 p.description ILIKE ?`,
+				searchPattern, searchPattern, searchPattern, searchPattern,
+				searchPattern, searchPattern, searchPattern, searchPattern,
+			)
+
+			// Apply intent filters if detected
+			if brandFilter, ok := intent.Filters["brand"]; ok {
+				sqlQuery = sqlQuery.Where("b.name ILIKE ?", "%"+brandFilter+"%")
+			}
+			if categoryFilter, ok := intent.Filters["category"]; ok {
+				sqlQuery = sqlQuery.Where("c.name ILIKE ?", "%"+categoryFilter+"%")
+			}
+			if potencyFilter, ok := intent.Filters["potency"]; ok {
+				sqlQuery = sqlQuery.Where("pot.name ILIKE ?", "%"+potencyFilter+"%")
+			}
+
+			if err := sqlQuery.Limit(20).Find(&products).Error; err != nil {
+				fmt.Println("❌ SQL Fallback Error:", err)
+			} else {
+				fmt.Printf("✅ SQL Fallback found: %d products for query: '%s'\n", len(products), searchQuery)
+			}
+
+			// Map results
+			for _, p := range products {
+				// Build a descriptive title
+				title := p.Name
+				if p.BrandName != "" {
+					title = p.BrandName + " - " + p.Name
+				}
+				if p.PotencyName != "" {
+					title += " (" + p.PotencyName + ")"
+				}
+
+				results = append(results, SearchResult{
+					ID:          p.ID,
+					Name:        title,
+					SKU:         p.SKU,
+					Barcode:     p.Barcode,
+					Brand:       p.BrandName,
+					Category:    p.CategoryName,
+					Potency:     p.PotencyName,
+					Form:        p.Form,
+					MRP:         p.MRP,
+					Stock:       int(p.CurrentStock),
+					Description: p.Description,
+					Type:        "product",
+					Module:      "products",
+					NavigateURL: fmt.Sprintf("/products/%s", p.ID),
+					Metadata: map[string]interface{}{
+						"source":  "database_fallback",
+						"query":   searchQuery,
+						"filters": intent.Filters,
+					},
+				})
+			}
+			totalHits += len(results)
 		}
 
 		// Process results
@@ -259,6 +453,86 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 			})
 		}
 		totalHits += total
+	}
+
+	// AI-POWERED FALLBACK: If still no results, try AI enhancement
+	// DISABLED: OpenAI rate limit - can be enabled later with paid API key
+	if false && len(results) == 0 && (searchType == "all" || searchType == "products" || searchType == "product") {
+		aiTerms, err := h.enhanceSearchWithAI(c, query, len(results))
+		if err == nil && len(aiTerms) > 0 {
+			fmt.Printf("🤖 Retrying search with AI-suggested terms: %v\n", aiTerms)
+
+			// Try searching with AI-suggested terms
+			for _, aiTerm := range aiTerms {
+				type ProductWithRelations struct {
+					ID           string  `gorm:"column:id"`
+					Name         string  `gorm:"column:name"`
+					SKU          string  `gorm:"column:sku"`
+					Barcode      string  `gorm:"column:barcode"`
+					Description  string  `gorm:"column:description"`
+					MRP          float64 `gorm:"column:mrp"`
+					CurrentStock float64 `gorm:"column:current_stock"`
+					BrandName    string  `gorm:"column:brand_name"`
+					CategoryName string  `gorm:"column:category_name"`
+					PotencyName  string  `gorm:"column:potency_name"`
+					Form         string  `gorm:"column:form"`
+				}
+				var aiProducts []ProductWithRelations
+
+				aiSearchPattern := "%" + aiTerm + "%"
+				aiQuery := h.db.Table("products p").
+					Select(`p.id, p.name, p.sku, p.barcode, p.description, p.mrp, p.current_stock, p.form,
+						b.name as brand_name, 
+						c.name as category_name, 
+						pot.name as potency_name`).
+					Joins("LEFT JOIN brands b ON p.brand_id = b.id").
+					Joins("LEFT JOIN categories c ON p.category_id = c.id").
+					Joins("LEFT JOIN potencies pot ON p.potency_id = pot.id").
+					Where(
+						`p.name ILIKE ? OR b.name ILIKE ? OR c.name ILIKE ? OR pot.name ILIKE ?`,
+						aiSearchPattern, aiSearchPattern, aiSearchPattern, aiSearchPattern,
+					).Limit(5)
+
+				if err := aiQuery.Find(&aiProducts).Error; err == nil {
+					for _, p := range aiProducts {
+						title := p.Name
+						if p.BrandName != "" {
+							title = p.BrandName + " - " + p.Name
+						}
+						if p.PotencyName != "" {
+							title += " (" + p.PotencyName + ")"
+						}
+
+						results = append(results, SearchResult{
+							ID:          p.ID,
+							Name:        title,
+							SKU:         p.SKU,
+							Barcode:     p.Barcode,
+							Brand:       p.BrandName,
+							Category:    p.CategoryName,
+							Potency:     p.PotencyName,
+							Form:        p.Form,
+							MRP:         p.MRP,
+							Stock:       int(p.CurrentStock),
+							Description: p.Description,
+							Type:        "product",
+							Module:      "products",
+							NavigateURL: fmt.Sprintf("/products/%s", p.ID),
+							Metadata: map[string]interface{}{
+								"source":         "ai_enhanced",
+								"original_query": query,
+								"ai_term":        aiTerm,
+							},
+						})
+					}
+				}
+
+				// Stop if we found results
+				if len(results) > 0 {
+					break
+				}
+			}
+		}
 	}
 
 	// Search customers
@@ -368,10 +642,24 @@ func searchMeiliSearch(baseURL, apiKey, index, query, limit string) ([]map[strin
 	body, _ := io.ReadAll(resp.Body)
 
 	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, 0
+	}
 
-	hits := result["hits"].([]interface{})
-	total := int(result["estimatedTotalHits"].(float64))
+	hitsRaw, ok := result["hits"]
+	if !ok || hitsRaw == nil {
+		return nil, 0
+	}
+
+	hits, ok := hitsRaw.([]interface{})
+	if !ok {
+		return nil, 0
+	}
+
+	var total int
+	if totalHits, ok := result["estimatedTotalHits"].(float64); ok {
+		total = int(totalHits)
+	}
 
 	var results []map[string]interface{}
 	for _, hit := range hits {
@@ -420,10 +708,24 @@ func searchMeiliSearchWithFilters(baseURL, apiKey, index, query string, filters 
 	body, _ := io.ReadAll(resp.Body)
 
 	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, 0
+	}
 
-	hits := result["hits"].([]interface{})
-	total := int(result["estimatedTotalHits"].(float64))
+	hitsRaw, ok := result["hits"]
+	if !ok || hitsRaw == nil {
+		return nil, 0
+	}
+
+	hits, ok := hitsRaw.([]interface{})
+	if !ok {
+		return nil, 0
+	}
+
+	var total int
+	if totalHits, ok := result["estimatedTotalHits"].(float64); ok {
+		total = int(totalHits)
+	}
 
 	var results []map[string]interface{}
 	for _, hit := range hits {

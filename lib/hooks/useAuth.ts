@@ -70,6 +70,6 @@ export function useAuth() {
     logout,
     hasPermission,
     hasRole,
-    isAuthenticated: \!\!user,
+    isAuthenticated: !!user,
   };
 }

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -190,8 +192,104 @@ func (h *InventoryAlertsHandler) GetStockSummary(c *gin.Context) {
 			AND ib.is_active = true
 	`).Scan(&summary.ExpiredCount)
 
+	// Get actual stock items with batch details
+	type StockItem struct {
+		ProductID    string         `json:"product_id"`
+		ProductName  string         `json:"product_name"`
+		SKU          string         `json:"sku"`
+		Category     string         `json:"category"`
+		Brand        string         `json:"brand"`
+		BatchNo      string         `json:"batch_no"`
+		ExpiryDate   sql.NullString `json:"expiry_date"`
+		QtyIn        float64        `json:"qty_in"`
+		QtyOut       float64        `json:"qty_out"`
+		Balance      float64        `json:"balance"`
+		MRP          float64        `json:"mrp"`
+		PurchaseRate float64        `json:"purchase_rate"`
+		Margin       float64        `json:"margin"`
+		ExpiryStatus string         `json:"expiry_status"`
+		Status       string         `json:"status"`
+		Warehouse    string         `json:"warehouse"`
+	}
+
+	var stockItems []StockItem
+	result := h.db.Raw(`
+		SELECT 
+			p.id as product_id,
+			p.name as product_name,
+			p.sku,
+			COALESCE(c.name, '') as category,
+			COALESCE(b.name, '') as brand,
+			COALESCE(ib.batch_number, '-') as batch_no,
+			ib.expiry_date,
+			COALESCE(ib.quantity, p.current_stock) as qty_in,
+			COALESCE(ib.quantity - ib.available_quantity, 0) as qty_out,
+			COALESCE(ib.available_quantity, p.current_stock) as balance,
+			COALESCE(p.mrp, 0) as mrp,
+			COALESCE(ib.unit_cost, p.cost_price, 0) as purchase_rate,
+			CASE 
+				WHEN p.mrp > 0 AND COALESCE(ib.unit_cost, p.cost_price) > 0 
+				THEN ((p.mrp - COALESCE(ib.unit_cost, p.cost_price)) / p.mrp * 100)
+				ELSE 0 
+			END as margin,
+			CASE
+				WHEN ib.expiry_date IS NULL THEN 'no_expiry'
+				WHEN ib.expiry_date < CURRENT_DATE THEN 'expired'
+				WHEN ib.expiry_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days' THEN 'expiring_7d'
+				WHEN ib.expiry_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days' THEN 'expiring_30d'
+				WHEN ib.expiry_date BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '90 days' THEN 'expiring_90d'
+				ELSE 'fresh'
+			END as expiry_status,
+			CASE
+				WHEN COALESCE(ib.available_quantity, p.current_stock) > 0 THEN 'in_stock'
+				ELSE 'out_of_stock'
+			END as status,
+			'Main Warehouse' as warehouse
+		FROM products p
+		LEFT JOIN categories c ON p.category_id = c.id
+		LEFT JOIN brands b ON p.brand_id = b.id
+		LEFT JOIN inventory_batches ib ON ib.product_id = p.id AND ib.is_active = true
+		WHERE p.is_active = true
+		ORDER BY p.name, ib.batch_number
+	`).Scan(&stockItems)
+
+	if result.Error != nil {
+		fmt.Printf("❌ Error fetching stock items: %v\n", result.Error)
+	}
+	fmt.Printf("📦 Fetched %d stock items\n", len(stockItems))
+
+	// Convert to JSON-friendly format
+	var jsonItems []gin.H
+	for _, item := range stockItems {
+		var expiryDate *string
+		if item.ExpiryDate.Valid {
+			expiryDate = &item.ExpiryDate.String
+		}
+
+		jsonItems = append(jsonItems, gin.H{
+			"product_id":    item.ProductID,
+			"product_name":  item.ProductName,
+			"sku":           item.SKU,
+			"category":      item.Category,
+			"brand":         item.Brand,
+			"batch_no":      item.BatchNo,
+			"expiry_date":   expiryDate,
+			"qty_in":        item.QtyIn,
+			"qty_out":       item.QtyOut,
+			"balance":       item.Balance,
+			"mrp":           item.MRP,
+			"purchase_rate": item.PurchaseRate,
+			"margin":        item.Margin,
+			"expiry_status": item.ExpiryStatus,
+			"status":        item.Status,
+			"warehouse":     item.Warehouse,
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    summary,
+		"data":    jsonItems,
+		"summary": summary,
+		"total":   len(jsonItems),
 	})
 }

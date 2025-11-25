@@ -446,6 +446,55 @@ func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
 	})
 }
 
+// GET /api/erp/dashboard/category-stats
+func (h *DashboardHandler) GetCategoryStats(c *gin.Context) {
+	type CategoryStat struct {
+		CategoryName string  `json:"category_name"`
+		ProductCount int     `json:"product_count"`
+		TotalValue   float64 `json:"total_value"`
+		Percentage   float64 `json:"percentage"`
+	}
+
+	var stats []CategoryStat
+
+	// Query category-wise product count and stock value
+	h.db.Raw(`
+		WITH category_totals AS (
+			SELECT 
+				COALESCE(c.name, 'Uncategorized') as category_name,
+				COUNT(DISTINCT p.id) as product_count,
+				COALESCE(SUM(ib.available_quantity * ib.unit_cost), 0) as total_value
+			FROM products p
+			LEFT JOIN categories c ON c.id = p.category_id
+			LEFT JOIN inventory_batches ib ON ib.product_id = p.id AND ib.is_active = true
+			WHERE p.is_active = true
+			GROUP BY c.name
+		),
+		grand_total AS (
+			SELECT SUM(total_value) as total FROM category_totals
+		)
+		SELECT 
+			ct.category_name,
+			ct.product_count,
+			ct.total_value,
+			CASE 
+				WHEN gt.total > 0 THEN (ct.total_value / gt.total) * 100
+				ELSE 0
+			END as percentage
+		FROM category_totals ct
+		CROSS JOIN grand_total gt
+		WHERE ct.product_count > 0
+		ORDER BY ct.total_value DESC
+		LIMIT 10
+	`).Scan(&stats)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    stats,
+		"count":   len(stats),
+	})
+}
+
 // GET /api/erp/dashboard/expiry-summary
 func (h *DashboardHandler) GetExpirySummary(c *gin.Context) {
 	summary := gin.H{
