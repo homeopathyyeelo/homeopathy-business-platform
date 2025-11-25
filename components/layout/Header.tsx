@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,33 +14,96 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, User, Settings, LogOut } from "lucide-react";
+import { Search, Bell, User, Settings, LogOut, Package, Users, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { GlobalSearch } from "@/lib/utils/global-search";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface SearchResult {
+  id: string;
+  name: string;
+  type: string;
+  module: string;
+  navigate_url: string;
+  brand?: string;
+  category?: string;
+  sku?: string;
+  description?: string;
+}
 
 const Header = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const globalSearch = new GlobalSearch(router);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
   
+  // Close search dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchQuery.trim().length >= 2) {
+        performSearch(searchQuery.trim());
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const performSearch = async (query: string) => {
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `${API_URL}/api/erp/search?q=${encodeURIComponent(query)}&type=all&limit=10`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          },
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.hits) {
+          setSearchResults(data.hits);
+          setShowResults(true);
+        }
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleResultClick = (result: SearchResult) => {
+    setShowResults(false);
+    setSearchQuery('');
+    router.push(result.navigate_url);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      // Use universal search to determine the best module
-      globalSearch.universalSearch(searchQuery);
-      
-      // Only show toast if not already on a relevant page
-      const currentPath = window.location.pathname;
-      if (!['/products', '/batches', '/sales', '/purchases'].some(path => currentPath.includes(path))) {
-        toast({
-          title: "Searching...",
-          description: `Looking for "${searchQuery.trim()}"`
-        });
-      }
+    if (searchQuery.trim() && searchResults.length > 0) {
+      handleResultClick(searchResults[0]);
     }
   };
   
@@ -67,20 +130,69 @@ const Header = () => {
   
   return (
     <header className="w-full h-16 border-b border-border bg-background flex items-center justify-between px-4">
-      <div className="w-1/3">
+      <div className="w-1/3" ref={searchRef}>
         <form onSubmit={handleSearch} className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          {isSearching && (
+            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-blue-500" />
+          )}
           <Input 
-            placeholder="Search products, SKU, barcode..." 
-            className="pl-10 w-full max-w-md"
+            placeholder="Search: SBL Mother Tincture, product name, customer..." 
+            className="pl-10 pr-10 w-full max-w-md"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSearch(e);
-              }
-            }}
+            onFocus={() => searchResults.length > 0 && setShowResults(true)}
           />
+          
+          {/* Search Results Dropdown */}
+          {showResults && searchResults.length > 0 && (
+            <Card className="absolute top-full mt-2 w-full max-w-md z-50 shadow-lg">
+              <CardContent className="p-2 max-h-96 overflow-y-auto">
+                {searchResults.map((result) => (
+                  <div
+                    key={result.id}
+                    onClick={() => handleResultClick(result)}
+                    className="flex items-start gap-3 p-3 hover:bg-slate-100 rounded cursor-pointer transition-colors"
+                  >
+                    <div className="mt-1">
+                      {result.type === 'product' ? (
+                        <Package className="h-5 w-5 text-blue-600" />
+                      ) : (
+                        <Users className="h-5 w-5 text-green-600" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-sm truncate">{result.name}</p>
+                        <Badge variant="outline" className="text-xs">
+                          {result.module}
+                        </Badge>
+                      </div>
+                      {result.brand && (
+                        <p className="text-xs text-muted-foreground">
+                          {result.brand} {result.category && `• ${result.category}`}
+                        </p>
+                      )}
+                      {result.sku && (
+                        <p className="text-xs text-muted-foreground">SKU: {result.sku}</p>
+                      )}
+                      {result.description && (
+                        <p className="text-xs text-muted-foreground">{result.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+          
+          {showResults && searchQuery.trim().length >= 2 && searchResults.length === 0 && !isSearching && (
+            <Card className="absolute top-full mt-2 w-full max-w-md z-50 shadow-lg">
+              <CardContent className="p-4 text-center text-sm text-muted-foreground">
+                No results found for "{searchQuery}"
+              </CardContent>
+            </Card>
+          )}
         </form>
       </div>
       
@@ -89,20 +201,15 @@ const Header = () => {
           variant="ghost" 
           size="icon" 
           className="relative"
-          onClick={() => {
-            toast({
-              title: "Notifications",
-              description: "No new notifications"
-            });
-          }}
+          onClick={() => router.push('/notifications')}
         >
           <Bell className="h-5 w-5" />
-          <Badge 
+          {/* <Badge 
             variant="destructive" 
             className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
           >
             0
-          </Badge>
+          </Badge> */}
         </Button>
         
         <DropdownMenu>

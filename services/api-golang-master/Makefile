@@ -5,7 +5,7 @@ APP_NAME=erp-api
 VERSION=$(shell git describe --tags --always --dirty)
 BUILD_DIR=bin
 GO_FILES=$(shell find . -name '*.go' -not -path "./vendor/*")
-MAIN_PATH=./cmd/api/main.go
+MAIN_PATH=./cmd/main.go
 
 # Colors for output
 BLUE=\033[0;34m

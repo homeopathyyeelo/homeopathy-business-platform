@@ -361,7 +361,7 @@ print(result['summary'])
 │
 ├── services/
 │   ├── api-golang-master/              # Go API
-│   │   ├── cmd/api/main.go
+│   │   ├── cmd/main.go
 │   │   └── internal/
 │   │       └── handlers/
 │   │           └── search_handler.go   # ✅ NEW: Search API

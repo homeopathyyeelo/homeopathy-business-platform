@@ -45,11 +45,13 @@ func main() {
 	categoriesHandler := handlers.NewCategoryHandler(db)
 	customerGroupHandler := handlers.NewCustomerGroupHandler()
 	dashboardHandler := handlers.NewDashboardHandler(db)
-	_ = expiryService  // TODO: Use when inventory module is ready
+	_ = expiryService // TODO: Use when inventory module is ready
 	// expiryHandler := handlers.NewExpiryHandler(expiryService)
 	inventoryHandler := handlers.NewInventoryHandler(db)
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
+	inventoryAlertsHandler := handlers.NewInventoryAlertsHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
+	searchHandler := handlers.NewSearchHandler()
 	productHandler := handlers.NewProductHandler(db)
 	productStatsHandler := handlers.NewProductStatsHandler(db)
 	quickActionsHandler := handlers.NewQuickActionsHandler(db)
@@ -59,7 +61,8 @@ func main() {
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
 	userHandler := handlers.NewUserHandler()
-	
+	gmbHandler := handlers.NewGMBHandler(db)
+
 	// Settings handlers
 	branchHandler := handlers.NewBranchHandler(db)
 	taxHandler := handlers.NewTaxHandler(db)
@@ -90,6 +93,16 @@ func main() {
 	paymentHandler := handlers.NewPaymentHandler(db)
 	campaignHandler := handlers.NewCampaignHandler(db)
 
+	groupedProductsHandler := handlers.NewGroupedProductsHandler(db)
+	productImportHandler := handlers.NewProductImportHandler(db)
+	productImportStreamingHandler := handlers.NewStreamingImportHandler(db)
+	uploadsHandler := handlers.NewUploadsHandler(db)
+	enhancedUploadsHandler := handlers.NewEnhancedUploadsHandler(db)
+	purchaseUploadHandler := handlers.NewPurchaseUploadHandler(db)
+	approveUploadHandler := handlers.NewApproveUploadHandler(db)
+	inventoryUploadHandler := handlers.NewInventoryUploadHandler(db)
+	marketingHandler := handlers.NewMarketingHandler(db)
+
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
 	r.Use(gin.Recovery())
@@ -99,8 +112,8 @@ func main() {
 	r.GET("/docs/*any", middleware.RequireAuth(), ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Add custom middleware
-	r.Use(middleware.RequestIDMiddleware())   // Add request ID to all requests
-	r.Use(middleware.DefaultTimeout())        // Add 30s timeout to all requests
+	r.Use(middleware.RequestIDMiddleware()) // Add request ID to all requests
+	r.Use(middleware.DefaultTimeout())      // Add 30s timeout to all requests
 
 	// CORS middleware - must be before routes
 	r.Use(cors.New(cors.Config{
@@ -124,13 +137,39 @@ func main() {
 	// API routes
 	api := r.Group("/api")
 	{
+		// Social / GMB Automation
+		social := api.Group("/social")
+		social.Use(middleware.RequireAuth())
+		{
+			// GMB OAuth routes
+			social.GET("/gmb/oauth/initiate", gmbHandler.InitiateOAuth)  // This should exist
+			social.POST("/gmb/oauth/initiate", gmbHandler.InitiateOAuth) // This should also exist
+			social.GET("/gmb/oauth/callback", gmbHandler.OAuthCallback)
+
+			social.POST("/gmb/oauth/disconnect", gmbHandler.DisconnectAccount)
+			social.POST("/gmb/oauth/refresh", gmbHandler.RefreshToken)
+
+			social.GET("/gmb/account", gmbHandler.GetAccount)
+			social.GET("/gmb/trends", gmbHandler.GetTrends)
+			social.GET("/gmb/history", gmbHandler.GetHistory)
+
+			social.GET("/gmb/schedules", gmbHandler.GetSchedules)
+			social.POST("/gmb/schedules", gmbHandler.UpdateSchedules)
+
+			social.POST("/gmb/generate", gmbHandler.GeneratePost)
+			social.POST("/gmb/validate", gmbHandler.ValidatePost)
+			social.POST("/gmb/post", gmbHandler.PostToGMB)
+
+			social.GET("/gmb/suggestions", gmbHandler.GetSuggestions)
+		}
+
 		// Authentication routes
 		auth := api.Group("/auth")
 		{
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
 			auth.POST("/refresh", authHandler.RefreshToken)
-			auth.GET("/me", authHandler.Me) // Get current user info
+			auth.GET("/me", authHandler.Me)                   // Get current user info
 			auth.POST("/validate", authHandler.ValidateToken) // Validate token
 		}
 
@@ -180,28 +219,45 @@ func main() {
 
 			// Products
 			erp.GET("/products/stats", productStatsHandler.GetProductStats) // MUST be before /:id
-			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes) // MUST be before /:id
-			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct) // MUST be before /:id
+			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)
+			erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
+			erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
+			erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
+			erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
+			erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)               // MUST be before /:id
+			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct)        // MUST be before /:id
 			erp.GET("/products/:id/barcode-image", barcodeLabelHandler.GenerateBarcodeImage) // Generate barcode image for single product
 			erp.GET("/products", productHandler.GetProducts)
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
-			
-			// Barcode Label Generation
-			erp.GET("/barcode/generate", barcodeLabelHandler.GenerateBarcodeByString) // Generate barcode by string
-			erp.GET("/barcode/labels/all", barcodeLabelHandler.GenerateAllBarcodeLabels) // Bulk generate all
-			erp.POST("/barcode/labels/print", barcodeLabelHandler.PrintBarcodeLabels) // Print selected labels
-			
+
+			// Products - order matters! Specific routes before :id
+			erp.GET("/products/template", productImportHandler.DownloadTemplate)                     // Must be before /:id
+			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts)                  // Grouped view
+			erp.GET("/products/grouped/:baseName/variants", groupedProductsHandler.GetGroupVariants) // Variants for group
+
+			// Product Import (no timeout for streaming)
+			erp.POST("/products/import/stream", func(c *gin.Context) {
+				// Remove timeout for streaming import
+				c.Set("no_timeout", true)
+				productImportStreamingHandler.StreamingImport(c)
+			})
+
+			// erp.GET("/barcodes", barcodeHandler.GetBarcodes)
+			// erp.POST("/barcodes/print", barcodeHandler.PrintBarcodes)
+			// erp.PUT("/barcodes/:id", barcodeHandler.UpdateBarcode)
+			// erp.DELETE("/barcodes/:id", barcodeHandler.DeleteBarcode)
+			// erp.GET("/barcodes/stats", barcodeHandler.GetBarcodeStats)
+			// erp.GET("/barcode/generate", barcodeLabelHandler.GenerateBarcodeByString)    // Generate barcode by string
+			// erp.GET("/barcode/labels/all", barcodeLabelHandler.GenerateAllBarcodeLabels) // Bulk generate all
+			// erp.POST("/barcode/labels/print", barcodeLabelHandler.PrintBarcodeLabels)    // Print selected labels
+
 			// Batch Management
 			erp.POST("/inventory/batches", batchBarcodeHandler.CreateBatch)
 			erp.POST("/inventory/batches/allocate", batchBarcodeHandler.AllocateBatch)
 			erp.GET("/inventory/batches/expiring", batchBarcodeHandler.GetExpiringBatches)
-
-			// Product Import (methods need to be implemented)
-			// erp.POST("/products/import", productImportHandler.ImportProducts) 
-			// erp.POST("/products/import/stream", streamingImportHandler.StreamImport)
 
 			// Categories
 			erp.GET("/categories", categoriesHandler.GetCategories)
@@ -275,16 +331,20 @@ func main() {
 			// Enhanced Inventory
 			inventory := erp.Group("/inventory")
 			{
-				inventory.GET("/stock", enhancedInventoryHandler.GetEnhancedStockList)
+				inventory.GET("/stock", inventoryAlertsHandler.GetStockSummary)
 				inventory.POST("/stock", enhancedInventoryHandler.AddManualStock)
 				inventory.GET("/transactions", enhancedInventoryHandler.GetStockTransactions)
-				inventory.GET("/alerts/low-stock", enhancedInventoryHandler.GetLowStockAlerts)
-				inventory.GET("/alerts/expiry", enhancedInventoryHandler.GetExpiryAlerts)
+				inventory.GET("/alerts/low-stock", inventoryAlertsHandler.GetLowStockAlerts)
+				inventory.GET("/alerts/expiry", inventoryAlertsHandler.GetExpiryAlerts)
 				inventory.GET("/valuation", enhancedInventoryHandler.GetStockValuation)
 				inventory.GET("/reports/stock", enhancedInventoryHandler.GenerateStockReport)
 				inventory.PUT("/alerts/low-stock/:id/resolve", enhancedInventoryHandler.ResolveLowStockAlert)
 				inventory.PUT("/alerts/expiry/:id/resolve", enhancedInventoryHandler.ResolveExpiryAlert)
 			}
+
+			// Global Search
+			erp.GET("/search", searchHandler.GlobalSearch)
+			erp.GET("/search/products", searchHandler.SearchProducts)
 
 			// Racks Management
 			erp.GET("/racks", rackHandler.GetRacks)
@@ -383,14 +443,6 @@ func main() {
 			// erp.GET("/inventory/expiries", expiryHandler.GetExpiries) // TODO
 			// erp.GET("/inventory/expiry-summary", expiryHandler.GetExpirySummary)  // TODO: Requires shop_id
 			// erp.POST("/inventory/expiry-alert", expiryHandler.CreateExpiryAlert) // TODO
-
-			// Barcode Management (commented out - using product handler instead)
-			// erp.GET("/products/barcode", barcodeHandler.GetBarcodes)
-			erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
-			erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
-			erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
-			erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
-			erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)
 
 			// Loyalty Management
 			erp.GET("/loyalty/points", loyaltyHandler.GetLoyaltyPoints)
@@ -503,6 +555,35 @@ func main() {
 				hr.PUT("/employees/:id", employeeHandler.UpdateEmployee)
 				hr.DELETE("/employees/:id", employeeHandler.DeleteEmployee)
 			}
+
+			erp.GET("/marketing/campaigns", marketingHandler.GetCampaigns)
+			erp.POST("/marketing/campaigns", marketingHandler.CreateCampaign)
+			erp.GET("/marketing/campaigns/:id", marketingHandler.GetCampaign)
+			erp.PUT("/marketing/campaigns/:id", marketingHandler.UpdateCampaign)
+			erp.DELETE("/marketing/campaigns/:id", marketingHandler.DeleteCampaign)
+
+			erp.GET("/marketing/stats", marketingHandler.GetStats)
+			erp.GET("/marketing/templates", marketingHandler.GetTemplates)
+			erp.POST("/marketing/templates", marketingHandler.CreateTemplate)
+
+		}
+
+		// Uploads & Approvals
+		uploads := api.Group("/uploads")
+		{
+			// Full TypeScript-compatible upload handlers
+			uploads.POST("/purchase", purchaseUploadHandler.UploadPurchase)
+			uploads.POST("/approve", approveUploadHandler.ApproveSession)
+			uploads.POST("/inventory", inventoryUploadHandler.UploadCSV)
+
+			uploads.GET("/inventory", uploadsHandler.GetInventorySessions)
+			uploads.GET("/session/:sessionId", uploadsHandler.GetSessionDetails)
+			uploads.POST("/approve/simple", uploadsHandler.ApproveOrRejectUpload)
+
+			// Enhanced upload endpoints
+			uploads.POST("/parse", enhancedUploadsHandler.ParseUploadFile)
+			uploads.POST("/process/purchase", enhancedUploadsHandler.ProcessPurchaseUpload)
+			uploads.POST("/process/inventory", enhancedUploadsHandler.ProcessInventoryUpload)
 		}
 
 		// Legacy routes
@@ -597,6 +678,46 @@ func main() {
 			campaigns.POST("/templates", campaignHandler.CreateTemplate)
 		}
 	}
+
+	// Handle 404 for unimplemented API endpoints with graceful stub responses
+	r.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+
+		// List of API prefixes that should get stub responses
+		stubPrefixes := []string{
+			"/api/ai/",
+			"/api/crm/",
+			"/api/finance/",
+			"/api/hr/",
+			"/api/marketing/",
+			"/api/analytics/",
+			"/api/reports/",
+			"/api/prescriptions/",
+		}
+
+		isStubAPI := false
+		for _, prefix := range stubPrefixes {
+			if len(path) >= len(prefix) && path[:len(prefix)] == prefix {
+				isStubAPI = true
+				break
+			}
+		}
+
+		if isStubAPI {
+			c.JSON(200, gin.H{
+				"success": true,
+				"data":    []interface{}{},
+				"message": "Feature coming soon - endpoint not yet implemented",
+				"stub":    true,
+			})
+			return
+		}
+
+		c.JSON(404, gin.H{
+			"success": false,
+			"error":   "Endpoint not found",
+		})
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {

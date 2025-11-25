@@ -286,10 +286,10 @@ func (h *EnhancedPurchaseHandler) CreateEnhancedPurchase(c *gin.Context) {
 		"success": true,
 		"message": "Purchase order created successfully",
 		"data": gin.H{
-			"id":          purchase.ID,
-			"invoice_no":  purchase.InvoiceNo,
+			"id":           purchase.ID,
+			"invoice_no":   purchase.InvoiceNo,
 			"total_amount": purchase.TotalAmount,
-			"items_count": len(req.Items),
+			"items_count":  len(req.Items),
 		},
 	})
 }
@@ -456,9 +456,9 @@ func (h *EnhancedPurchaseHandler) ApproveEnhancedPurchase(c *gin.Context) {
 		"success": true,
 		"message": "Purchase order approved and inventory updated successfully",
 		"data": gin.H{
-			"purchase_id": purchase.ID,
-			"invoice_no":  purchase.InvoiceNo,
-			"items_count": len(purchase.Items),
+			"purchase_id":  purchase.ID,
+			"invoice_no":   purchase.InvoiceNo,
+			"items_count":  len(purchase.Items),
 			"total_amount": purchase.TotalAmount,
 		},
 	})
@@ -513,7 +513,7 @@ func (h *EnhancedPurchaseHandler) GetPendingPurchases(c *gin.Context) {
 	// Check if table exists first
 	var tableExists bool
 	err := h.db.(*gorm.DB).Raw("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'purchase_orders')").Scan(&tableExists).Error
-	
+
 	if err != nil || !tableExists {
 		// Return empty array if table doesn't exist
 		c.JSON(http.StatusOK, gin.H{
@@ -622,7 +622,7 @@ func (h *EnhancedPurchaseHandler) UpdatePurchaseItem(c *gin.Context) {
 	result := h.db.(*gorm.DB).Model(&models.EnhancedPurchaseItem{}).
 		Where("id = ? AND purchase_id = ?", itemID, purchaseIDUint).
 		Updates(gin.H{
-			"product_id":        req.ProductID,
+			"product_id":       req.ProductID,
 			"batch_no":         req.BatchNo,
 			"qty":              req.Qty,
 			"rate":             req.Rate,
@@ -800,7 +800,7 @@ func (h *EnhancedPurchaseHandler) AddPurchaseItem(c *gin.Context) {
 		"success": true,
 		"message": "Purchase item added successfully",
 		"data": gin.H{
-			"id": purchaseItem.ID,
+			"id":     purchaseItem.ID,
 			"amount": amount,
 		},
 	})

@@ -4,50 +4,8 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2.2s
+ ✓ Ready in 2.8s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 858ms (159 modules)
- ○ Compiling /products/[id] ...
- ✓ Compiled /inventory/stock in 13.2s (1381 modules)
- GET /inventory/stock 200 in 6206ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 14442ms
- GET /inventory/stock 200 in 306ms
- GET /inventory/stock 200 in 538ms
- ✓ Compiled in 743ms (570 modules)
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 432ms
- GET /inventory/stock 200 in 529ms
- ✓ Compiled in 1998ms (570 modules)
- ⨯ SyntaxError: Unexpected end of JSON input
-    at JSON.parse (<anonymous>) {
-  page: '/products/8ae68c4e-79e9-40b1-be54-e4bf9eede335'
-}
- GET /inventory/stock 200 in 1219ms
- ○ Compiling /_error ...
- ✓ Compiled /_error in 6.9s (1714 modules)
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 500 in 7020ms
- GET /inventory/stock 200 in 530ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 411ms
- GET /inventory/stock 200 in 306ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 393ms
- GET /inventory/stock 200 in 271ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 304ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 851ms
- GET /inventory/stock 200 in 467ms
- GET /inventory/stock 200 in 384ms
- GET /inventory/stock 200 in 358ms
- GET /inventory/stock 200 in 463ms
- ✓ Compiled in 2.2s (727 modules)
- ✓ Compiled in 944ms (727 modules)
- GET /inventory/stock 200 in 531ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 455ms
- GET /inventory/stock 200 in 543ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 469ms
- GET /inventory/stock 200 in 517ms
- GET /inventory/stock 200 in 302ms
- GET /inventory/stock 200 in 262ms
- GET /inventory/stock 200 in 257ms
- GET /inventory/stock 200 in 354ms
- GET /inventory/stock 200 in 263ms
- ✓ Compiled in 4.1s (1635 modules)
- GET /inventory/stock 200 in 889ms
- GET /products/8ae68c4e-79e9-40b1-be54-e4bf9eede335 200 in 783ms
+ ✓ Compiled /middleware in 948ms (159 modules)
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 17.7s (2281 modules)

@@ -554,21 +554,43 @@ func (h *EnhancedInventoryHandler) GenerateStockReport(c *gin.Context) {
 		WHERE ib.available_quantity > 0 AND ib.is_active = true
 	`).Scan(&stats)
 
-	// Get top products
-	var topProducts []gin.H
+	// typed structs for aggregation queries
+	type topProductRow struct {
+		ProductName          string  `json:"product_name"`
+		Category             string  `json:"category"`
+		Brand                string  `json:"brand"`
+		TotalBatches         int     `json:"total_batches"`
+		TotalQtyIn           float64 `json:"total_qty_in"`
+		CurrentBalance       float64 `json:"current_balance"`
+		AvgPurchaseRate      float64 `json:"avg_purchase_rate"`
+		AvgMRP               float64 `json:"avg_mrp"`
+		TotalCostValue       float64 `json:"total_cost_value"`
+		TotalSellingValue    float64 `json:"total_selling_value"`
+		OverallMarginPercent float64 `json:"overall_margin_percent"`
+	}
+
+	type categorySummaryRow struct {
+		Category          string  `json:"category"`
+		ProductsCount     int     `json:"products_count"`
+		BatchesCount      int     `json:"batches_count"`
+		TotalQuantity     float64 `json:"total_quantity"`
+		TotalCostValue    float64 `json:"total_cost_value"`
+		TotalSellingValue float64 `json:"total_selling_value"`
+	}
+
+	var topProductRows []topProductRow
 	h.db.Raw(`
 		SELECT
-			p.name as product_name,
-			c.name as category,
-			b.name as brand,
+			COALESCE(p.name, 'Unknown Product') as product_name,
+			COALESCE(c.name, 'Uncategorized') as category,
+			COALESCE(b.name, 'Unknown Brand') as brand,
 			COUNT(DISTINCT ib.batch_number) as total_batches,
 			SUM(ib.available_quantity) as total_qty_in,
-			0 as total_qty_out,
 			SUM(ib.available_quantity) as current_balance,
-			AVG(ib.unit_cost) as avg_purchase_rate,
-			AVG(ib.mrp) as avg_mrp,
-			SUM(ib.available_quantity * ib.unit_cost) as total_cost_value,
-			SUM(ib.available_quantity * ib.mrp) as total_selling_value,
+			COALESCE(AVG(ib.unit_cost), 0) as avg_purchase_rate,
+			COALESCE(AVG(ib.mrp), 0) as avg_mrp,
+			COALESCE(SUM(ib.available_quantity * ib.unit_cost), 0) as total_cost_value,
+			COALESCE(SUM(ib.available_quantity * ib.mrp), 0) as total_selling_value,
 			CASE
 				WHEN SUM(ib.available_quantity * ib.unit_cost) > 0
 				THEN ROUND(((SUM(ib.available_quantity * ib.mrp) - SUM(ib.available_quantity * ib.unit_cost)) / SUM(ib.available_quantity * ib.unit_cost) * 100)::numeric, 2)
@@ -582,25 +604,54 @@ func (h *EnhancedInventoryHandler) GenerateStockReport(c *gin.Context) {
 		GROUP BY p.id, p.name, c.name, b.name
 		ORDER BY total_cost_value DESC
 		LIMIT 10
-	`).Scan(&topProducts)
+	`).Scan(&topProductRows)
 
-	// Get category summary
-	var categorySummary []gin.H
+	var categoryRows []categorySummaryRow
 	h.db.Raw(`
 		SELECT
-			c.name as category,
+			COALESCE(c.name, 'Uncategorized') as category,
 			COUNT(DISTINCT p.id) as products_count,
 			COUNT(DISTINCT ib.batch_number) as batches_count,
-			SUM(ib.available_quantity) as total_quantity,
-			SUM(ib.available_quantity * ib.unit_cost) as total_cost_value,
-			SUM(ib.available_quantity * ib.mrp) as total_selling_value
+			COALESCE(SUM(ib.available_quantity), 0) as total_quantity,
+			COALESCE(SUM(ib.available_quantity * ib.unit_cost), 0) as total_cost_value,
+			COALESCE(SUM(ib.available_quantity * ib.mrp), 0) as total_selling_value
 		FROM inventory_batches ib
 		LEFT JOIN products p ON p.id = ib.product_id
 		LEFT JOIN categories c ON c.id = p.category_id
 		WHERE ib.available_quantity > 0 AND ib.is_active = true
 		GROUP BY c.name
 		ORDER BY total_cost_value DESC
-	`).Scan(&categorySummary)
+	`).Scan(&categoryRows)
+
+	// convert to []gin.H for response
+	topProducts := make([]gin.H, 0, len(topProductRows))
+	for _, row := range topProductRows {
+		topProducts = append(topProducts, gin.H{
+			"product_name":           row.ProductName,
+			"category":               row.Category,
+			"brand":                  row.Brand,
+			"total_batches":          row.TotalBatches,
+			"total_qty_in":           row.TotalQtyIn,
+			"current_balance":        row.CurrentBalance,
+			"avg_purchase_rate":      row.AvgPurchaseRate,
+			"avg_mrp":                row.AvgMRP,
+			"total_cost_value":       row.TotalCostValue,
+			"total_selling_value":    row.TotalSellingValue,
+			"overall_margin_percent": row.OverallMarginPercent,
+		})
+	}
+
+	categorySummary := make([]gin.H, 0, len(categoryRows))
+	for _, row := range categoryRows {
+		categorySummary = append(categorySummary, gin.H{
+			"category":            row.Category,
+			"products_count":      row.ProductsCount,
+			"batches_count":       row.BatchesCount,
+			"total_quantity":      row.TotalQuantity,
+			"total_cost_value":    row.TotalCostValue,
+			"total_selling_value": row.TotalSellingValue,
+		})
+	}
 
 	reportData = struct {
 		TotalProducts     int     `json:"total_products"`

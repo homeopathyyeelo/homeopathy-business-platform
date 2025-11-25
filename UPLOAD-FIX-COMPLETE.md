@@ -106,7 +106,7 @@ curl -H "Authorization: Bearer test" \
    - Fixed potency insert to include potency_type
    - Added default 'DECIMAL' value
 
-2. `services/api-golang-master/cmd/api/main.go`
+2. `services/api-golang-master/cmd/main.go`
    - Added marketing handler
    - Added all marketing routes
    - Fixed undefined method reference

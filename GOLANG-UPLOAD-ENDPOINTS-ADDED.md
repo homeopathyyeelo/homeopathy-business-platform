@@ -8,7 +8,7 @@ The TypeScript proxy was trying to call Golang endpoints that didn't exist. I've
 
 ## 🔧 **CHANGES MADE**
 
-### **File**: `/services/api-golang-master/cmd/api/main.go`
+### **File**: `/services/api-golang-master/cmd/main.go`
 
 **Added**:
 1. Enhanced uploads handler initialization (line 82)
@@ -29,7 +29,7 @@ cd /var/www/homeopathy-business-platform/services/api-golang-master
 pkill -f "go run"
 
 # Rebuild and start
-go run cmd/api/main.go
+go run cmd/main.go
 ```
 
 Or if using systemd:

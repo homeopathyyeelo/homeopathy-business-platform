@@ -38,7 +38,7 @@ curl -I http://localhost:3000
 ========================================
 
 cd services/api-golang-master
-go build -o ../../backend-server cmd/api/main.go
+go build -o ../../backend-server cmd/main.go
 
 ========================================
   DATABASE

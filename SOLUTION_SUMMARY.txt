@@ -46,7 +46,7 @@ SOLUTION IMPLEMENTED (Hybrid Approach):
 
 3. ✅ STUB ENDPOINT HANDLER ADDED
    -------------------------------
-   Location: /services/api-golang-master/cmd/api/main.go (NoRoute handler)
+   Location: /services/api-golang-master/cmd/main.go (NoRoute handler)
    
    For unimplemented endpoints, returns graceful responses instead of 404:
    ```json
@@ -312,7 +312,7 @@ CREATED:
 
 MODIFIED:
 - 82 frontend files in /app/ (fetch → apiFetch)
-- /services/api-golang-master/cmd/api/main.go (Added uploads routes + stub handler)
+- /services/api-golang-master/cmd/main.go (Added uploads routes + stub handler)
 
 ===============================================================================
 CONCLUSION:

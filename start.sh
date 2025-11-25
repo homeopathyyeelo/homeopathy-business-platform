@@ -118,7 +118,7 @@ if [ "$FRESH_INSTALL" = true ]; then
   
   # Rebuild backend
   echo "  → Building backend binary..."
-  go build -o ../../backend-server cmd/api/main.go
+  go build -o ../../backend-server cmd/main.go
   
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}  ✅ Backend compiled successfully${NC}"

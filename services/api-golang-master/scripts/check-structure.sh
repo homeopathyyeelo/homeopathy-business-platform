@@ -47,18 +47,18 @@ else
     report_success "No .go files in root"
 fi
 
-# Check 2: cmd/api/main.go exists
+# Check 2: cmd/main.go exists
 echo -e "\n${BLUE}[2/15]${NC} Checking entry point..."
-if [ ! -f "cmd/api/main.go" ]; then
-    report_error "cmd/api/main.go missing. Entry point should be here" 15
+if [ ! -f "cmd/main.go" ]; then
+    report_error "cmd/main.go missing. Entry point should be here" 15
 else
-    report_success "cmd/api/main.go exists"
+    report_success "cmd/main.go exists"
 fi
 
 # Check 3: No cmd/main.go (old location)
 echo -e "\n${BLUE}[3/15]${NC} Checking for old cmd/main.go..."
 if [ -f "cmd/main.go" ]; then
-    report_warning "cmd/main.go still exists. Should be cmd/api/main.go" 5
+    report_warning "cmd/main.go still exists. Should be cmd/main.go" 5
 else
     report_success "No old cmd/main.go"
 fi

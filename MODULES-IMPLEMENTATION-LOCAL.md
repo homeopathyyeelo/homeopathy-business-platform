@@ -74,7 +74,7 @@ OPENAI_API_KEY=sk-proj-8CvUj3D3Gh1CB9nP6vEv9aVQsKZTgTi5o3dibXYInNVbtK4iA_1POKO8I
 ```
 
 ### Step 3: Add Go Routes (ONE TIME SETUP)
-Edit: `services/api-golang-master/cmd/api/main.go`
+Edit: `services/api-golang-master/cmd/main.go`
 
 Add these lines after other handlers:
 ```go
@@ -136,7 +136,7 @@ CREATE INDEX idx_templates_type ON message_templates(type);
 ```bash
 # Terminal 1: Start Go API
 cd services/api-golang-master
-go run cmd/api/main.go
+go run cmd/main.go
 
 # Terminal 2: Start Next.js
 cd /var/www/homeopathy-business-platform
@@ -373,7 +373,7 @@ cat .env.local | grep OPENAI_API_KEY
 ```bash
 # Check for compilation errors
 cd services/api-golang-master
-go build cmd/api/main.go
+go build cmd/main.go
 
 # If errors, let me know and I'll fix
 ```

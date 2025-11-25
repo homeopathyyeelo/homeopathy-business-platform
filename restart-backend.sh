@@ -39,7 +39,7 @@ cd /var/www/homeopathy-business-platform
 rm -f backend-server 2>/dev/null
 
 cd services/api-golang-master
-go build -o ../../backend-server cmd/api/main.go
+go build -o ../../backend-server cmd/main.go
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}   ✅ Build successful${NC}"

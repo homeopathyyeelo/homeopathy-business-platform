@@ -140,43 +140,43 @@ func (h *DashboardHandler) GetStats(c *gin.Context) {
 
 	// Real sales query
 	h.db.Table("sales_invoices").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TotalSales)
-	
+
 	// Real purchases query
 	h.db.Table("purchase_orders").Where("status = 'COMPLETED'").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TotalPurchases)
-	
+
 	// Real customers count
 	var customerCount int64
 	h.db.Table("customers").Where("is_active = true").Count(&customerCount)
 	stats.TotalCustomers = int(customerCount)
-	
+
 	// Real products count
 	var productCount int64
 	h.db.Table("products").Where("is_active = true").Count(&productCount)
 	stats.TotalProducts = int(productCount)
-	
+
 	// Low stock items
 	h.db.Raw(`SELECT COUNT(*) FROM (SELECT p.id FROM products p LEFT JOIN inventory_batches ib ON ib.product_id = p.id WHERE p.is_active = true GROUP BY p.id, p.min_stock_level HAVING COALESCE(SUM(ib.available_quantity), 0) < p.min_stock_level) as low_stock`).Scan(&stats.LowStockItems)
-	
+
 	// Expiring items (next 90 days)
 	h.db.Raw(`SELECT COUNT(DISTINCT ib.id) FROM inventory_batches ib WHERE ib.expiry_date IS NOT NULL AND ib.expiry_date <= CURRENT_DATE + INTERVAL '90 days' AND ib.expiry_date >= CURRENT_DATE AND ib.available_quantity > 0 AND ib.is_active = true`).Scan(&stats.ExpiringItems)
-	
+
 	// Pending orders
 	h.db.Table("sales_orders").Where("status = 'PENDING'").Count(&customerCount)
 	stats.PendingOrders = int(customerCount)
-	
+
 	// Today revenue
 	h.db.Table("sales_invoices").Where("DATE(created_at) = CURRENT_DATE").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.TodayRevenue)
-	
+
 	// Month revenue
 	h.db.Table("sales_invoices").Where("EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE) AND EXTRACT(MONTH FROM created_at) = EXTRACT(MONTH FROM CURRENT_DATE)").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.MonthRevenue)
-	
+
 	// Year revenue
 	h.db.Table("sales_invoices").Where("EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)").Select("COALESCE(SUM(total_amount), 0)").Scan(&stats.YearRevenue)
-	
+
 	// Active users
 	h.db.Table("users").Where("is_active = true").Count(&customerCount)
 	stats.ActiveUsers = int(customerCount)
-	
+
 	// Pending invoices
 	h.db.Table("sales_invoices").Where("payment_status = 'PENDING'").Count(&customerCount)
 	stats.PendingInvoices = int(customerCount)
@@ -262,37 +262,24 @@ func (h *DashboardHandler) GetActivity(c *gin.Context) {
 
 // GET /api/erp/dashboard/recent-sales
 func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
-	_ = c.DefaultQuery("limit", "10") // TODO: implement pagination
-	_ = c.Query("shop_id")            // TODO: filter by shop
+	limit := c.DefaultQuery("limit", "10")
 
-	// TODO: Query real data from sales_invoices table
-	now := time.Now()
-	sales := []RecentSale{
-		{
-			ID:           "sale-001",
-			InvoiceNo:    "INV-2024-0123",
-			CustomerName: "Dr. Sharma",
-			Amount:       2450.50,
-			Status:       "paid",
-			CreatedAt:    now.Add(-10 * time.Minute),
-		},
-		{
-			ID:           "sale-002",
-			InvoiceNo:    "INV-2024-0122",
-			CustomerName: "Rajesh Pharmacy",
-			Amount:       15780.00,
-			Status:       "paid",
-			CreatedAt:    now.Add(-1 * time.Hour),
-		},
-		{
-			ID:           "sale-003",
-			InvoiceNo:    "INV-2024-0121",
-			CustomerName: "City Medical Store",
-			Amount:       8920.00,
-			Status:       "pending",
-			CreatedAt:    now.Add(-2 * time.Hour),
-		},
-	}
+	var sales []RecentSale
+
+	// Query recent sales from database
+	h.db.Raw(`
+		SELECT 
+			si.id,
+			si.invoice_no,
+			COALESCE(c.name, 'Walk-in Customer') as customer_name,
+			si.total_amount as amount,
+			LOWER(si.payment_status) as status,
+			si.created_at
+		FROM sales_invoices si
+		LEFT JOIN customers c ON c.id = si.customer_id
+		ORDER BY si.created_at DESC
+		LIMIT ?
+	`, limit).Scan(&sales)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -302,31 +289,43 @@ func (h *DashboardHandler) GetRecentSales(c *gin.Context) {
 
 // GET /api/erp/dashboard/top-products
 func (h *DashboardHandler) GetTopProducts(c *gin.Context) {
-	_ = c.DefaultQuery("limit", "10")     // TODO: implement pagination
-	_ = c.Query("shop_id")                // TODO: filter by shop
-	_ = c.DefaultQuery("period", "month") // today, week, month, year
+	limit := c.DefaultQuery("limit", "10")
+	period := c.DefaultQuery("period", "month") // today, week, month, year
 
-	// TODO: Query real data with GROUP BY
-	products := []TopProduct{
-		{
-			ProductID:   "prod-001",
-			ProductName: "SBL Arnica Montana 30C",
-			SoldQty:     450,
-			Revenue:     38250.00,
-		},
-		{
-			ProductID:   "prod-002",
-			ProductName: "Reckeweg R1 Drops",
-			SoldQty:     285,
-			Revenue:     69825.00,
-		},
-		{
-			ProductID:   "prod-003",
-			ProductName: "Allen Arsenicum Album 200",
-			SoldQty:     320,
-			Revenue:     30400.00,
-		},
+	// Determine date filter
+	var dateFilter string
+	switch period {
+	case "today":
+		dateFilter = "DATE(si.created_at) = CURRENT_DATE"
+	case "week":
+		dateFilter = "si.created_at >= CURRENT_DATE - INTERVAL '7 days'"
+	case "month":
+		dateFilter = "si.created_at >= CURRENT_DATE - INTERVAL '30 days'"
+	case "year":
+		dateFilter = "si.created_at >= CURRENT_DATE - INTERVAL '365 days'"
+	default:
+		dateFilter = "si.created_at >= CURRENT_DATE - INTERVAL '30 days'"
 	}
+
+	var products []TopProduct
+
+	// Query top products by revenue from sales
+	h.db.Raw(`
+		SELECT 
+			p.id as product_id,
+			p.name as product_name,
+			COALESCE(SUM(sii.quantity), 0)::int as sold_qty,
+			COALESCE(SUM(sii.quantity * sii.unit_price), 0) as revenue
+		FROM products p
+		LEFT JOIN sales_invoice_items sii ON sii.product_id = p.id
+		LEFT JOIN sales_invoices si ON si.id = sii.sales_invoice_id
+		WHERE `+dateFilter+`
+			AND p.is_active = true
+		GROUP BY p.id, p.name
+		HAVING SUM(sii.quantity) > 0
+		ORDER BY revenue DESC
+		LIMIT ?
+	`, limit).Scan(&products)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
@@ -375,17 +374,70 @@ func (h *DashboardHandler) GetAlerts(c *gin.Context) {
 
 // GET /api/erp/dashboard/revenue-chart
 func (h *DashboardHandler) GetRevenueChart(c *gin.Context) {
-	_ = c.DefaultQuery("period", "7days") // TODO: implement period filtering
+	period := c.DefaultQuery("period", "7days")
 
-	// TODO: Query real data with date grouping
-	chartData := []gin.H{
-		{"date": "2024-10-18", "sales": 12450.00, "purchases": 8920.00},
-		{"date": "2024-10-19", "sales": 15780.00, "purchases": 11200.00},
-		{"date": "2024-10-20", "sales": 10980.00, "purchases": 7500.00},
-		{"date": "2024-10-21", "sales": 18240.00, "purchases": 13400.00},
-		{"date": "2024-10-22", "sales": 16500.00, "purchases": 10800.00},
-		{"date": "2024-10-23", "sales": 14320.00, "purchases": 9200.00},
-		{"date": "2024-10-24", "sales": 19870.00, "purchases": 14500.00},
+	// Determine date range based on period
+	var daysBack int
+	switch period {
+	case "7days":
+		daysBack = 7
+	case "30days", "month":
+		daysBack = 30
+	case "90days", "3months":
+		daysBack = 90
+	case "6months", "6m":
+		daysBack = 180
+	default:
+		daysBack = 7
+	}
+
+	// Query real sales data grouped by date
+	type ChartData struct {
+		Date      string  `json:"month"` // Using 'month' key for compatibility
+		Sales     float64 `json:"sales"`
+		Purchases float64 `json:"purchases"`
+	}
+
+	var chartData []ChartData
+
+	// Sales data grouped by date
+	h.db.Raw(`
+		SELECT 
+			TO_CHAR(created_at::date, 'YYYY-MM-DD') as date,
+			COALESCE(SUM(total_amount), 0) as sales
+		FROM sales_invoices
+		WHERE created_at >= CURRENT_DATE - INTERVAL '? days'
+		GROUP BY created_at::date
+		ORDER BY date ASC
+	`, daysBack).Scan(&chartData)
+
+	// Get purchases data and merge
+	type PurchaseData struct {
+		Date      string
+		Purchases float64
+	}
+	var purchaseData []PurchaseData
+	h.db.Raw(`
+		SELECT 
+			TO_CHAR(created_at::date, 'YYYY-MM-DD') as date,
+			COALESCE(SUM(total_amount), 0) as purchases
+		FROM purchase_orders
+		WHERE created_at >= CURRENT_DATE - INTERVAL '? days'
+			AND status = 'COMPLETED'
+		GROUP BY created_at::date
+		ORDER BY date ASC
+	`, daysBack).Scan(&purchaseData)
+
+	// Merge purchase data into chart data
+	purchaseMap := make(map[string]float64)
+	for _, p := range purchaseData {
+		purchaseMap[p.Date] = p.Purchases
+	}
+
+	for i := range chartData {
+		if purchases, ok := purchaseMap[chartData[i].Date]; ok {
+			chartData[i].Purchases = purchases
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -441,8 +493,8 @@ func (h *DashboardHandler) GetAIBusinessInsights(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
-		"insights": aiResponse,
+		"success":      true,
+		"insights":     aiResponse,
 		"generated_at": time.Now(),
 	})
 }

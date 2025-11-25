@@ -65,10 +65,10 @@ tail -50 /var/www/homeopathy-business-platform/logs/frontend.log
 ========================================
 
 # Rebuild Go Binary
-cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/api/main.go
+cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/main.go
 
 # Rebuild and Restart
-cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/api/main.go && cd ../.. && pkill -f backend-server && ./backend-server > logs/backend.log 2>&1 &
+cd /var/www/homeopathy-business-platform/services/api-golang-master && go build -o ../../backend-server cmd/main.go && cd ../.. && pkill -f backend-server && ./backend-server > logs/backend.log 2>&1 &
 
 
 🗄️ DATABASE

@@ -149,15 +149,15 @@ for binary in "${BINARIES[@]}"; do
     fi
 done
 
-# Remove old cmd/main.go if cmd/api/main.go exists
+# Remove old cmd/main.go if cmd/main.go exists
 echo -e "\n${BLUE}🔄 Checking cmd structure...${NC}"
-if [ -f "cmd/api/main.go" ] && [ -f "cmd/main.go" ]; then
-    echo -e "  ${GREEN}✓ cmd/api/main.go exists${NC}"
+if [ -f "cmd/main.go" ] && [ -f "cmd/main.go" ]; then
+    echo -e "  ${GREEN}✓ cmd/main.go exists${NC}"
     echo -e "  Removing old cmd/main.go"
     rm -f cmd/main.go
-elif [ -f "cmd/main.go" ] && [ ! -f "cmd/api/main.go" ]; then
-    echo -e "  Moving cmd/main.go → cmd/api/main.go"
-    mv cmd/main.go cmd/api/main.go
+elif [ -f "cmd/main.go" ] && [ ! -f "cmd/main.go" ]; then
+    echo -e "  Moving cmd/main.go → cmd/main.go"
+    mv cmd/main.go cmd/main.go
 fi
 
 # Update go.mod if needed
@@ -170,7 +170,7 @@ echo -e "${GREEN}╚════════════════════
 
 echo -e "\n${BLUE}📋 Next Steps:${NC}"
 echo -e "  1. Update import paths: ${YELLOW}goimports -w .${NC}"
-echo -e "  2. Test compilation: ${YELLOW}go build cmd/api/main.go${NC}"
+echo -e "  2. Test compilation: ${YELLOW}go build cmd/main.go${NC}"
 echo -e "  3. Run structure check: ${YELLOW}bash scripts/check-structure.sh${NC}"
 echo -e "  4. Review changes and commit"
 
