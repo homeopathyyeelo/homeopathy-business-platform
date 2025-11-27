@@ -735,6 +735,7 @@ func searchMeiliSearchWithFilters(baseURL, apiKey, index, query string, filters 
 	return results, total
 }
 
+
 // Helper functions
 func getString(m map[string]interface{}, key string) string {
 	if val, ok := m[key]; ok && val != nil {
