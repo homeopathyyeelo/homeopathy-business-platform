@@ -12,13 +12,26 @@ const golangAPI = axios.create({
 // Add auth interceptor
 golangAPI.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('auth_token')
+    // Try multiple token sources
+    let token = localStorage.getItem('auth_token') || 
+                localStorage.getItem('token') ||
+                getCookie('auth-token')
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
   }
   return config
 })
+
+// Helper function to get cookie
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+  return null
+}
 
 // Products API
 export const productsAPI = {

@@ -6,8 +6,25 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const customerId = params.id;
     
-    // Fetch customer from Golang API
-    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`);
+    // Get auth token from request
+    const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    
+    if (authHeader) {
+      if (authHeader.includes('Bearer ')) {
+        headers['Authorization'] = authHeader;
+      } else if (authHeader.includes('auth-token=')) {
+        const tokenMatch = authHeader.match(/auth-token=([^;]+)/);
+        if (tokenMatch) {
+          headers['Authorization'] = `Bearer ${tokenMatch[1]}`;
+        }
+      }
+    }
+    
+    // Fetch customer from Golang API with auth
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`, {
+      headers
+    });
     const data = await res.json();
     
     if (!res.ok) {

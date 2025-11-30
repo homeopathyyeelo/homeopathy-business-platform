@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Package, AlertTriangle, TrendingUp, DollarSign } from 'lucide-react';
 import { useInventory, useLowStock, useInventoryStats } from '@/lib/hooks/inventory';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import SmartInsights from '@/components/smart-insights/SmartInsights';
 
 export default function InventoryDashboardPage() {
   const { data: inventory = [], isLoading } = useInventory();

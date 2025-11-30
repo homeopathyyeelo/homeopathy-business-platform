@@ -4,705 +4,674 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2.8s
+ ✓ Ready in 1993ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 879ms (159 modules)
+ ✓ Compiled /middleware in 814ms (159 modules)
  ○ Compiling / ...
- ✓ Compiled / in 8.4s (1265 modules)
- GET / 200 in 9125ms
+ ✓ Compiled / in 8.7s (1265 modules)
+ GET / 200 in 9432ms
  ○ Compiling /dashboard ...
  ✓ Compiled /dashboard in 3.5s (2199 modules)
- GET /dashboard 200 in 3765ms
- GET /dashboard 200 in 135ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 916ms (2187 modules)
- GET /dashboard/stats 200 in 1193ms
- ○ Compiling /dashboard/activity ...
- ✓ Compiled /dashboard/activity in 516ms (2202 modules)
- GET /dashboard/activity 200 in 836ms
- ○ Compiling /api/dashboard/activity-feed ...
- ✓ Compiled /api/dashboard/activity-feed in 1109ms (2229 modules)
- GET /api/system/health 200 in 1430ms
- GET /api/ai/activity 200 in 1422ms
- GET /api/system/bugs 200 in 1417ms
- GET /api/dashboard/activity-feed 200 in 1423ms
- GET /api/dashboard/metrics 200 in 1482ms
- ○ Compiling /admin/approvals ...
- ✓ Compiled /admin/approvals in 1354ms (2242 modules)
- GET /admin/approvals 200 in 1616ms
- ○ Compiling /api/uploads/purchase ...
- ✓ Compiled /api/uploads/purchase in 658ms (2247 modules)
- GET /api/uploads/purchase?status=pending 200 in 927ms
- GET /api/uploads/purchase?status=pending 200 in 157ms
- ✓ Compiled /api/uploads/inventory in 495ms (2252 modules)
- GET /api/uploads/inventory?status=pending 401 in 712ms
- GET /api/uploads/inventory?status=pending 401 in 135ms
+ GET /dashboard 200 in 3771ms
+ GET /dashboard 200 in 121ms
+ GET /dashboard 200 in 120ms
  ○ Compiling /products ...
- ✓ Compiled /products in 1361ms (2279 modules)
- GET /products 200 in 1577ms
- ○ Compiling /products/[id] ...
- ✓ Compiled /products/[id] in 1678ms (2266 modules)
- GET /products/52a6e7e6-45bd-43d0-aef5-61b8c7d1424e 200 in 2536ms
- GET /products 200 in 126ms
- ○ Compiling /products/import-export ...
- ✓ Compiled /products/import-export in 2.3s (1921 modules)
- GET /products/import-export 200 in 2593ms
- ○ Compiling /purchases/upload ...
- ✓ Compiled /purchases/upload in 1659ms (1924 modules)
- GET /purchases/upload 200 in 1919ms
- ✓ Compiled /api/uploads/purchase in 309ms (869 modules)
-Detected Marg ERP format: 194 items
- POST /api/uploads/purchase 200 in 1827ms
- GET /admin/approvals 200 in 202ms
- GET /api/uploads/purchase?status=pending 200 in 166ms
- GET /api/uploads/purchase?status=pending 200 in 196ms
- ○ Compiling /api/uploads/inventory ...
- ✓ Compiled /api/uploads/inventory in 666ms (874 modules)
- GET /api/uploads/inventory?status=pending 401 in 913ms
- GET /api/uploads/inventory?status=pending 401 in 100ms
- ○ Compiling /admin/approvals/[sessionId] ...
- ✓ Compiled /admin/approvals/[sessionId] in 1561ms (1954 modules)
- GET /admin/approvals/36b72a8a-8852-40ed-bdcd-cbb8d028b95e 200 in 2387ms
- ○ Compiling /api/uploads/session/[sessionId] ...
- ✓ Compiled /api/uploads/session/[sessionId] in 589ms (1956 modules)
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/36b72a8a-8852-40ed-bdcd-cbb8d028b95e 200 in 1405ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/36b72a8a-8852-40ed-bdcd-cbb8d028b95e 200 in 243ms
- ○ Compiling /inventory ...
- ✓ Compiled /inventory in 2.1s (1933 modules)
- GET /inventory 200 in 2889ms
- ○ Compiling /api/uploads/approve ...
- ✓ Compiled /api/uploads/approve in 1270ms (1946 modules)
+ ✓ Compiled /products in 761ms (2212 modules)
+ GET /products 200 in 956ms
+ GET /products 200 in 500ms
+ ✓ Compiled in 1577ms (2226 modules)
+ GET /products 200 in 349ms
+ ✓ Compiled in 784ms (2226 modules)
+ GET /products 200 in 320ms
+ ✓ Compiled in 806ms (2226 modules)
+ GET /products 200 in 327ms
+ ✓ Compiled in 789ms (2226 modules)
+ GET /products 200 in 254ms
+ ✓ Compiled in 582ms (2226 modules)
+ GET /products 200 in 221ms
+ ✓ Compiled in 754ms (2226 modules)
+ GET /products 200 in 428ms
+ ✓ Compiled in 819ms (2226 modules)
+ GET /products 200 in 214ms
+ ✓ Compiled in 535ms (2226 modules)
+ GET /products 200 in 173ms
+ ✓ Compiled in 523ms (2226 modules)
+ GET /products 200 in 190ms
+ ✓ Compiled in 810ms (2226 modules)
+ GET /products 200 in 210ms
+ ✓ Compiled in 585ms (2226 modules)
+ GET /products 200 in 241ms
+ ✓ Compiled in 663ms (2226 modules)
+ GET /products 200 in 276ms
+ ✓ Compiled in 575ms (2226 modules)
+ GET /products 200 in 192ms
+ GET /products 200 in 583ms
+ ✓ Compiled in 1750ms (2224 modules)
+ GET /products 200 in 236ms
+ ✓ Compiled in 672ms (2226 modules)
+ GET /products 200 in 456ms
+ ✓ Compiled in 740ms (2226 modules)
+ GET /products 200 in 214ms
+ ✓ Compiled in 876ms (2226 modules)
+ GET /products 200 in 204ms
+ ✓ Compiled in 645ms (2226 modules)
+ GET /products 200 in 497ms
+ ✓ Compiled in 1045ms (2222 modules)
+ GET /products 200 in 192ms
+ ✓ Compiled in 657ms (2226 modules)
+ GET /products 200 in 265ms
+ ✓ Compiled in 971ms (2222 modules)
+ GET /products 200 in 388ms
+ ✓ Compiled in 647ms (2226 modules)
+ GET /products 200 in 309ms
+ ✓ Compiled in 628ms (2224 modules)
+ GET /products 200 in 312ms
+ ✓ Compiled in 580ms (2226 modules)
+ GET /products 200 in 279ms
+ ✓ Compiled in 823ms (2226 modules)
+ GET /products 200 in 278ms
+ ✓ Compiled in 763ms (991 modules)
+ GET /products 200 in 304ms
+ ✓ Compiled in 2.4s (1282 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /products 200 in 286ms
+ ⨯ ReferenceError: config is not defined
+    at ProductsPage (app/products/page.tsx:23:63)
+  21 |           </div>
+  22 |           <div>
+> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+     |                                                               ^
+  24 |             <p className="text-gray-500">{config.description}</p>
+  25 |           </div>
+  26 |         </div> {
+  digest: '2664011510'
+}
+ GET /products 500 in 532ms
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 589ms
- POST /api/uploads/approve 200 in 2638ms
- ✓ Compiled /admin/approvals in 471ms (875 modules)
- GET /admin/approvals 200 in 844ms
- ✓ Compiled /api/uploads/purchase in 446ms (877 modules)
- GET /api/uploads/purchase?status=pending 200 in 622ms
- GET /api/uploads/purchase?status=pending 200 in 173ms
- ✓ Compiled /api/uploads/inventory in 310ms (882 modules)
- GET /api/uploads/inventory?status=pending 401 in 519ms
- GET /api/uploads/inventory?status=pending 401 in 110ms
- GET /products/58e78b6b-3254-4a04-9435-cb46a6314b42 200 in 195ms
+ ✓ Compiled in 4.3s (2226 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /products 200 in 2784ms
+ ✓ Compiled in 1107ms (991 modules)
+ GET /products 200 in 586ms
+ ✓ Compiled in 659ms (991 modules)
+ GET /products 200 in 178ms
+ ✓ Compiled in 507ms (991 modules)
+ GET /products 200 in 222ms
+ GET /products 200 in 261ms
+ ○ Compiling /customers ...
+ ✓ Compiled /customers in 2.6s (2351 modules)
+ GET /customers 200 in 2831ms
+ ○ Compiling /api/customers ...
+ ✓ Compiled /api/customers in 1016ms (2370 modules)
+Customers API error: Error: No authentication token provided
+    at GET (app/api/customers/route.ts:23:13)
+  21 |     
+  22 |     if (!res.ok) {
+> 23 |       throw new Error(data.error || 'Failed to fetch customers');
+     |             ^
+  24 |     }
+  25 |
+  26 |     return NextResponse.json({
+ GET /api/customers 500 in 1558ms
+ ✓ Compiled in 1581ms (1060 modules)
+ GET /customers 200 in 443ms
+ ✓ Compiled in 874ms (1060 modules)
+ GET /customers 200 in 930ms
+ ✓ Compiled in 691ms (1060 modules)
+ GET /customers 200 in 248ms
+ ✓ Compiled in 1058ms (1060 modules)
+ GET /customers 200 in 424ms
+ ✓ Compiled in 573ms (1060 modules)
+ GET /customers 200 in 486ms
+ ✓ Compiled in 1461ms (1060 modules)
+ GET /customers 200 in 358ms
+ ✓ Compiled in 987ms (1060 modules)
+ GET /customers 200 in 266ms
  ○ Compiling /sales/pos ...
- ✓ Compiled /sales/pos in 2.5s (1995 modules)
- GET /sales/pos 200 in 3017ms
+ ✓ Compiled /sales/pos in 3.1s (2389 modules)
+ GET /sales/pos 200 in 3561ms
+ ✓ Compiled in 3.1s (1077 modules)
+ GET /sales/pos 200 in 712ms
+ ✓ Compiled in 1602ms (1077 modules)
+ GET /sales/pos 200 in 414ms
+ ⨯ ./app/customers/page.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/var/www/homeopathy-business-platform/app/customers/page.tsx[0m:275:1]
+ [2m272[0m |                       </Button>
+ [2m273[0m |                     </TableCell>
+ [2m274[0m |                   </TableRow>
+ [2m275[0m |                 ))
+     : [35;1m                 ^[0m
+ [2m276[0m |               )}
+ [2m277[0m |             </TableBody>
+ [2m278[0m |           </Table>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/customers/page.tsx
+ ○ Compiling /_error ...
+ ⨯ ./app/customers/page.tsx
+Error:   [31mx[0m Expected '</', got ')'
+     ,-[[36;1;4m/var/www/homeopathy-business-platform/app/customers/page.tsx[0m:275:1]
+ [2m272[0m |                       </Button>
+ [2m273[0m |                     </TableCell>
+ [2m274[0m |                   </TableRow>
+ [2m275[0m |                 ))
+     : [35;1m                 ^[0m
+ [2m276[0m |               )}
+ [2m277[0m |             </TableBody>
+ [2m278[0m |           </Table>
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/customers/page.tsx
+ GET /sales/pos 500 in 15510ms
+ GET /customers 500 in 3828ms
+ GET /sales/pos 500 in 3818ms
+ GET /sales/pos 500 in 245ms
+ GET /sales/pos 500 in 212ms
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 468ms
- ○ Compiling /customers ...
- ✓ Compiled /customers in 1990ms (1964 modules)
- GET /customers 200 in 2358ms
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 572ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /customers 500 in 1955ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /sales/pos 500 in 1975ms
+ ✓ Compiled /_error in 11.5s (2736 modules)
+ GET /sales/pos 200 in 7583ms
+ GET /customers 200 in 7582ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /sales/pos 200 in 1896ms
+ GET /customers 200 in 2005ms
  ○ Compiling /api/customers ...
- ✓ Compiled /api/customers in 653ms (1982 modules)
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 1130ms
- ○ Compiling /purchases/upload ...
- ✓ Compiled /purchases/upload in 748ms (865 modules)
- GET /purchases/upload 200 in 1100ms
- ✓ Compiled /api/uploads/purchase in 313ms (878 modules)
-Detected Marg ERP format: 81 items
- POST /api/uploads/purchase 200 in 1016ms
- ○ Compiling /admin/approvals ...
- ✓ Compiled /admin/approvals in 782ms (886 modules)
- GET /admin/approvals 200 in 1031ms
- GET /api/uploads/purchase?status=pending 200 in 154ms
- GET /api/uploads/purchase?status=pending 200 in 203ms
- ✓ Compiled /api/uploads/inventory in 387ms (891 modules)
- GET /api/uploads/inventory?status=pending 401 in 603ms
- GET /api/uploads/inventory?status=pending 401 in 98ms
- ○ Compiling /admin/approvals/[sessionId] ...
- ✓ Compiled /admin/approvals/[sessionId] in 1135ms (898 modules)
- GET /admin/approvals/293599f7-247f-4574-9db1-60d7778f2b0d 200 in 1506ms
- ○ Compiling /api/uploads/session/[sessionId] ...
- ✓ Compiled /api/uploads/session/[sessionId] in 640ms (900 modules)
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/293599f7-247f-4574-9db1-60d7778f2b0d 200 in 933ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/293599f7-247f-4574-9db1-60d7778f2b0d 200 in 174ms
- ○ Compiling /api/uploads/approve ...
- ✓ Compiled /api/uploads/approve in 777ms (875 modules)
- POST /api/uploads/approve 200 in 1083ms
- GET /admin/approvals 200 in 177ms
- GET /api/uploads/purchase?status=pending 200 in 136ms
- GET /api/uploads/purchase?status=pending 200 in 230ms
- GET /api/uploads/inventory?status=pending 401 in 195ms
- GET /api/uploads/inventory?status=pending 401 in 125ms
- GET /admin/approvals 200 in 122ms
- GET /purchases/upload 200 in 167ms
- ✓ Compiled in 2.2s (1113 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 691ms
- GET /purchases/upload 200 in 693ms
-Detected Marg ERP format: 349 items
- POST /api/uploads/purchase 200 in 1912ms
- GET /admin/approvals 200 in 154ms
- GET /api/uploads/purchase?status=pending 200 in 139ms
- GET /api/uploads/purchase?status=pending 200 in 236ms
- GET /api/uploads/inventory?status=pending 401 in 202ms
- GET /api/uploads/inventory?status=pending 401 in 111ms
- GET /admin/approvals/1f7101d5-655b-452b-9cfc-a2e9ac4499bb 200 in 166ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/1f7101d5-655b-452b-9cfc-a2e9ac4499bb 200 in 323ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/1f7101d5-655b-452b-9cfc-a2e9ac4499bb 200 in 251ms
- POST /api/uploads/approve 200 in 491ms
- GET /admin/approvals 200 in 124ms
- GET /api/uploads/purchase?status=pending 200 in 138ms
- GET /api/uploads/purchase?status=pending 200 in 244ms
- GET /api/uploads/inventory?status=pending 401 in 203ms
- GET /api/uploads/inventory?status=pending 401 in 120ms
- GET /purchases/upload 200 in 187ms
-Detected Marg ERP format: 4 items
- POST /api/uploads/purchase 200 in 135ms
- GET /admin/approvals 200 in 150ms
- GET /api/uploads/purchase?status=pending 200 in 137ms
- GET /api/uploads/purchase?status=pending 200 in 258ms
- GET /api/uploads/inventory?status=pending 401 in 201ms
- GET /api/uploads/inventory?status=pending 401 in 133ms
- GET /admin/approvals/27f516b5-5503-4b6e-903b-6f6f2d4fb37c 200 in 152ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/27f516b5-5503-4b6e-903b-6f6f2d4fb37c 200 in 275ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/27f516b5-5503-4b6e-903b-6f6f2d4fb37c 200 in 266ms
- POST /api/uploads/approve 200 in 148ms
- GET /admin/approvals 200 in 162ms
- GET /api/uploads/purchase?status=pending 200 in 144ms
- GET /api/uploads/purchase?status=pending 200 in 642ms
- GET /api/uploads/inventory?status=pending 401 in 545ms
- GET /api/uploads/inventory?status=pending 401 in 103ms
- GET /purchases/upload 200 in 135ms
-Detected Marg ERP format: 4 items
- POST /api/uploads/purchase 200 in 132ms
- GET /admin/approvals 200 in 122ms
- GET /api/uploads/purchase?status=pending 200 in 132ms
- GET /api/uploads/purchase?status=pending 200 in 224ms
- GET /api/uploads/inventory?status=pending 401 in 188ms
- GET /api/uploads/inventory?status=pending 401 in 123ms
- GET /admin/approvals/d75f5089-ef0e-43c0-a70f-8bcdbdb55607 200 in 162ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/d75f5089-ef0e-43c0-a70f-8bcdbdb55607 200 in 250ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/d75f5089-ef0e-43c0-a70f-8bcdbdb55607 200 in 244ms
- POST /api/uploads/approve 200 in 128ms
- GET /admin/approvals 200 in 160ms
- GET /api/uploads/purchase?status=pending 200 in 127ms
- GET /api/uploads/purchase?status=pending 200 in 242ms
- GET /api/uploads/inventory?status=pending 401 in 192ms
- GET /api/uploads/inventory?status=pending 401 in 127ms
- GET /purchases/upload 200 in 138ms
-Detected Marg ERP format: 1 items
- POST /api/uploads/purchase 200 in 136ms
- GET /admin/approvals 200 in 123ms
- GET /api/uploads/purchase?status=pending 200 in 134ms
- GET /api/uploads/purchase?status=pending 200 in 233ms
- GET /api/uploads/inventory?status=pending 401 in 186ms
- GET /api/uploads/inventory?status=pending 401 in 130ms
- GET /admin/approvals/5b23aa25-219d-46b7-9052-081cd3974a0b 200 in 162ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/5b23aa25-219d-46b7-9052-081cd3974a0b 200 in 308ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/5b23aa25-219d-46b7-9052-081cd3974a0b 200 in 251ms
- POST /api/uploads/approve 200 in 157ms
- GET /admin/approvals 200 in 146ms
- GET /api/uploads/purchase?status=pending 200 in 124ms
- GET /api/uploads/purchase?status=pending 200 in 244ms
- GET /api/uploads/inventory?status=pending 401 in 196ms
- GET /api/uploads/inventory?status=pending 401 in 144ms
- GET /purchases/upload 200 in 127ms
-Detected Marg ERP format: 151 items
-Slow query detected (103ms): SELECT id FROM products WHERE sku = $1 OR name = $2 LIMIT 1
- POST /api/uploads/purchase 200 in 1091ms
- GET /admin/approvals 200 in 161ms
- GET /api/uploads/purchase?status=pending 200 in 143ms
- GET /api/uploads/purchase?status=pending 200 in 249ms
- GET /api/uploads/inventory?status=pending 401 in 200ms
- GET /api/uploads/inventory?status=pending 401 in 133ms
- GET /admin/approvals/b8154854-7cd0-4b03-9f1d-4816fb4b3379 200 in 177ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/b8154854-7cd0-4b03-9f1d-4816fb4b3379 200 in 284ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/b8154854-7cd0-4b03-9f1d-4816fb4b3379 200 in 270ms
- POST /api/uploads/approve 200 in 317ms
- GET /admin/approvals 200 in 141ms
- GET /api/uploads/purchase?status=pending 200 in 307ms
- GET /api/uploads/purchase?status=pending 200 in 235ms
- GET /api/uploads/inventory?status=pending 401 in 198ms
- GET /api/uploads/inventory?status=pending 401 in 92ms
- GET /purchases/upload 200 in 119ms
-Detected Marg ERP format: 104 items
- POST /api/uploads/purchase 200 in 662ms
- GET /admin/approvals 200 in 118ms
- GET /api/uploads/purchase?status=pending 200 in 151ms
- GET /api/uploads/purchase?status=pending 200 in 223ms
- GET /api/uploads/inventory?status=pending 401 in 191ms
- GET /api/uploads/inventory?status=pending 401 in 122ms
- GET /admin/approvals/3a25fee1-737a-4d61-9bd1-dfff845c4f31 200 in 150ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/3a25fee1-737a-4d61-9bd1-dfff845c4f31 200 in 268ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/3a25fee1-737a-4d61-9bd1-dfff845c4f31 200 in 526ms
- POST /api/uploads/approve 200 in 250ms
- GET /admin/approvals 200 in 132ms
- GET /api/uploads/purchase?status=pending 200 in 144ms
- GET /api/uploads/purchase?status=pending 200 in 235ms
- GET /api/uploads/inventory?status=pending 401 in 192ms
- GET /api/uploads/inventory?status=pending 401 in 115ms
- GET /purchases/upload 200 in 119ms
-Detected Marg ERP format: 8 items
- POST /api/uploads/purchase 200 in 169ms
- GET /admin/approvals 200 in 108ms
- GET /api/uploads/purchase?status=pending 200 in 139ms
- GET /api/uploads/purchase?status=pending 200 in 251ms
- GET /api/uploads/inventory?status=pending 401 in 201ms
- GET /api/uploads/inventory?status=pending 401 in 123ms
- GET /admin/approvals/88a38179-7971-406a-873a-1064b9f02e58 200 in 153ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/88a38179-7971-406a-873a-1064b9f02e58 200 in 272ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/88a38179-7971-406a-873a-1064b9f02e58 200 in 256ms
- POST /api/uploads/approve 200 in 138ms
- GET /admin/approvals 200 in 121ms
- GET /api/uploads/purchase?status=pending 200 in 145ms
- GET /api/uploads/purchase?status=pending 200 in 263ms
- GET /api/uploads/inventory?status=pending 401 in 215ms
- GET /api/uploads/inventory?status=pending 401 in 118ms
- GET /purchases/upload 200 in 204ms
-Detected Marg ERP format: 173 items
- POST /api/uploads/purchase 200 in 870ms
- GET /admin/approvals 200 in 147ms
- GET /api/uploads/purchase?status=pending 200 in 169ms
- GET /api/uploads/purchase?status=pending 200 in 239ms
- GET /api/uploads/inventory?status=pending 401 in 197ms
- GET /api/uploads/inventory?status=pending 401 in 127ms
- GET /admin/approvals/f17e89e6-1336-4cf5-b035-b4253bf1402d 200 in 162ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/f17e89e6-1336-4cf5-b035-b4253bf1402d 200 in 297ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/f17e89e6-1336-4cf5-b035-b4253bf1402d 200 in 278ms
- POST /api/uploads/approve 200 in 361ms
- GET /admin/approvals 200 in 118ms
- GET /api/uploads/purchase?status=pending 200 in 196ms
- GET /api/uploads/purchase?status=pending 200 in 568ms
- GET /api/uploads/inventory?status=pending 401 in 485ms
- GET /api/uploads/inventory?status=pending 401 in 97ms
- GET /purchases/upload 200 in 149ms
-Detected Marg ERP format: 8 items
- POST /api/uploads/purchase 200 in 155ms
- GET /admin/approvals 200 in 125ms
- GET /api/uploads/purchase?status=pending 200 in 131ms
- GET /api/uploads/purchase?status=pending 200 in 258ms
- GET /api/uploads/inventory?status=pending 401 in 209ms
- GET /api/uploads/inventory?status=pending 401 in 128ms
- GET /admin/approvals/a7ab1d83-10ed-45f5-a857-0c69a15437ee 200 in 161ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/a7ab1d83-10ed-45f5-a857-0c69a15437ee 200 in 259ms
-Error: Route "/api/uploads/session/[sessionId]" used `params.sessionId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/uploads/session/[sessionId]/route.ts:30:30)
-  28 |     userId = userId && userId !== '0' ? userId : null;
-  29 |
-> 30 |     const sessionId = params.sessionId;
-     |                              ^
-  31 |
-  32 |     // Get session
-  33 |     const sessionResult = await query(
- GET /api/uploads/session/a7ab1d83-10ed-45f5-a857-0c69a15437ee 200 in 254ms
- POST /api/uploads/approve 200 in 153ms
- GET /admin/approvals 200 in 140ms
- GET /api/uploads/purchase?status=pending 200 in 136ms
- GET /api/uploads/purchase?status=pending 200 in 246ms
- GET /api/uploads/inventory?status=pending 401 in 206ms
- GET /api/uploads/inventory?status=pending 401 in 144ms
- ○ Compiling /purchases/orders ...
- ✓ Compiled /purchases/orders in 3s (1983 modules)
- GET /purchases/orders 200 in 3319ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 729ms
- GET /purchases/orders 200 in 193ms
- ○ Compiling /purchases/history ...
- ✓ Compiled /purchases/history in 693ms (1919 modules)
- GET /purchases/history 200 in 950ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 581ms
- ○ Compiling /inventory/stock ...
- ✓ Compiled /inventory/stock in 2.7s (1978 modules)
- GET /inventory/stock 200 in 2931ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 456ms
- ✓ Compiled in 1323ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 549ms
- GET /inventory/stock 200 in 549ms
- ✓ Compiled in 623ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 418ms
- GET /inventory/stock 200 in 420ms
- ○ Compiling /customers ...
- ✓ Compiled /customers in 941ms (851 modules)
+ ✓ Compiled /api/customers in 3.2s (1533 modules)
+ GET /api/customers 200 in 3968ms
+ GET /customers 200 in 611ms
+ GET /sales/pos 200 in 613ms
+ ✓ Compiled in 3.9s (2768 modules)
+ GET /customers 200 in 939ms
+ GET /sales/pos 200 in 723ms
+ ○ Compiling /customers/[id] ...
+ ✓ Compiled /customers/[id] in 7.2s (2769 modules)
+ GET /customers 200 in 709ms
+ GET /sales/pos 200 in 719ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 7480ms
+ ○ Compiling /api/customers/[id] ...
+ ✓ Compiled /api/customers/[id] in 1697ms (2771 modules)
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Fetch customer from Golang API
+  10 |     const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`);
+ GET /api/customers/00000000-0000-0000-0000-000000000001 401 in 3111ms
+ ○ Compiling /api/customers/[id]/invoices ...
+ ✓ Compiled /api/customers/[id]/invoices in 895ms (2773 modules)
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 2495ms
+ ○ Compiling /api/customers/[id]/products ...
+ ✓ Compiled /api/customers/[id]/products in 799ms (2766 modules)
+Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/products/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 1886ms
+ ✓ Compiled in 8.4s (2756 modules)
+ GET /customers 200 in 1206ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1088ms
+ GET /sales/pos 200 in 1211ms
+ ✓ Compiled in 1127ms (1241 modules)
+ GET /customers 200 in 1145ms
+ GET /sales/pos 200 in 1163ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1055ms
+ ✓ Compiled in 1273ms (1241 modules)
+ GET /customers 200 in 1298ms
+ GET /sales/pos 200 in 1299ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1126ms
+ ○ Compiling /api/customers/[id] ...
+ ✓ Compiled /api/customers/[id] in 820ms (1533 modules)
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 1697ms
+ GET /customers 200 in 1017ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 896ms
+ GET /sales/pos 200 in 1030ms
+ ✓ Compiled in 5.5s (2774 modules)
+ ✓ Compiled in 1ms (1533 modules)
+ ✓ Compiled in 1ms (1533 modules)
+ ✓ Compiled in 1ms (1533 modules)
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 6027ms
+ ✓ Compiled /api/customers/[id]/invoices in 1ms (1533 modules)
+ GET /customers 200 in 6976ms
+ GET /sales/pos 200 in 7003ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 6881ms
+ ✓ Compiled in 5s (2776 modules)
+ ✓ Compiled in 4ms (1535 modules)
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 16381ms
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 5312ms
+ ○ Compiling /api/customers/[id]/products ...
+ GET /customers 200 in 7058ms
+ GET /sales/pos 200 in 7394ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 7253ms
+ ✓ Compiled /api/customers/[id]/products in 2.3s (1537 modules)
+ ✓ Compiled in 1ms (1537 modules)
+ ✓ Compiled in 1ms (1537 modules)
+ ✓ Compiled in 1ms (1537 modules)
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/products/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 7558ms
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 5498ms
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 6812ms
+ ✓ Compiled in 1ms (1537 modules)
+ GET /customers 200 in 6196ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 5852ms
+ GET /sales/pos 200 in 6180ms
+Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/products/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 3286ms
+ ✓ Compiled in 3.8s (1241 modules)
+ GET /customers 200 in 2196ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1433ms
+ GET /sales/pos 200 in 2229ms
+ ✓ Compiled in 2.4s (1241 modules)
  GET /customers 200 in 1268ms
+ GET /sales/pos 200 in 1270ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1024ms
+ ✓ Compiled in 6.4s (2756 modules)
+ GET /customers 200 in 1411ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1245ms
+ GET /sales/pos 200 in 1418ms
+ ✓ Compiled in 6.1s (2762 modules)
+ GET /customers 200 in 1184ms
+ GET /sales/pos 200 in 1281ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1182ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1417ms
+ ○ Compiling /api/customers/[id] ...
+ ✓ Compiled /api/customers/[id] in 3.2s (1536 modules)
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 4480ms
+ ○ Compiling /api/customers/[id]/invoices ...
+ ✓ Compiled /api/customers in 4.9s (2782 modules)
+ ✓ Compiled in 1ms (1540 modules)
+ ✓ Compiled in 9ms (1540 modules)
+ ✓ Compiled in 0ms (1540 modules)
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 10579ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 5661ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 6426ms
+ GET /api/customers 200 in 8091ms
+ GET /customers 200 in 6852ms
+ GET /sales/pos 200 in 6859ms
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 1728ms
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 1190ms
+ ○ Compiling /api/customers/[id]/products ...
+ ✓ Compiled /api/customers/[id]/products in 9.3s (2786 modules)
+ ✓ Compiled in 1ms (1542 modules)
+ ✓ Compiled in 0ms (1542 modules)
+ ✓ Compiled in 1ms (1542 modules)
+Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/products/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/products 200 in 13608ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 4643ms
+ GET /api/customers?limit=100 200 in 11348ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 6022ms
+ ✓ Compiled in 1ms (1542 modules)
+ GET /customers 200 in 7270ms
+ GET /sales/pos 200 in 7368ms
+ ✓ Compiled in 6ms (1542 modules)
+ ✓ Compiled in 5.6s (2786 modules)
+ GET /api/customers?limit=100 200 in 12719ms
+Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     
+   9 |     // Get auth token from request
+  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+ GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 3822ms
+ GET /customers 200 in 13262ms
+Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 1056ms
+ GET /sales/pos 200 in 2131ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 2150ms
+Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (app/api/customers/[id]/products/route.ts:7:31)
+   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+   6 |   try {
+>  7 |     const customerId = params.id;
+     |                               ^
+   8 |     const { searchParams } = new URL(request.url);
+   9 |     const limit = searchParams.get('limit') || '50';
+  10 |     
+ GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 1177ms
+ GET /api/customers?limit=100 200 in 462ms
+ GET /api/customers 200 in 407ms
+ GET /api/customers?limit=100 200 in 213ms
+ ✓ Compiled in 1959ms (2786 modules)
+ GET /sales/pos 200 in 1152ms
+ GET /customers 200 in 1160ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1037ms
+ ✓ Compiled in 5.5s (2786 modules)
+ GET /sales/pos 200 in 894ms
+ GET /customers 200 in 900ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 822ms
+ GET /sales/pos 200 in 860ms
+ GET /products 200 in 1449ms
+ ✓ Compiled in 4.7s (2786 modules)
+ GET /customers 200 in 2188ms
+ GET /sales/pos 200 in 1787ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1825ms
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 3.6s (2780 modules)
+ GET /api/products?limit=100 401 in 4423ms
+ GET /api/products?limit=100 401 in 468ms
+ ✓ Compiled in 1938ms (1244 modules)
+ GET /products 200 in 1470ms
+ GET /customers 200 in 1684ms
+ GET /sales/pos 200 in 1686ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1475ms
+ ✓ Compiled in 1533ms (1244 modules)
+ GET /sales/pos 200 in 2201ms
+ GET /customers 200 in 2224ms
+ GET /products 200 in 2226ms
+ ✓ Compiled in 2.5s (1244 modules)
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1480ms
+ GET /products 200 in 1801ms
+ GET /customers 200 in 1825ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1739ms
+ GET /sales/pos 200 in 745ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 4.5s (2785 modules)
+ GET /dashboard/stats 200 in 5273ms
+ ✓ Compiled in 1255ms (1249 modules)
+ GET /products 200 in 1871ms
+ GET /customers 200 in 1900ms
+ GET /dashboard/stats 200 in 1922ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1794ms
+ GET /sales/pos 200 in 1766ms
+ GET /sales/pos 200 in 644ms
+ ✓ Compiled in 9.4s (2304 modules)
+ GET /products 200 in 1902ms
+ GET /customers 200 in 1918ms
+ GET /dashboard/stats 200 in 1925ms
+ GET /sales/pos 200 in 1933ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1735ms
+ ✓ Compiled in 4.2s (2304 modules)
+ GET /dashboard/stats 200 in 2046ms
+ GET /customers 200 in 2052ms
+ GET /products 200 in 2055ms
+ GET /sales/pos 200 in 2056ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1905ms
+ ✓ Compiled in 2.6s (2304 modules)
+ GET /products 200 in 2100ms
+ GET /customers 200 in 2110ms
+ GET /dashboard/stats 200 in 2127ms
+ GET /sales/pos 200 in 2143ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1945ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 4s (1526 modules)
+ GET /dashboard 200 in 4663ms
+ ○ Compiling /api/dashboard/stats ...
+ ✓ Compiled /api/dashboard/stats in 5.8s (2779 modules)
+ GET /api/dashboard/stats 200 in 7090ms
+ GET /api/dashboard/stats 200 in 7133ms
+ ✓ Compiled in 1893ms (2793 modules)
+ GET /dashboard/stats 200 in 2172ms
+ GET /products 200 in 2176ms
+ GET /customers 200 in 2169ms
+ GET /dashboard 200 in 2173ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 2032ms
+ ✓ Compiled in 2.5s (2793 modules)
+ GET /products 200 in 2167ms
+ GET /dashboard 200 in 2156ms
+ GET /customers 200 in 2160ms
+ GET /dashboard/stats 200 in 2176ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1861ms
+ ✓ Compiled in 6.3s (2793 modules)
+ GET /dashboard/stats 200 in 1713ms
+ GET /dashboard 200 in 1718ms
+ GET /customers 200 in 1726ms
+ GET /products 200 in 1731ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1618ms
+ GET /products 200 in 655ms
+ ○ Compiling /api/products ...
+ ✓ Compiled /api/products in 4.7s (1552 modules)
+ GET /api/products?limit=100 401 in 5539ms
+ GET /api/products?limit=100 401 in 2395ms
+ GET /api/products?limit=100 401 in 5614ms
  ○ Compiling /api/customers ...
- ✓ Compiled /api/customers in 956ms (869 modules)
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 1300ms
- ✓ Compiled in 2.8s (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 1252ms
- GET /inventory 200 in 1258ms
- ✓ Compiled in 1510ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 649ms
- GET /inventory 200 in 655ms
- ✓ Compiled in 1943ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 572ms
- GET /inventory 200 in 576ms
- ✓ Compiled in 853ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 593ms
- GET /customers 200 in 597ms
- ✓ Compiled in 816ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 1330ms (1121 modules)
- GET /customers 200 in 941ms
- GET /inventory 200 in 943ms
- GET /customers 200 in 235ms
- ✓ Compiled in 1501ms (1121 modules)
- GET /customers 200 in 180ms
- ✓ Compiled in 866ms (1121 modules)
- GET /customers 200 in 260ms
- ✓ Compiled in 694ms (1121 modules)
- GET /customers 200 in 184ms
- ✓ Compiled in 676ms (1121 modules)
- GET /customers 200 in 220ms
- ✓ Compiled in 1530ms (1121 modules)
- GET /customers 200 in 205ms
- ✓ Compiled in 879ms (1121 modules)
- GET /customers 200 in 198ms
- ✓ Compiled in 847ms (1121 modules)
- GET /customers 200 in 197ms
- ✓ Compiled in 963ms (1121 modules)
- GET /customers 200 in 238ms
- ✓ Compiled in 1784ms (1121 modules)
- GET /customers 200 in 218ms
- ✓ Compiled in 912ms (1121 modules)
- GET /customers 200 in 210ms
- ✓ Compiled in 628ms (1121 modules)
- GET /customers 200 in 192ms
- ✓ Compiled in 1775ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 751ms
- GET /inventory 200 in 754ms
- ✓ Compiled in 773ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 575ms
- GET /inventory 200 in 581ms
- ✓ Compiled in 705ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 475ms
- GET /customers 200 in 477ms
- ✓ Compiled in 1696ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 603ms
- GET /inventory 200 in 604ms
- ✓ Compiled in 964ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 618ms
- GET /inventory 200 in 627ms
- ✓ Compiled in 772ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 538ms
- GET /inventory 200 in 538ms
- ✓ Compiled in 1696ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 686ms
- GET /inventory 200 in 687ms
- ✓ Compiled in 903ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 479ms
- GET /inventory 200 in 481ms
- ✓ Compiled in 857ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 200 in 479ms
- GET /inventory 200 in 481ms
- GET /customers 200 in 273ms
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 275ms
- GET /inventory 200 in 225ms
- ✓ Compiled in 3.1s (1960 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ○ Compiling /api/customers ...
- GET /inventory 200 in 1024ms
- ✓ Compiled /api/customers in 1174ms (857 modules)
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 2247ms
- GET /customers 200 in 2334ms
- GET /customers 200 in 811ms
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 415ms
- GET /customers 200 in 731ms
- GET /inventory 200 in 746ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 5.6s (2137 modules)
- GET /inventory 200 in 4744ms
- ✓ Compiled in 630ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 474ms
- ✓ Compiled in 496ms (1121 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /inventory 200 in 436ms
- ✓ Compiled in 744ms (1121 modules)
- GET /inventory 200 in 461ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 1786ms (1121 modules)
- GET /inventory 200 in 1428ms
- ✓ Compiled in 1575ms (1121 modules)
- ✓ Compiled in 668ms (1121 modules)
- ✓ Compiled in 2.7s (1121 modules)
- ✓ Compiled in 1775ms (1121 modules)
- ✓ Compiled in 665ms (1121 modules)
- GET /customers 200 in 543ms
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 370ms
- ✓ Compiled in 661ms (1121 modules)
- GET /customers 200 in 234ms
- ✓ Compiled in 641ms (1121 modules)
- GET /customers 200 in 178ms
- ✓ Compiled in 535ms (1121 modules)
- GET /customers 200 in 142ms
- ✓ Compiled in 689ms (1121 modules)
- GET /customers 200 in 173ms
- ✓ Compiled in 5.8s (1978 modules)
- GET /customers 200 in 253ms
- ✓ Compiled /api/customers in 2.2s (1960 modules)
- ✓ Compiled in 2ms (857 modules)
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 2226ms
- GET /customers 200 in 1609ms
+ ✓ Compiled /api/customers in 3.7s (2801 modules)
+ ✓ Compiled in 1ms (1554 modules)
+ GET /api/customers 200 in 5487ms
+ GET /products 200 in 4365ms
+ GET /products 200 in 4369ms
+ GET /customers 200 in 4369ms
+ GET /dashboard/stats 200 in 4375ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 4174ms
+ ✓ Compiled in 3.3s (2781 modules)
+ GET /dashboard/stats 200 in 2010ms
+ GET /customers 200 in 2016ms
+ GET /products 200 in 2021ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1833ms
+ GET /products 200 in 817ms
+ ✓ Compiled in 1914ms (1249 modules)
+ GET /products 200 in 1896ms
+ GET /products 200 in 1902ms
+ GET /customers 200 in 1903ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1557ms
+ GET /dashboard/stats 200 in 1909ms
+ ✓ Compiled in 4.7s (1246 modules)
+ GET /products 200 in 2208ms
+ GET /customers 200 in 2230ms
+ ✓ Compiled in 2.5s (1246 modules)
+ GET /dashboard/stats 200 in 2279ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 1486ms
+ GET /customers 200 in 527ms
+ GET /customers/00000000-0000-0000-0000-000000000001 200 in 3842ms
+ GET /dashboard/stats 200 in 9123ms
+ GET /products 200 in 8469ms
+ ✓ Compiled in 4.6s (2778 modules)
+ GET /products 200 in 962ms
+ GET /dashboard/stats 200 in 964ms
+ GET /products 200 in 879ms
+ ✓ Compiled in 2.3s (2752 modules)
+ GET /products 200 in 759ms
+ GET /products 200 in 692ms
+ ✓ Compiled in 2s (1246 modules)
+ GET /products 200 in 202ms
+ ✓ Compiled in 760ms (1246 modules)
+ GET /products 200 in 316ms
+ ✓ Compiled in 663ms (1246 modules)
+ GET /products 200 in 119ms
+ ✓ Compiled in 635ms (1246 modules)
+ GET /products 200 in 144ms
+ ✓ Compiled in 1076ms (1246 modules)
+ GET /products 200 in 604ms
+ ✓ Compiled in 693ms (1246 modules)
+ GET /products 200 in 164ms
+ ✓ Compiled in 1937ms (1246 modules)
+ GET /products 200 in 732ms
+ ✓ Compiled in 823ms (1246 modules)
+ GET /products 200 in 139ms
+ ✓ Compiled in 498ms (1246 modules)
+ GET /products 200 in 126ms
+ ✓ Compiled in 742ms (1246 modules)
+ GET /products 200 in 621ms
+ ✓ Compiled in 731ms (1246 modules)
+ GET /products 200 in 203ms
+ ✓ Compiled in 552ms (1246 modules)
+ GET /products 200 in 164ms
+ ✓ Compiled in 511ms (1246 modules)
+ GET /products 200 in 167ms
+ ✓ Compiled in 802ms (1246 modules)
+ GET /products 200 in 466ms
+ ✓ Compiled in 647ms (1246 modules)
+ GET /products 200 in 176ms
+ ✓ Compiled in 919ms (1246 modules)
+ GET /products 200 in 174ms
+ ✓ Compiled in 1751ms (1246 modules)
+ GET /products 200 in 490ms
+ ✓ Compiled in 608ms (1246 modules)
+ GET /products 200 in 131ms
+ ✓ Compiled in 2.1s (1246 modules)
+ GET /products 200 in 493ms
+ ✓ Compiled in 1131ms (1246 modules)
+ GET /products 200 in 177ms
+ ✓ Compiled in 557ms (1246 modules)
+ GET /products 200 in 142ms
+ ✓ Compiled in 596ms (1246 modules)
+ GET /products 200 in 436ms
+ ✓ Compiled in 485ms (1246 modules)
+ GET /products 200 in 198ms
+ ✓ Compiled in 642ms (1246 modules)
+ GET /products 200 in 143ms
+ ✓ Compiled in 990ms (1246 modules)
+ GET /products 200 in 244ms
+ ✓ Compiled in 444ms (1246 modules)
+ GET /products 200 in 137ms
+ ✓ Compiled in 785ms (1246 modules)
+ GET /products 200 in 320ms
+ ✓ Compiled in 2.5s (1246 modules)
+ GET /products 200 in 603ms
+ ✓ Compiled in 787ms (1246 modules)
+ GET /products 200 in 647ms
+Killed

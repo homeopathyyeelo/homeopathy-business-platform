@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { golangAPI } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import SmartInsights from '@/components/smart-insights/SmartInsights';
 
 // Billing Types
 type BillingType = 

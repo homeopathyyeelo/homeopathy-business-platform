@@ -263,16 +263,16 @@ export default function CustomersPage() {
                       {customer.email && <div className="text-xs text-muted-foreground">{customer.email}</div>}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={customer.type === 'retail' ? 'default' : 'secondary'}>
-                        {customer.type === 'retail' ? 'Retail' : 'Wholesale'}
+                      <Badge variant={customer.customerType === 'retail' || customer.customerType === 'RETAIL' ? 'default' : 'secondary'}>
+                        {customer.customerType}
                       </Badge>
                     </TableCell>
-                    <TableCell>{customer.gst_number || 'N/A'}</TableCell>
-                    <TableCell>{customer.totalPurchases || 0}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(customer.totalSpent || 0)}</TableCell>
+                    <TableCell>{customer.gstNumber || 'N/A'}</TableCell>
+                    <TableCell>{customer.loyaltyPoints || 0}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(0)}</TableCell>
                     <TableCell className="text-right">
-                      {customer.pendingAmount > 0 ? (
-                        <span className="text-red-600">{formatCurrency(customer.pendingAmount)}</span>
+                      {customer.outstandingBalance > 0 ? (
+                        <span className="text-red-600">{formatCurrency(customer.outstandingBalance)}</span>
                       ) : formatCurrency(0)}
                     </TableCell>
                     <TableCell className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -316,12 +316,14 @@ export default function CustomersPage() {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="wholesale">Wholesale</SelectItem>
+                  <SelectItem value="RETAIL">Retail</SelectItem>
+                  <SelectItem value="WHOLESALE">Wholesale</SelectItem>
+                  <SelectItem value="DOCTOR">Doctor</SelectItem>
+                  <SelectItem value="DISTRIBUTOR">Distributor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {formData.type === 'wholesale' && (
+            {(formData.type === 'WHOLESALE' || formData.type === 'DOCTOR' || formData.type === 'DISTRIBUTOR') && (
               <div className="space-y-2">
                 <Label htmlFor="gstNumber">GST Number</Label>
                 <Input id="gstNumber" name="gstNumber" value={formData.gstNumber} onChange={handleInputChange} />
@@ -364,12 +366,14 @@ export default function CustomersPage() {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="retail">Retail</SelectItem>
-                  <SelectItem value="wholesale">Wholesale</SelectItem>
+                  <SelectItem value="RETAIL">Retail</SelectItem>
+                  <SelectItem value="WHOLESALE">Wholesale</SelectItem>
+                  <SelectItem value="DOCTOR">Doctor</SelectItem>
+                  <SelectItem value="DISTRIBUTOR">Distributor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {formData.type === 'wholesale' && (
+            {(formData.type === 'WHOLESALE' || formData.type === 'DOCTOR' || formData.type === 'DISTRIBUTOR') && (
               <div className="space-y-2">
                 <Label htmlFor="edit-gstNumber">GST Number</Label>
                 <Input id="edit-gstNumber" name="gstNumber" value={formData.gstNumber} onChange={handleInputChange} />

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Package, Plus, TrendingUp, AlertTriangle, Filter, Barcode, Settings } from 'lucide-react';
 import { useProducts, useProductStats, useProductMutations } from '@/lib/hooks/products';
 import { golangAPI } from '@/lib/api';
+import SmartInsights from '@/components/smart-insights/SmartInsights';
 
 export default function ProductListPage() {
   const router = useRouter();

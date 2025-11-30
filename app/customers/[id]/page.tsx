@@ -51,6 +51,15 @@ interface Product {
   last_purchase: string;
 }
 
+// Helper function to get cookie
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
+
 export default function CustomerDetailPage() {
   const params = useParams();
   const customerId = params.id as string;
@@ -69,22 +78,43 @@ export default function CustomerDetailPage() {
     try {
       setLoading(true);
       
+      // Get auth headers
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      };
+      
+      // Add auth token if available
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('auth_token') || 
+                     localStorage.getItem('token') ||
+                     getCookie('auth-token');
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+      
       // Fetch customer details
-      const customerRes = await fetch(`/api/customers/${customerId}`);
+      const customerRes = await fetch(`/api/customers/${customerId}`, { headers });
       if (customerRes.ok) {
         const customerData = await customerRes.json();
-        setCustomer(customerData.data);
+        if (customerData.success) {
+          setCustomer(customerData.data);
+        } else {
+          throw new Error(customerData.error || 'Customer not found');
+        }
+      } else {
+        throw new Error('Failed to fetch customer');
       }
 
       // Fetch customer invoices
-      const invoicesRes = await fetch(`/api/customers/${customerId}/invoices`);
+      const invoicesRes = await fetch(`/api/customers/${customerId}/invoices`, { headers });
       if (invoicesRes.ok) {
         const invoicesData = await invoicesRes.json();
         setInvoices(invoicesData.data || []);
       }
 
       // Fetch customer products
-      const productsRes = await fetch(`/api/customers/${customerId}/products`);
+      const productsRes = await fetch(`/api/customers/${customerId}/products`, { headers });
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData.data || []);

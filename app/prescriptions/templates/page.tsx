@@ -1,14 +1,105 @@
 'use client';
 
+import { useState } from 'react';
+import { FileStack, Plus, Search, Copy, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
 export default function PrescriptionTemplatesPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const templates = [
+    {
+      id: 1,
+      name: 'Acute Cold & Cough',
+      medicines: ['Arsenic Alb 30', 'Bryonia 200', 'Aconite 200'],
+      usageCount: 24,
+      lastUsed: '2024-11-30'
+    },
+    {
+      id: 2,
+      name: 'Chronic Migraine',
+      medicines: ['Belladonna 200', 'Natrum Mur 1M', 'Spigelia 30'],
+      usageCount: 18,
+      lastUsed: '2024-11-29'
+    }
+  ];
+
   return (
-    <div className="p-4 space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">Prescription Templates</h1>
-        <p className="text-gray-600">Manage reusable templates for common conditions.</p>
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-3 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-lg">
+            <FileStack className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Prescription Templates</h1>
+            <p className="text-gray-500">Pre-configured prescription templates</p>
+          </div>
+        </div>
       </div>
-      <div className="rounded-md border bg-white p-4 text-sm text-gray-700">
-        Templates grid placeholder. Connect to /api/prescriptions/templates.
+
+      {/* Actions Bar */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search templates..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Template
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Templates List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {templates.map((template) => (
+          <Card key={template.id}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">{template.name}</CardTitle>
+                <Badge>{template.usageCount} uses</Badge>
+              </div>
+              <CardDescription>Last used: {template.lastUsed}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 mb-2">Medicines:</p>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  {template.medicines.map((med, idx) => (
+                    <li key={idx}>• {med}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm">
+                  <Copy className="h-3 w-3 mr-1" />
+                  Use
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Edit className="h-3 w-3 mr-1" />
+                  Edit
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -59,15 +60,15 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 				return
 			}
 			c.JSON(200, gin.H{
-				"token": token,
+				"token":     token,
 				"expiresAt": time.Now().Add(24 * time.Hour).Format(time.RFC3339),
 				"user": gin.H{
-					"id":          "superadmin-1",
-					"email":       "medicine@yeelohomeopathy.com",
-					"displayName": "Super Admin",
-					"firstName":   "Super",
-					"lastName":    "Admin",
-					"role":        "SUPERADMIN",
+					"id":           "superadmin-1",
+					"email":        "medicine@yeelohomeopathy.com",
+					"displayName":  "Super Admin",
+					"firstName":    "Super",
+					"lastName":     "Admin",
+					"role":         "SUPERADMIN",
 					"isSuperAdmin": true,
 				},
 			})
@@ -81,7 +82,7 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 func handleMe(c *gin.Context) {
 	userId := c.GetString("userId")
 	role := c.GetString("role")
-	
+
 	c.JSON(200, gin.H{
 		"id":    userId,
 		"role":  role,
@@ -579,11 +580,11 @@ func (h *FinancialHandler) GetMetricsByPeriod(c *gin.Context) {
 
 // Main Handler struct that includes all services
 type Handler struct {
-	workflowService     *WorkflowService
-	inventoryService    *InventoryService
-	customerService     *CustomerServiceService
-	financialService    *FinancialService
-	workflowProcessor   *WorkflowProcessor
+	workflowService   *WorkflowService
+	inventoryService  *InventoryService
+	customerService   *CustomerServiceService
+	financialService  *FinancialService
+	workflowProcessor *WorkflowProcessor
 }
 
 func NewHandler(ws *WorkflowService, wp *WorkflowProcessor) *Handler {
@@ -766,15 +767,15 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 				return
 			}
 			c.JSON(200, gin.H{
-				"token": token,
+				"token":     token,
 				"expiresAt": time.Now().Add(24 * time.Hour).Format(time.RFC3339),
 				"user": gin.H{
-					"id":          "superadmin-1",
-					"email":       "medicine@yeelohomeopathy.com",
-					"displayName": "Super Admin",
-					"firstName":   "Super",
-					"lastName":    "Admin",
-					"role":        "SUPERADMIN",
+					"id":           "superadmin-1",
+					"email":        "medicine@yeelohomeopathy.com",
+					"displayName":  "Super Admin",
+					"firstName":    "Super",
+					"lastName":     "Admin",
+					"role":         "SUPERADMIN",
 					"isSuperAdmin": true,
 				},
 			})
@@ -788,7 +789,7 @@ func handleLogin(jwtSecret string) gin.HandlerFunc {
 func handleMe(c *gin.Context) {
 	userId := c.GetString("userId")
 	role := c.GetString("role")
-	
+
 	c.JSON(200, gin.H{
 		"id":    userId,
 		"role":  role,

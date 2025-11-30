@@ -63,6 +63,8 @@ func main() {
 	systemHandler := handlers.NewSystemHandler()
 	userHandler := handlers.NewUserHandler()
 	gmbHandler := handlers.NewGMBHandler(db)
+	socialHandler := handlers.NewSocialHandler(db)
+	aiRecommendationHandler := handlers.NewAIRecommendationHandler(db)
 
 	// Settings handlers
 	branchHandler := handlers.NewBranchHandler(db)
@@ -144,6 +146,13 @@ func main() {
 		social := api.Group("/social")
 		social.Use(middleware.RequireAuth())
 		{
+			// FB/Insta Routes
+			social.GET("/accounts", socialHandler.GetAccounts)
+			social.POST("/accounts/connect", socialHandler.ConnectAccount)
+			social.GET("/posts", socialHandler.GetPosts)
+			social.POST("/posts", socialHandler.CreatePost)
+			social.GET("/analytics", socialHandler.GetAnalytics)
+
 			// GMB OAuth routes
 			social.GET("/gmb/oauth/initiate", gmbHandler.InitiateOAuth)  // This should exist
 			social.POST("/gmb/oauth/initiate", gmbHandler.InitiateOAuth) // This should also exist
@@ -186,6 +195,12 @@ func main() {
 			}
 
 			v1.POST("/enrich/invoice/:parsed_invoice_id", enrichHandler.EnrichParsedInvoice)
+
+			// AI Recommendations
+			ai := v1.Group("/ai")
+			{
+				ai.GET("/recommendations", aiRecommendationHandler.GetProductRecommendations)
+			}
 
 			customers := v1.Group("/customers")
 			{

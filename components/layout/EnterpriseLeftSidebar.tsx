@@ -40,47 +40,23 @@ const menuItems: MenuItem[] = [
       { label: 'Overview', path: '/dashboard' },
       { label: 'Quick Stats', path: '/dashboard/stats' },
       { label: 'Activity Log', path: '/dashboard/activity' },
-      { label: 'Approvals', path: '/admin/approvals' },
     ]
   },
   {
-    id: 'products',
-    label: 'Products',
-    icon: Pill,
-    path: '/products',
-    color: 'from-green-500 to-green-600',
+    id: 'social',
+    label: 'Social',
+    icon: Share2,
+    path: '/social',
+    color: 'from-sky-500 to-sky-600',
     submenus: [
-      { label: 'Product List', path: '/products' },
-      { label: 'Add Product', path: '/products/add' },
-      { label: 'Categories', path: '/products/categories' },
-      { label: 'Subcategories', path: '/products/subcategories' },
-      { label: 'Brands', path: '/products/brands' },
-      { label: 'Potencies', path: '/products/potencies' },
-      { label: 'Forms', path: '/products/forms' },
-      { label: 'HSN Codes', path: '/products/hsn' },
-      { label: 'Units', path: '/products/units' },
-      { label: 'Batch Management', path: '/products/batches' },
-      { label: 'Barcode Print', path: '/products/barcode' },
-      { label: 'Import Export', path: '/products/import-export' },
-    ]
-  },
-  {
-    id: 'inventory',
-    label: 'Inventory',
-    icon: Warehouse,
-    path: '/inventory',
-    color: 'from-purple-500 to-purple-600',
-    submenus: [
-      { label: 'Purchase Upload', path: '/purchases/upload' },
-      { label: 'Inventory Upload', path: '/inventory/upload' },
-      { label: 'Current Stock', path: '/inventory/stock' },
-      { label: 'Stock Adjustments', path: '/inventory/adjustments' },
-      { label: 'Stock Transfers', path: '/inventory/transfers' },
-      { label: 'Reconciliation', path: '/inventory/reconciliation' },
-      { label: 'Low Stock', path: '/inventory/low-stock' },
-      { label: 'Expiry Alerts', path: '/inventory/expiry' },
-      { label: 'Stock Valuation', path: '/inventory/valuation' },
-      { label: 'AI Reorder', path: '/inventory/ai-reorder' },
+      { label: 'Post Scheduler', path: '/social/scheduler' },
+      { label: 'GMB Posts', path: '/social/gmb' },
+      { label: 'Instagram', path: '/social/instagram' },
+      { label: 'Facebook', path: '/social/facebook' },
+      { label: 'AI Content', path: '/social/ai-content' },
+      { label: 'YouTube', path: '/social/youtube' },
+      { label: 'Blog/WordPress', path: '/social/blog' },
+      { label: 'Multi-Account', path: '/social/accounts' },
     ]
   },
   {
@@ -109,6 +85,7 @@ const menuItems: MenuItem[] = [
     color: 'from-pink-500 to-pink-600',
     submenus: [
       { label: 'Purchase Upload', path: '/purchases/upload' },
+      { label: 'Approvals', path: '/admin/approvals' },
       { label: 'Purchase Orders', path: '/purchases/orders' },
       { label: 'GRN', path: '/purchases/grn' },
       { label: 'Purchase Bills', path: '/purchases/bills' },
@@ -117,6 +94,45 @@ const menuItems: MenuItem[] = [
       { label: 'Price Comparison', path: '/purchases/price-comparison' },
       { label: 'AI Reorder', path: '/purchases/ai-reorder' },
       { label: 'Purchase History', path: '/purchases/history' },
+    ]
+  },
+  {
+    id: 'inventory',
+    label: 'Inventory',
+    icon: Warehouse,
+    path: '/inventory',
+    color: 'from-purple-500 to-purple-600',
+    submenus: [
+      { label: 'Inventory Upload', path: '/inventory/upload' },
+      { label: 'Current Stock', path: '/inventory/stock' },
+      { label: 'Stock Adjustments', path: '/inventory/adjustments' },
+      { label: 'Stock Transfers', path: '/inventory/transfers' },
+      { label: 'Reconciliation', path: '/inventory/reconciliation' },
+      { label: 'Low Stock', path: '/inventory/low-stock' },
+      { label: 'Expiry Alerts', path: '/inventory/expiry' },
+      { label: 'Stock Valuation', path: '/inventory/valuation' },
+      { label: 'AI Reorder', path: '/inventory/ai-reorder' },
+    ]
+  },
+  {
+    id: 'products',
+    label: 'Products',
+    icon: Pill,
+    path: '/products',
+    color: 'from-green-500 to-green-600',
+    submenus: [
+      { label: 'Product List', path: '/products' },
+      { label: 'Add Product', path: '/products/add' },
+      { label: 'Categories', path: '/products/categories' },
+      { label: 'Subcategories', path: '/products/subcategories' },
+      { label: 'Brands', path: '/products/brands' },
+      { label: 'Potencies', path: '/products/potencies' },
+      { label: 'Forms', path: '/products/forms' },
+      { label: 'HSN Codes', path: '/products/hsn' },
+      { label: 'Units', path: '/products/units' },
+      { label: 'Batch Management', path: '/products/batches' },
+      { label: 'Barcode Print', path: '/products/barcode' },
+      { label: 'Import Export', path: '/products/import-export' },
     ]
   },
   {
@@ -245,41 +261,6 @@ const menuItems: MenuItem[] = [
     ]
   },
   {
-    id: 'marketing',
-    label: 'Marketing',
-    icon: Megaphone,
-    path: '/marketing',
-    color: 'from-fuchsia-500 to-fuchsia-600',
-    submenus: [
-      { label: 'Campaign Dashboard', path: '/marketing/dashboard' },
-      { label: 'WhatsApp Campaigns', path: '/marketing/whatsapp' },
-      { label: 'SMS Campaigns', path: '/marketing/sms' },
-      { label: 'Email Campaigns', path: '/marketing/email' },
-      { label: 'Offers Coupons', path: '/marketing/offers' },
-      { label: 'Festival Campaigns', path: '/marketing/festivals' },
-      { label: 'Templates', path: '/marketing/templates' },
-      { label: 'AI Campaign Generator', path: '/marketing/ai-generator' },
-      { label: 'Dealer Announcements', path: '/marketing/announcements' },
-    ]
-  },
-  {
-    id: 'social',
-    label: 'Social',
-    icon: Share2,
-    path: '/social',
-    color: 'from-sky-500 to-sky-600',
-    submenus: [
-      { label: 'Post Scheduler', path: '/social/scheduler' },
-      { label: 'GMB Posts', path: '/social/gmb' },
-      { label: 'Instagram', path: '/social/instagram' },
-      { label: 'Facebook', path: '/social/facebook' },
-      { label: 'AI Content', path: '/social/ai-content' },
-      { label: 'YouTube', path: '/social/youtube' },
-      { label: 'Blog/WordPress', path: '/social/blog' },
-      { label: 'Multi-Account', path: '/social/accounts' },
-    ]
-  },
-  {
     id: 'ai',
     label: 'AI Assistant',
     icon: Brain,
@@ -296,6 +277,24 @@ const menuItems: MenuItem[] = [
       { label: 'Remedy Suggestion', path: '/ai/remedy' },
       { label: 'Workflow Automation', path: '/ai/workflow' },
       { label: 'AI Demos', path: '/ai/demos' },
+    ]
+  },
+  {
+    id: 'marketing',
+    label: 'Marketing',
+    icon: Megaphone,
+    path: '/marketing',
+    color: 'from-fuchsia-500 to-fuchsia-600',
+    submenus: [
+      { label: 'Campaign Dashboard', path: '/marketing/dashboard' },
+      { label: 'WhatsApp Campaigns', path: '/marketing/whatsapp' },
+      { label: 'SMS Campaigns', path: '/marketing/sms' },
+      { label: 'Email Campaigns', path: '/marketing/email' },
+      { label: 'Offers Coupons', path: '/marketing/offers' },
+      { label: 'Festival Campaigns', path: '/marketing/festivals' },
+      { label: 'Templates', path: '/marketing/templates' },
+      { label: 'AI Campaign Generator', path: '/marketing/ai-generator' },
+      { label: 'Dealer Announcements', path: '/marketing/announcements' },
     ]
   },
   {
@@ -378,9 +377,8 @@ export default function EnterpriseLeftSidebar({ isOpen, onClose }: EnterpriseLef
             <div key={item.id}>
               <button
                 onClick={() => item.submenus ? toggleExpand(item.id) : null}
-                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
-                  isActive ? 'bg-white text-blue-700 shadow-lg' : 'text-blue-100 hover:bg-blue-500/30 hover:text-white'
-                }`}
+                className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${isActive ? 'bg-white text-blue-700 shadow-lg' : 'text-blue-100 hover:bg-blue-500/30 hover:text-white'
+                  }`}
               >
                 <div className={`p-2 rounded-lg bg-gradient-to-br ${item.color} ${isActive ? 'shadow-md' : 'opacity-80 group-hover:opacity-100'}`}>
                   <Icon className="h-4 w-4 text-white" />
@@ -404,11 +402,10 @@ export default function EnterpriseLeftSidebar({ isOpen, onClose }: EnterpriseLef
                       <Link
                         key={submenu.path}
                         href={submenu.path}
-                        className={`block px-4 py-2 text-sm rounded-lg transition-colors ${
-                          isSubActive 
-                            ? 'bg-blue-500/50 text-white font-medium' 
-                            : 'text-blue-200 hover:bg-blue-500/30 hover:text-white'
-                        }`}
+                        className={`block px-4 py-2 text-sm rounded-lg transition-colors ${isSubActive
+                          ? 'bg-blue-500/50 text-white font-medium'
+                          : 'text-blue-200 hover:bg-blue-500/30 hover:text-white'
+                          }`}
                       >
                         {submenu.label}
                       </Link>

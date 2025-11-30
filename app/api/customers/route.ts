@@ -15,8 +15,25 @@ export async function GET(request: NextRequest) {
     if (type && type !== 'ALL') params.append('customer_type', type);
     params.append('limit', limit);
     
-    // Fetch from Golang API
-    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers?${params.toString()}`);
+    // Get auth token from request
+    const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    
+    if (authHeader) {
+      if (authHeader.includes('Bearer ')) {
+        headers['Authorization'] = authHeader;
+      } else if (authHeader.includes('auth-token=')) {
+        const tokenMatch = authHeader.match(/auth-token=([^;]+)/);
+        if (tokenMatch) {
+          headers['Authorization'] = `Bearer ${tokenMatch[1]}`;
+        }
+      }
+    }
+    
+    // Fetch from Golang API with auth
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers?${params.toString()}`, {
+      headers
+    });
     const data = await res.json();
     
     if (!res.ok) {
@@ -47,11 +64,38 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // Get auth token from request
+    const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
+    const headers: HeadersInit = { 'Content-Type': 'application/json' };
+    
+    if (authHeader) {
+      if (authHeader.includes('Bearer ')) {
+        headers['Authorization'] = authHeader;
+      } else if (authHeader.includes('auth-token=')) {
+        const tokenMatch = authHeader.match(/auth-token=([^;]+)/);
+        if (tokenMatch) {
+          headers['Authorization'] = `Bearer ${tokenMatch[1]}`;
+        }
+      }
+    }
+    
+    // Transform frontend data to match backend schema
+    const customerData = {
+      name: body.name,
+      phone: body.phone,
+      email: body.email || '',
+      address: body.address || '',
+      customerType: body.type || 'RETAIL',
+      gstNumber: body.gstNumber || '',
+      creditLimit: 0,
+      isActive: true
+    };
+    
     // Send to Golang API
     const res = await fetch(`${GOLANG_API_URL}/api/erp/customers`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      headers,
+      body: JSON.stringify(customerData)
     });
     
     const data = await res.json();

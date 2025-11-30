@@ -9,6 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/xuri/excelize/v2"
+	"github.com/yeelo/homeopathy-erp/internal/config"
+	"github.com/yeelo/homeopathy-erp/internal/database"
 	"gorm.io/gorm"
 )
 
@@ -19,12 +21,12 @@ type ImportRequest struct {
 
 // ImportResponse represents the response after importing
 type ImportResponse struct {
-	Success     bool      `json:"success"`
-	Message     string    `json:"message"`
-	TotalRows   int       `json:"total_rows"`
-	SuccessRows int       `json:"success_rows"`
-	ErrorRows   int       `json:"error_rows"`
-	Errors      []string  `json:"errors"`
+	Success     bool     `json:"success"`
+	Message     string   `json:"message"`
+	TotalRows   int      `json:"total_rows"`
+	SuccessRows int      `json:"success_rows"`
+	ErrorRows   int      `json:"error_rows"`
+	Errors      []string `json:"errors"`
 }
 
 // ImportResult represents the result of importing a single row
@@ -70,7 +72,10 @@ func (s *ProductImportService) ImportProductsFromExcel(filePath string) (*Import
 
 	// Process the first sheet
 	sheetName := sheets[0]
-	rows := f.GetRows(sheetName)
+	rows, err := f.GetRows(sheetName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rows: %v", err)
+	}
 
 	if len(rows) <= 1 {
 		return nil, fmt.Errorf("no data rows found in Excel file")
@@ -134,12 +139,12 @@ func (s *ProductImportService) importProductRow(row []string, rowNumber int) *Im
 		Name:            productData.Name,
 		Description:     productData.Description,
 		CategoryID:      productData.CategoryID,
-		SubcategoryID:   productData.SubcategoryID,
-		BrandID:         productData.BrandID,
-		PotencyID:       productData.PotencyID,
-		SizeID:          productData.SizeID,
-		VariantID:       productData.VariantID,
-		GroupID:         productData.GroupID,
+		SubcategoryID:   &productData.SubcategoryID,
+		BrandID:         &productData.BrandID,
+		PotencyID:       &productData.PotencyID,
+		SizeID:          &productData.SizeID,
+		VariantID:       &productData.VariantID,
+		GroupID:         &productData.GroupID,
 		HSNCode:         productData.HSNCode,
 		TaxSlabID:       productData.TaxSlabID,
 		UOMID:           productData.UOMID,
@@ -197,15 +202,15 @@ type ProductImportData struct {
 	RackLocation    string
 	Warehouse       string
 	// Master data IDs (populated after lookup/creation)
-	CategoryID      string
-	SubcategoryID   string
-	BrandID         string
-	PotencyID       string
-	SizeID          string
-	VariantID       string
-	GroupID         string
-	TaxSlabID       string
-	UOMID           string
+	CategoryID    string
+	SubcategoryID string
+	BrandID       string
+	PotencyID     string
+	SizeID        string
+	VariantID     string
+	GroupID       string
+	TaxSlabID     string
+	UOMID         string
 }
 
 // parseProductData parses Excel row into ProductImportData
@@ -542,7 +547,8 @@ func HandleImportProducts(c *gin.Context) {
 	}
 
 	// Initialize database connection
-	db := getDB()
+	cfg := config.Load()
+	db := database.Init(cfg.DatabaseURL)
 
 	service := NewProductImportService(db)
 	response, err := service.ImportProductsFromExcel(req.FilePath)

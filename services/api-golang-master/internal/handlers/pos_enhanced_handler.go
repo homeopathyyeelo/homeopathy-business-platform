@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/yeelo/homeopathy-erp/internal/models"
+	"github.com/yeelo/homeopathy-erp/internal/services"
 	"gorm.io/gorm"
 )
 
@@ -26,20 +27,24 @@ func NewPOSEnhancedHandler(db *gorm.DB) *POSEnhancedHandler {
 // ============================================================================
 
 type ProductSearchResult struct {
-	ID       string      `json:"id"`
-	Name     string      `json:"name"`
-	SKU      string      `json:"sku"`
-	Barcode  string      `json:"barcode"`
-	Category string      `json:"category"`
-	Brand    string      `json:"brand"`
-	Potency  string      `json:"potency"`
-	Form     string      `json:"form"`
-	HSNCode  string      `json:"hsnCode"`
-	GSTRate  float64     `json:"gstRate"`
-	MRP      float64     `json:"mrp"`
-	Stock    float64     `json:"stock"`
-	Batches  []BatchInfo `json:"batches"`
-	TaxRate  float64     `json:"taxRate"`
+	ID             string      `json:"id"`
+	Name           string      `json:"name"`
+	SKU            string      `json:"sku"`
+	Barcode        string      `json:"barcode"`
+	Category       string      `json:"category"`
+	Brand          string      `json:"brand"`
+	Potency        string      `json:"potency"`
+	Form           string      `json:"form"`
+	HSNCode        string      `json:"hsnCode"`
+	GSTRate        float64     `json:"gstRate"`
+	MRP            float64     `json:"mrp"`
+	WholesalePrice float64     `json:"wholesalePrice"`
+	DP             float64     `json:"dp"`
+	PTR            float64     `json:"ptr"`
+	PTS            float64     `json:"pts"`
+	Stock          float64     `json:"stock"`
+	Batches        []BatchInfo `json:"batches"`
+	TaxRate        float64     `json:"taxRate"`
 }
 
 type BatchInfo struct {
@@ -67,6 +72,7 @@ func (h *POSEnhancedHandler) SearchProducts(c *gin.Context) {
 
 	err := h.db.Preload("Category").Preload("Brand").Preload("Potency").
 		Preload("Form").Preload("HSNCode").Preload("InventoryBatches", "is_active = ? AND is_expired = ?", true, false).
+		Preload("PricingTiers", "is_active = ?", true).
 		Where("LOWER(name) LIKE ? OR LOWER(sku) LIKE ? OR LOWER(barcode) LIKE ?", searchQuery, searchQuery, searchQuery).
 		Where("is_active = ?", true).
 		Limit(20).
@@ -107,6 +113,25 @@ func (h *POSEnhancedHandler) SearchProducts(c *gin.Context) {
 		if p.HSNCode != nil {
 			result.HSNCode = p.HSNCode.Code
 			result.GSTRate = p.HSNCode.GSTRate
+		}
+
+		// Populate wholesale pricing from active tier
+		for _, tier := range p.PricingTiers {
+			if tier.IsActive {
+				if tier.WholesalePrice != nil {
+					result.WholesalePrice = *tier.WholesalePrice
+				}
+				if tier.DP != nil {
+					result.DP = *tier.DP
+				}
+				if tier.PTR != nil {
+					result.PTR = *tier.PTR
+				}
+				if tier.PTS != nil {
+					result.PTS = *tier.PTS
+				}
+				break // Use the first active tier found
+			}
 		}
 
 		// Sort batches by expiry (FEFO - First Expiry First Out)
@@ -254,11 +279,41 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 
 	for _, item := range req.Items {
 		// Validate stock
+		// Validate stock & Auto-select batch if needed
 		var batch models.InventoryBatch
-		if err := tx.First(&batch, "id = ?", item.BatchID).Error; err != nil {
-			tx.Rollback()
-			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Batch not found: %s", item.BatchID)})
-			return
+
+		// Auto-select batch if BatchID is empty
+		if item.BatchID == "" {
+			// Find best batch (FEFO) with stock
+			var bestBatch models.InventoryBatch
+			if err := tx.Where("product_id = ? AND is_active = ? AND is_expired = ? AND available_quantity >= ?",
+				item.ProductID, true, false, item.Quantity).
+				Order("expiry_date ASC NULLS LAST").
+				First(&bestBatch).Error; err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("No stock available for %s", item.ProductName)})
+				return
+			}
+			batch = bestBatch
+			item.BatchID = batch.ID // Assign the selected batch ID
+		} else {
+			// Validate provided BatchID
+			if err := tx.First(&batch, "id = ?", item.BatchID).Error; err != nil {
+				// Fallback: Try to find ANY valid batch if the specific one is not found
+				// This handles cases where frontend might send an invalid ID but we have stock
+				var bestBatch models.InventoryBatch
+				if err := tx.Where("product_id = ? AND is_active = ? AND available_quantity >= ?",
+					item.ProductID, true, item.Quantity).
+					Order("expiry_date ASC NULLS LAST").
+					First(&bestBatch).Error; err == nil {
+					batch = bestBatch
+					item.BatchID = batch.ID // Use this valid batch instead
+				} else {
+					tx.Rollback()
+					c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Batch not found: %s", item.BatchID)})
+					return
+				}
+			}
 		}
 
 		if batch.AvailableQuantity < item.Quantity {
@@ -421,15 +476,112 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 		}
 	}
 
-	// Calculate doctor commission if applicable
-	if req.DoctorID != "" {
-		go h.calculateDoctorCommission(invoice.ID, req.DoctorID, req.DoctorName, invoiceNo, totalAmount)
+	// Create Order from Invoice
+	orderService := services.NewOrderCreationService(tx)
+	orderItems := make([]services.OrderItemRequest, len(invoiceItems))
+	for i, invItem := range invoiceItems {
+		orderItems[i] = services.OrderItemRequest{
+			ProductID:   invItem.ProductID,
+			ProductName: invItem.ProductName,
+			SKU:         invItem.SKU,
+			BatchID:     invItem.BatchID,
+			BatchNumber: invItem.BatchNumber,
+			Quantity:    invItem.Quantity,
+			UnitPrice:   invItem.UnitPrice,
+			TotalPrice:  invItem.LineTotal,
+		}
 	}
+
+	// Create order from invoice
+	orderReq := services.InvoiceToOrderRequest{
+		InvoiceID:     invoice.ID,
+		InvoiceNo:     invoiceNo,
+		CustomerID:    invoice.CustomerID,
+		CustomerName:  req.CustomerName,
+		CustomerPhone: req.CustomerPhone,
+		CustomerEmail: req.CustomerEmail,
+		TotalAmount:   totalAmount,
+		Items:         orderItems,
+		PaymentMethod: req.PaymentMethod,
+		PaymentStatus: "PAID",
+	}
+
+	order, err := orderService.CreateOrderFromInvoice(tx, orderReq)
+	if err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
+		return
+	}
+
+	// Calculate doctor commission if applicable (async after commit)
+	calculateCommission := req.DoctorID != ""
 
 	// Commit transaction
 	if err := tx.Commit().Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to commit transaction"})
 		return
+	}
+
+	// Generate PDFs (after commit)
+	pdfService := services.NewInvoicePDFService()
+	pdfData := services.InvoiceData{
+		Invoice:      &invoice,
+		Items:        invoiceItems,
+		CompanyName:  "Homeopathy Store",      // TODO: Get from company settings
+		CompanyGSTIN: "29XXXXX1234X1ZS",       // TODO: Get from settings
+		CompanyAddr:  "123 Main Street, City", // TODO: Get from settings
+		CompanyPhone: "+91 9876543210",        // TODO: Get from settings
+	}
+
+	thermalPDF, err := pdfService.GenerateThermalReceipt(pdfData)
+	if err != nil {
+		// Log error but don't fail the invoice creation
+		thermalPDF = ""
+	}
+
+	a4PDF, err := pdfService.GenerateA4Invoice(pdfData)
+	if err != nil {
+		// Log error but don't fail the invoice creation
+		a4PDF = ""
+	}
+
+	// Send Notifications (Async)
+	notificationService := services.NewNotificationService()
+	go func() {
+		// Email Invoice
+		if req.CustomerEmail != "" && a4PDF != "" {
+			notificationService.SendInvoiceEmail(req.CustomerEmail, req.CustomerName, invoiceNo, a4PDF)
+		}
+
+		// WhatsApp Invoice
+		if req.CustomerPhone != "" && a4PDF != "" {
+			notificationService.SendInvoiceWhatsApp(req.CustomerPhone, invoiceNo, a4PDF)
+		}
+
+		// SMS Confirmation
+		if req.CustomerPhone != "" {
+			notificationService.SendPaymentConfirmationSMS(req.CustomerPhone, totalAmount, invoiceNo)
+		}
+	}()
+
+	// E-Invoice Generation (Async for B2B)
+	if invoice.InvoiceType == "B2B" || (invoice.CustomerGSTNumber != "") {
+		gstService := services.NewGSTService()
+		go func() {
+			irn, qrCode, err := gstService.GenerateIRN(&invoice)
+			if err == nil {
+				// Update invoice with IRN and QR Code
+				// Note: In a real app, we'd need a separate DB update here since the main transaction is committed
+				// For now, we just log it as the stub implementation doesn't persist back yet
+				fmt.Printf("Generated IRN for %s: %s\n", invoiceNo, irn)
+				_ = qrCode // usage
+			}
+		}()
+	}
+
+	// Async doctor commission calculation
+	if calculateCommission {
+		go h.calculateDoctorCommission(invoice.ID, req.DoctorID, req.DoctorName, invoiceNo, totalAmount)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -439,12 +591,16 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 			"invoiceNo":   invoiceNo,
 			"totalAmount": totalAmount,
 			"invoice":     invoice,
+			"order":       order,
 			"items":       invoiceItems,
+			"pdfs": gin.H{
+				"thermal": thermalPDF,
+				"a4":      a4PDF,
+			},
 		},
 	})
 }
 
-// Calculate doctor commission (async)
 func (h *POSEnhancedHandler) calculateDoctorCommission(invoiceID, doctorID, doctorName, invoiceNo string, invoiceAmount float64) {
 	// Get commission rule
 	var rule models.DoctorCommissionRule

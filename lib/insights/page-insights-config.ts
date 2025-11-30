@@ -28,33 +28,33 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
     pageName: 'Dashboard',
     insights: [
       {
-        title: 'Today\'s Sales Summary',
+        title: 'Dashboard Summary',
         icon: '💰',
-        dataFetcher: '/api/erp/dashboard/stats',
+        dataFetcher: '/api/dashboard/stats',
         priority: 10
       },
       {
-        title: 'Expiring Products Alert',
-        icon: '⏰',
-        dataFetcher: '/api/erp/dashboard/expiry-summary',
+        title: 'Customer Overview',
+        icon: '👥',
+        dataFetcher: '/api/customers?limit=5',
         priority: 9
       },
       {
-        title: 'Low Stock Alerts',
+        title: 'Product Catalog',
         icon: '📦',
-        dataFetcher: '/api/erp/inventory/alerts/low-stock',
+        dataFetcher: '/api/products?limit=5',
         priority: 8
       },
       {
         title: 'Recent Activity',
         icon: '📊',
-        dataFetcher: '/api/erp/dashboard/activity',
+        dataFetcher: '/api/dashboard/activity-feed',
         priority: 7
       },
       {
-        title: 'Pending Purchase Orders',
-        icon: '🛒',
-        dataFetcher: '/api/erp/purchases/pending',
+        title: 'System Status',
+        icon: '�',
+        dataFetcher: '/api/erp/notifications',
         priority: 6
       }
     ]
@@ -66,27 +66,27 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
     pageName: 'Products',
     insights: [
       {
-        title: 'Total Products',
+        title: 'Product Statistics',
         icon: '📦',
-        dataFetcher: '/api/erp/products?limit=1',
+        dataFetcher: '/api/products/stats',
         priority: 10
       },
       {
-        title: 'Categories',
+        title: 'Product Categories',
         icon: '📂',
-        dataFetcher: '/api/erp/categories',
+        dataFetcher: '/api/products/categories',
         priority: 9
       },
       {
-        title: 'Brands',
-        icon: '🏭',
-        dataFetcher: '/api/erp/brands',
+        title: 'Low Stock Items',
+        icon: '⚠️',
+        dataFetcher: '/api/inventory/low-stock',
         priority: 8
       },
       {
-        title: 'Recent Activity',
-        icon: '📊',
-        dataFetcher: '/api/erp/dashboard/activity?limit=3',
+        title: 'Recent Products',
+        icon: '🆕',
+        dataFetcher: '/api/products?limit=5&sort=created_at',
         priority: 7
       }
     ]
@@ -98,54 +98,105 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
     pageName: 'Inventory',
     insights: [
       {
-        title: 'Expiry Alerts',
-        icon: '🚨',
-        dataFetcher: '/api/erp/inventory/alerts/expiry',
+        title: 'Stock Overview',
+        icon: '📊',
+        dataFetcher: '/api/inventory',
         priority: 10
       },
       {
         title: 'Low Stock Alerts',
         icon: '⚠️',
-        dataFetcher: '/api/erp/inventory/alerts/low-stock',
+        dataFetcher: '/api/inventory/low-stock',
         priority: 9
       },
       {
-        title: 'Stock Summary',
-        icon: '📊',
-        dataFetcher: '/api/erp/inventory/stock',
+        title: 'Product Categories',
+        icon: '📂',
+        dataFetcher: '/api/products/categories',
         priority: 8
       },
       {
-        title: 'Recent Activity',
-        icon: '📝',
-        dataFetcher: '/api/erp/dashboard/activity?limit=3',
+        title: 'System Status',
+        icon: '🔧',
+        dataFetcher: '/api/erp/notifications',
         priority: 7
       }
     ]
   },
 
-  // ============ SALES, PURCHASE, CUSTOMERS, VENDORS, etc. ============
-  // Simplified to use only dashboard/common endpoints
+  // ============ CUSTOMERS MODULE ============
   {
-    pagePattern: /^\/(sales|purchases|customers|vendors|finance|reports|analytics|marketing|hr|settings)/,
+    pagePattern: /^\/customers/,
+    pageName: 'Customers',
+    insights: [
+      {
+        title: 'Customer Overview',
+        icon: '👥',
+        dataFetcher: '/api/customers?limit=10',
+        priority: 10
+      },
+      {
+        title: 'Customer Statistics',
+        icon: '📊',
+        dataFetcher: '/api/dashboard/stats',
+        priority: 9
+      },
+      {
+        title: 'Recent Activity',
+        icon: '📝',
+        dataFetcher: '/api/dashboard/activity-feed',
+        priority: 8
+      }
+    ]
+  },
+
+  // ============ SALES MODULE ============
+  {
+    pagePattern: /^\/sales/,
+    pageName: 'Sales',
+    insights: [
+      {
+        title: 'Sales Summary',
+        icon: '💰',
+        dataFetcher: '/api/dashboard/stats',
+        priority: 10
+      },
+      {
+        title: 'Customer Overview',
+        icon: '👥',
+        dataFetcher: '/api/customers?limit=5',
+        priority: 9
+      },
+      {
+        title: 'Product Performance',
+        icon: '📦',
+        dataFetcher: '/api/products/stats',
+        priority: 8
+      }
+    ]
+  },
+
+  // ============ OTHER MODULES ============
+  {
+    pagePattern: /^\/(purchases|vendors|finance|reports|analytics|marketing|hr|settings)/,
     pageName: 'Module',
     insights: [
       {
-        title: 'Dashboard Summary',
+        title: 'Business Overview',
         icon: '📊',
-        dataFetcher: '/api/erp/dashboard/summary',
+        dataFetcher: '/api/dashboard/stats',
         priority: 10
       },
       {
         title: 'Recent Activity',
         icon: '📝',
-        dataFetcher: '/api/erp/dashboard/activity?limit=5',
+        dataFetcher: '/api/dashboard/activity-feed',
         priority: 9
       },
       {
-        title: 'Expiry Summary',
-        icon: '⏰',
-        dataFetcher: '/api/erp/dashboard/expiry-summary',
+        title: 'System Status',
+        icon: '🔧',
+        dataFetcher: '/api/erp/notifications',
         priority: 8
       }
     ]
@@ -159,19 +210,19 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Business Overview',
         icon: '🏪',
-        dataFetcher: '/api/erp/dashboard/summary',
+        dataFetcher: '/api/dashboard/stats',
         priority: 10
       },
       {
-        title: 'Quick Actions',
-        icon: '⚡',
-        dataFetcher: '/api/erp/dashboard/quick-actions',
+        title: 'Customer Base',
+        icon: '👥',
+        dataFetcher: '/api/customers?limit=5',
         priority: 9
       },
       {
-        title: 'System Notifications',
+        title: 'System Status',
         icon: '🔔',
-        dataFetcher: '/api/erp/notifications/recent',
+        dataFetcher: '/api/erp/notifications',
         priority: 8
       }
     ]

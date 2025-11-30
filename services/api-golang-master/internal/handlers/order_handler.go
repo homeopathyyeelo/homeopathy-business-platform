@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/yeelo/homeopathy-erp/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -18,56 +20,60 @@ func NewOrderHandler(db *gorm.DB) *OrderHandler {
 }
 
 type Order struct {
-	ID              uuid.UUID  `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	OrderNumber     string     `json:"order_number" gorm:"uniqueIndex"`
-	CustomerID      uuid.UUID  `json:"customer_id" gorm:"index"`
-	CustomerName    string     `json:"customer_name"`
-	CustomerEmail   string     `json:"customer_email"`
-	CustomerPhone   string     `json:"customer_phone"`
-	Status          string     `json:"status" gorm:"index;default:'pending'"` // pending, confirmed, processing, shipped, delivered, cancelled, returned
-	PaymentStatus   string     `json:"payment_status" gorm:"index;default:'pending'"` // pending, paid, failed, refunded
-	PaymentMethod   string     `json:"payment_method"`
-	Subtotal        float64    `json:"subtotal"`
-	TaxAmount       float64    `json:"tax_amount"`
-	DiscountAmount  float64    `json:"discount_amount"`
-	ShippingAmount  float64    `json:"shipping_amount"`
-	TotalAmount     float64    `json:"total_amount"`
-	ShippingAddress string     `json:"shipping_address"`
-	ShippingCity    string     `json:"shipping_city"`
-	ShippingState   string     `json:"shipping_state"`
-	ShippingPincode string     `json:"shipping_pincode"`
-	ShippingCountry string     `json:"shipping_country" gorm:"default:'India'"`
-	BillingAddress  string     `json:"billing_address"`
-	Notes           string     `json:"notes"`
-	InternalNotes   string     `json:"internal_notes"`
-	TrackingNumber  string     `json:"tracking_number"`
-	CourierName     string     `json:"courier_name"`
-	Metadata        string     `json:"metadata" gorm:"type:jsonb"`
-	ConfirmedAt     *time.Time `json:"confirmed_at"`
-	ShippedAt       *time.Time `json:"shipped_at"`
-	DeliveredAt     *time.Time `json:"delivered_at"`
-	CancelledAt     *time.Time `json:"cancelled_at"`
-	CreatedAt       time.Time  `json:"created_at" gorm:"index"`
-	UpdatedAt       time.Time  `json:"updated_at"`
+	ID              uuid.UUID   `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	OrderNumber     string      `json:"order_number" gorm:"uniqueIndex"`
+	CustomerID      uuid.UUID   `json:"customer_id" gorm:"index"`
+	CustomerName    string      `json:"customer_name"`
+	CustomerEmail   string      `json:"customer_email"`
+	CustomerPhone   string      `json:"customer_phone"`
+	Status          string      `json:"status" gorm:"index;default:'pending'"`         // pending, confirmed, processing, shipped, delivered, cancelled, returned
+	PaymentStatus   string      `json:"payment_status" gorm:"index;default:'pending'"` // pending, paid, failed, refunded
+	PaymentMethod   string      `json:"payment_method"`
+	Subtotal        float64     `json:"subtotal"`
+	TaxAmount       float64     `json:"tax_amount"`
+	DiscountAmount  float64     `json:"discount_amount"`
+	ShippingAmount  float64     `json:"shipping_amount"`
+	TotalAmount     float64     `json:"total_amount"`
+	ShippingAddress string      `json:"shipping_address"`
+	ShippingCity    string      `json:"shipping_city"`
+	ShippingState   string      `json:"shipping_state"`
+	ShippingPincode string      `json:"shipping_pincode"`
+	ShippingCountry string      `json:"shipping_country" gorm:"default:'India'"`
+	BillingAddress  string      `json:"billing_address"`
+	Notes           string      `json:"notes"`
+	InternalNotes   string      `json:"internal_notes"`
+	TrackingNumber  string      `json:"tracking_number"`
+	CourierName     string      `json:"courier_name"`
+	Metadata        string      `json:"metadata" gorm:"type:jsonb"`
+	ConfirmedAt     *time.Time  `json:"confirmed_at"`
+	ShippedAt       *time.Time  `json:"shipped_at"`
+	DeliveredAt     *time.Time  `json:"delivered_at"`
+	CancelledAt     *time.Time  `json:"cancelled_at"`
+	CreatedAt       time.Time   `json:"created_at" gorm:"index"`
+	UpdatedAt       time.Time   `json:"updated_at"`
+	Items           []OrderItem `json:"items" gorm:"foreignKey:OrderID"`
 }
 
 type OrderItem struct {
-	ID           uuid.UUID `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
-	OrderID      uuid.UUID `json:"order_id" gorm:"index"`
-	ProductID    uuid.UUID `json:"product_id" gorm:"index"`
-	ProductName  string    `json:"product_name"`
-	ProductSKU   string    `json:"product_sku"`
-	ProductImage string    `json:"product_image"`
-	Quantity     int       `json:"quantity"`
-	UnitPrice    float64   `json:"unit_price"`
-	Discount     float64   `json:"discount"`
-	TaxRate      float64   `json:"tax_rate"`
-	TaxAmount    float64   `json:"tax_amount"`
-	TotalPrice   float64   `json:"total_price"`
-	Notes        string    `json:"notes"`
-	Metadata     string    `json:"metadata" gorm:"type:jsonb"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID           uuid.UUID  `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	OrderID      uuid.UUID  `json:"order_id" gorm:"index"`
+	ProductID    uuid.UUID  `json:"product_id" gorm:"index"`
+	ProductName  string     `json:"product_name"`
+	ProductSKU   string     `json:"product_sku"`
+	ProductImage string     `json:"product_image"`
+	Quantity     int        `json:"quantity"`
+	UnitPrice    float64    `json:"unit_price"`
+	Discount     float64    `json:"discount"`
+	TaxRate      float64    `json:"tax_rate"`
+	TaxAmount    float64    `json:"tax_amount"`
+	TotalPrice   float64    `json:"total_price"`
+	Notes        string     `json:"notes"`
+	Metadata     string     `json:"metadata" gorm:"type:jsonb"`
+	BatchID      *string    `json:"batch_id" gorm:"type:uuid"`
+	BatchNumber  string     `json:"batch_number"`
+	ExpiryDate   *time.Time `json:"expiry_date"`
+	CreatedAt    time.Time  `json:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at"`
 }
 
 type OrderStatusHistory struct {
@@ -100,12 +106,12 @@ func (h *OrderHandler) GetOrders(c *gin.Context) {
 func (h *OrderHandler) GetOrder(c *gin.Context) {
 	id := c.Param("id")
 	var order Order
-	
+
 	if err := h.DB.Preload("Items").First(&order, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "order": order})
 }
 
@@ -117,16 +123,61 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	// Start transaction
+	tx := h.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	order.ID = uuid.New()
 	order.OrderNumber = generateOrderNumber()
 	order.Status = "pending"
 	order.PaymentStatus = "pending"
+	order.CreatedAt = time.Now()
+	order.UpdatedAt = time.Now()
 
-	if err := h.DB.Create(&order).Error; err != nil {
+	// Process items for inventory
+	for i := range order.Items {
+		item := &order.Items[i]
+		item.ID = uuid.New()
+		item.OrderID = order.ID
+		item.CreatedAt = time.Now()
+		item.UpdatedAt = time.Now()
+
+		// Find best batch (FEFO)
+		var batch models.InventoryBatch
+		if err := tx.Where("product_id = ? AND is_active = ? AND is_expired = ? AND available_quantity >= ?",
+			item.ProductID, true, false, item.Quantity).
+			Order("expiry_date ASC NULLS LAST").
+			First(&batch).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Insufficient stock for product %s (Qty: %d)", item.ProductName, item.Quantity)})
+			return
+		}
+
+		// Deduct stock
+		newQty := batch.AvailableQuantity - float64(item.Quantity)
+		if err := tx.Model(&batch).Update("available_quantity", newQty).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update stock"})
+			return
+		}
+
+		// Assign batch info
+		item.BatchID = &batch.ID
+		item.BatchNumber = batch.BatchNumber
+		item.ExpiryDate = batch.ExpiryDate
+	}
+
+	if err := tx.Create(&order).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	tx.Commit()
 	c.JSON(http.StatusOK, gin.H{"success": true, "order": order})
 }
 
@@ -134,7 +185,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 func (h *OrderHandler) UpdateOrder(c *gin.Context) {
 	id := c.Param("id")
 	var order Order
-	
+
 	if err := h.DB.First(&order, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
@@ -161,7 +212,7 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 		Status string `json:"status" binding:"required"`
 		Notes  string `json:"notes"`
 	}
-	
+
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -200,24 +251,90 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 	}
 	h.DB.Create(&history)
 
+	// Restore stock if cancelled
+	if req.Status == "cancelled" && oldStatus != "cancelled" {
+		// Load items if not loaded
+		if len(order.Items) == 0 {
+			h.DB.Model(&order).Association("Items").Find(&order.Items)
+		}
+
+		for _, item := range order.Items {
+			if item.BatchID != nil {
+				// Restore to original batch
+				h.DB.Model(&models.InventoryBatch{}).
+					Where("id = ?", item.BatchID).
+					UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", float64(item.Quantity)))
+			} else {
+				// Fallback: Restore to best batch
+				var batch models.InventoryBatch
+				if err := h.DB.Where("product_id = ?", item.ProductID).
+					Order("expiry_date ASC NULLS LAST").
+					First(&batch).Error; err == nil {
+					h.DB.Model(&batch).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", float64(item.Quantity)))
+				}
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{"success": true, "order": order})
 }
 
 // Cancel order
 func (h *OrderHandler) CancelOrder(c *gin.Context) {
 	id := c.Param("id")
+
+	tx := h.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	var order Order
-	
-	if err := h.DB.First(&order, "id = ?", id).Error; err != nil {
+	if err := tx.Preload("Items").First(&order, "id = ?", id).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
 		return
+	}
+
+	if order.Status == "cancelled" {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Order already cancelled"})
+		return
+	}
+
+	// Restore stock
+	for _, item := range order.Items {
+		if item.BatchID != nil {
+			// Restore to original batch
+			if err := tx.Model(&models.InventoryBatch{}).
+				Where("id = ?", item.BatchID).
+				UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", float64(item.Quantity))).
+				Error; err != nil {
+				// Log error?
+			}
+		} else {
+			// Fallback: Restore to best batch
+			var batch models.InventoryBatch
+			if err := tx.Where("product_id = ?", item.ProductID).
+				Order("expiry_date ASC NULLS LAST").
+				First(&batch).Error; err == nil {
+				tx.Model(&batch).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", float64(item.Quantity)))
+			}
+		}
 	}
 
 	now := time.Now()
 	order.Status = "cancelled"
 	order.CancelledAt = &now
-	h.DB.Save(&order)
 
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cancel order"})
+		return
+	}
+
+	tx.Commit()
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Order cancelled"})
 }
 

@@ -148,15 +148,16 @@ type Product struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 
 	// Relationships
-	Category           *Category           `json:"category" gorm:"foreignKey:CategoryID"`
-	Brand              *Brand              `json:"brand" gorm:"foreignKey:BrandID"`
-	Potency            *Potency            `json:"potency" gorm:"foreignKey:PotencyID"`
-	Form               *Form               `json:"form" gorm:"foreignKey:FormID"`
-	HSNCode            *HSNCode            `json:"hsnCode" gorm:"foreignKey:HSNCodeID"`
-	Unit               *Unit               `json:"unit" gorm:"foreignKey:UnitID"`
-	InventoryBatches   []InventoryBatch    `json:"inventoryBatches" gorm:"foreignKey:ProductID"`
-	SalesOrderItems    []SalesOrderItem    `json:"salesOrderItems" gorm:"foreignKey:ProductID"`
-	PurchaseOrderItems []PurchaseOrderItem `json:"purchaseOrderItems" gorm:"foreignKey:ProductID"`
+	Category           *Category            `json:"category" gorm:"foreignKey:CategoryID"`
+	Brand              *Brand               `json:"brand" gorm:"foreignKey:BrandID"`
+	Potency            *Potency             `json:"potency" gorm:"foreignKey:PotencyID"`
+	Form               *Form                `json:"form" gorm:"foreignKey:FormID"`
+	HSNCode            *HSNCode             `json:"hsnCode" gorm:"foreignKey:HSNCodeID"`
+	Unit               *Unit                `json:"unit" gorm:"foreignKey:UnitID"`
+	InventoryBatches   []InventoryBatch     `json:"inventoryBatches" gorm:"foreignKey:ProductID"`
+	PricingTiers       []ProductPricingTier `json:"pricingTiers" gorm:"foreignKey:ProductID"`
+	SalesOrderItems    []SalesOrderItem     `json:"salesOrderItems" gorm:"foreignKey:ProductID"`
+	PurchaseOrderItems []PurchaseOrderItem  `json:"purchaseOrderItems" gorm:"foreignKey:ProductID"`
 }
 
 // Customers Entity
