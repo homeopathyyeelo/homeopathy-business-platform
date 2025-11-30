@@ -104,4 +104,21 @@ func RegisterPOSRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		eway.POST("/extend", eInvoiceHandler.ExtendEWayBill)
 		eway.POST("/cancel", eInvoiceHandler.CancelEWayBill)
 	}
+
+	// ============================================================================
+	// ORDERS MANAGEMENT & PAYMENT TRACKING
+	// ============================================================================
+	ordersHandler := handlers.NewOrdersHandler(db)
+	orders := router.Group("/orders")
+	{
+		// List orders with filters
+		orders.GET("", ordersHandler.GetOrders)
+
+		// Order details
+		orders.GET("/:id", ordersHandler.GetOrderDetails)
+
+		// Payment tracking
+		orders.GET("/:id/payments", ordersHandler.GetOrderPayments)
+		orders.POST("/:id/payments", ordersHandler.RecordPayment)
+	}
 }

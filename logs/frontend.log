@@ -4,674 +4,364 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 1993ms
+ ✓ Ready in 1972ms
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 814ms (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 8.7s (1265 modules)
- GET / 200 in 9432ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 3.5s (2199 modules)
- GET /dashboard 200 in 3771ms
- GET /dashboard 200 in 121ms
- GET /dashboard 200 in 120ms
- ○ Compiling /products ...
- ✓ Compiled /products in 761ms (2212 modules)
- GET /products 200 in 956ms
- GET /products 200 in 500ms
- ✓ Compiled in 1577ms (2226 modules)
- GET /products 200 in 349ms
- ✓ Compiled in 784ms (2226 modules)
- GET /products 200 in 320ms
- ✓ Compiled in 806ms (2226 modules)
- GET /products 200 in 327ms
- ✓ Compiled in 789ms (2226 modules)
- GET /products 200 in 254ms
- ✓ Compiled in 582ms (2226 modules)
- GET /products 200 in 221ms
- ✓ Compiled in 754ms (2226 modules)
- GET /products 200 in 428ms
- ✓ Compiled in 819ms (2226 modules)
- GET /products 200 in 214ms
- ✓ Compiled in 535ms (2226 modules)
- GET /products 200 in 173ms
- ✓ Compiled in 523ms (2226 modules)
- GET /products 200 in 190ms
- ✓ Compiled in 810ms (2226 modules)
- GET /products 200 in 210ms
- ✓ Compiled in 585ms (2226 modules)
- GET /products 200 in 241ms
- ✓ Compiled in 663ms (2226 modules)
- GET /products 200 in 276ms
- ✓ Compiled in 575ms (2226 modules)
- GET /products 200 in 192ms
- GET /products 200 in 583ms
- ✓ Compiled in 1750ms (2224 modules)
- GET /products 200 in 236ms
- ✓ Compiled in 672ms (2226 modules)
- GET /products 200 in 456ms
- ✓ Compiled in 740ms (2226 modules)
- GET /products 200 in 214ms
- ✓ Compiled in 876ms (2226 modules)
- GET /products 200 in 204ms
- ✓ Compiled in 645ms (2226 modules)
- GET /products 200 in 497ms
- ✓ Compiled in 1045ms (2222 modules)
- GET /products 200 in 192ms
- ✓ Compiled in 657ms (2226 modules)
- GET /products 200 in 265ms
- ✓ Compiled in 971ms (2222 modules)
- GET /products 200 in 388ms
- ✓ Compiled in 647ms (2226 modules)
- GET /products 200 in 309ms
- ✓ Compiled in 628ms (2224 modules)
- GET /products 200 in 312ms
- ✓ Compiled in 580ms (2226 modules)
- GET /products 200 in 279ms
- ✓ Compiled in 823ms (2226 modules)
- GET /products 200 in 278ms
- ✓ Compiled in 763ms (991 modules)
- GET /products 200 in 304ms
- ✓ Compiled in 2.4s (1282 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET /products 200 in 286ms
- ⨯ ReferenceError: config is not defined
-    at ProductsPage (app/products/page.tsx:23:63)
-  21 |           </div>
-  22 |           <div>
-> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
-     |                                                               ^
-  24 |             <p className="text-gray-500">{config.description}</p>
-  25 |           </div>
-  26 |         </div> {
-  digest: '2664011510'
-}
- GET /products 500 in 532ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 4.3s (2226 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /products 200 in 2784ms
- ✓ Compiled in 1107ms (991 modules)
- GET /products 200 in 586ms
- ✓ Compiled in 659ms (991 modules)
- GET /products 200 in 178ms
- ✓ Compiled in 507ms (991 modules)
- GET /products 200 in 222ms
- GET /products 200 in 261ms
- ○ Compiling /customers ...
- ✓ Compiled /customers in 2.6s (2351 modules)
- GET /customers 200 in 2831ms
- ○ Compiling /api/customers ...
- ✓ Compiled /api/customers in 1016ms (2370 modules)
-Customers API error: Error: No authentication token provided
-    at GET (app/api/customers/route.ts:23:13)
-  21 |     
-  22 |     if (!res.ok) {
-> 23 |       throw new Error(data.error || 'Failed to fetch customers');
-     |             ^
-  24 |     }
-  25 |
-  26 |     return NextResponse.json({
- GET /api/customers 500 in 1558ms
- ✓ Compiled in 1581ms (1060 modules)
- GET /customers 200 in 443ms
- ✓ Compiled in 874ms (1060 modules)
- GET /customers 200 in 930ms
- ✓ Compiled in 691ms (1060 modules)
- GET /customers 200 in 248ms
- ✓ Compiled in 1058ms (1060 modules)
- GET /customers 200 in 424ms
- ✓ Compiled in 573ms (1060 modules)
- GET /customers 200 in 486ms
- ✓ Compiled in 1461ms (1060 modules)
- GET /customers 200 in 358ms
- ✓ Compiled in 987ms (1060 modules)
- GET /customers 200 in 266ms
+ ✓ Compiled /middleware in 876ms (159 modules)
  ○ Compiling /sales/pos ...
- ✓ Compiled /sales/pos in 3.1s (2389 modules)
- GET /sales/pos 200 in 3561ms
- ✓ Compiled in 3.1s (1077 modules)
- GET /sales/pos 200 in 712ms
- ✓ Compiled in 1602ms (1077 modules)
- GET /sales/pos 200 in 414ms
- ⨯ ./app/customers/page.tsx
-Error:   [31mx[0m Expected '</', got ')'
-     ,-[[36;1;4m/var/www/homeopathy-business-platform/app/customers/page.tsx[0m:275:1]
- [2m272[0m |                       </Button>
- [2m273[0m |                     </TableCell>
- [2m274[0m |                   </TableRow>
- [2m275[0m |                 ))
-     : [35;1m                 ^[0m
- [2m276[0m |               )}
- [2m277[0m |             </TableBody>
- [2m278[0m |           </Table>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./app/customers/page.tsx
+ ✓ Compiled /sales/pos in 11.3s (1409 modules)
+ GET /sales/pos 200 in 12216ms
+ ✓ Compiled in 670ms (581 modules)
+ GET /sales/pos 200 in 695ms
+ ✓ Compiled in 791ms (581 modules)
+ GET /sales/pos 200 in 245ms
+ ✓ Compiled in 592ms (581 modules)
+ GET /sales/pos 200 in 314ms
+ ✓ Compiled in 730ms (581 modules)
+ GET /sales/pos 200 in 193ms
+ ✓ Compiled in 742ms (581 modules)
+ GET /sales/pos 200 in 647ms
+ ✓ Compiled in 463ms (581 modules)
+ GET /sales/pos 200 in 271ms
+ ✓ Compiled in 676ms (581 modules)
+ GET /sales/pos 200 in 222ms
+ GET /sales/pos 200 in 389ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 558ms (1390 modules)
+ GET /orders 404 in 1094ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 1487ms (582 modules)
+ GET /orders 404 in 252ms
+ GET /sales/pos 200 in 291ms
+ ✓ Compiled in 613ms (582 modules)
+ GET /orders 404 in 397ms
+ GET /sales/pos 200 in 272ms
+ GET /sales/pos 200 in 412ms
+ ○ Compiling /sales/orders ...
+ ✓ Compiled /sales/orders in 1162ms (1409 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /sales/orders 200 in 1902ms
+ GET /sales/pos 200 in 175ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 1931ms (1415 modules)
+ ✓ Compiled in 4ms (829 modules)
+ ✓ Compiled in 1ms (829 modules)
+ ✓ Compiled in 0ms (829 modules)
+ GET /sales/orders 200 in 1946ms
+ GET /sales/orders 200 in 2258ms
+ GET /sales/pos 200 in 2452ms
+ ✓ Compiled in 551ms (586 modules)
+ GET /sales/pos 200 in 576ms
+ GET /sales/orders 200 in 487ms
+ ✓ Compiled in 414ms (586 modules)
+ GET /sales/pos 200 in 301ms
+ GET /sales/orders 200 in 301ms
+ ✓ Compiled in 313ms (586 modules)
+ GET /sales/pos 200 in 298ms
+ GET /sales/orders 200 in 299ms
+ ✓ Compiled in 367ms (586 modules)
+ GET /sales/pos 200 in 307ms
+ GET /sales/orders 200 in 307ms
+ GET /sales/orders 200 in 456ms
+ ✓ Compiled in 362ms (586 modules)
+ GET /sales/pos 200 in 302ms
+ GET /sales/orders 200 in 302ms
+ ✓ Compiled in 319ms (586 modules)
+ GET /sales/pos 200 in 413ms
+ GET /sales/orders 200 in 414ms
+ GET /sales/orders 200 in 292ms
+ ✓ Compiled in 497ms (586 modules)
+ GET /sales/pos 200 in 367ms
+ GET /sales/orders 200 in 160ms
+ ✓ Compiled in 311ms (586 modules)
+ GET /sales/pos 200 in 278ms
+ GET /sales/orders 200 in 279ms
+ ○ Compiling /sales/invoices ...
+ ✓ Compiled /sales/invoices in 2.1s (1431 modules)
+ GET /sales/invoices 200 in 2630ms
+ GET /sales/pos 200 in 267ms
+ GET /sales/invoices 200 in 181ms
+ ✓ Compiled in 550ms (594 modules)
+ GET /sales/pos 200 in 351ms
+ GET /sales/invoices 200 in 271ms
+ GET /sales/orders 200 in 164ms
+ ✓ Compiled in 842ms (594 modules)
+ GET /sales/pos 200 in 324ms
+ GET /sales/orders 200 in 325ms
+ ✓ Compiled in 318ms (594 modules)
+ GET /sales/pos 200 in 255ms
+ GET /sales/orders 200 in 256ms
+ ✓ Compiled in 310ms (594 modules)
+ GET /sales/pos 200 in 297ms
+ GET /sales/orders 200 in 297ms
+ ✓ Compiled in 377ms (594 modules)
+ GET /sales/pos 200 in 289ms
+ GET /sales/orders 200 in 290ms
+ ✓ Compiled in 297ms (594 modules)
+ GET /sales/pos 200 in 239ms
+ GET /sales/orders 200 in 240ms
+ GET /sales/invoices 200 in 125ms
+ ✓ Compiled in 402ms (594 modules)
+ GET /sales/pos 200 in 309ms
+ GET /sales/invoices 200 in 259ms
+ ✓ Compiled in 361ms (594 modules)
+ GET /sales/pos 200 in 254ms
+ GET /sales/invoices 200 in 254ms
+ ✓ Compiled in 401ms (594 modules)
+ GET /sales/invoices 200 in 464ms
+ GET /sales/pos 200 in 465ms
+ GET /sales/orders 200 in 502ms
+ ✓ Compiled in 510ms (594 modules)
+ GET /sales/orders 200 in 469ms
+ GET /sales/pos 200 in 471ms
+ GET /sales/invoices 200 in 472ms
+ ✓ Compiled in 289ms (594 modules)
+ GET /sales/orders 200 in 372ms
+ GET /sales/pos 200 in 375ms
+ GET /sales/invoices 200 in 375ms
+ ✓ Compiled in 474ms (594 modules)
+ GET /sales/orders 200 in 391ms
+ GET /sales/invoices 200 in 391ms
+ GET /sales/pos 200 in 393ms
+ ✓ Compiled in 308ms (594 modules)
+ GET /sales/orders 200 in 337ms
+ GET /sales/pos 200 in 338ms
+ GET /sales/invoices 200 in 339ms
+ GET /sales/orders 200 in 234ms
+ ✓ Compiled in 368ms (594 modules)
+ GET /sales/pos 200 in 357ms
+ GET /sales/orders 200 in 358ms
+ GET /sales/invoices 200 in 358ms
+ ✓ Compiled in 385ms (594 modules)
+ GET /sales/orders 200 in 550ms
+ GET /sales/invoices 200 in 551ms
+ GET /sales/pos 200 in 552ms
+ ✓ Compiled in 324ms (594 modules)
+ GET /sales/orders 200 in 399ms
+ GET /sales/invoices 200 in 401ms
+ GET /sales/pos 200 in 402ms
+ ✓ Compiled in 310ms (594 modules)
+ GET /sales/orders 200 in 329ms
+ GET /sales/invoices 200 in 330ms
+ GET /sales/pos 200 in 330ms
+ ✓ Compiled in 393ms (594 modules)
+ GET /sales/orders 200 in 401ms
+ GET /sales/invoices 200 in 400ms
+ GET /sales/pos 200 in 402ms
+ ✓ Compiled in 328ms (594 modules)
+ GET /sales/orders 200 in 488ms
+ GET /sales/pos 200 in 490ms
+ GET /sales/invoices 200 in 491ms
+ ✓ Compiled in 298ms (594 modules)
+ GET /sales/orders 200 in 350ms
+ GET /sales/invoices 200 in 350ms
+ GET /sales/pos 200 in 352ms
+ GET /sales/orders 200 in 253ms
+ ✓ Compiled in 347ms (594 modules)
+ GET /sales/pos 200 in 363ms
+ GET /sales/orders 200 in 363ms
+ GET /sales/invoices 200 in 364ms
+ ✓ Compiled in 419ms (594 modules)
+ GET /sales/orders 200 in 867ms
+ GET /sales/pos 200 in 924ms
+ GET /sales/invoices 200 in 925ms
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/sales/invoices'
+}
  ○ Compiling /_error ...
- ⨯ ./app/customers/page.tsx
-Error:   [31mx[0m Expected '</', got ')'
-     ,-[[36;1;4m/var/www/homeopathy-business-platform/app/customers/page.tsx[0m:275:1]
- [2m272[0m |                       </Button>
- [2m273[0m |                     </TableCell>
- [2m274[0m |                   </TableRow>
- [2m275[0m |                 ))
-     : [35;1m                 ^[0m
- [2m276[0m |               )}
- [2m277[0m |             </TableBody>
- [2m278[0m |           </Table>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./app/customers/page.tsx
- GET /sales/pos 500 in 15510ms
- GET /customers 500 in 3828ms
- GET /sales/pos 500 in 3818ms
- GET /sales/pos 500 in 245ms
- GET /sales/pos 500 in 212ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /customers 500 in 1955ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /sales/pos 500 in 1975ms
- ✓ Compiled /_error in 11.5s (2736 modules)
- GET /sales/pos 200 in 7583ms
- GET /customers 200 in 7582ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /sales/pos 200 in 1896ms
- GET /customers 200 in 2005ms
- ○ Compiling /api/customers ...
- ✓ Compiled /api/customers in 3.2s (1533 modules)
- GET /api/customers 200 in 3968ms
- GET /customers 200 in 611ms
- GET /sales/pos 200 in 613ms
- ✓ Compiled in 3.9s (2768 modules)
- GET /customers 200 in 939ms
- GET /sales/pos 200 in 723ms
- ○ Compiling /customers/[id] ...
- ✓ Compiled /customers/[id] in 7.2s (2769 modules)
- GET /customers 200 in 709ms
- GET /sales/pos 200 in 719ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 7480ms
- ○ Compiling /api/customers/[id] ...
- ✓ Compiled /api/customers/[id] in 1697ms (2771 modules)
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Fetch customer from Golang API
-  10 |     const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`);
- GET /api/customers/00000000-0000-0000-0000-000000000001 401 in 3111ms
- ○ Compiling /api/customers/[id]/invoices ...
- ✓ Compiled /api/customers/[id]/invoices in 895ms (2773 modules)
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 2495ms
- ○ Compiling /api/customers/[id]/products ...
- ✓ Compiled /api/customers/[id]/products in 799ms (2766 modules)
-Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/products/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 1886ms
- ✓ Compiled in 8.4s (2756 modules)
- GET /customers 200 in 1206ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1088ms
- GET /sales/pos 200 in 1211ms
- ✓ Compiled in 1127ms (1241 modules)
- GET /customers 200 in 1145ms
- GET /sales/pos 200 in 1163ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1055ms
- ✓ Compiled in 1273ms (1241 modules)
- GET /customers 200 in 1298ms
- GET /sales/pos 200 in 1299ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1126ms
- ○ Compiling /api/customers/[id] ...
- ✓ Compiled /api/customers/[id] in 820ms (1533 modules)
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 1697ms
- GET /customers 200 in 1017ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 896ms
- GET /sales/pos 200 in 1030ms
- ✓ Compiled in 5.5s (2774 modules)
- ✓ Compiled in 1ms (1533 modules)
- ✓ Compiled in 1ms (1533 modules)
- ✓ Compiled in 1ms (1533 modules)
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 6027ms
- ✓ Compiled /api/customers/[id]/invoices in 1ms (1533 modules)
- GET /customers 200 in 6976ms
- GET /sales/pos 200 in 7003ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 6881ms
- ✓ Compiled in 5s (2776 modules)
- ✓ Compiled in 4ms (1535 modules)
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 16381ms
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 5312ms
- ○ Compiling /api/customers/[id]/products ...
- GET /customers 200 in 7058ms
- GET /sales/pos 200 in 7394ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 7253ms
- ✓ Compiled /api/customers/[id]/products in 2.3s (1537 modules)
- ✓ Compiled in 1ms (1537 modules)
- ✓ Compiled in 1ms (1537 modules)
- ✓ Compiled in 1ms (1537 modules)
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
-Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/products/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 7558ms
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 5498ms
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 6812ms
- ✓ Compiled in 1ms (1537 modules)
- GET /customers 200 in 6196ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 5852ms
- GET /sales/pos 200 in 6180ms
-Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/products/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 3286ms
- ✓ Compiled in 3.8s (1241 modules)
- GET /customers 200 in 2196ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1433ms
- GET /sales/pos 200 in 2229ms
- ✓ Compiled in 2.4s (1241 modules)
- GET /customers 200 in 1268ms
- GET /sales/pos 200 in 1270ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1024ms
- ✓ Compiled in 6.4s (2756 modules)
- GET /customers 200 in 1411ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1245ms
- GET /sales/pos 200 in 1418ms
- ✓ Compiled in 6.1s (2762 modules)
- GET /customers 200 in 1184ms
- GET /sales/pos 200 in 1281ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1182ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1417ms
- ○ Compiling /api/customers/[id] ...
- ✓ Compiled /api/customers/[id] in 3.2s (1536 modules)
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 4480ms
- ○ Compiling /api/customers/[id]/invoices ...
- ✓ Compiled /api/customers in 4.9s (2782 modules)
- ✓ Compiled in 1ms (1540 modules)
- ✓ Compiled in 9ms (1540 modules)
- ✓ Compiled in 0ms (1540 modules)
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 10579ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 5661ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 6426ms
- GET /api/customers 200 in 8091ms
- GET /customers 200 in 6852ms
- GET /sales/pos 200 in 6859ms
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 1728ms
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 1190ms
- ○ Compiling /api/customers/[id]/products ...
- ✓ Compiled /api/customers/[id]/products in 9.3s (2786 modules)
- ✓ Compiled in 1ms (1542 modules)
- ✓ Compiled in 0ms (1542 modules)
- ✓ Compiled in 1ms (1542 modules)
-Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/products/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/products 200 in 13608ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 4643ms
- GET /api/customers?limit=100 200 in 11348ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 6022ms
- ✓ Compiled in 1ms (1542 modules)
- GET /customers 200 in 7270ms
- GET /sales/pos 200 in 7368ms
- ✓ Compiled in 6ms (1542 modules)
- ✓ Compiled in 5.6s (2786 modules)
- GET /api/customers?limit=100 200 in 12719ms
-Error: Route "/api/customers/[id]" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     
-   9 |     // Get auth token from request
-  10 |     const authHeader = request.headers.get('authorization') || request.headers.get('cookie');
- GET /api/customers/00000000-0000-0000-0000-000000000001 200 in 3822ms
- GET /customers 200 in 13262ms
-Error: Route "/api/customers/[id]/invoices" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/invoices/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/invoices 404 in 1056ms
- GET /sales/pos 200 in 2131ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 2150ms
-Error: Route "/api/customers/[id]/products" used `params.id`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at GET (app/api/customers/[id]/products/route.ts:7:31)
-   5 | export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-   6 |   try {
->  7 |     const customerId = params.id;
-     |                               ^
-   8 |     const { searchParams } = new URL(request.url);
-   9 |     const limit = searchParams.get('limit') || '50';
-  10 |     
- GET /api/customers/00000000-0000-0000-0000-000000000001/products 404 in 1177ms
- GET /api/customers?limit=100 200 in 462ms
- GET /api/customers 200 in 407ms
- GET /api/customers?limit=100 200 in 213ms
- ✓ Compiled in 1959ms (2786 modules)
- GET /sales/pos 200 in 1152ms
- GET /customers 200 in 1160ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1037ms
- ✓ Compiled in 5.5s (2786 modules)
- GET /sales/pos 200 in 894ms
- GET /customers 200 in 900ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 822ms
- GET /sales/pos 200 in 860ms
- GET /products 200 in 1449ms
- ✓ Compiled in 4.7s (2786 modules)
- GET /customers 200 in 2188ms
- GET /sales/pos 200 in 1787ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1825ms
- ○ Compiling /api/products ...
- ✓ Compiled /api/products in 3.6s (2780 modules)
- GET /api/products?limit=100 401 in 4423ms
- GET /api/products?limit=100 401 in 468ms
- ✓ Compiled in 1938ms (1244 modules)
- GET /products 200 in 1470ms
- GET /customers 200 in 1684ms
- GET /sales/pos 200 in 1686ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1475ms
- ✓ Compiled in 1533ms (1244 modules)
- GET /sales/pos 200 in 2201ms
- GET /customers 200 in 2224ms
- GET /products 200 in 2226ms
- ✓ Compiled in 2.5s (1244 modules)
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1480ms
- GET /products 200 in 1801ms
- GET /customers 200 in 1825ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1739ms
- GET /sales/pos 200 in 745ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 4.5s (2785 modules)
- GET /dashboard/stats 200 in 5273ms
- ✓ Compiled in 1255ms (1249 modules)
- GET /products 200 in 1871ms
- GET /customers 200 in 1900ms
- GET /dashboard/stats 200 in 1922ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1794ms
- GET /sales/pos 200 in 1766ms
- GET /sales/pos 200 in 644ms
- ✓ Compiled in 9.4s (2304 modules)
- GET /products 200 in 1902ms
- GET /customers 200 in 1918ms
- GET /dashboard/stats 200 in 1925ms
- GET /sales/pos 200 in 1933ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1735ms
- ✓ Compiled in 4.2s (2304 modules)
- GET /dashboard/stats 200 in 2046ms
- GET /customers 200 in 2052ms
- GET /products 200 in 2055ms
- GET /sales/pos 200 in 2056ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1905ms
- ✓ Compiled in 2.6s (2304 modules)
- GET /products 200 in 2100ms
- GET /customers 200 in 2110ms
- GET /dashboard/stats 200 in 2127ms
- GET /sales/pos 200 in 2143ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1945ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 4s (1526 modules)
- GET /dashboard 200 in 4663ms
- ○ Compiling /api/dashboard/stats ...
- ✓ Compiled /api/dashboard/stats in 5.8s (2779 modules)
- GET /api/dashboard/stats 200 in 7090ms
- GET /api/dashboard/stats 200 in 7133ms
- ✓ Compiled in 1893ms (2793 modules)
- GET /dashboard/stats 200 in 2172ms
- GET /products 200 in 2176ms
- GET /customers 200 in 2169ms
- GET /dashboard 200 in 2173ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 2032ms
- ✓ Compiled in 2.5s (2793 modules)
- GET /products 200 in 2167ms
- GET /dashboard 200 in 2156ms
- GET /customers 200 in 2160ms
- GET /dashboard/stats 200 in 2176ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1861ms
- ✓ Compiled in 6.3s (2793 modules)
- GET /dashboard/stats 200 in 1713ms
- GET /dashboard 200 in 1718ms
- GET /customers 200 in 1726ms
- GET /products 200 in 1731ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1618ms
- GET /products 200 in 655ms
- ○ Compiling /api/products ...
- ✓ Compiled /api/products in 4.7s (1552 modules)
- GET /api/products?limit=100 401 in 5539ms
- GET /api/products?limit=100 401 in 2395ms
- GET /api/products?limit=100 401 in 5614ms
- ○ Compiling /api/customers ...
- ✓ Compiled /api/customers in 3.7s (2801 modules)
- ✓ Compiled in 1ms (1554 modules)
- GET /api/customers 200 in 5487ms
- GET /products 200 in 4365ms
- GET /products 200 in 4369ms
- GET /customers 200 in 4369ms
- GET /dashboard/stats 200 in 4375ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 4174ms
- ✓ Compiled in 3.3s (2781 modules)
- GET /dashboard/stats 200 in 2010ms
- GET /customers 200 in 2016ms
- GET /products 200 in 2021ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1833ms
- GET /products 200 in 817ms
- ✓ Compiled in 1914ms (1249 modules)
- GET /products 200 in 1896ms
- GET /products 200 in 1902ms
- GET /customers 200 in 1903ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1557ms
- GET /dashboard/stats 200 in 1909ms
- ✓ Compiled in 4.7s (1246 modules)
- GET /products 200 in 2208ms
- GET /customers 200 in 2230ms
- ✓ Compiled in 2.5s (1246 modules)
- GET /dashboard/stats 200 in 2279ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 1486ms
- GET /customers 200 in 527ms
- GET /customers/00000000-0000-0000-0000-000000000001 200 in 3842ms
- GET /dashboard/stats 200 in 9123ms
- GET /products 200 in 8469ms
- ✓ Compiled in 4.6s (2778 modules)
- GET /products 200 in 962ms
- GET /dashboard/stats 200 in 964ms
- GET /products 200 in 879ms
- ✓ Compiled in 2.3s (2752 modules)
- GET /products 200 in 759ms
- GET /products 200 in 692ms
- ✓ Compiled in 2s (1246 modules)
- GET /products 200 in 202ms
- ✓ Compiled in 760ms (1246 modules)
- GET /products 200 in 316ms
- ✓ Compiled in 663ms (1246 modules)
- GET /products 200 in 119ms
- ✓ Compiled in 635ms (1246 modules)
- GET /products 200 in 144ms
- ✓ Compiled in 1076ms (1246 modules)
- GET /products 200 in 604ms
- ✓ Compiled in 693ms (1246 modules)
- GET /products 200 in 164ms
- ✓ Compiled in 1937ms (1246 modules)
- GET /products 200 in 732ms
- ✓ Compiled in 823ms (1246 modules)
- GET /products 200 in 139ms
- ✓ Compiled in 498ms (1246 modules)
- GET /products 200 in 126ms
- ✓ Compiled in 742ms (1246 modules)
- GET /products 200 in 621ms
- ✓ Compiled in 731ms (1246 modules)
- GET /products 200 in 203ms
- ✓ Compiled in 552ms (1246 modules)
- GET /products 200 in 164ms
- ✓ Compiled in 511ms (1246 modules)
- GET /products 200 in 167ms
- ✓ Compiled in 802ms (1246 modules)
- GET /products 200 in 466ms
- ✓ Compiled in 647ms (1246 modules)
- GET /products 200 in 176ms
- ✓ Compiled in 919ms (1246 modules)
- GET /products 200 in 174ms
- ✓ Compiled in 1751ms (1246 modules)
- GET /products 200 in 490ms
- ✓ Compiled in 608ms (1246 modules)
- GET /products 200 in 131ms
- ✓ Compiled in 2.1s (1246 modules)
- GET /products 200 in 493ms
- ✓ Compiled in 1131ms (1246 modules)
- GET /products 200 in 177ms
- ✓ Compiled in 557ms (1246 modules)
- GET /products 200 in 142ms
- ✓ Compiled in 596ms (1246 modules)
- GET /products 200 in 436ms
- ✓ Compiled in 485ms (1246 modules)
- GET /products 200 in 198ms
- ✓ Compiled in 642ms (1246 modules)
- GET /products 200 in 143ms
- ✓ Compiled in 990ms (1246 modules)
- GET /products 200 in 244ms
- ✓ Compiled in 444ms (1246 modules)
- GET /products 200 in 137ms
- ✓ Compiled in 785ms (1246 modules)
- GET /products 200 in 320ms
- ✓ Compiled in 2.5s (1246 modules)
- GET /products 200 in 603ms
- ✓ Compiled in 787ms (1246 modules)
- GET /products 200 in 647ms
-Killed
+ ✓ Compiled /_error in 4.1s (1764 modules)
+ GET /sales/invoices 500 in 4069ms
+ GET /sales/invoices 200 in 383ms
+ GET /sales/pos 200 in 602ms
+ GET /sales/pos 200 in 212ms
+ GET /sales/pos 200 in 158ms
+ ✓ Compiled in 433ms (752 modules)
+ GET /sales/pos 200 in 144ms
+ ✓ Compiled in 2.3s (1778 modules)
+ GET /sales/pos 200 in 344ms
+ GET /sales/orders 200 in 742ms
+ ✓ Compiled in 440ms (752 modules)
+ GET /sales/orders 200 in 292ms
+ GET /sales/pos 200 in 293ms
+ GET /sales/orders 200 in 294ms
+ ✓ Compiled in 372ms (752 modules)
+ GET /sales/pos 200 in 361ms
+ GET /sales/orders 200 in 361ms
+ GET /sales/invoices 200 in 435ms
+ ✓ Compiled in 373ms (752 modules)
+ GET /sales/orders 200 in 669ms
+ ✓ Compiled in 867ms (752 modules)
+ GET /sales/pos 200 in 660ms
+ GET /sales/invoices 200 in 665ms
+ GET /sales/pos 200 in 598ms
+ GET /sales/invoices 200 in 549ms
+ GET /sales/orders 200 in 374ms
+ GET /sales/invoices 200 in 247ms
+ ✓ Compiled in 409ms (752 modules)
+ GET /sales/orders 200 in 1271ms
+ ✓ Compiled in 1467ms (752 modules)
+ GET /sales/pos 200 in 1326ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /sales/orders 200 in 770ms
+ GET /sales/invoices 200 in 776ms
+ GET /sales/pos 200 in 352ms
+ GET /sales/invoices 200 in 219ms
+ ✓ Compiled in 1010ms (752 modules)
+ GET /sales/orders 200 in 465ms
+ GET /sales/pos 200 in 467ms
+ GET /sales/invoices 200 in 469ms
+ ✓ Compiled in 314ms (752 modules)
+ GET /sales/orders 200 in 313ms
+ GET /sales/pos 200 in 314ms
+ GET /sales/invoices 200 in 315ms
+ ✓ Compiled in 425ms (751 modules)
+ GET /sales/orders 200 in 336ms
+ GET /sales/invoices 200 in 336ms
+ GET /sales/pos 200 in 337ms
+ ✓ Compiled in 406ms (751 modules)
+ GET /sales/orders 200 in 797ms
+ GET /sales/invoices 200 in 796ms
+ GET /sales/pos 200 in 798ms
+ ✓ Compiled in 353ms (751 modules)
+ GET /sales/orders 200 in 334ms
+ GET /sales/invoices 200 in 334ms
+ GET /sales/pos 200 in 335ms
+ GET /sales/orders 200 in 262ms
+ ✓ Compiled in 363ms (751 modules)
+ GET /sales/pos 200 in 500ms
+ GET /sales/orders 200 in 564ms
+ GET /sales/invoices 200 in 565ms
+ GET /sales/invoices 200 in 414ms
+ ✓ Compiled in 448ms (751 modules)
+ GET /sales/orders 200 in 939ms
+ ✓ Compiled in 1065ms (751 modules)
+ GET /sales/invoices 200 in 468ms
+ GET /sales/pos 200 in 471ms
+ GET /sales/orders 200 in 436ms
+ GET /sales/invoices 200 in 255ms
+ GET /sales/pos 200 in 256ms
+ GET /sales/invoices 200 in 334ms
+ ✓ Compiled in 381ms (751 modules)
+ GET /sales/orders 200 in 690ms
+ GET /sales/pos 200 in 562ms
+ GET /sales/invoices 200 in 564ms
+ ✓ Compiled in 734ms (751 modules)
+ GET /sales/pos 200 in 358ms
+ GET /sales/invoices 200 in 378ms
+ GET /sales/orders 200 in 217ms
+ GET /sales/orders 200 in 269ms
+ ✓ Compiled in 365ms (751 modules)
+ GET /sales/pos 200 in 335ms
+ GET /sales/orders 200 in 336ms
+ GET /sales/invoices 200 in 336ms
+ ✓ Compiled in 426ms (751 modules)
+ GET /sales/orders 200 in 370ms
+ GET /sales/invoices 200 in 371ms
+ GET /sales/pos 200 in 372ms
+ ✓ Compiled in 354ms (751 modules)
+ GET /sales/pos 200 in 456ms
+ GET /sales/invoices 200 in 458ms
+ GET /sales/orders 200 in 458ms
+ ✓ Compiled in 369ms (751 modules)
+ GET /sales/orders 200 in 433ms
+ GET /sales/pos 200 in 435ms
+ GET /sales/invoices 200 in 435ms
+ GET /sales/orders 200 in 326ms
+ ✓ Compiled in 638ms (751 modules)
+ GET /sales/pos 200 in 381ms
+ GET /sales/invoices 200 in 382ms
+ GET /sales/orders 200 in 383ms
+ ✓ Compiled in 356ms (751 modules)
+ GET /sales/pos 200 in 408ms
+ GET /sales/orders 200 in 409ms
+ GET /sales/invoices 200 in 410ms
+ ✓ Compiled in 309ms (751 modules)
+ GET /sales/orders 200 in 405ms
+ GET /sales/pos 200 in 405ms
+ GET /sales/invoices 200 in 407ms
+ ✓ Compiled in 394ms (751 modules)
+ GET /sales/orders 200 in 668ms
+ GET /sales/invoices 200 in 670ms
+ GET /sales/pos 200 in 672ms
+ ✓ Compiled in 347ms (751 modules)
+ GET /sales/orders 200 in 392ms
+ GET /sales/pos 200 in 393ms
+ GET /sales/invoices 200 in 394ms
+ ✓ Compiled in 333ms (751 modules)
+ GET /sales/pos 200 in 534ms
+ GET /sales/orders 200 in 535ms
+ GET /sales/invoices 200 in 535ms
+ ✓ Compiled in 469ms (751 modules)
+ GET /sales/pos 200 in 413ms
+ GET /sales/invoices 200 in 414ms
+ GET /sales/orders 200 in 415ms
+ ✓ Compiled in 462ms (751 modules)
+ GET /sales/pos 200 in 532ms
+ GET /sales/orders 200 in 534ms
+ GET /sales/invoices 200 in 535ms
+ ✓ Compiled in 336ms (751 modules)
+ GET /sales/pos 200 in 363ms
+ GET /sales/orders 200 in 364ms
+ GET /sales/invoices 200 in 365ms
+ ✓ Compiled in 343ms (751 modules)
+ GET /sales/pos 200 in 370ms
+ GET /sales/orders 200 in 370ms
+ GET /sales/invoices 200 in 371ms
+ ✓ Compiled in 386ms (751 modules)
+ GET /sales/orders 200 in 702ms
+ GET /sales/pos 200 in 699ms
+ GET /sales/invoices 200 in 701ms
+ ✓ Compiled in 427ms (751 modules)
+ GET /sales/orders 200 in 397ms
+ GET /sales/pos 200 in 398ms
+ GET /sales/invoices 200 in 401ms
+ ✓ Compiled in 386ms (751 modules)
+ GET /sales/orders 200 in 361ms
+ GET /sales/pos 200 in 362ms
+ GET /sales/invoices 200 in 363ms
+ ✓ Compiled in 354ms (751 modules)
+ GET /sales/pos 200 in 518ms
+ GET /sales/orders 200 in 520ms
+ GET /sales/invoices 200 in 522ms
+ ✓ Compiled in 412ms (751 modules)
+ GET /sales/pos 200 in 406ms
+ GET /sales/invoices 200 in 406ms
+ GET /sales/orders 200 in 408ms
+ ✓ Compiled in 1577ms (1685 modules)
+ GET /sales/orders 200 in 769ms
+ GET /sales/pos 200 in 770ms
+ GET /sales/invoices 200 in 771ms
+ ✓ Compiled in 646ms (751 modules)
+ GET /sales/pos 200 in 1116ms
+ GET /sales/orders 200 in 1120ms
+ GET /sales/invoices 200 in 1122ms
+ ✓ Compiled in 3.6s (1685 modules)
+ ✓ Compiled in 708ms (1685 modules)
+ ✓ Compiled in 418ms (751 modules)
+ ✓ Compiled in 700ms (1685 modules)
+ ✓ Compiled in 531ms (1685 modules)
+ ✓ Compiled in 371ms (751 modules)
+ ✓ Compiled in 569ms (1685 modules)
+ ✓ Compiled in 500ms (751 modules)
+ ✓ Compiled in 1137ms (1685 modules)
+ GET /sales/orders 200 in 600ms
+ ✓ Compiled in 539ms (751 modules)
+ GET /sales/orders 200 in 159ms
+ ✓ Compiled in 380ms (751 modules)
+ GET /sales/orders 200 in 131ms
+ GET /sales/invoices 200 in 451ms
+ ✓ Compiled in 359ms (751 modules)
+ GET /sales/orders 200 in 609ms
+ GET /sales/invoices 200 in 368ms
+ ✓ Compiled in 677ms (751 modules)
+ GET /sales/invoices 200 in 277ms
+ GET /sales/orders 200 in 168ms
+ ✓ Compiled in 325ms (751 modules)
+ GET /sales/orders 200 in 532ms
+ GET /sales/invoices 200 in 536ms
+ ✓ Compiled in 439ms (751 modules)
+ GET /sales/orders 200 in 254ms
+ GET /sales/invoices 200 in 254ms
+ ✓ Compiled in 425ms (751 modules)
+ GET /sales/orders 200 in 347ms
+ GET /sales/invoices 200 in 349ms

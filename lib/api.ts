@@ -88,7 +88,7 @@ export const api = {
     updateStatus: (id: string, status: string) => golangAPI.put(`/api/erp/sales/${id}/status`, { status }),
     cancel: (id: string) => golangAPI.delete(`/api/erp/sales/${id}`),
     getReport: (params?: any) => golangAPI.get('/api/erp/sales/reports', { params }),
-    getCustomerHistory: (customerId: string, params?: any) => 
+    getCustomerHistory: (customerId: string, params?: any) =>
       golangAPI.get(`/api/erp/customers/${customerId}/sales`, { params }),
   },
 
@@ -211,7 +211,7 @@ export const api = {
       },
       currency: {
         getRates: () => nestjsAPI.get('/finance/currency/rates'),
-        convert: (amount: number, from: string, to: string) => 
+        convert: (amount: number, from: string, to: string) =>
           nestjsAPI.get('/finance/currency/convert', { params: { amount, from, to } }),
       },
     },
@@ -275,7 +275,7 @@ export const api = {
     recommendations: (customerId?: string) => pythonAI.post('/api/ai/recommendations', { customerId }),
     contentGeneration: (prompt: string) => pythonAI.post('/api/ai/content', { prompt }),
     priceOptimization: (productId: string) => pythonAI.post('/api/ai/pricing', { productId }),
-    demandForecasting: (productId: string, days: number) => 
+    demandForecasting: (productId: string, days: number) =>
       pythonAI.post('/api/ai/demand-forecast', { productId, days }),
     customerSegmentation: () => pythonAI.get('/api/ai/segmentation'),
   },

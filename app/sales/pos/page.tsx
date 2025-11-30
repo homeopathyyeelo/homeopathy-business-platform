@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ShoppingCart, Printer, Save, Trash2, Plus, Minus, Search, User, CreditCard,
   Banknote, Receipt, X, Clock, Package, AlertCircle, CheckCircle,
-  Scan, Calculator, Percent, IndianRupee, FileText, Sparkles, FileCheck, 
+  Scan, Calculator, Percent, IndianRupee, FileText, Sparkles, FileCheck,
   Truck, List, Building, UserCircle, Store, Stethoscope, RotateCcw, Send,
   Download, Eye, Edit, Copy
 } from 'lucide-react';
@@ -23,11 +23,11 @@ import { useToast } from '@/hooks/use-toast';
 import SmartInsights from '@/components/smart-insights/SmartInsights';
 
 // Billing Types
-type BillingType = 
-  | 'RETAIL' 
-  | 'WHOLESALE' 
-  | 'DISTRIBUTOR' 
-  | 'DOCTOR' 
+type BillingType =
+  | 'RETAIL'
+  | 'WHOLESALE'
+  | 'DISTRIBUTOR'
+  | 'DOCTOR'
   | 'RETURN'
   | 'COSMETIC'      // 18% GST items
   | 'NON_GST'       // Zero-rated medicines
@@ -73,60 +73,60 @@ interface Customer {
 export default function UniversalPOSPage() {
   const { toast } = useToast();
   const barcodeInputRef = useRef<HTMLInputElement>(null);
-  
+
   // BILLING TYPE - Main selector
   const [billingType, setBillingType] = useState<BillingType>('RETAIL');
-  
+
   // Cart & Billing (with localStorage persistence)
   const [cart, setCart] = useState<CartItem[]>([]);
   const [billDiscount, setBillDiscount] = useState(0);
   const [billDiscountType, setBillDiscountType] = useState<'percent' | 'amount'>('amount');
-  
+
   // Customer Outstanding & Credit
   const [customerOutstanding, setCustomerOutstanding] = useState<any[]>([]);
   const [totalOutstanding, setTotalOutstanding] = useState(0);
   const [overdueAmount, setOverdueAmount] = useState(0);
   const [interestAmount, setInterestAmount] = useState(0);
-  
+
   // Load cart from localStorage on mount and set default customer
   useEffect(() => {
     const savedCart = localStorage.getItem('pos_cart');
     const savedDiscount = localStorage.getItem('pos_discount');
     const savedBillingType = localStorage.getItem('pos_billing_type');
-    
+
     if (savedCart) setCart(JSON.parse(savedCart));
     if (savedDiscount) setBillDiscount(parseFloat(savedDiscount));
     if (savedBillingType) setBillingType(savedBillingType as BillingType);
-    
+
     // Auto-select Walk-in Customer for RETAIL billing
     if (!selectedCustomer && (billingType === 'RETAIL' || billingType === 'TOKEN_SALE')) {
       setSelectedCustomer(WALK_IN_CUSTOMER);
     }
   }, []);
-  
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('pos_cart', JSON.stringify(cart));
     localStorage.setItem('pos_discount', billDiscount.toString());
     localStorage.setItem('pos_billing_type', billingType);
   }, [cart, billDiscount, billingType]);
-  
+
   // Product Search
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  
+
   // Batch Selection
   const [showBatchDialog, setShowBatchDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [availableBatches, setAvailableBatches] = useState<any[]>([]);
-  
+
   // Customer
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerSearch, setCustomerSearch] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [showCustomerDialog, setShowCustomerDialog] = useState(false);
-  
+
   // Walk-in Customer (Default)
   const WALK_IN_CUSTOMER: Customer = {
     id: '00000000-0000-0000-0000-000000000001',
@@ -137,28 +137,28 @@ export default function UniversalPOSPage() {
     gstin: undefined,
     address: undefined
   };
-  
+
   // Payment
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [amountPaid, setAmountPaid] = useState('');
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [notes, setNotes] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Order/Invoice
   const [orderMode, setOrderMode] = useState<'DIRECT' | 'ORDER_FIRST'>('DIRECT');
   const [lastCreatedOrder, setLastCreatedOrder] = useState<any>(null);
   const [lastCreatedInvoice, setLastCreatedInvoice] = useState<any>(null);
   const [showInvoiceDialog, setShowInvoiceDialog] = useState(false);
-  
+
   // Hold Bills
   const [showHeldBillsDialog, setShowHeldBillsDialog] = useState(false);
   const [heldBills, setHeldBills] = useState<any[]>([]);
-  
+
   // E-Invoice
   const [showEInvoiceDialog, setShowEInvoiceDialog] = useState(false);
   const [eInvoiceData, setEInvoiceData] = useState<any>(null);
-  
+
   // E-Way Bill
   const [showEWayBillDialog, setShowEWayBillDialog] = useState(false);
   const [eWayBillData, setEWayBillData] = useState({
@@ -166,13 +166,13 @@ export default function UniversalPOSPage() {
     vehicleNumber: '',
     distance: '',
   });
-  
+
   // AI Assistant
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [aiQuery, setAiQuery] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  
+
   // Returns
   const [returnInvoiceNo, setReturnInvoiceNo] = useState('');
   const [originalInvoice, setOriginalInvoice] = useState<any>(null);
@@ -207,34 +207,34 @@ export default function UniversalPOSPage() {
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
   const itemsDiscount = cart.reduce((sum, item) => sum + item.discount_amount, 0);
-  
+
   let billDiscountAmount = 0;
   if (billDiscountType === 'percent') {
     billDiscountAmount = (subtotal - itemsDiscount) * (billDiscount / 100);
   } else {
     billDiscountAmount = billDiscount;
   }
-  
+
   const totalDiscount = itemsDiscount + billDiscountAmount;
   const taxableAmount = subtotal - totalDiscount;
-  
+
   // Calculate GST by rate
   const gst5Items = cart.filter(item => (item.gst_rate || item.tax_percent) === 5);
   const gst12Items = cart.filter(item => (item.gst_rate || item.tax_percent) === 12);
   const gst18Items = cart.filter(item => (item.gst_rate || item.tax_percent) === 18);
-  
+
   const calculateGSTForItems = (items: CartItem[], rate: number) => {
     return items.reduce((sum, item) => {
       const itemTaxable = (item.unit_price * item.quantity) - item.discount_amount;
       return sum + itemTaxable;
     }, 0) * (rate / 100);
   };
-  
+
   const gst5Amount = calculateGSTForItems(gst5Items, 5);
   const gst12Amount = calculateGSTForItems(gst12Items, 12);
   const gst18Amount = calculateGSTForItems(gst18Items, 18);
   const totalTax = gst5Amount + gst12Amount + gst18Amount;
-  
+
   const grandTotal = taxableAmount + totalTax;
   const changeAmount = parseFloat(amountPaid || '0') - grandTotal;
 
@@ -289,31 +289,31 @@ export default function UniversalPOSPage() {
       const res = await golangAPI.get(`/api/v1/customers/${customerId}/bills`, {
         params: { status: 'pending' },
       });
-      
+
       const pendingBills = res.data?.data || [];
       setCustomerOutstanding(pendingBills);
-      
+
       // Calculate totals and interest
       const CREDIT_DAYS = 7; // Default credit period
       const MONTHLY_INTEREST_RATE = 0.24; // 24% per month
       const DAILY_INTEREST_RATE = MONTHLY_INTEREST_RATE / 30;
-      
+
       let totalDue = 0;
       let overdue = 0;
       let totalInterest = 0;
-      
+
       pendingBills.forEach((bill: any) => {
         const amount = bill.grandTotal || bill.grand_total || 0;
         totalDue += amount;
-        
+
         // Calculate days overdue
         const invoiceDate = new Date(bill.invoiceDate || bill.invoice_date);
         const dueDate = new Date(invoiceDate);
         dueDate.setDate(dueDate.getDate() + CREDIT_DAYS);
-        
+
         const today = new Date();
         const daysOverdue = Math.floor((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
-        
+
         if (daysOverdue > 0) {
           overdue += amount;
           // Calculate interest: Principal × Daily Rate × Days Overdue
@@ -321,16 +321,16 @@ export default function UniversalPOSPage() {
           totalInterest += interest;
         }
       });
-      
+
       setTotalOutstanding(totalDue);
       setOverdueAmount(overdue);
       setInterestAmount(totalInterest);
-      
+
     } catch (error) {
       console.error('Failed to fetch customer outstanding:', error);
     }
   };
-  
+
   // When customer is selected, fetch their outstanding
   useEffect(() => {
     if (selectedCustomer?.id) {
@@ -345,10 +345,12 @@ export default function UniversalPOSPage() {
 
   // Select product (show batch dialog)
   const selectProduct = async (product: any) => {
-    if (product.batches && product.batches.length > 0) {
+    if (product.batches && product.batches.length > 1) {
       setSelectedProduct(product);
       setAvailableBatches(product.batches);
       setShowBatchDialog(true);
+    } else if (product.batches && product.batches.length === 1) {
+      addToCart(product, product.batches[0]);
     } else {
       addToCart(product, null);
     }
@@ -358,15 +360,15 @@ export default function UniversalPOSPage() {
   const addToCart = (product: any, batch: any) => {
     const gstRate = getGSTRateForType(product, billingType);
     const unitPrice = batch?.sellingPrice || getPriceForType(product);
-    
+
     // Check if EXACT same product+batch+price already in cart
     // Different sizes/batches should be separate items
     const existingItemIndex = cart.findIndex(
-      item => item.product_id === product.id && 
-               item.batch_id === batch?.id &&
-               item.unit_price === unitPrice
+      item => item.product_id === product.id &&
+        item.batch_id === batch?.id &&
+        item.unit_price === unitPrice
     );
-    
+
     if (existingItemIndex >= 0) {
       // Update quantity of existing item
       const updatedCart = [...cart];
@@ -379,7 +381,7 @@ export default function UniversalPOSPage() {
       item.tax_amount = qty < 0 ? -taxAmount : taxAmount;
       item.total = taxableAmount + (qty < 0 ? -taxAmount : taxAmount);
       setCart(updatedCart);
-      
+
       toast({
         title: 'Quantity updated',
         description: `${product.name} x${Math.abs(qty)}`,
@@ -407,15 +409,15 @@ export default function UniversalPOSPage() {
         gst_rate: gstRate,
         composition: product.composition || '',
       };
-      
+
       setCart([...cart, newItem]);
-      
+
       toast({
         title: 'Added to cart',
         description: `${product.name} x${Math.abs(newItem.quantity)}`,
       });
     }
-    
+
     setShowBatchDialog(false);
     setSearchQuery('');
     setSearchResults([]);
@@ -427,7 +429,7 @@ export default function UniversalPOSPage() {
       removeFromCart(itemId);
       return;
     }
-    
+
     setCart(cart.map(item => {
       if (item.id === itemId) {
         const qty = billingType === 'RETURN' ? -Math.abs(newQuantity) : Math.abs(newQuantity);
@@ -488,7 +490,7 @@ export default function UniversalPOSPage() {
       toast({ title: 'Cart is empty', variant: 'destructive' });
       return;
     }
-    
+
     try {
       await golangAPI.post('/api/erp/pos/hold-bill', {
         customerName: selectedCustomer?.name || 'Walk-in',
@@ -497,7 +499,7 @@ export default function UniversalPOSPage() {
         itemsCount: cart.length,
         counterId: 'COUNTER-1',
       });
-      
+
       toast({ title: '✅ Bill held successfully' });
       setCart([]);
     } catch (error) {
@@ -533,7 +535,7 @@ export default function UniversalPOSPage() {
       toast({ title: 'Cart is empty', variant: 'destructive' });
       return;
     }
-    
+
     // For now, just open payment dialog (order created with invoice)
     setShowPaymentDialog(true);
   };
@@ -544,24 +546,24 @@ export default function UniversalPOSPage() {
       toast({ title: 'Cart is empty', variant: 'destructive' });
       return;
     }
-    
+
     // Validate all items have batch_id
     const invalidItems = cart.filter(item => !item.batch_id);
     if (invalidItems.length > 0) {
-      toast({ 
-        title: 'Invalid Items', 
+      toast({
+        title: 'Invalid Items',
         description: `${invalidItems.length} items missing batch information`,
-        variant: 'destructive' 
+        variant: 'destructive'
       });
       return;
     }
-    
+
     setIsProcessing(true);
     try {
       // Use Walk-in Customer if no customer selected for retail/token billing
-      const effectiveCustomer = selectedCustomer || 
+      const effectiveCustomer = selectedCustomer ||
         (['RETAIL', 'TOKEN_SALE'].includes(billingType) ? WALK_IN_CUSTOMER : null);
-      
+
       if (!effectiveCustomer && ['WHOLESALE', 'DISTRIBUTOR', 'DOCTOR'].includes(billingType)) {
         toast({
           title: 'Customer Required',
@@ -570,7 +572,7 @@ export default function UniversalPOSPage() {
         });
         return;
       }
-      
+
       const invoiceData: any = {
         invoiceType: billingType,
         customerName: effectiveCustomer?.name || 'Walk-in Customer',
@@ -597,38 +599,38 @@ export default function UniversalPOSPage() {
         counterId: 'COUNTER-1',
         counterName: 'Main Counter',
       };
-      
+
       // If order exists, link it
       if (lastCreatedOrder) {
         invoiceData.orderId = lastCreatedOrder.id;
       }
-      
+
       const res = await golangAPI.post('/api/erp/pos/create-invoice', invoiceData);
-      
+
       if (res.data?.success) {
         const invoice = res.data.data.invoice;
         setLastCreatedInvoice(invoice);
-        
+
         toast({
           title: '✅ Invoice Created',
           description: `Invoice No: ${invoice.invoiceNo}`,
         });
-        
+
         setCart([]);
         setBillDiscount(0);
         setNotes('');
         // Clear localStorage
         localStorage.removeItem('pos_cart');
         localStorage.removeItem('pos_discount');
-        
+
         setShowPaymentDialog(false);
         setShowInvoiceDialog(true);
-        
+
         // Auto-generate E-Invoice for B2B (Wholesale/Distributor)
         if (['WHOLESALE', 'DISTRIBUTOR'].includes(billingType) && selectedCustomer?.gstin) {
           setTimeout(() => generateEInvoice(invoice.id), 1000);
         }
-        
+
         // Auto-check E-Way Bill requirement
         if (grandTotal >= 50000) {
           setShowEWayBillDialog(true);
@@ -651,7 +653,7 @@ export default function UniversalPOSPage() {
       const res = await golangAPI.post('/api/erp/einvoice/generate', {
         invoiceId: invoiceId,
       });
-      
+
       if (res.data?.success) {
         setEInvoiceData(res.data.data);
         setShowEInvoiceDialog(true);
@@ -665,7 +667,7 @@ export default function UniversalPOSPage() {
   // Generate E-Way Bill
   const generateEWayBill = async () => {
     if (!lastCreatedInvoice) return;
-    
+
     try {
       const res = await golangAPI.post('/api/erp/ewaybill/generate', {
         invoiceId: lastCreatedInvoice.id,
@@ -673,7 +675,7 @@ export default function UniversalPOSPage() {
         vehicleNumber: eWayBillData.vehicleNumber,
         distance: parseFloat(eWayBillData.distance),
       });
-      
+
       if (res.data?.success) {
         toast({ title: '✅ E-Way Bill Generated', description: `EWB No: ${res.data.data.ewaybillNo}` });
         setShowEWayBillDialog(false);
@@ -689,7 +691,7 @@ export default function UniversalPOSPage() {
       toast({ title: 'Select items to return', variant: 'destructive' });
       return;
     }
-    
+
     setIsProcessing(true);
     try {
       const res = await golangAPI.post('/api/erp/pos/create-return', {
@@ -706,7 +708,7 @@ export default function UniversalPOSPage() {
         reason: notes,
         refundMethod: paymentMethod,
       });
-      
+
       if (res.data?.success) {
         toast({ title: '✅ Return Processed', description: 'Credit note generated' });
         setCart([]);
@@ -723,7 +725,7 @@ export default function UniversalPOSPage() {
   // AI Assistant
   const askAI = async () => {
     if (!aiQuery) return;
-    
+
     setAiLoading(true);
     try {
       const res = await golangAPI.post('/api/ai/billing-assistant', {
@@ -735,7 +737,7 @@ export default function UniversalPOSPage() {
           billingType: billingType,
         },
       });
-      
+
       setAiResponse(res.data?.response || 'No response');
     } catch (error) {
       setAiResponse('AI assistant is currently unavailable');
@@ -815,7 +817,7 @@ export default function UniversalPOSPage() {
                 </TabsList>
               </div>
             </Tabs>
-            
+
             {/* Customer Search */}
             <div className="mt-4 space-y-2">
               <Label>Customer (Optional for Retail)</Label>
@@ -833,7 +835,7 @@ export default function UniversalPOSPage() {
                   <UserCircle className="h-4 w-4" />
                 </Button>
               </div>
-              
+
               {/* Customer Suggestions Dropdown */}
               {customers.length > 0 && !selectedCustomer && (
                 <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
@@ -855,7 +857,7 @@ export default function UniversalPOSPage() {
                   ))}
                 </div>
               )}
-              
+
               {selectedCustomer && (
                 <div className="mt-2 flex items-center gap-2">
                   <Badge variant="secondary">
@@ -905,7 +907,7 @@ export default function UniversalPOSPage() {
                 className="pl-10"
               />
             </div>
-            
+
             {searchResults.length > 0 && (
               <div className="flex-1 overflow-y-auto border rounded-md">
                 {searchResults.map((product) => (
@@ -954,7 +956,7 @@ export default function UniversalPOSPage() {
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
           {/* Cart Items */}
           <div className="flex-1 overflow-y-auto">
@@ -984,7 +986,7 @@ export default function UniversalPOSPage() {
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
                           <Button
@@ -1067,7 +1069,7 @@ export default function UniversalPOSPage() {
               <span className="text-green-600">₹{grandTotal.toFixed(2)}</span>
             </div>
           </div>
-          
+
           {/* Customer Outstanding Section */}
           {selectedCustomer && totalOutstanding > 0 && (
             <div className="border-t pt-4 space-y-2">
@@ -1077,25 +1079,25 @@ export default function UniversalPOSPage() {
                   Customer Outstanding
                 </h3>
               </div>
-              
+
               <div className="bg-orange-50 border border-orange-200 rounded-md p-3 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Total Pending:</span>
                   <span className="font-semibold">₹{totalOutstanding.toFixed(2)}</span>
                 </div>
-                
+
                 {overdueAmount > 0 && (
                   <>
                     <div className="flex justify-between text-sm text-red-600">
                       <span>Overdue ({">"} 7 days):</span>
                       <span className="font-semibold">₹{overdueAmount.toFixed(2)}</span>
                     </div>
-                    
+
                     <div className="flex justify-between text-sm text-red-700">
                       <span>Interest @ 24%/month:</span>
                       <span className="font-semibold">₹{interestAmount.toFixed(2)}</span>
                     </div>
-                    
+
                     <div className="flex justify-between text-sm font-bold text-red-800 border-t border-red-200 pt-2">
                       <span>Total Due (with interest):</span>
                       <span>₹{(totalOutstanding + interestAmount).toFixed(2)}</span>
@@ -1103,7 +1105,7 @@ export default function UniversalPOSPage() {
                   </>
                 )}
               </div>
-              
+
               {/* Pending Bills List */}
               {customerOutstanding.length > 0 && (
                 <div className="max-h-40 overflow-y-auto">
@@ -1114,7 +1116,7 @@ export default function UniversalPOSPage() {
                       const dueDate = new Date(invoiceDate);
                       dueDate.setDate(dueDate.getDate() + 7);
                       const daysOverdue = Math.max(0, Math.floor((new Date().getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24)));
-                      
+
                       return (
                         <div key={idx} className="text-xs bg-white border rounded p-2">
                           <div className="flex justify-between">
@@ -1314,7 +1316,7 @@ export default function UniversalPOSPage() {
                 </p>
                 <Badge className="mt-2">{billingType}</Badge>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-2">
                 <Button variant="outline" onClick={() => generateEInvoice(lastCreatedInvoice.id)}>
                   <FileCheck className="mr-2 h-4 w-4" />
