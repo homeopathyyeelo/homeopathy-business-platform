@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mock vendors data
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+
+// Mock vendors data (fallback only)
 const mockVendors = [
   {
     id: 1,
@@ -44,25 +46,42 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const limit = searchParams.get('limit') || '100';
     
-    let filtered = mockVendors;
-    if (status && status !== 'ALL') {
-      filtered = mockVendors.filter(v => v.status === status);
+    // Build query params
+    const params = new URLSearchParams();
+    if (status && status !== 'ALL') params.append('is_active', status === 'ACTIVE' ? 'true' : 'false');
+    params.append('limit', limit);
+    
+    // Fetch from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/vendors?${params.toString()}`);
+    const data = await res.json();
+    
+    if (!res.ok) {
+      console.warn('Golang API failed, using mock data');
+      let filtered = mockVendors;
+      if (status && status !== 'ALL') {
+        filtered = mockVendors.filter(v => v.status === status);
+      }
+      return NextResponse.json({
+        success: true,
+        data: filtered,
+        summary: { total: filtered.length }
+      });
     }
-
-    const summary = {
-      total: filtered.length,
-      active: filtered.filter(v => v.status === 'ACTIVE').length,
-      totalPurchases: filtered.reduce((sum, v) => sum + v.totalPurchases, 0),
-      totalOutstanding: filtered.reduce((sum, v) => sum + v.outstandingAmount, 0)
-    };
 
     return NextResponse.json({
       success: true,
-      data: filtered,
-      summary
+      data: data.data?.items || data.data || [],
+      summary: {
+        total: data.data?.total || 0,
+        active: 0,
+        totalPurchases: 0,
+        totalOutstanding: 0
+      }
     });
   } catch (error: any) {
+    console.error('Vendors API error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -73,6 +92,19 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    // Send to Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/vendors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to create vendor');
+    }
     
     const newVendor = {
       id: mockVendors.length + 1,

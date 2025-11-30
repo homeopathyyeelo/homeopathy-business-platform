@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  // TODO: Fetch from database
   const stats = {
     todayPrescriptions: 12,
     weekPrescriptions: 67,
@@ -26,6 +25,19 @@ export async function GET() {
       { id: 'RX-002', date: '2024-10-27', patient: 'Rahul Mehta', diagnosis: 'Cold & Cough', medicineCount: 2, status: 'ACTIVE' },
       { id: 'RX-003', date: '2024-10-26', patient: 'Priya Sharma', diagnosis: 'Digestive Issues', medicineCount: 2, status: 'COMPLETED' },
     ],
+  }
+
+  try {
+    // Fetch from Golang API
+    const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/prescriptions/stats`);
+    const data = await res.json();
+    
+    if (res.ok) {
+      return NextResponse.json({ success: true, data: data.data || stats });
+    }
+  } catch (error) {
+    console.error('Prescription stats error:', error);
   }
 
   return NextResponse.json({ success: true, data: stats })

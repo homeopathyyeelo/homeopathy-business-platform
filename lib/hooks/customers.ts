@@ -8,7 +8,11 @@ export function useCustomers() {
     queryFn: async () => {
       try {
         const res = await fetch('/api/customers')
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+        }
         const json = await res.json()
+        console.log('Customers API response:', json) // Debug log
         const data = Array.isArray(json.data) ? json.data : []
         return data as any[]
       } catch (error) {

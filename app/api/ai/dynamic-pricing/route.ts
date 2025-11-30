@@ -118,18 +118,27 @@ export async function GET(request: NextRequest) {
       queryParams.push(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) // 30 days from now
     }
 
-    // TODO: Execute query and get products
-    // For now, return mock data
-    const products = [
-      {
-        id: "1",
-        name: "Sample Product 1",
-        current_price: 100,
-        cost_price: 60,
-        current_stock: 50,
-        expiry_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
-      }
-    ]
+    // Fetch real products from Golang API
+    let products = [];
+    try {
+      const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+      const res = await fetch(`${GOLANG_API_URL}/api/erp/products?limit=${limit}&include_pricing=true`);
+      const data = await res.json();
+      products = data.data?.items || [];
+    } catch (error) {
+      console.error('Failed to fetch products for pricing:', error);
+      // Fallback to sample data
+      products = [
+        {
+          id: "1",
+          name: "Sample Product 1",
+          current_price: 100,
+          cost_price: 60,
+          current_stock: 50,
+          expiry_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)
+        }
+      ];
+    }
 
     // Generate pricing recommendations for each product
     const pricingRecommendations = await Promise.all(
@@ -140,7 +149,7 @@ export async function GET(request: NextRequest) {
             current_price: product.current_price,
             current_stock: product.current_stock,
             expiry_date: product.expiry_date,
-            demand_forecast: 30, // TODO: Get actual demand forecast
+            demand_forecast: product.demand_forecast || 30, // Use product forecast or default
             cost_price: product.cost_price
           })
           

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mock categories data
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+
+// Mock categories data (fallback only)
 const mockCategories = [
   { id: 1, name: 'Dilution', description: 'Homeopathic dilutions', count: 150 },
   { id: 2, name: 'Mother Tincture', description: 'Mother tinctures (Q potency)', count: 80 },
@@ -11,6 +13,24 @@ const mockCategories = [
 ];
 
 export async function GET() {
+  try {
+    // Fetch from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/products/categories`);
+    const data = await res.json();
+    
+    if (res.ok) {
+      return NextResponse.json({
+        success: true,
+        data: data.data || [],
+        categories: data.data || [],
+        total: data.total || 0
+      });
+    }
+  } catch (error) {
+    console.error('Categories API error:', error);
+  }
+  
+  // Fallback to mock data
   return NextResponse.json({
     success: true,
     data: mockCategories,

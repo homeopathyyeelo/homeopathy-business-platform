@@ -112,6 +112,87 @@ func (h *SalesHandler) GetInvoices(c *gin.Context) {
 	})
 }
 
+// GET /api/erp/sales/invoices/:id - Get invoice details with items for printing
+func (h *SalesHandler) GetInvoiceDetails(c *gin.Context) {
+	invoiceID := c.Param("id")
+
+	// Mock invoice data with items for A4 printing
+	invoice := gin.H{
+		"id":        invoiceID,
+		"invoiceNo": "INV-2024-" + invoiceID[:6],
+		"date":      time.Now().Format("2006-01-02"),
+		"dueDate":   time.Now().AddDate(0, 0, 30).Format("2006-01-02"),
+		"customer": gin.H{
+			"name":      "Dr. Sharma Clinic",
+			"address":   "123 Medical Complex, MG Road, Bangalore, Karnataka 560001",
+			"phone":     "+91 98765 43210",
+			"email":     "drsharma@clinic.com",
+			"gstNumber": "29AAAPL1234C1ZV",
+		},
+		"items": []gin.H{
+			{
+				"id": uuid.New().String(),
+				"product": gin.H{
+					"name":         "Arnica Montana 30C",
+					"potency":      "30C",
+					"manufacturer": "SBL",
+				},
+				"hsnCode":       "30049014",
+				"batchNumber":   "ARN-30C-2024-01",
+				"quantity":      2,
+				"unitPrice":     125.00,
+				"gstPercentage": 5,
+				"gstAmount":     12.50,
+				"total":         250.00,
+			},
+			{
+				"id": uuid.New().String(),
+				"product": gin.H{
+					"name":         "Rhus Toxicodendron 200C",
+					"potency":      "200C",
+					"manufacturer": "Schwabe",
+				},
+				"hsnCode":       "30049014",
+				"batchNumber":   "RHU-200C-2024-02",
+				"quantity":      1,
+				"unitPrice":     180.00,
+				"gstPercentage": 5,
+				"gstAmount":     9.00,
+				"total":         189.00,
+			},
+			{
+				"id": uuid.New().String(),
+				"product": gin.H{
+					"name":         "Calendula Mother Tincture",
+					"potency":      "Q",
+					"manufacturer": "Reckeweg",
+				},
+				"hsnCode":       "30049014",
+				"batchNumber":   "CAL-Q-2024-03",
+				"quantity":      1,
+				"unitPrice":     220.00,
+				"gstPercentage": 5,
+				"gstAmount":     11.00,
+				"total":         231.00,
+			},
+		},
+		"subtotal":       525.00,
+		"discountAmount": 0.00,
+		"gstAmount":      32.50,
+		"total":          557.50,
+		"paymentStatus":  "PAID",
+		"paymentMethod":  "CASH",
+		"placeOfSupply":  "Karnataka",
+		"salesExecutive": "John Doe",
+		"notes":          "Payment received via cash. Thank you for your business!",
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    invoice,
+	})
+}
+
 // POST /api/erp/sales/pos/create - Create POS sale
 func (h *SalesHandler) CreatePOSSale(c *gin.Context) {
 	var req map[string]interface{}
@@ -200,13 +281,13 @@ func (h *SalesHandler) GetB2CSales(c *gin.Context) {
 func (h *SalesHandler) GetD2DSales(c *gin.Context) {
 	sales := []gin.H{
 		{
-			"id":           uuid.New().String(),
-			"invoiceNo":    "D2D-2024-001",
-			"date":         time.Now().Format("2006-01-02"),
-			"doctorName":   "Dr. Kumar Homeopathy",
-			"totalAmount":  12000.00,
-			"status":       "pending",
-			"itemsCount":   25,
+			"id":          uuid.New().String(),
+			"invoiceNo":   "D2D-2024-001",
+			"date":        time.Now().Format("2006-01-02"),
+			"doctorName":  "Dr. Kumar Homeopathy",
+			"totalAmount": 12000.00,
+			"status":      "pending",
+			"itemsCount":  25,
 		},
 	}
 
@@ -220,13 +301,13 @@ func (h *SalesHandler) GetD2DSales(c *gin.Context) {
 func (h *SalesHandler) GetCreditSales(c *gin.Context) {
 	creditSales := []gin.H{
 		{
-			"id":            uuid.New().String(),
-			"customerName":  "City Pharmacy",
-			"totalCredit":   45000.00,
-			"paid":          20000.00,
-			"balance":       25000.00,
-			"dueDate":       time.Now().Add(15 * 24 * time.Hour).Format("2006-01-02"),
-			"status":        "overdue",
+			"id":           uuid.New().String(),
+			"customerName": "City Pharmacy",
+			"totalCredit":  45000.00,
+			"paid":         20000.00,
+			"balance":      25000.00,
+			"dueDate":      time.Now().Add(15 * 24 * time.Hour).Format("2006-01-02"),
+			"status":       "overdue",
 		},
 	}
 
@@ -240,13 +321,13 @@ func (h *SalesHandler) GetCreditSales(c *gin.Context) {
 func (h *SalesHandler) GetHoldBills(c *gin.Context) {
 	holdBills := []gin.H{
 		{
-			"id":          uuid.New().String(),
-			"tempId":      "HOLD-001",
-			"counter":     "Counter 1",
-			"operator":    "Rajesh Kumar",
-			"items":       []gin.H{{"name": "Arnica 30C", "qty": 2, "price": 70.0}},
-			"subtotal":    140.00,
-			"heldAt":      time.Now().Add(-30 * time.Minute).Format("2006-01-02T15:04:05Z"),
+			"id":       uuid.New().String(),
+			"tempId":   "HOLD-001",
+			"counter":  "Counter 1",
+			"operator": "Rajesh Kumar",
+			"items":    []gin.H{{"name": "Arnica 30C", "qty": 2, "price": 70.0}},
+			"subtotal": 140.00,
+			"heldAt":   time.Now().Add(-30 * time.Minute).Format("2006-01-02T15:04:05Z"),
 		},
 	}
 
@@ -356,16 +437,16 @@ func (h *SalesHandler) CreateSalesOrder(c *gin.Context) {
 
 	// Create sales order
 	order := &models.SalesOrder{
-		ID:           uuid.New().String(),
-		OrderNumber:  generateSalesOrderNumber(),
-		CustomerID:   &req.CustomerID,
-		OrderDate:    req.OrderDate,
-		Status:       "pending",
-		Subtotal:     0,
+		ID:             uuid.New().String(),
+		OrderNumber:    generateSalesOrderNumber(),
+		CustomerID:     &req.CustomerID,
+		OrderDate:      req.OrderDate,
+		Status:         "pending",
+		Subtotal:       0,
 		DiscountAmount: 0,
-		TaxAmount:    0,
-		TotalAmount:  0,
-		Notes:        req.Notes,
+		TaxAmount:      0,
+		TotalAmount:    0,
+		Notes:          req.Notes,
 	}
 
 	// Calculate totals
@@ -376,7 +457,7 @@ func (h *SalesHandler) CreateSalesOrder(c *gin.Context) {
 		itemTotal -= discount
 		tax := itemTotal * (item.TaxPct / 100)
 		itemTotal += tax
-		
+
 		subtotal += float64(item.Quantity) * item.UnitPrice
 		taxTotal += tax
 	}
@@ -396,7 +477,7 @@ func (h *SalesHandler) CreateSalesOrder(c *gin.Context) {
 		itemTotal := float64(itemReq.Quantity) * itemReq.UnitPrice
 		discount := itemTotal * (itemReq.DiscountPct / 100)
 		tax := (itemTotal - discount) * (itemReq.TaxPct / 100)
-		
+
 		item := &models.SalesOrderItem{
 			ID:              uuid.New().String(),
 			SalesOrderID:    order.ID,
@@ -435,7 +516,7 @@ func (h *SalesHandler) CreateSalesOrder(c *gin.Context) {
 // UpdateSalesOrder updates an existing sales order
 func (h *SalesHandler) UpdateSalesOrder(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	var req map[string]interface{}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -544,8 +625,8 @@ func (h *SalesHandler) GetAISalesForecast(c *gin.Context) {
 	// Call AI service for sales forecasting
 	endpoint := "/v2/forecast/sales"
 	payload := map[string]interface{}{
-		"product_ids": req.ProductIDs,
-		"months_ahead": req.Months,
+		"product_ids":        req.ProductIDs,
+		"months_ahead":       req.Months,
 		"include_confidence": true,
 	}
 
@@ -559,9 +640,9 @@ func (h *SalesHandler) GetAISalesForecast(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"success": true,
+		"success":        true,
 		"sales_forecast": aiResponse,
-		"generated_at": time.Now(),
+		"generated_at":   time.Now(),
 	})
 }
 

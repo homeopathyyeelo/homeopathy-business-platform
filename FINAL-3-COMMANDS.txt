@@ -1,0 +1,39 @@
+════════════════════════════════════════════════════
+✅ POS UPDATED! Run these 3 commands:
+════════════════════════════════════════════════════
+
+1️⃣ Setup database (copy-paste):
+   sudo -u postgres psql yeelo_homeopathy < setup-db.sql
+
+2️⃣ Add OpenAI key:
+   echo 'OPENAI_API_KEY=sk-proj-YOUR-KEY' >> .env.local
+
+3️⃣ Restart frontend:
+   pkill -f "next dev" ; npm run dev > next.log 2>&1 &
+
+════════════════════════════════════════════════════
+THEN OPEN: http://localhost:3000/sales/pos
+════════════════════════════════════════════════════
+
+✅ What's working now:
+  • Multi-rate GST (5% & 18%)
+  • E-Invoice generation
+  • E-Way Bill (B2B)
+  • AI Assistant
+  • Hold/Resume bills
+  • Doctor commissions
+  • ITC tracking
+
+UPDATE YOUR GSTIN:
+  psql yeelo_homeopathy
+  UPDATE company_settings SET gstin='YOUR_ACTUAL_GSTIN';
+
+DOCTOR COMMISSIONS:
+  Already setup! 3 doctors with 10-15% commission.
+  Check: SELECT * FROM doctor_commission_rules;
+
+GST SETTINGS:
+  State: Maharashtra (27)
+  Update: UPDATE company_settings SET state_code='YOUR_STATE';
+
+That's it! 🎉

@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const limit = parseInt(searchParams.get('limit') || '5')
+  const limit = parseInt(searchParams.get('limit') || '10')
 
-  // TODO: Fetch from database
+  try {
+    // Fetch from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/dashboard/recent-sales?limit=${limit}`);
+    const data = await res.json();
+    
+    if (res.ok) {
+      return NextResponse.json({ success: true, data: data.data || [] });
+    }
+  } catch (error) {
+    console.error('Recent sales API error:', error);
+  }
+
+  // Fallback data
   const recentSales = [
     {
       id: 's1',

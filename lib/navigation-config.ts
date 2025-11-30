@@ -307,9 +307,10 @@ export const navigationMenu: MenuItem[] = [
     permissions: ['settings.view'],
     children: [
       { id: 'company-profile', label: 'Company Profile', icon: Building2, path: '/settings/company' },
+      { id: 'erp-settings', label: 'ERP Settings', icon: Settings, path: '/settings/erp' },
       { id: 'branch-management', label: 'Branch Management', icon: Building2, path: '/settings/branches' },
       { id: 'roles-permissions', label: 'Roles & Permissions', icon: UserCircle, path: '/settings/roles' },
-      { id: 'global-settings', label: 'Global ERP Settings', icon: Settings, path: '/settings/global' },
+      { id: 'global-settings', label: 'Global App Settings', icon: Settings, path: '/settings/global' },
       { id: 'tax-settings', label: 'Tax/GST Settings', icon: FileBarChart, path: '/settings/tax' },
       { id: 'payment-methods', label: 'Payment Methods', icon: CreditCard, path: '/settings/payment-methods' },
       { id: 'ai-model', label: 'AI Model Selection', icon: Bot, path: '/settings/ai-model' },

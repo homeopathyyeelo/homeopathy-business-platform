@@ -593,21 +593,97 @@ func (h *SearchHandler) SearchProducts(c *gin.Context) {
 	results, total := searchMeiliSearchWithFilters(meiliURL, meiliAPIKey, "products", query, filters, limit)
 
 	var searchResults []SearchResult
-	for _, hit := range results {
-		searchResults = append(searchResults, SearchResult{
-			ID:          hit["id"].(string),
-			Name:        getString(hit, "name"),
-			SKU:         getString(hit, "sku"),
-			Barcode:     getString(hit, "barcode"),
-			Brand:       getString(hit, "brand"),
-			Category:    getString(hit, "category"),
-			Potency:     getString(hit, "potency"),
-			Form:        getString(hit, "form"),
-			MRP:         getFloat(hit, "mrp"),
-			Stock:       getInt(hit, "stock"),
-			Description: getString(hit, "description"),
-			Type:        "product",
-		})
+
+	// If MeiliSearch returns no results, try SQL fallback
+	if len(results) == 0 && h.db != nil {
+		fmt.Printf("🔄 SearchProducts: Using SQL fallback for query: '%s'\n", query)
+
+		type ProductWithRelations struct {
+			ID           string  `gorm:"column:id"`
+			Name         string  `gorm:"column:name"`
+			SKU          string  `gorm:"column:sku"`
+			Barcode      string  `gorm:"column:barcode"`
+			Description  string  `gorm:"column:description"`
+			MRP          float64 `gorm:"column:mrp"`
+			CurrentStock float64 `gorm:"column:current_stock"`
+			BrandName    string  `gorm:"column:brand_name"`
+			CategoryName string  `gorm:"column:category_name"`
+			PotencyName  string  `gorm:"column:potency_name"`
+			Form         string  `gorm:"column:form"`
+		}
+
+		var products []ProductWithRelations
+		sqlQuery := h.db.Table("product_masters as p").
+			Select(`p.id, p.name, p.sku, p.barcode, p.description, p.mrp, p.current_stock,
+					b.name as brand_name, c.name as category_name, pot.name as potency_name, p.form`).
+			Joins("LEFT JOIN brands b ON p.brand_id = b.id").
+			Joins("LEFT JOIN categories c ON p.category_id = c.id").
+			Joins("LEFT JOIN potencies pot ON p.potency_id = pot.id").
+			Where("p.is_active = ? AND (p.name ILIKE ? OR p.sku ILIKE ? OR p.barcode ILIKE ?)",
+				true, "%"+query+"%", "%"+query+"%", "%"+query+"%")
+
+		// Apply filters
+		if brand != "" {
+			sqlQuery = sqlQuery.Where("b.name ILIKE ?", "%"+brand+"%")
+		}
+		if category != "" {
+			sqlQuery = sqlQuery.Where("c.name ILIKE ?", "%"+category+"%")
+		}
+		if potency != "" {
+			sqlQuery = sqlQuery.Where("pot.name ILIKE ?", "%"+potency+"%")
+		}
+
+		if err := sqlQuery.Limit(20).Find(&products).Error; err != nil {
+			fmt.Printf("❌ SearchProducts SQL fallback error: %v\n", err)
+		} else {
+			fmt.Printf("✅ SearchProducts SQL fallback found: %d products\n", len(products))
+			total = len(products)
+
+			for _, p := range products {
+				searchResults = append(searchResults, SearchResult{
+					ID:          p.ID,
+					Name:        p.Name,
+					SKU:         p.SKU,
+					Barcode:     p.Barcode,
+					Brand:       p.BrandName,
+					Category:    p.CategoryName,
+					Potency:     p.PotencyName,
+					Form:        p.Form,
+					MRP:         p.MRP,
+					Stock:       int(p.CurrentStock),
+					Description: p.Description,
+					Type:        "product",
+					Module:      "products",
+					NavigateURL: fmt.Sprintf("/products/%s", p.ID),
+					Metadata: map[string]interface{}{
+						"source": "sql_fallback",
+					},
+				})
+			}
+		}
+	} else {
+		// Use MeiliSearch results
+		for _, hit := range results {
+			searchResults = append(searchResults, SearchResult{
+				ID:          hit["id"].(string),
+				Name:        getString(hit, "name"),
+				SKU:         getString(hit, "sku"),
+				Barcode:     getString(hit, "barcode"),
+				Brand:       getString(hit, "brand"),
+				Category:    getString(hit, "category"),
+				Potency:     getString(hit, "potency"),
+				Form:        getString(hit, "form"),
+				MRP:         getFloat(hit, "mrp"),
+				Stock:       getInt(hit, "stock"),
+				Description: getString(hit, "description"),
+				Type:        "product",
+				Module:      "products",
+				NavigateURL: fmt.Sprintf("/products/%s", getString(hit, "id")),
+				Metadata: map[string]interface{}{
+					"source": "meilisearch",
+				},
+			})
+		}
 	}
 
 	c.JSON(http.StatusOK, SearchResponse{
@@ -734,7 +810,6 @@ func searchMeiliSearchWithFilters(baseURL, apiKey, index, query string, filters 
 
 	return results, total
 }
-
 
 // Helper functions
 func getString(m map[string]interface{}, key string) string {

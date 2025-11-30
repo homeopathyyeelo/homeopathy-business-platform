@@ -14,6 +14,7 @@ import (
 	"github.com/yeelo/homeopathy-erp/internal/database"
 	"github.com/yeelo/homeopathy-erp/internal/handlers"
 	"github.com/yeelo/homeopathy-erp/internal/middleware"
+	"github.com/yeelo/homeopathy-erp/internal/routes"
 	"github.com/yeelo/homeopathy-erp/internal/services"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -74,11 +75,13 @@ func main() {
 	backupHandler := handlers.NewBackupHandler(db)
 	unitsHandler := handlers.NewUnitsHandler(db)
 	settingsHandler := handlers.NewSettingsHandler(db)
+	erpSettingsHandler := handlers.NewERPSettingsHandler(db)
 
 	// Additional handlers
 	enrichHandler := handlers.NewEnrichHandler(db)
 	employeeHandler := handlers.NewEmployeeHandler(db)
 	customerHandler := handlers.NewCustomerHandler(db)
+	customerAnalyticsHandler := handlers.NewCustomerAnalyticsHandler(db)
 	notificationHandler := handlers.NewNotificationHandler(sqlDB)
 	hsnCodeHandler := handlers.NewHSNCodeHandler()
 	priceListHandler := handlers.NewPriceListHandler()
@@ -190,8 +193,17 @@ func main() {
 				customers.GET("/:id", customerHandler.GetCustomer)
 				customers.POST("", customerHandler.CreateCustomer)
 				customers.PUT("/:id", customerHandler.UpdateCustomer)
+
+				// Analytics & Insights
+				customers.GET("/:id/profile", customerAnalyticsHandler.GetCustomerProfile)
+				customers.GET("/:id/bills", customerAnalyticsHandler.GetCustomerBills)
+				customers.GET("/:id/products", customerAnalyticsHandler.GetCustomerProducts)
+				customers.GET("/outstanding", customerAnalyticsHandler.GetOutstandingCustomers)
+				customers.POST("/:id/loyalty/add", customerAnalyticsHandler.AddLoyaltyPoints)
+				customers.GET("/analytics/summary", customerAnalyticsHandler.GetCustomerAnalyticsSummary)
+
+				// Legacy routes
 				customers.GET("/loyalty", customerHandler.GetLoyaltyPoints)
-				customers.GET("/outstanding", customerHandler.GetOutstanding)
 				customers.GET("/credit-limit", customerHandler.GetCreditLimit)
 				customers.GET("/feedback", customerHandler.GetFeedback)
 				customers.GET("/communication", customerHandler.GetCommunication)
@@ -199,9 +211,22 @@ func main() {
 			}
 		}
 
-		// ERP routes
+		// ERP routes (public access for POS)
+		erp_public := api.Group("/erp")
+		{
+			// Register POS routes (no auth required for POS operations)
+			routes.RegisterPOSRoutes(erp_public, db)
+
+			// Public ERP Settings (read-only)
+			erp_public.GET("/erp-settings", erpSettingsHandler.GetSettings)
+			erp_public.GET("/erp-settings/categories", erpSettingsHandler.GetCategories)
+			erp_public.GET("/erp-settings/:key", erpSettingsHandler.GetSetting)
+		}
+
+		// ERP routes (protected)
 		erp := api.Group("/erp", middleware.RequireAuth())
 		{
+
 			// Dashboard
 			erp.GET("/dashboard/stats", dashboardHandler.GetStats)
 			erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
@@ -533,9 +558,11 @@ func main() {
 			erp.DELETE("/units-settings/:id", unitsHandler.DeleteUnit)
 
 			// Settings: App Key-Value
-			erp.GET("/settings", settingsHandler.GetSettings)
-			erp.GET("/settings/:key", settingsHandler.GetSetting)
 			erp.PUT("/settings/:key", settingsHandler.UpsertSetting)
+
+			// ERP Settings (Centralized Configuration) - Write operations only (read is public)
+			erp.PUT("/erp-settings/:key", erpSettingsHandler.UpdateSetting)
+			erp.POST("/erp-settings/bulk-update", erpSettingsHandler.BulkUpdateSettings)
 
 			// Notifications
 			erp.GET("/notifications", notificationHandler.GetNotifications)

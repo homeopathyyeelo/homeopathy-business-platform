@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server'
 
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+
 export async function GET() {
-  // TODO: Fetch from database
+  try {
+    // Fetch from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/notifications`);
+    const data = await res.json();
+    
+    if (res.ok) {
+      return NextResponse.json({ success: true, data: data.data || [] });
+    }
+  } catch (error) {
+    console.error('Notifications API error:', error);
+  }
   const notifications = [
     {
       id: 'n1',

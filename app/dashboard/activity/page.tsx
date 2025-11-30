@@ -50,12 +50,37 @@ interface BusinessEvent {
 }
 
 export default function ActivityPage() {
-  // Real-time data with SWR (auto-refresh)
-  const { data: metrics } = useSWR<SystemMetrics>('/api/dashboard/metrics', fetcher, { refreshInterval: 60000 })
-  const { data: services } = useSWR<ServiceHealth[]>('/api/system/health', fetcher, { refreshInterval: 30000 })
-  const { data: aiActivities } = useSWR<AIActivity[]>('/api/ai/activity', fetcher, { refreshInterval: 10000 })
-  const { data: bugs } = useSWR<BugReport[]>('/api/system/bugs', fetcher, { refreshInterval: 60000 })
-  const { data: events } = useSWR<BusinessEvent[]>('/api/dashboard/activity-feed', fetcher, { refreshInterval: 5000 })
+  // Real-time data with SWR (auto-refresh) - with error handling and fallbacks
+  const { data: metrics, error: metricsError } = useSWR<SystemMetrics>('/api/dashboard/metrics', fetcher, { 
+    refreshInterval: 60000,
+    fallbackData: { openBugs: 0, activeServices: 0, aiTasks: 0, inventorySync: 'N/A', salesToday: 0, systemLoad: 0 },
+    shouldRetryOnError: false,
+    revalidateOnFocus: false
+  })
+  const { data: services, error: servicesError } = useSWR<ServiceHealth[]>('/api/system/health', fetcher, { 
+    refreshInterval: 30000,
+    fallbackData: [],
+    shouldRetryOnError: false,
+    revalidateOnFocus: false
+  })
+  const { data: aiActivities, error: aiError } = useSWR<AIActivity[]>('/api/ai/activity', fetcher, { 
+    refreshInterval: 10000,
+    fallbackData: [],
+    shouldRetryOnError: false,
+    revalidateOnFocus: false
+  })
+  const { data: bugs, error: bugsError } = useSWR<BugReport[]>('/api/system/bugs', fetcher, { 
+    refreshInterval: 60000,
+    fallbackData: [],
+    shouldRetryOnError: false,
+    revalidateOnFocus: false
+  })
+  const { data: events, error: eventsError } = useSWR<BusinessEvent[]>('/api/dashboard/activity-feed', fetcher, { 
+    refreshInterval: 5000,
+    fallbackData: [],
+    shouldRetryOnError: false,
+    revalidateOnFocus: false
+  })
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp)

@@ -27,11 +27,15 @@ func (h *BarcodeLabelHandler) GenerateBarcodeImage(c *gin.Context) {
 
 	// Get product details
 	var product struct {
-		ID      string  `json:"id"`
-		SKU     string  `json:"sku"`
-		Name    string  `json:"name"`
-		Barcode string  `json:"barcode"`
-		MRP     float64 `json:"mrp"`
+		ID              string  `json:"id"`
+		SKU             string  `json:"sku"`
+		Name            string  `json:"name"`
+		Barcode         string  `json:"barcode"`
+		BarcodeTemplate string  `json:"barcodeTemplate"`
+		MRP             float64 `json:"mrp"`
+		SellingPrice    float64 `json:"sellingPrice"`
+		Brand           string  `json:"brand"`
+		Category        string  `json:"category"`
 	}
 
 	if err := h.db.Table("products").Where("id = ?", productID).First(&product).Error; err != nil {

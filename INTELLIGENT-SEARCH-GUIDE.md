@@ -154,7 +154,7 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy?sslm
 
 # MeiliSearch (Optional, for faster search)
 MEILISEARCH_URL=http://localhost:7700
-MEILISEARCH_API_KEY=your_key_here
+MEILISEARCH_API_KEY=fae4e404c0164eec5b08870ddacef40fba2e7077
 
 # OpenAI (Optional, for AI-powered search)
 OPENAI_API_KEY=sk-your-key-here

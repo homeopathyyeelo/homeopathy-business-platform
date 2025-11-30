@@ -137,6 +137,7 @@ type Product struct {
 
 	// Product Details
 	Barcode                string `json:"barcode"`
+	BarcodeTemplate        string `json:"barcodeTemplate" gorm:"default:'BarcodeT8'"`
 	Description            string `json:"description"`
 	Manufacturer           string `json:"manufacturer"`
 	IsPrescriptionRequired bool   `json:"isPrescriptionRequired" gorm:"default:false"`

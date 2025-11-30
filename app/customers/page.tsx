@@ -256,7 +256,7 @@ export default function CustomersPage() {
                 </TableRow>
               ) : (
                 filteredCustomers.map((customer: any) => (
-                  <TableRow key={customer.id}>
+                  <TableRow key={customer.id} className="cursor-pointer hover:bg-muted/50" onClick={() => window.open(`/customers/${customer.id}`, '_blank')}>
                     <TableCell className="font-medium">{customer.name}</TableCell>
                     <TableCell>
                       <div>{customer.phone}</div>
@@ -275,7 +275,7 @@ export default function CustomersPage() {
                         <span className="text-red-600">{formatCurrency(customer.pendingAmount)}</span>
                       ) : formatCurrency(0)}
                     </TableCell>
-                    <TableCell className="flex space-x-2">
+                    <TableCell className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" onClick={() => handleEditCustomer(customer)}>
                         <Edit className="h-4 w-4" />
                       </Button>

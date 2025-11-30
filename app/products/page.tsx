@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import DataTable from '@/components/common/DataTable';
 import { useRouter } from 'next/navigation';
-import { Package, Plus, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
+import { Package, Plus, TrendingUp, AlertTriangle, Filter, Barcode, Settings } from 'lucide-react';
 import { useProducts, useProductStats, useProductMutations } from '@/lib/hooks/products';
 import { golangAPI } from '@/lib/api';
 
@@ -247,6 +247,35 @@ export default function ProductListPage() {
 
   return (
     <div className="space-y-6">
+      {/* Barcode Quick Actions */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Barcode className="w-5 h-5 text-blue-600" />
+              Barcode Management
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">Print labels, manage templates, and generate barcodes</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push('/products/barcode')}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              <Barcode className="w-4 h-4" />
+              Print Barcodes
+            </button>
+            <button
+              onClick={() => router.push('/products/barcode-templates')}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
+            >
+              <Settings className="w-4 h-4" />
+              Manage Templates
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg shadow-sm border">

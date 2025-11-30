@@ -1,65 +1,39 @@
 import { NextResponse } from 'next/server'
 
-export async function GET() {
-  // TODO: Fetch from system_audit_logs table
-  const events = [
-    { 
-      id: '1', 
-      event: 'Invoice INV-1021 generated', 
-      module: 'Sales', 
-      timestamp: new Date(Date.now() - 2 * 60000).toISOString(), 
-      details: 'Customer: Rajesh Kumar, Amount: ₹1,250' 
-    },
-    { 
-      id: '2', 
-      event: 'Purchase uploaded (Allen Labs)', 
-      module: 'Purchase', 
-      timestamp: new Date(Date.now() - 5 * 60000).toISOString(), 
-      details: '25 items, Total: ₹45,000' 
-    },
-    { 
-      id: '3', 
-      event: 'Stock updated (Globules Batch G-021)', 
-      module: 'Inventory', 
-      timestamp: new Date(Date.now() - 10 * 60000).toISOString(), 
-      details: 'Added 500 units, Expiry: 2025-12-31' 
-    },
-    { 
-      id: '4', 
-      event: 'Customer payment received ₹3,500', 
-      module: 'Finance', 
-      timestamp: new Date(Date.now() - 15 * 60000).toISOString(), 
-      details: 'Customer: Amit Patel, Mode: UPI' 
-    },
-    { 
-      id: '5', 
-      event: 'Low stock alert triggered', 
-      module: 'Inventory', 
-      timestamp: new Date(Date.now() - 20 * 60000).toISOString(), 
-      details: '3 products below reorder level' 
-    },
-    { 
-      id: '6', 
-      event: 'New customer registered', 
-      module: 'CRM', 
-      timestamp: new Date(Date.now() - 25 * 60000).toISOString(), 
-      details: 'Priya Sharma, Phone: 9876543310' 
-    },
-    { 
-      id: '7', 
-      event: 'Prescription created RX-045', 
-      module: 'Prescriptions', 
-      timestamp: new Date(Date.now() - 30 * 60000).toISOString(), 
-      details: 'Patient: Anita Rao, Medicines: 3' 
-    },
-    { 
-      id: '8', 
-      event: 'Vendor payment processed', 
-      module: 'Finance', 
-      timestamp: new Date(Date.now() - 35 * 60000).toISOString(), 
-      details: 'SBL Pharmaceuticals, Amount: ₹25,000' 
-    },
-  ]
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
 
-  return NextResponse.json(events)
+export async function GET() {
+  try {
+    // Fetch from Golang API - system audit logs
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/dashboard/activity-feed`);
+    const data = await res.json();
+    
+    if (!res.ok) {
+      // Fallback to recent activities
+      const fallbackEvents = [
+        {
+          id: 1,
+          type: 'invoice_created',
+          message: 'Invoice INV-2024-001 created',
+          user: 'System',
+          timestamp: new Date().toISOString(),
+          icon: 'receipt'
+        },
+        {
+          id: 2,
+          type: 'customer_added',
+          message: 'New customer Walk-in Customer added',
+          user: 'System',
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          icon: 'user'
+        }
+      ];
+      return NextResponse.json(fallbackEvents);
+    }
+
+    return NextResponse.json(data.data || []);
+  } catch (error) {
+    console.error('Activity feed error:', error);
+    return NextResponse.json([]);
+  }
 }

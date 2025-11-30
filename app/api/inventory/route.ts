@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mock inventory data
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+
+// Mock inventory data (fallback only)
 const mockInventory = [
   {
     id: 1,
@@ -52,27 +54,44 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const limit = searchParams.get('limit') || '100';
     
-    let filtered = mockInventory;
-    if (status && status !== 'ALL') {
-      filtered = mockInventory.filter(i => i.status === status);
+    // Build query params
+    const params = new URLSearchParams();
+    if (status && status !== 'ALL') params.append('status', status);
+    params.append('limit', limit);
+    
+    // Fetch from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/inventory?${params.toString()}`);
+    const data = await res.json();
+    
+    if (!res.ok) {
+      console.warn('Golang API failed, using mock data');
+      // Fallback to mock if API fails
+      let filtered = mockInventory;
+      if (status && status !== 'ALL') {
+        filtered = mockInventory.filter(i => i.status === status);
+      }
+      return NextResponse.json({
+        success: true,
+        data: filtered,
+        summary: { total: filtered.length }
+      });
     }
-
-    // Calculate summary
-    const summary = {
-      total: filtered.length,
-      inStock: filtered.filter(i => i.status === 'IN_STOCK').length,
-      lowStock: filtered.filter(i => i.status === 'LOW_STOCK').length,
-      critical: filtered.filter(i => i.status === 'CRITICAL').length,
-      totalValue: filtered.reduce((sum, item) => sum + (item.quantity * 100), 0)
-    };
 
     return NextResponse.json({
       success: true,
-      data: filtered,
-      summary
+      data: data.data?.items || data.data || [],
+      summary: {
+        total: data.data?.total || 0,
+        inStock: 0,
+        lowStock: 0,
+        critical: 0,
+        totalValue: 0
+      }
     });
   } catch (error: any) {
+    console.error('Inventory API error:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

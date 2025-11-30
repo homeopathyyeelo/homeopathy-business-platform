@@ -21,7 +21,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Plus, Search, Printer, Download, Barcode as BarcodeIcon,
-  Package, Calendar, TrendingUp, QrCode 
+  Package, Calendar, TrendingUp, QrCode, ArrowLeft, Settings 
 } from "lucide-react";
 import { golangAPI } from "@/lib/api";
 import Barcode from "react-barcode";
@@ -318,6 +318,27 @@ export default function BarcodesPage() {
 
   return (
     <div className="space-y-6">
+      {/* Navigation Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <button 
+          onClick={() => router.push('/products')}
+          className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Products
+        </button>
+        <span>/</span>
+        <span className="text-gray-900 font-medium">Barcode Management</span>
+        <span>/</span>
+        <button 
+          onClick={() => router.push('/products/barcode-templates')}
+          className="flex items-center gap-1 hover:text-purple-600 transition-colors"
+        >
+          <Settings className="w-4 h-4" />
+          Templates
+        </button>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -325,6 +346,13 @@ export default function BarcodesPage() {
           <p className="text-muted-foreground">Generate and print batch-level barcodes for your homeopathy products</p>
         </div>
         <div className="flex space-x-2">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push('/products/barcode-templates')}
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Manage Templates
+          </Button>
           <Button 
             variant="outline" 
             onClick={handlePrintSelected}

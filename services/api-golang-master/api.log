@@ -1,1112 +1,626 @@
-nohup: ignoring input
-2025/11/17 22:31:15 📋 Configuration loaded for development environment
-2025/11/17 22:31:15 🔌 Database: postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy
-2025/11/17 22:31:15 ✅ Database connected successfully (using SQL migrations)
+2025/11/28 01:02:28 📋 Configuration loaded for development environment
+2025/11/28 01:02:28 🔌 Database: postgresql://postgres:postgres@localhost:5432/yeelo_homeopathy
+2025/11/28 01:02:28 ✅ Database connected successfully (using SQL migrations)
 ✅ Notifications table ready
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
+[GIN-debug] GET    /docs/*any                --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (4 handlers)
 [GIN-debug] GET    /health                   --> main.main.func1 (6 handlers)
+[GIN-debug] GET    /api/social/gmb/oauth/initiate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).InitiateOAuth-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/oauth/initiate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).InitiateOAuth-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/oauth/callback --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).OAuthCallback-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/oauth/disconnect --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).DisconnectAccount-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/oauth/refresh --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).RefreshToken-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/account   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GetAccount-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/trends    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GetTrends-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/history   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GetHistory-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/schedules --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GetSchedules-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/schedules --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).UpdateSchedules-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/generate  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GeneratePost-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/validate  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).ValidatePost-fm (7 handlers)
+[GIN-debug] POST   /api/social/gmb/post      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).PostToGMB-fm (7 handlers)
+[GIN-debug] GET    /api/social/gmb/suggestions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GMBHandler).GetSuggestions-fm (7 handlers)
 [GIN-debug] POST   /api/auth/login           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).Login-fm (6 handlers)
 [GIN-debug] POST   /api/auth/logout          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).Logout-fm (6 handlers)
 [GIN-debug] POST   /api/auth/refresh         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).RefreshToken-fm (6 handlers)
-[GIN-debug] POST   /api/auth/validate        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).ValidateToken-fm (6 handlers)
 [GIN-debug] GET    /api/auth/me              --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).Me-fm (6 handlers)
-[GIN-debug] GET    /api/v1/system/health     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemHealth-fm (6 handlers)
-[GIN-debug] GET    /api/v1/system/info       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemInfo-fm (6 handlers)
-[GIN-debug] POST   /api/v1/enrich/invoice/:parsed_invoice_id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnrichHandler).EnrichParsedInvoice-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCustomers-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCustomer-fm (6 handlers)
-[GIN-debug] POST   /api/v1/customers         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).CreateCustomer-fm (6 handlers)
-[GIN-debug] PUT    /api/v1/customers/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).UpdateCustomer-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/loyalty --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetLoyaltyPoints-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/outstanding --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetOutstanding-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/credit-limit --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCreditLimit-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/feedback --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetFeedback-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/communication --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCommunication-fm (6 handlers)
-[GIN-debug] GET    /api/v1/customers/appointments --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetAppointments-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetStats-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/activity --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetActivity-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/recent-sales --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetRecentSales-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/top-products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetTopProducts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetAlerts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/revenue-chart --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetRevenueChart-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetSummary-fm (6 handlers)
-[GIN-debug] GET    /api/erp/dashboard/expiry-summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ExpiryHandler).GetExpirySummary-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProducts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/template --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductImportHandler).DownloadTemplate-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/stats   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProductStats-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/grouped --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GroupedProductsHandler).GetGroupedProducts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/grouped/:baseName/variants --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GroupedProductsHandler).GetGroupVariants-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProduct-fm (6 handlers)
-[GIN-debug] POST   /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateProduct-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateProduct-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteProduct-fm (6 handlers)
-[GIN-debug] POST   /api/erp/products/import/stream --> main.main.func2 (6 handlers)
-[GIN-debug] GET    /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategories-fm (6 handlers)
-[GIN-debug] GET    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategory-fm (6 handlers)
-[GIN-debug] POST   /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).CreateCategory-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).UpdateCategory-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).DeleteCategory-fm (6 handlers)
-[GIN-debug] GET    /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (6 handlers)
-[GIN-debug] POST   /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateBrand-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateBrand-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteBrand-fm (6 handlers)
-[GIN-debug] GET    /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (6 handlers)
-[GIN-debug] POST   /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreatePotency-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdatePotency-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeletePotency-fm (6 handlers)
-[GIN-debug] GET    /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (6 handlers)
-[GIN-debug] POST   /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateForm-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateForm-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteForm-fm (6 handlers)
-[GIN-debug] GET    /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (6 handlers)
-[GIN-debug] POST   /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateUnit-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateUnit-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteUnit-fm (6 handlers)
-[GIN-debug] GET    /api/erp/sales/orders     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesOrders-fm (6 handlers)
-[GIN-debug] GET    /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesOrder-fm (6 handlers)
-[GIN-debug] POST   /api/erp/sales/orders     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).CreateSalesOrder-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).UpdateSalesOrder-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).DeleteSalesOrder-fm (6 handlers)
-[GIN-debug] GET    /api/erp/sales/invoices   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesInvoices-fm (6 handlers)
-[GIN-debug] POST   /api/erp/sales/invoices   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).CreateSalesInvoice-fm (6 handlers)
-[GIN-debug] GET    /api/erp/customers        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCustomers-fm (6 handlers)
-[GIN-debug] GET    /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCustomer-fm (6 handlers)
-[GIN-debug] POST   /api/erp/customers        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateCustomer-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateCustomer-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteCustomer-fm (6 handlers)
-[GIN-debug] GET    /api/erp/customer-groups  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).GetCustomerGroups-fm (6 handlers)
-[GIN-debug] GET    /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).GetCustomerGroup-fm (6 handlers)
-[GIN-debug] POST   /api/erp/customer-groups  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).CreateCustomerGroup-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).UpdateCustomerGroup-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).DeleteCustomerGroup-fm (6 handlers)
-[GIN-debug] GET    /api/erp/vendors          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetVendors-fm (6 handlers)
-[GIN-debug] GET    /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetVendor-fm (6 handlers)
-[GIN-debug] POST   /api/erp/vendors          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateVendor-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateVendor-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteVendor-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetInventory-fm (6 handlers)
-[GIN-debug] POST   /api/erp/inventory/adjust --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).AdjustStock-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/adjustments --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetAdjustments-fm (6 handlers)
-[GIN-debug] POST   /api/erp/inventory/transfer --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).TransferStock-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/transfers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetTransfers-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetAlerts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetEnhancedStockList-fm (6 handlers)
-[GIN-debug] POST   /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).AddManualStock-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockTransactions-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/alerts/low-stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetLowStockAlerts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/alerts/expiry --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetExpiryAlerts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/expiries/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetExpiryAlerts-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/valuation --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockValuation-fm (6 handlers)
-[GIN-debug] GET    /api/erp/inventory/reports/stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GenerateStockReport-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/inventory/alerts/low-stock/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveLowStockAlert-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/inventory/alerts/expiry/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveExpiryAlert-fm (6 handlers)
-[GIN-debug] GET    /api/erp/racks            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).GetRacks-fm (6 handlers)
-[GIN-debug] GET    /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).GetRack-fm (6 handlers)
-[GIN-debug] POST   /api/erp/racks            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).CreateRack-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).UpdateRack-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).DeleteRack-fm (6 handlers)
-[GIN-debug] GET    /api/erp/pos/sessions     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).GetPOSSessions-fm (6 handlers)
-[GIN-debug] POST   /api/erp/pos/sessions     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).CreatePOSSession-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/pos/sessions/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).UpdatePOSSession-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/pos/sessions/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).DeletePOSSession-fm (6 handlers)
-[GIN-debug] GET    /api/erp/pos/counters     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetPOSCounters-fm (6 handlers)
-[GIN-debug] GET    /api/erp/purchases/orders --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchases-fm (6 handlers)
-[GIN-debug] GET    /api/erp/purchases/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchase-fm (6 handlers)
-[GIN-debug] POST   /api/erp/purchases/orders --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).CreateEnhancedPurchase-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/purchases/orders/:id/approve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).ApproveEnhancedPurchase-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/purchases/orders/:id/reject --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).RejectEnhancedPurchase-fm (6 handlers)
-[GIN-debug] GET    /api/erp/purchases/pending --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetPendingPurchases-fm (6 handlers)
-[GIN-debug] GET    /api/erp/payments         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPayments-fm (6 handlers)
-[GIN-debug] POST   /api/erp/payments         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreatePayment-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/payments/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdatePayment-fm (6 handlers)
-[GIN-debug] GET    /api/erp/price-lists      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).GetPriceLists-fm (6 handlers)
-[GIN-debug] GET    /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).GetPriceList-fm (6 handlers)
-[GIN-debug] POST   /api/erp/price-lists      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).CreatePriceList-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).UpdatePriceList-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).DeletePriceList-fm (6 handlers)
-[GIN-debug] POST   /api/erp/price-lists/:id/products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).AddProductToPriceList-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/price-lists/:id/products/:productId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).RemoveProductFromPriceList-fm (6 handlers)
-[GIN-debug] GET    /api/erp/users            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetUsers-fm (6 handlers)
-[GIN-debug] GET    /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetUser-fm (6 handlers)
-[GIN-debug] POST   /api/erp/users            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).CreateUser-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).UpdateUser-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).DeleteUser-fm (6 handlers)
-[GIN-debug] GET    /api/erp/roles            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetRoles-fm (6 handlers)
-[GIN-debug] POST   /api/erp/roles            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).CreateRole-fm (6 handlers)
-[GIN-debug] GET    /api/erp/permissions      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetPermissions-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/recommendations/products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIProductRecommendations-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai/recommendations/customers/:customer_id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIProductRecommendationsByCustomer-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/recommendations/batch --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIBatchRecommendations-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/forecast/sales --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetAISalesForecast-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/segmentation/customers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAICustomerSegmentation-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai/insights/business --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetAIBusinessInsights-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai/insights/customers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAICustomerInsights-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/chatbot       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).GetAIChatbotResponse-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai/models/status --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).GetAIModelStatus-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/models/train  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).TrainAIModels-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai/data/prepare  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).PrepareAIData-fm (6 handlers)
-[GIN-debug] GET    /api/erp/outbox/events    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).GetOutboxEvents-fm (6 handlers)
-[GIN-debug] GET    /api/erp/outbox/events/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).GetOutboxEvent-fm (6 handlers)
-[GIN-debug] POST   /api/erp/outbox/events/process --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).ProcessOutboxEvents-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/outbox/events/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).DeleteOutboxEvent-fm (6 handlers)
-[GIN-debug] GET    /api/erp/system/health    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemHealth-fm (6 handlers)
-[GIN-debug] GET    /api/erp/system/info      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemInfo-fm (6 handlers)
-[GIN-debug] GET    /api/erp/bugs             --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BugHandler).ListBugs-fm (6 handlers)
-[GIN-debug] GET    /api/erp/barcodes         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodes-fm (6 handlers)
-[GIN-debug] POST   /api/erp/barcodes/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GenerateBarcode-fm (6 handlers)
-[GIN-debug] POST   /api/erp/barcodes/print   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).PrintBarcodes-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/barcodes/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).UpdateBarcode-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/barcodes/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).DeleteBarcode-fm (6 handlers)
-[GIN-debug] GET    /api/erp/barcodes/stats   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodeStats-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/products/barcode/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).DeleteBarcode-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/barcode/stats --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodeStats-fm (6 handlers)
-[GIN-debug] GET    /api/erp/products/barcode --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProductsWithBarcodes-fm (6 handlers)
-[GIN-debug] GET    /api/erp/loyalty/points   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetLoyaltyPoints-fm (6 handlers)
-[GIN-debug] GET    /api/erp/loyalty/points/:customerId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetCustomerLoyaltyPoints-fm (6 handlers)
-[GIN-debug] POST   /api/erp/loyalty/points/add --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).AddLoyaltyPoints-fm (6 handlers)
-[GIN-debug] POST   /api/erp/loyalty/points/redeem --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).RedeemLoyaltyPoints-fm (6 handlers)
-[GIN-debug] GET    /api/erp/loyalty/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetLoyaltyTransactions-fm (6 handlers)
-[GIN-debug] POST   /api/erp/bulk/products    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkCreateProducts-fm (6 handlers)
-[GIN-debug] POST   /api/erp/bulk/products/update --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkUpdateProducts-fm (6 handlers)
-[GIN-debug] POST   /api/erp/bulk/products/delete --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkDeleteProducts-fm (6 handlers)
-[GIN-debug] POST   /api/erp/bulk/inventory/adjust --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkAdjustInventory-fm (6 handlers)
-[GIN-debug] GET    /api/erp/branches         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).GetBranches-fm (6 handlers)
-[GIN-debug] GET    /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).GetBranch-fm (6 handlers)
-[GIN-debug] POST   /api/erp/branches         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).CreateBranch-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).UpdateBranch-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).DeleteBranch-fm (6 handlers)
-[GIN-debug] GET    /api/erp/tax/slabs        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetTaxSlabs-fm (6 handlers)
-[GIN-debug] GET    /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetTaxSlab-fm (6 handlers)
-[GIN-debug] POST   /api/erp/tax/slabs        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).CreateTaxSlab-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).UpdateTaxSlab-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).DeleteTaxSlab-fm (6 handlers)
-[GIN-debug] GET    /api/erp/tax/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCodes-fm (6 handlers)
-[GIN-debug] GET    /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCode-fm (6 handlers)
-[GIN-debug] POST   /api/erp/tax/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).CreateHSNCode-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).UpdateHSNCode-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).DeleteHSNCode-fm (6 handlers)
-[GIN-debug] GET    /api/erp/hsn-codes        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCodes-fm (6 handlers)
-[GIN-debug] GET    /api/erp/hsn-codes/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCode-fm (6 handlers)
-[GIN-debug] POST   /api/erp/hsn-codes        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).CreateHSNCode-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/hsn-codes/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).UpdateHSNCode-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/hsn-codes/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).DeleteHSNCode-fm (6 handlers)
-[GIN-debug] GET    /api/erp/rbac/roles       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetRoles-fm (6 handlers)
-[GIN-debug] GET    /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetRole-fm (6 handlers)
-[GIN-debug] POST   /api/erp/rbac/roles       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).CreateRole-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).UpdateRole-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).DeleteRole-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/rbac/roles/:id/permissions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).UpdateRolePermissions-fm (6 handlers)
-[GIN-debug] GET    /api/erp/rbac/permissions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetPermissions-fm (6 handlers)
-[GIN-debug] GET    /api/erp/payment-methods  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).GetPaymentMethods-fm (6 handlers)
-[GIN-debug] GET    /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).GetPaymentMethod-fm (6 handlers)
-[GIN-debug] POST   /api/erp/payment-methods  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).CreatePaymentMethod-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).UpdatePaymentMethod-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).DeletePaymentMethod-fm (6 handlers)
-[GIN-debug] POST   /api/erp/payment-methods/test --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).TestPaymentMethod-fm (6 handlers)
-[GIN-debug] GET    /api/erp/gateway/configs  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).GetGatewayConfigs-fm (6 handlers)
-[GIN-debug] GET    /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).GetGatewayConfig-fm (6 handlers)
-[GIN-debug] POST   /api/erp/gateway/configs  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).CreateGatewayConfig-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).UpdateGatewayConfig-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).DeleteGatewayConfig-fm (6 handlers)
-[GIN-debug] POST   /api/erp/gateway/test/:type --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).TestGatewayConnection-fm (6 handlers)
-[GIN-debug] GET    /api/erp/integrations     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).GetIntegrations-fm (6 handlers)
-[GIN-debug] GET    /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).GetIntegration-fm (6 handlers)
-[GIN-debug] POST   /api/erp/integrations     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).CreateIntegration-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).UpdateIntegration-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).DeleteIntegration-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai-models        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).GetAIModels-fm (6 handlers)
-[GIN-debug] GET    /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).GetAIModel-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai-models        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).CreateAIModel-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).UpdateAIModel-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).DeleteAIModel-fm (6 handlers)
-[GIN-debug] POST   /api/erp/ai-models/test   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).TestAIModel-fm (6 handlers)
-[GIN-debug] GET    /api/erp/backups          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).GetBackups-fm (6 handlers)
-[GIN-debug] POST   /api/erp/backups          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).CreateBackup-fm (6 handlers)
-[GIN-debug] POST   /api/erp/backups/:id/restore --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).RestoreBackup-fm (6 handlers)
-[GIN-debug] GET    /api/erp/units-settings   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).GetUnits-fm (6 handlers)
-[GIN-debug] GET    /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).GetUnit-fm (6 handlers)
-[GIN-debug] POST   /api/erp/units-settings   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).CreateUnit-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).UpdateUnit-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).DeleteUnit-fm (6 handlers)
-[GIN-debug] GET    /api/erp/settings         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SettingsHandler).GetSettings-fm (6 handlers)
-[GIN-debug] GET    /api/erp/settings/:key    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SettingsHandler).GetSetting-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/settings/:key    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SettingsHandler).UpsertSetting-fm (6 handlers)
-[GIN-debug] GET    /api/erp/notifications    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetNotifications-fm (6 handlers)
-[GIN-debug] GET    /api/erp/notifications/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetNotification-fm (6 handlers)
-[GIN-debug] POST   /api/erp/notifications    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).CreateNotification-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/notifications/:id/read --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).MarkAsRead-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/notifications/mark-all-read --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).MarkAllAsRead-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/notifications/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).DeleteNotification-fm (6 handlers)
-[GIN-debug] GET    /api/erp/notifications/unread/count --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetUnreadCount-fm (6 handlers)
-[GIN-debug] POST   /api/erp/notifications/cleanup --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).CleanupExpiredNotifications-fm (6 handlers)
-[GIN-debug] GET    /api/erp/hr/employees     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).GetEmployees-fm (6 handlers)
-[GIN-debug] GET    /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).GetEmployee-fm (6 handlers)
-[GIN-debug] POST   /api/erp/hr/employees     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).CreateEmployee-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).UpdateEmployee-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).DeleteEmployee-fm (6 handlers)
-[GIN-debug] GET    /api/uploads/purchase     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UploadsHandler).GetPurchaseSessions-fm (6 handlers)
+[GIN-debug] POST   /api/auth/validate        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AuthHandler).ValidateToken-fm (6 handlers)
+[GIN-debug] GET    /api/v1/system/health     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemHealth-fm (7 handlers)
+[GIN-debug] GET    /api/v1/system/info       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemInfo-fm (7 handlers)
+[GIN-debug] POST   /api/v1/enrich/invoice/:parsed_invoice_id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnrichHandler).EnrichParsedInvoice-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCustomers-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCustomer-fm (7 handlers)
+[GIN-debug] POST   /api/v1/customers         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).CreateCustomer-fm (7 handlers)
+[GIN-debug] PUT    /api/v1/customers/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).UpdateCustomer-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/:id/profile --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).GetCustomerProfile-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/:id/bills --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).GetCustomerBills-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/:id/products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).GetCustomerProducts-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/outstanding --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).GetOutstandingCustomers-fm (7 handlers)
+[GIN-debug] POST   /api/v1/customers/:id/loyalty/add --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).AddLoyaltyPoints-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/analytics/summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerAnalyticsHandler).GetCustomerAnalyticsSummary-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/loyalty --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetLoyaltyPoints-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/credit-limit --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCreditLimit-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/feedback --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetFeedback-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/communication --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetCommunication-fm (7 handlers)
+[GIN-debug] GET    /api/v1/customers/appointments --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerHandler).GetAppointments-fm (7 handlers)
+[GIN-debug] GET    /api/erp/pos/search-products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).SearchProducts-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/product/:id/batches --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).GetProductBatches-fm (6 handlers)
+[GIN-debug] POST   /api/erp/pos/create-invoice --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).CreateInvoice-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/invoices     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).GetInvoices-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/invoice/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).GetInvoice-fm (6 handlers)
+[GIN-debug] POST   /api/erp/pos/hold-bill    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).HoldBill-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/held-bills   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).GetHeldBills-fm (6 handlers)
+[GIN-debug] POST   /api/erp/pos/resume-bill/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).ResumeBill-fm (6 handlers)
+[GIN-debug] DELETE /api/erp/pos/held-bill/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).DeleteHeldBill-fm (6 handlers)
+[GIN-debug] POST   /api/erp/pos/create-return --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).CreateReturn-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/returns      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSEnhancedHandler).GetReturns-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/dashboard-stats --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetDashboardStats-fm (6 handlers)
+[GIN-debug] GET    /api/erp/pos/doctor-commissions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetDoctorCommissions-fm (6 handlers)
+[GIN-debug] POST   /api/erp/pos/doctor-commissions/:id/mark-paid --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).MarkCommissionPaid-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/summary      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetGSTSummary-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/gstr1        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetGSTR1Report-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/gstr3b       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetGSTR3BReport-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/itc-ledger   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetITCLedger-fm (6 handlers)
+[GIN-debug] POST   /api/erp/gst/itc-ledger   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).AddITCEntry-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/hsn-wise-sales --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetHSNWiseSales-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/sales-register --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetSalesRegister-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/purchase-register --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).GetPurchaseRegister-fm (6 handlers)
+[GIN-debug] GET    /api/erp/gst/export       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GSTReportsHandler).ExportGSTData-fm (6 handlers)
+[GIN-debug] POST   /api/erp/einvoice/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).GenerateEInvoice-fm (6 handlers)
+[GIN-debug] GET    /api/erp/einvoice/:invoiceId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).GetEInvoiceDetails-fm (6 handlers)
+[GIN-debug] POST   /api/erp/einvoice/cancel  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).CancelEInvoice-fm (6 handlers)
+[GIN-debug] POST   /api/erp/ewaybill/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).GenerateEWayBill-fm (6 handlers)
+[GIN-debug] POST   /api/erp/ewaybill/extend  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).ExtendEWayBill-fm (6 handlers)
+[GIN-debug] POST   /api/erp/ewaybill/cancel  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EInvoiceHandler).CancelEWayBill-fm (6 handlers)
+[GIN-debug] GET    /api/erp/erp-settings     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ERPSettingsHandler).GetSettings-fm (6 handlers)
+[GIN-debug] GET    /api/erp/erp-settings/categories --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ERPSettingsHandler).GetCategories-fm (6 handlers)
+[GIN-debug] GET    /api/erp/erp-settings/:key --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ERPSettingsHandler).GetSetting-fm (6 handlers)
+[GIN-debug] GET    /api/erp/dashboard/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetStats-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/activity --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetActivity-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/recent-sales --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetRecentSales-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/top-products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetTopProducts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetAlerts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/revenue-chart --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetRevenueChart-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/category-stats --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetCategoryStats-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetSummary-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/expiry-summary --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetExpirySummary-fm (7 handlers)
+[GIN-debug] GET    /api/erp/dashboard/quick-actions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*QuickActionsHandler).GetQuickActions-fm (7 handlers)
+[GIN-debug] GET    /api/erp/notifications/recent --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetRecentNotifications-fm (7 handlers)
+[GIN-debug] GET    /api/erp/favicon.ico      --> main.main.func2 (7 handlers)
+[GIN-debug] GET    /api/erp/products/stats   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductStatsHandler).GetProductStats-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/barcode --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProductsWithBarcodes-fm (7 handlers)
+[GIN-debug] POST   /api/erp/products/barcode/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GenerateBarcode-fm (7 handlers)
+[GIN-debug] POST   /api/erp/products/barcode/print --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).PrintBarcodes-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/products/barcode/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).UpdateBarcode-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/products/barcode/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).DeleteBarcode-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/barcode/stats --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeHandler).GetBarcodeStats-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/:id/batches --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BatchBarcodeHandler).GetBatchesByProduct-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/:id/barcode-image --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BarcodeLabelHandler).GenerateBarcodeImage-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProducts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetProduct-fm (7 handlers)
+[GIN-debug] POST   /api/erp/products         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateProduct-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateProduct-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/products/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteProduct-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/template --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductImportHandler).DownloadTemplate-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/grouped --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GroupedProductsHandler).GetGroupedProducts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/products/grouped/:baseName/variants --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GroupedProductsHandler).GetGroupVariants-fm (7 handlers)
+[GIN-debug] POST   /api/erp/products/import/stream --> main.main.func3 (7 handlers)
+[GIN-debug] POST   /api/erp/inventory/batches --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BatchBarcodeHandler).CreateBatch-fm (7 handlers)
+[GIN-debug] POST   /api/erp/inventory/batches/allocate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BatchBarcodeHandler).AllocateBatch-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/batches/expiring --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BatchBarcodeHandler).GetExpiringBatches-fm (7 handlers)
+[GIN-debug] GET    /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategories-fm (7 handlers)
+[GIN-debug] GET    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategory-fm (7 handlers)
+[GIN-debug] POST   /api/erp/categories       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).CreateCategory-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).UpdateCategory-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/categories/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).DeleteCategory-fm (7 handlers)
+[GIN-debug] GET    /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (7 handlers)
+[GIN-debug] POST   /api/erp/brands           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateBrand-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateBrand-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/brands/:id       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteBrand-fm (7 handlers)
+[GIN-debug] GET    /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (7 handlers)
+[GIN-debug] POST   /api/erp/potencies        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreatePotency-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdatePotency-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/potencies/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeletePotency-fm (7 handlers)
+[GIN-debug] GET    /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (7 handlers)
+[GIN-debug] POST   /api/erp/forms            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateForm-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateForm-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/forms/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteForm-fm (7 handlers)
+[GIN-debug] GET    /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (7 handlers)
+[GIN-debug] POST   /api/erp/units            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateUnit-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateUnit-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/units/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteUnit-fm (7 handlers)
+[GIN-debug] GET    /api/erp/sales/orders     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesOrders-fm (7 handlers)
+[GIN-debug] GET    /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesOrder-fm (7 handlers)
+[GIN-debug] POST   /api/erp/sales/orders     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).CreateSalesOrder-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).UpdateSalesOrder-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/sales/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).DeleteSalesOrder-fm (7 handlers)
+[GIN-debug] GET    /api/erp/sales/invoices   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetSalesInvoices-fm (7 handlers)
+[GIN-debug] POST   /api/erp/sales/invoices   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).CreateSalesInvoice-fm (7 handlers)
+[GIN-debug] GET    /api/erp/customers        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCustomers-fm (7 handlers)
+[GIN-debug] GET    /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetCustomer-fm (7 handlers)
+[GIN-debug] POST   /api/erp/customers        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateCustomer-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateCustomer-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/customers/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteCustomer-fm (7 handlers)
+[GIN-debug] GET    /api/erp/customer-groups  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).GetCustomerGroups-fm (7 handlers)
+[GIN-debug] GET    /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).GetCustomerGroup-fm (7 handlers)
+[GIN-debug] POST   /api/erp/customer-groups  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).CreateCustomerGroup-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).UpdateCustomerGroup-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/customer-groups/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CustomerGroupHandler).DeleteCustomerGroup-fm (7 handlers)
+[GIN-debug] GET    /api/erp/vendors          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetVendors-fm (7 handlers)
+[GIN-debug] GET    /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetVendor-fm (7 handlers)
+[GIN-debug] POST   /api/erp/vendors          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreateVendor-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdateVendor-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/vendors/:id      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).DeleteVendor-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetInventory-fm (7 handlers)
+[GIN-debug] POST   /api/erp/inventory/adjust --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).AdjustStock-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/adjustments --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetAdjustments-fm (7 handlers)
+[GIN-debug] POST   /api/erp/inventory/transfer --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).TransferStock-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/transfers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetTransfers-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/alerts --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetAlerts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryAlertsHandler).GetStockSummary-fm (7 handlers)
+[GIN-debug] POST   /api/erp/inventory/stock  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).AddManualStock-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockTransactions-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/alerts/low-stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryAlertsHandler).GetLowStockAlerts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/alerts/expiry --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryAlertsHandler).GetExpiryAlerts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/valuation --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GetStockValuation-fm (7 handlers)
+[GIN-debug] GET    /api/erp/inventory/reports/stock --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).GenerateStockReport-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/inventory/alerts/low-stock/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveLowStockAlert-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/inventory/alerts/expiry/:id/resolve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedInventoryHandler).ResolveExpiryAlert-fm (7 handlers)
+[GIN-debug] GET    /api/erp/search           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SearchHandler).GlobalSearch-fm (7 handlers)
+[GIN-debug] GET    /api/erp/search/products  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SearchHandler).SearchProducts-fm (7 handlers)
+[GIN-debug] GET    /api/erp/racks            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).GetRacks-fm (7 handlers)
+[GIN-debug] GET    /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).GetRack-fm (7 handlers)
+[GIN-debug] POST   /api/erp/racks            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).CreateRack-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).UpdateRack-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/racks/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RackHandler).DeleteRack-fm (7 handlers)
+[GIN-debug] GET    /api/erp/pos/sessions     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).GetPOSSessions-fm (7 handlers)
+[GIN-debug] POST   /api/erp/pos/sessions     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).CreatePOSSession-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/pos/sessions/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).UpdatePOSSession-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/pos/sessions/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*POSSessionHandler).DeletePOSSession-fm (7 handlers)
+[GIN-debug] GET    /api/erp/pos/counters     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetPOSCounters-fm (7 handlers)
+[GIN-debug] GET    /api/erp/purchases/orders --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchases-fm (7 handlers)
+[GIN-debug] GET    /api/erp/purchases/orders/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetEnhancedPurchase-fm (7 handlers)
+[GIN-debug] POST   /api/erp/purchases/orders --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).CreateEnhancedPurchase-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/purchases/orders/:id/approve --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).ApproveEnhancedPurchase-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/purchases/orders/:id/reject --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).RejectEnhancedPurchase-fm (7 handlers)
+[GIN-debug] GET    /api/erp/purchases/pending --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedPurchaseHandler).GetPendingPurchases-fm (7 handlers)
+[GIN-debug] GET    /api/erp/payments         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPayments-fm (7 handlers)
+[GIN-debug] POST   /api/erp/payments         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).CreatePayment-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/payments/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).UpdatePayment-fm (7 handlers)
+[GIN-debug] GET    /api/erp/price-lists      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).GetPriceLists-fm (7 handlers)
+[GIN-debug] GET    /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).GetPriceList-fm (7 handlers)
+[GIN-debug] POST   /api/erp/price-lists      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).CreatePriceList-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).UpdatePriceList-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/price-lists/:id  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).DeletePriceList-fm (7 handlers)
+[GIN-debug] POST   /api/erp/price-lists/:id/products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).AddProductToPriceList-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/price-lists/:id/products/:productId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PriceListHandler).RemoveProductFromPriceList-fm (7 handlers)
+[GIN-debug] GET    /api/erp/users/me         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetMe-fm (7 handlers)
+[GIN-debug] GET    /api/erp/users            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetUsers-fm (7 handlers)
+[GIN-debug] GET    /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetUser-fm (7 handlers)
+[GIN-debug] POST   /api/erp/users            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).CreateUser-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).UpdateUser-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/users/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).DeleteUser-fm (7 handlers)
+[GIN-debug] GET    /api/erp/roles            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetRoles-fm (7 handlers)
+[GIN-debug] POST   /api/erp/roles            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).CreateRole-fm (7 handlers)
+[GIN-debug] GET    /api/erp/permissions      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UserHandler).GetPermissions-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/recommendations/products --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIProductRecommendations-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai/recommendations/customers/:customer_id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIProductRecommendationsByCustomer-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/recommendations/batch --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAIBatchRecommendations-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/forecast/sales --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SalesHandler).GetAISalesForecast-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/segmentation/customers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAICustomerSegmentation-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/fraud/check   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).AIFraudDetection-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai/insights/business --> github.com/yeelo/homeopathy-erp/internal/handlers.(*DashboardHandler).GetAIBusinessInsights-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai/insights/customers --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetAICustomerInsights-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/chatbot       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).GetAIChatbotResponse-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai/models/status --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).GetAIModelStatus-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/models/train  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).TrainAIModels-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai/data/prepare  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelHandler).PrepareAIData-fm (7 handlers)
+[GIN-debug] GET    /api/erp/outbox/events    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).GetOutboxEvents-fm (7 handlers)
+[GIN-debug] GET    /api/erp/outbox/events/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).GetOutboxEvent-fm (7 handlers)
+[GIN-debug] POST   /api/erp/outbox/events/process --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).ProcessOutboxEvents-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/outbox/events/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OutboxEventHandler).DeleteOutboxEvent-fm (7 handlers)
+[GIN-debug] GET    /api/erp/system/health    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemHealth-fm (7 handlers)
+[GIN-debug] GET    /api/erp/system/info      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SystemHandler).GetSystemInfo-fm (7 handlers)
+[GIN-debug] GET    /api/erp/bugs             --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BugHandler).ListBugs-fm (7 handlers)
+[GIN-debug] GET    /api/erp/loyalty/points   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetLoyaltyPoints-fm (7 handlers)
+[GIN-debug] GET    /api/erp/loyalty/points/:customerId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetCustomerLoyaltyPoints-fm (7 handlers)
+[GIN-debug] POST   /api/erp/loyalty/points/add --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).AddLoyaltyPoints-fm (7 handlers)
+[GIN-debug] POST   /api/erp/loyalty/points/redeem --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).RedeemLoyaltyPoints-fm (7 handlers)
+[GIN-debug] GET    /api/erp/loyalty/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*LoyaltyHandler).GetLoyaltyTransactions-fm (7 handlers)
+[GIN-debug] POST   /api/erp/bulk/products    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkCreateProducts-fm (7 handlers)
+[GIN-debug] POST   /api/erp/bulk/products/update --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkUpdateProducts-fm (7 handlers)
+[GIN-debug] POST   /api/erp/bulk/products/delete --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkDeleteProducts-fm (7 handlers)
+[GIN-debug] POST   /api/erp/bulk/inventory/adjust --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BulkOperationsHandler).BulkAdjustInventory-fm (7 handlers)
+[GIN-debug] GET    /api/erp/branches         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).GetBranches-fm (7 handlers)
+[GIN-debug] GET    /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).GetBranch-fm (7 handlers)
+[GIN-debug] POST   /api/erp/branches         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).CreateBranch-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).UpdateBranch-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/branches/:id     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BranchHandler).DeleteBranch-fm (7 handlers)
+[GIN-debug] GET    /api/erp/tax/slabs        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetTaxSlabs-fm (7 handlers)
+[GIN-debug] GET    /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetTaxSlab-fm (7 handlers)
+[GIN-debug] POST   /api/erp/tax/slabs        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).CreateTaxSlab-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).UpdateTaxSlab-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/tax/slabs/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).DeleteTaxSlab-fm (7 handlers)
+[GIN-debug] GET    /api/erp/tax/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCodes-fm (7 handlers)
+[GIN-debug] GET    /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).GetHSNCode-fm (7 handlers)
+[GIN-debug] POST   /api/erp/tax/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).CreateHSNCode-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).UpdateHSNCode-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/tax/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*TaxHandler).DeleteHSNCode-fm (7 handlers)
+[GIN-debug] GET    /api/erp/rbac/roles       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetRoles-fm (7 handlers)
+[GIN-debug] GET    /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetRole-fm (7 handlers)
+[GIN-debug] POST   /api/erp/rbac/roles       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).CreateRole-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).UpdateRole-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/rbac/roles/:id   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).DeleteRole-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/rbac/roles/:id/permissions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).UpdateRolePermissions-fm (7 handlers)
+[GIN-debug] GET    /api/erp/rbac/permissions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*RBACHandler).GetPermissions-fm (7 handlers)
+[GIN-debug] GET    /api/erp/payment-methods  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).GetPaymentMethods-fm (7 handlers)
+[GIN-debug] GET    /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).GetPaymentMethod-fm (7 handlers)
+[GIN-debug] POST   /api/erp/payment-methods  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).CreatePaymentMethod-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).UpdatePaymentMethod-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/payment-methods/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).DeletePaymentMethod-fm (7 handlers)
+[GIN-debug] POST   /api/erp/payment-methods/test --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentMethodsHandler).TestPaymentMethod-fm (7 handlers)
+[GIN-debug] GET    /api/erp/gateway/configs  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).GetGatewayConfigs-fm (7 handlers)
+[GIN-debug] GET    /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).GetGatewayConfig-fm (7 handlers)
+[GIN-debug] POST   /api/erp/gateway/configs  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).CreateGatewayConfig-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).UpdateGatewayConfig-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/gateway/configs/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).DeleteGatewayConfig-fm (7 handlers)
+[GIN-debug] POST   /api/erp/gateway/test/:type --> github.com/yeelo/homeopathy-erp/internal/handlers.(*GatewayHandler).TestGatewayConnection-fm (7 handlers)
+[GIN-debug] GET    /api/erp/integrations     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).GetIntegrations-fm (7 handlers)
+[GIN-debug] GET    /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).GetIntegration-fm (7 handlers)
+[GIN-debug] POST   /api/erp/integrations     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).CreateIntegration-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).UpdateIntegration-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/integrations/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*IntegrationHandler).DeleteIntegration-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai-models        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).GetAIModels-fm (7 handlers)
+[GIN-debug] GET    /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).GetAIModel-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai-models        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).CreateAIModel-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).UpdateAIModel-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/ai-models/:id    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).DeleteAIModel-fm (7 handlers)
+[GIN-debug] POST   /api/erp/ai-models/test   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*AIModelsHandler).TestAIModel-fm (7 handlers)
+[GIN-debug] GET    /api/erp/backups          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).GetBackups-fm (7 handlers)
+[GIN-debug] POST   /api/erp/backups          --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).CreateBackup-fm (7 handlers)
+[GIN-debug] POST   /api/erp/backups/:id/restore --> github.com/yeelo/homeopathy-erp/internal/handlers.(*BackupHandler).RestoreBackup-fm (7 handlers)
+[GIN-debug] GET    /api/erp/units-settings   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).GetUnits-fm (7 handlers)
+[GIN-debug] GET    /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).GetUnit-fm (7 handlers)
+[GIN-debug] POST   /api/erp/units-settings   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).CreateUnit-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).UpdateUnit-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/units-settings/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UnitsHandler).DeleteUnit-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/settings/:key    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*SettingsHandler).UpsertSetting-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/erp-settings/:key --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ERPSettingsHandler).UpdateSetting-fm (7 handlers)
+[GIN-debug] POST   /api/erp/erp-settings/bulk-update --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ERPSettingsHandler).BulkUpdateSettings-fm (7 handlers)
+[GIN-debug] GET    /api/erp/notifications    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetNotifications-fm (7 handlers)
+[GIN-debug] GET    /api/erp/notifications/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetNotification-fm (7 handlers)
+[GIN-debug] POST   /api/erp/notifications    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).CreateNotification-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/notifications/:id/read --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).MarkAsRead-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/notifications/mark-all-read --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).MarkAllAsRead-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/notifications/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).DeleteNotification-fm (7 handlers)
+[GIN-debug] GET    /api/erp/notifications/unread/count --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).GetUnreadCount-fm (7 handlers)
+[GIN-debug] POST   /api/erp/notifications/cleanup --> github.com/yeelo/homeopathy-erp/internal/handlers.(*NotificationHandler).CleanupExpiredNotifications-fm (7 handlers)
+[GIN-debug] GET    /api/erp/hr/employees     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).GetEmployees-fm (7 handlers)
+[GIN-debug] GET    /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).GetEmployee-fm (7 handlers)
+[GIN-debug] POST   /api/erp/hr/employees     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).CreateEmployee-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).UpdateEmployee-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/hr/employees/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EmployeeHandler).DeleteEmployee-fm (7 handlers)
+[GIN-debug] GET    /api/erp/marketing/campaigns --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetCampaigns-fm (7 handlers)
+[GIN-debug] POST   /api/erp/marketing/campaigns --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).CreateCampaign-fm (7 handlers)
+[GIN-debug] GET    /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetCampaign-fm (7 handlers)
+[GIN-debug] PUT    /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).UpdateCampaign-fm (7 handlers)
+[GIN-debug] DELETE /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).DeleteCampaign-fm (7 handlers)
+[GIN-debug] GET    /api/erp/marketing/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetStats-fm (7 handlers)
+[GIN-debug] GET    /api/erp/marketing/templates --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetTemplates-fm (7 handlers)
+[GIN-debug] POST   /api/erp/marketing/templates --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).CreateTemplate-fm (7 handlers)
+[GIN-debug] POST   /api/uploads/purchase     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PurchaseUploadHandler).UploadPurchase-fm (6 handlers)
+[GIN-debug] POST   /api/uploads/approve      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ApproveUploadHandler).ApproveSession-fm (6 handlers)
+[GIN-debug] POST   /api/uploads/inventory    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryUploadHandler).UploadCSV-fm (6 handlers)
 [GIN-debug] GET    /api/uploads/inventory    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UploadsHandler).GetInventorySessions-fm (6 handlers)
 [GIN-debug] GET    /api/uploads/session/:sessionId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UploadsHandler).GetSessionDetails-fm (6 handlers)
-[GIN-debug] POST   /api/uploads/approve      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UploadsHandler).ApproveOrRejectUpload-fm (6 handlers)
-[GIN-debug] GET    /api/erp/marketing/campaigns --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetCampaigns-fm (6 handlers)
-[GIN-debug] POST   /api/erp/marketing/campaigns --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).CreateCampaign-fm (6 handlers)
-[GIN-debug] GET    /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetCampaign-fm (6 handlers)
-[GIN-debug] PUT    /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).UpdateCampaign-fm (6 handlers)
-[GIN-debug] DELETE /api/erp/marketing/campaigns/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).DeleteCampaign-fm (6 handlers)
-[GIN-debug] GET    /api/erp/marketing/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetStats-fm (6 handlers)
-[GIN-debug] GET    /api/erp/marketing/templates --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).GetTemplates-fm (6 handlers)
-[GIN-debug] POST   /api/erp/marketing/templates --> github.com/yeelo/homeopathy-erp/internal/handlers.(*MarketingHandler).CreateTemplate-fm (6 handlers)
-[GIN-debug] GET    /api/masters/subcategories --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetSubcategories-fm (6 handlers)
-[GIN-debug] GET    /api/masters/categories   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategories-fm (6 handlers)
-[GIN-debug] GET    /api/masters/brands       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (6 handlers)
-[GIN-debug] GET    /api/masters/potencies    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (6 handlers)
-[GIN-debug] GET    /api/masters/forms        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (6 handlers)
-[GIN-debug] GET    /api/masters/units        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (6 handlers)
-[GIN-debug] GET    /api/masters/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).GetHSNCodes-fm (6 handlers)
-[GIN-debug] GET    /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).GetHSNCode-fm (6 handlers)
-[GIN-debug] POST   /api/masters/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).CreateHSNCode-fm (6 handlers)
-[GIN-debug] PUT    /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).UpdateHSNCode-fm (6 handlers)
-[GIN-debug] DELETE /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).DeleteHSNCode-fm (6 handlers)
-[GIN-debug] GET    /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetBatches-fm (6 handlers)
-[GIN-debug] POST   /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).CreateBatch-fm (6 handlers)
-[GIN-debug] PUT    /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).UpdateBatch-fm (6 handlers)
-[GIN-debug] DELETE /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).DeleteBatch-fm (6 handlers)
-[GIN-debug] POST   /api/whatsapp/send        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).SendMessage-fm (6 handlers)
-[GIN-debug] GET    /api/whatsapp/templates   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetTemplates-fm (6 handlers)
-[GIN-debug] GET    /api/whatsapp/status/:messageId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetMessageStatus-fm (6 handlers)
-2025/11/17 22:31:15 🚀 HomeoERP API Server starting on port 3005
-2025/11/17 22:31:15 📊 Total API endpoints: 80+ (150+ routes defined, 70+ need implementation)
-2025/11/17 22:31:15 🔗 Frontend URL: http://localhost:3000
-2025/11/17 22:31:15 🔗 API Base URL: http://localhost:3005/api
+[GIN-debug] POST   /api/uploads/approve/simple --> github.com/yeelo/homeopathy-erp/internal/handlers.(*UploadsHandler).ApproveOrRejectUpload-fm (6 handlers)
+[GIN-debug] POST   /api/uploads/parse        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedUploadsHandler).ParseUploadFile-fm (6 handlers)
+[GIN-debug] POST   /api/uploads/process/purchase --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedUploadsHandler).ProcessPurchaseUpload-fm (6 handlers)
+[GIN-debug] POST   /api/uploads/process/inventory --> github.com/yeelo/homeopathy-erp/internal/handlers.(*EnhancedUploadsHandler).ProcessInventoryUpload-fm (6 handlers)
+[GIN-debug] GET    /api/masters/subcategories --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetSubcategories-fm (7 handlers)
+[GIN-debug] GET    /api/masters/categories   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CategoryHandler).GetCategories-fm (7 handlers)
+[GIN-debug] GET    /api/masters/brands       --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetBrands-fm (7 handlers)
+[GIN-debug] GET    /api/masters/potencies    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetPotencies-fm (7 handlers)
+[GIN-debug] GET    /api/masters/forms        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetForms-fm (7 handlers)
+[GIN-debug] GET    /api/masters/units        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*ProductHandler).GetUnits-fm (7 handlers)
+[GIN-debug] GET    /api/masters/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).GetHSNCodes-fm (7 handlers)
+[GIN-debug] GET    /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).GetHSNCode-fm (7 handlers)
+[GIN-debug] POST   /api/masters/hsn-codes    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).CreateHSNCode-fm (7 handlers)
+[GIN-debug] PUT    /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).UpdateHSNCode-fm (7 handlers)
+[GIN-debug] DELETE /api/masters/hsn-codes/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*HSNCodeHandler).DeleteHSNCode-fm (7 handlers)
+[GIN-debug] GET    /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).GetBatches-fm (7 handlers)
+[GIN-debug] POST   /api/products/batches     --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).CreateBatch-fm (7 handlers)
+[GIN-debug] PUT    /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).UpdateBatch-fm (7 handlers)
+[GIN-debug] DELETE /api/products/batches/:id --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InventoryHandler).DeleteBatch-fm (7 handlers)
+[GIN-debug] POST   /api/whatsapp/send        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).SendMessage-fm (7 handlers)
+[GIN-debug] GET    /api/whatsapp/templates   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetTemplates-fm (7 handlers)
+[GIN-debug] GET    /api/whatsapp/status/:messageId --> github.com/yeelo/homeopathy-erp/internal/handlers.(*WhatsAppHandler).GetMessageStatus-fm (7 handlers)
+[GIN-debug] POST   /api/invoices/upload      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InvoiceParserHandler).UploadInvoice-fm (7 handlers)
+[GIN-debug] POST   /api/invoices/:id/parse   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InvoiceParserHandler).ParseInvoice-fm (7 handlers)
+[GIN-debug] POST   /api/invoices/:id/match   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InvoiceParserHandler).MatchProducts-fm (7 handlers)
+[GIN-debug] POST   /api/invoices/:id/reconcile --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InvoiceParserHandler).ReconcileInvoice-fm (7 handlers)
+[GIN-debug] GET    /api/invoices             --> github.com/yeelo/homeopathy-erp/internal/handlers.(*InvoiceParserHandler).GetParsedInvoices-fm (7 handlers)
+[GIN-debug] GET    /api/finance/ledgers      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GetLedgers-fm (7 handlers)
+[GIN-debug] POST   /api/finance/ledgers      --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).CreateLedger-fm (7 handlers)
+[GIN-debug] GET    /api/finance/journal-entries --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GetJournalEntries-fm (7 handlers)
+[GIN-debug] POST   /api/finance/journal-entries --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).CreateJournalEntry-fm (7 handlers)
+[GIN-debug] GET    /api/finance/gst-reports  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GetGSTReports-fm (7 handlers)
+[GIN-debug] POST   /api/finance/gst-reports/generate --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GenerateGSTReport-fm (7 handlers)
+[GIN-debug] GET    /api/finance/profit-loss  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GetProfitLoss-fm (7 handlers)
+[GIN-debug] GET    /api/finance/balance-sheet --> github.com/yeelo/homeopathy-erp/internal/handlers.(*FinanceHandler).GetBalanceSheet-fm (7 handlers)
+[GIN-debug] GET    /api/orders               --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).GetOrders-fm (7 handlers)
+[GIN-debug] GET    /api/orders/:id           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).GetOrder-fm (7 handlers)
+[GIN-debug] POST   /api/orders               --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).CreateOrder-fm (7 handlers)
+[GIN-debug] PUT    /api/orders/:id           --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).UpdateOrder-fm (7 handlers)
+[GIN-debug] PUT    /api/orders/:id/status    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).UpdateOrderStatus-fm (7 handlers)
+[GIN-debug] POST   /api/orders/:id/cancel    --> github.com/yeelo/homeopathy-erp/internal/handlers.(*OrderHandler).CancelOrder-fm (7 handlers)
+[GIN-debug] GET    /api/payments             --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).GetPayments-fm (7 handlers)
+[GIN-debug] GET    /api/payments/:id         --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).GetPayment-fm (7 handlers)
+[GIN-debug] POST   /api/payments             --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).CreatePayment-fm (7 handlers)
+[GIN-debug] POST   /api/payments/:id/process --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).ProcessPayment-fm (7 handlers)
+[GIN-debug] POST   /api/payments/:id/refund  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).RefundPayment-fm (7 handlers)
+[GIN-debug] GET    /api/payments/:id/transactions --> github.com/yeelo/homeopathy-erp/internal/handlers.(*PaymentHandler).GetPaymentTransactions-fm (7 handlers)
+[GIN-debug] GET    /api/campaigns            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).GetCampaigns-fm (7 handlers)
+[GIN-debug] GET    /api/campaigns/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).GetCampaign-fm (7 handlers)
+[GIN-debug] POST   /api/campaigns            --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).CreateCampaign-fm (7 handlers)
+[GIN-debug] PUT    /api/campaigns/:id        --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).UpdateCampaign-fm (7 handlers)
+[GIN-debug] POST   /api/campaigns/:id/schedule --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).ScheduleCampaign-fm (7 handlers)
+[GIN-debug] POST   /api/campaigns/:id/send   --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).SendCampaign-fm (7 handlers)
+[GIN-debug] GET    /api/campaigns/:id/stats  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).GetCampaignStats-fm (7 handlers)
+[GIN-debug] GET    /api/campaigns/templates  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).GetTemplates-fm (7 handlers)
+[GIN-debug] POST   /api/campaigns/templates  --> github.com/yeelo/homeopathy-erp/internal/handlers.(*CampaignHandler).CreateTemplate-fm (7 handlers)
+2025/11/28 01:02:28 🚀 HomeoERP API Server starting on port 3005
+2025/11/28 01:02:28 📊 Total API endpoints: 80+ (150+ routes defined, 70+ need implementation)
+2025/11/28 01:02:28 🔗 Frontend URL: http://localhost:3000
+2025/11/28 01:02:28 🔗 API Base URL: http://localhost:3005/api
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :3005
-[GIN] 2025/11/17 - 22:31:21 | 200 |    8.996784ms |             ::1 | GET      "/api/erp/products/barcode?limit=10&page=1"
-[GIN] 2025/11/17 - 22:31:21 | 200 |     201.169µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:31:21 | 200 |      460.84µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:31:32 | 200 |     100.869µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:31:32 | 200 |      237.57µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:31:33 | 200 |     100.827µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:31:33 | 200 |     229.577µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:31:51 | 200 |      71.922µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:31:51 | 200 |     112.057µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:32:02 | 200 |     223.786µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:32:02 | 200 |     110.764µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:32:12 | 200 |      79.699µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:32:12 | 200 |     141.945µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:32:21 | 200 |      77.529µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:32:21 | 200 |     195.019µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:32:51 | 200 |      75.353µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:32:51 | 200 |      95.075µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:33:12 | 200 |     212.166µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:33:12 | 200 |     260.471µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:33:12 | 200 |      181.63µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:33:12 | 200 |     264.929µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:33:21 | 200 |     317.872µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:33:21 | 200 |      141.01µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:33:51 | 200 |     267.776µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:33:51 | 200 |     306.439µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:12 | 200 |      82.991µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:12 | 200 |     102.685µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:12 | 200 |     122.256µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:12 | 200 |      109.17µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:21 | 200 |      87.132µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:21 | 200 |     112.717µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:31 | 200 |      79.018µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:31 | 200 |     719.993µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:34:31 | 200 |    7.832323ms |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 22:34:31 | 200 |   15.520863ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 22:34:31 | 200 |   27.057623ms |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 22:34:31 | 200 |    6.473683ms |             ::1 | GET      "/api/erp/products/barcode?limit=100&page=1"
-[GIN] 2025/11/17 - 22:34:31 | 200 |     126.518µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:31 | 200 |    7.209084ms |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 22:34:31 | 200 |    1.731602ms |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 22:34:31 | 200 |     173.468µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 22:34:41 | 200 |      95.436µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:41 | 200 |     222.022µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:34:41 | 200 |    1.363945ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 22:34:42 | 200 |    6.400688ms |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 22:34:42 | 200 |   21.032863ms |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 22:34:42 | 200 |    7.623765ms |             ::1 | GET      "/api/erp/products/barcode?limit=100&page=1"
-[GIN] 2025/11/17 - 22:34:42 | 200 |     145.492µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:42 | 200 |    1.730945ms |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 22:34:42 | 200 |    5.437872ms |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 22:34:42 | 200 |     265.329µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 22:34:49 | 200 |      84.195µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:49 | 200 |     118.992µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:34:54 | 200 |     104.032µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:34:54 | 200 |     952.952µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:02 | 200 |      99.847µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:02 | 200 |     109.816µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:02 | 200 |      75.342µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:02 | 200 |     132.833µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:12 | 200 |     118.339µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:12 | 200 |     186.402µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:32 | 200 |     142.395µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:32 | 200 |     121.683µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:32 | 200 |      75.873µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:32 | 200 |     103.517µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:35:42 | 200 |      135.46µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:35:42 | 200 |     114.646µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:02 | 200 |      62.184µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:02 | 200 |     113.673µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:02 | 200 |    8.434116ms |             ::1 | GET      "/api/erp/products"
-[GIN] 2025/11/17 - 22:36:12 | 200 |     139.296µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:12 | 200 |      82.061µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:12 | 200 |     131.719µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:12 | 200 |     288.612µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:32 | 200 |      108.76µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:32 | 200 |      267.78µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:33 | 200 |      95.953µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:33 | 200 |     106.098µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:36:41 | 200 |     107.829µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:36:41 | 200 |     127.068µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:37:02 | 200 |      77.153µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:37:02 | 200 |     105.466µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:37:03 | 200 |      68.059µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:37:03 | 200 |     107.542µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:37:11 | 200 |      69.689µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:37:11 | 200 |      100.57µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:37:41 | 200 |     145.801µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:37:41 | 200 |     109.002µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:38:12 | 200 |      71.759µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:38:12 | 200 |      88.343µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:38:12 | 200 |      77.637µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:38:12 | 200 |     148.348µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:38:12 | 200 |     136.813µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:38:12 | 200 |     189.977µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:38:42 | 200 |       98.22µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:38:42 | 200 |     130.059µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:39:12 | 200 |     121.709µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:39:12 | 200 |     171.568µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:39:12 | 200 |      77.938µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:39:12 | 200 |     104.176µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:39:12 | 200 |     106.917µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:39:12 | 200 |     143.723µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:40:12 | 200 |      80.607µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:40:12 | 200 |     113.828µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:40:12 | 200 |     104.868µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:40:12 | 200 |     112.016µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:40:12 | 200 |     159.185µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:40:12 | 200 |     127.338µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:41:12 | 200 |      90.655µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:41:12 | 200 |      80.243µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:41:12 | 200 |      71.884µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:41:12 | 200 |     201.874µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:41:12 | 200 |     110.606µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:41:12 | 200 |     115.025µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:42:12 | 200 |      93.337µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:42:12 | 200 |      77.117µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:42:12 | 200 |     138.851µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:42:12 | 200 |      185.23µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:42:12 | 200 |     220.686µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:42:12 | 200 |     469.539µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:43:12 | 200 |     104.398µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:43:12 | 200 |       92.25µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:43:12 | 200 |     120.245µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:43:12 | 200 |     161.147µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:43:12 | 200 |     134.188µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:43:12 | 200 |      95.581µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:44:12 | 200 |     161.504µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:44:12 | 200 |      71.539µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:44:12 | 200 |      110.93µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:44:12 | 200 |     108.793µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:44:12 | 200 |     118.555µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:44:12 | 200 |       64.37µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:45:12 | 200 |      79.296µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:45:12 | 200 |     173.228µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:45:12 | 200 |      73.184µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:45:12 | 200 |     118.501µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:45:12 | 200 |      99.122µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:45:12 | 200 |     209.858µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:46:12 | 200 |       82.47µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:46:12 | 200 |     152.967µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:46:12 | 200 |     131.822µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:46:12 | 200 |     115.085µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:46:12 | 200 |     101.458µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:46:12 | 200 |     237.897µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:47:12 | 200 |     142.866µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:47:12 | 200 |    1.485349ms |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:47:12 | 200 |     164.158µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:47:12 | 200 |     113.012µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:47:12 | 200 |     293.254µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:47:12 | 200 |     100.634µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     143.564µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     186.233µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     128.752µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     113.501µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     142.267µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:48:12 | 200 |     120.635µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:49:12 | 200 |     123.481µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:49:12 | 200 |     102.073µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:49:12 | 200 |      73.317µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:49:12 | 200 |     155.655µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:49:12 | 200 |     112.768µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:49:12 | 200 |     420.078µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:50:12 | 200 |     157.905µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:50:12 | 200 |     100.755µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:50:12 | 200 |      92.747µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:50:12 | 200 |     154.636µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:50:12 | 200 |     107.268µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:50:12 | 200 |     133.763µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:51:12 | 200 |      76.056µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:51:12 | 200 |      67.239µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:51:12 | 200 |       62.76µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:51:12 | 200 |     140.202µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:51:12 | 200 |      121.15µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:51:12 | 200 |     194.328µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:52:12 | 200 |       86.87µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:52:12 | 200 |      81.886µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:52:12 | 200 |      70.066µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:52:12 | 200 |     113.717µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:52:12 | 200 |      112.84µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:52:12 | 200 |     112.222µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:53:12 | 200 |      85.388µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:53:12 | 200 |     105.484µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:53:12 | 200 |      72.656µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:53:12 | 200 |     101.725µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:53:12 | 200 |     121.084µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:53:12 | 200 |    3.694761ms |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:54:12 | 200 |      120.48µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:54:12 | 200 |     131.465µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:54:12 | 200 |      79.926µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:54:12 | 200 |     116.271µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:54:12 | 200 |     299.996µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:54:12 | 200 |     110.632µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:55:12 | 200 |     105.698µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:55:12 | 200 |     130.986µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:55:12 | 200 |      73.956µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:55:12 | 200 |     125.052µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:55:12 | 200 |     144.388µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:55:12 | 200 |     213.843µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:56:12 | 200 |     202.585µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:56:12 | 200 |     121.437µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:56:12 | 200 |     115.867µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:56:12 | 200 |     126.201µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:56:12 | 200 |     416.387µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:56:12 | 200 |      93.585µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:06 | 200 |      82.405µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:06 | 200 |     103.465µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:08 | 200 |     153.596µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:09 | 200 |     108.578µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:10 | 200 |      87.843µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:10 | 200 |     200.668µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:57:10 | 200 |      290.94µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 22:57:10 | 200 |     110.556µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:10 | 200 |      330.34µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:02:45 | 200 |    2.185268ms |             ::1 | GET      "/api/erp/erp-settings?category=credit"
+[GIN] 2025/11/28 - 01:02:53 | 200 |     228.908µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:02:53 | 200 |     305.364µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:02:59 | 200 |     164.313µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:02:59 | 200 |     170.474µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:03:23 | 200 |     455.053µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:03:23 | 200 |     372.929µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:03:53 | 200 |      159.55µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:03:53 | 200 |     205.634µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:03:59 | 200 |     134.818µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:03:59 | 200 |     306.819µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     143.942µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     165.746µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:04:03 | 204 |      62.377µs |             ::1 | OPTIONS  "/api/erp/settings?category=ui&limit=100"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     246.048µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:04:03 | 404 |      76.174µs |             ::1 | GET      "/api/erp/settings?category=ui&limit=100"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     241.774µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     158.657µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:04:03 | 200 |     308.157µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:04:08 | 204 |      49.061µs |             ::1 | OPTIONS  "/api/erp/settings?category=pagination&limit=100"
+[GIN] 2025/11/28 - 01:04:08 | 404 |       73.14µs |             ::1 | GET      "/api/erp/settings?category=pagination&limit=100"
+[GIN] 2025/11/28 - 01:04:09 | 204 |      49.088µs |             ::1 | OPTIONS  "/api/erp/settings?category=defaults&limit=100"
+[GIN] 2025/11/28 - 01:04:09 | 404 |      71.452µs |             ::1 | GET      "/api/erp/settings?category=defaults&limit=100"
+[GIN] 2025/11/28 - 01:04:12 | 204 |      51.174µs |             ::1 | OPTIONS  "/api/erp/settings?category=inventory&limit=100"
+[GIN] 2025/11/28 - 01:04:12 | 404 |      67.425µs |             ::1 | GET      "/api/erp/settings?category=inventory&limit=100"
+[GIN] 2025/11/28 - 01:04:16 | 204 |      38.516µs |             ::1 | OPTIONS  "/api/erp/settings?category=sales&limit=100"
+[GIN] 2025/11/28 - 01:04:16 | 404 |      61.866µs |             ::1 | GET      "/api/erp/settings?category=sales&limit=100"
+[GIN] 2025/11/28 - 01:04:18 | 204 |      42.572µs |             ::1 | OPTIONS  "/api/erp/settings?category=finance&limit=100"
+[GIN] 2025/11/28 - 01:04:18 | 404 |      61.689µs |             ::1 | GET      "/api/erp/settings?category=finance&limit=100"
+[GIN] 2025/11/28 - 01:04:20 | 204 |      109.91µs |             ::1 | OPTIONS  "/api/erp/settings?category=notifications&limit=100"
+[GIN] 2025/11/28 - 01:04:20 | 404 |      69.139µs |             ::1 | GET      "/api/erp/settings?category=notifications&limit=100"
+[GIN] 2025/11/28 - 01:04:21 | 204 |      46.883µs |             ::1 | OPTIONS  "/api/erp/settings?category=ai&limit=100"
+[GIN] 2025/11/28 - 01:04:21 | 404 |      57.926µs |             ::1 | GET      "/api/erp/settings?category=ai&limit=100"
+[GIN] 2025/11/28 - 01:04:23 | 204 |      35.097µs |             ::1 | OPTIONS  "/api/erp/settings?category=system&limit=100"
+[GIN] 2025/11/28 - 01:04:23 | 404 |      63.495µs |             ::1 | GET      "/api/erp/settings?category=system&limit=100"
+[GIN] 2025/11/28 - 01:04:24 | 200 |     183.454µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:04:24 | 200 |     364.347µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:04:32 | 204 |     159.236µs |             ::1 | OPTIONS  "/api/erp/companies"
+[GIN] 2025/11/28 - 01:04:32 | 404 |     103.031µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:04:33 | 200 |     219.112µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:04:33 | 200 |      268.54µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:04:33 | 404 |      69.453µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:04:35 | 404 |      65.728µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:04:39 | 404 |      59.412µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:04:54 | 200 |     199.841µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:04:54 | 200 |     202.026µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:04:59 | 200 |     143.673µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:04:59 | 200 |     134.866µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:05:03 | 200 |     145.079µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:05:03 | 200 |     120.456µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:05:33 | 200 |     163.172µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:05:33 | 200 |     157.116µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:05:36 | 200 |     159.941µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:05:36 | 200 |     163.185µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:05:59 | 200 |     168.377µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:05:59 | 200 |     188.747µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:05:59 | 200 |     134.133µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:05:59 | 200 |     186.582µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:06:03 | 200 |     151.228µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:06:03 | 200 |      244.63µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:06:33 | 200 |     222.023µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:06:33 | 200 |     175.429µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:06:36 | 200 |     136.452µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:06:36 | 200 |     172.504µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:06:58 | 200 |     172.106µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:06:58 | 200 |     168.623µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:06:59 | 200 |     264.459µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:06:59 | 200 |     170.031µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:07:03 | 200 |     135.206µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:07:03 | 200 |     164.202µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:07:33 | 200 |     154.638µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:07:33 | 200 |     158.802µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:07:36 | 200 |     157.177µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:07:36 | 200 |     202.609µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:07:59 | 200 |     157.222µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:07:59 | 200 |     133.644µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:07:59 | 200 |     185.385µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:07:59 | 200 |     153.475µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:08:03 | 200 |     130.123µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:08:03 | 200 |     189.844µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:08:33 | 200 |     108.942µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:08:33 | 200 |     321.923µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:08:36 | 200 |     248.483µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:08:36 | 200 |      459.22µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:08:59 | 200 |     616.698µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:08:59 | 200 |     232.147µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:08:59 | 200 |     169.665µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:08:59 | 200 |     179.868µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:09:03 | 200 |     139.045µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:09:03 | 200 |     249.648µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     178.585µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     140.124µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     172.317µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     372.149µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     255.524µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:09:25 | 200 |     304.183µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:09:33 | 200 |     210.001µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:09:33 | 200 |     181.411µs |             ::1 | GET      "/api/erp/pos/counters"
 
-2025/11/17 22:57:10 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[1.509ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 22:57:10 | 500 |    1.738634ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 22:57:12 | 200 |     141.306µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:12 | 200 |     105.268µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:25 | 200 |      86.314µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:25 | 200 |     164.901µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:57:25 | 200 |      91.965µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 22:57:25 | 404 |      96.539µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 22:57:25 | 200 |      287.23µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:25 | 500 |    1.514316ms |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 22:57:40 | 200 |      72.656µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:40 | 200 |     124.268µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:46 | 200 |      62.475µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:57:46 | 200 |      166.13µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:57:46 | 200 |      87.317µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 22:57:46 | 404 |      68.833µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 22:57:46 | 200 |     120.593µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:57:46 | 500 |     684.869µs |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 22:58:10 | 200 |     110.024µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:58:10 | 200 |     110.108µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:58:17 | 200 |     189.862µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:58:17 | 200 |     127.487µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:58:40 | 200 |      75.865µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:58:40 | 200 |     103.466µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:58:47 | 200 |     108.017µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:58:47 | 200 |     105.751µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:11 | 200 |        74.8µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:11 | 200 |     110.541µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:17 | 200 |      94.749µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:17 | 200 |     100.456µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:37 | 200 |      73.487µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:37 | 200 |      638.99µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:59:37 | 200 |    2.781114ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 22:59:37 | 200 |    5.867977ms |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 22:59:37 | 200 |   25.779184ms |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 22:59:37 | 200 |     129.017µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:37 | 200 |    1.235417ms |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 22:59:37 | 200 |     852.741µs |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 22:59:37 | 200 |     177.506µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 22:59:41 | 200 |      91.003µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:41 | 200 |     197.208µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:41 | 200 |      86.952µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:41 | 200 |     182.343µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:59:41 | 200 |    1.935303ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 22:59:41 | 200 |    5.898965ms |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 22:59:41 | 200 |   21.457642ms |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 22:59:41 | 200 |     122.199µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:41 | 200 |    1.166355ms |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 22:59:41 | 200 |     868.434µs |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 22:59:41 | 200 |     167.338µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 22:59:46 | 200 |     122.313µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:46 | 200 |     149.041µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:51 | 200 |      71.439µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     184.329µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     104.124µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 22:59:51 | 404 |      71.501µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     238.808µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 22:59:51 | 500 |    1.294788ms |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     161.262µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 22:59:51 | 200 |      28.654µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     326.312µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     156.013µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 22:59:51 | 200 |     160.413µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:09:35 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/pos_enhanced_handler.go:332 [35;1mERROR: column "stock_source" of relation "inventory_batches" does not exist (SQLSTATE 42703)
+[0m[33m[0.435ms] [34;1m[rows:0][0m UPDATE "inventory_batches" SET "product_id"='4e885e3e-a377-4832-98c9-deed801bd233',"batch_number"='HC250068',"manufacturing_date"=NULL,"expiry_date"=NULL,"quantity"=24,"reserved_quantity"=0,"available_quantity"=21,"unit_cost"=30.25,"selling_price"=55,"mrp"=55,"location"='',"rack_number"='',"bin_number"='',"supplier_id"=NULL,"purchase_order_id"='',"stock_source"='',"is_expired"=false,"is_active"=true,"created_at"='2025-11-18 08:03:12.581',"updated_at"='2025-11-28 01:09:35.653' WHERE "id" = '598d942c-ea28-4bfb-a2c3-6af1dd326fe1'
+[GIN] 2025/11/28 - 01:09:35 | 500 |    5.918612ms |             ::1 | POST     "/api/erp/pos/create-invoice"
+[GIN] 2025/11/28 - 01:09:55 | 200 |      160.81µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:09:55 | 200 |     199.522µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:09:59 | 200 |     181.256µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:09:59 | 200 |     173.685µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:10:03 | 200 |     159.325µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:10:03 | 200 |      180.58µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:10:13 | 200 |     271.943µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:10:13 | 200 |     159.752µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:10:14 | 200 |     148.874µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:10:14 | 200 |     251.977µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:10:14 | 200 |      351.12µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:10:14 | 200 |     288.246µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:10:43 | 200 |     1.49008ms |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:10:43 | 200 |         185µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:10:46 | 200 |     195.528µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:10:46 | 200 |     189.787µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:10:59 | 200 |     161.457µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:10:59 | 200 |      196.46µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:11:01 | 204 |       65.67µs |             ::1 | OPTIONS  "/api/erp/sales/orders"
+[GIN] 2025/11/28 - 01:11:01 | 400 |    8.349716ms |             ::1 | POST     "/api/erp/sales/orders"
+[GIN] 2025/11/28 - 01:11:03 | 200 |     200.364µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:11:03 | 200 |     149.004µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:11:13 | 200 |     252.544µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:11:13 | 200 |     178.413µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:11:43 | 200 |     186.821µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:11:43 | 200 |     201.019µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:11:59 | 200 |     207.533µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:11:59 | 200 |     438.796µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:11:59 | 200 |     177.517µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:11:59 | 200 |      198.04µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:12:13 | 200 |     179.114µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:12:13 | 200 |      205.77µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:12:43 | 200 |     177.101µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:12:43 | 200 |     496.818µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:12:59 | 200 |     162.426µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:12:59 | 200 |      184.93µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:12:59 | 200 |      237.14µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:12:59 | 200 |     186.376µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:13:13 | 200 |      180.03µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:13:13 | 200 |     289.471µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:13:43 | 200 |      176.72µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:13:43 | 200 |     186.183µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:13:59 | 200 |     161.025µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:13:59 | 200 |     170.456µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:13:59 | 200 |     204.739µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:13:59 | 200 |     170.861µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:14:13 | 200 |     536.696µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:14:13 | 200 |     245.091µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:14:35 | 404 |       68.59µs |             ::1 | GET      "/api/erp/settings?category=ui&limit=100"
+[GIN] 2025/11/28 - 01:14:40 | 404 |      62.705µs |             ::1 | GET      "/api/erp/settings?category=finance&limit=100"
+[GIN] 2025/11/28 - 01:14:43 | 404 |     151.215µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:14:43 | 200 |     381.194µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:14:43 | 200 |      176.19µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:14:44 | 404 |       89.46µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:14:46 | 404 |     175.899µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:14:50 | 404 |       70.19µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:14:55 | 204 |      56.887µs |             ::1 | OPTIONS  "/api/erp/branches"
 
-2025/11/17 22:59:51 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[1.337ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 22:59:51 | 500 |    1.727462ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:00:12 | 200 |      65.948µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:12 | 200 |     126.255µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:21 | 200 |     114.318µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:21 | 200 |     118.178µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:22 | 200 |      89.259µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:22 | 200 |      92.547µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:42 | 200 |     335.039µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:42 | 200 |     158.678µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:51 | 200 |      67.465µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:51 | 200 |     123.672µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:52 | 200 |      69.981µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:52 | 200 |     136.008µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:57 | 200 |      93.002µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:57 | 200 |     151.167µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:00:57 | 200 |     435.557µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:00:57 | 404 |      61.866µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 23:00:57 | 200 |     509.819µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:00:57 | 500 |    1.816821ms |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 23:00:57 | 200 |     103.349µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:00:57 | 200 |     631.431µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:00:58 | 200 |     204.532µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:00:58 | 200 |     157.344µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:00:58 | 200 |     121.606µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:14:55 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/branch_handler.go:55 [35;1mERROR: relation "branches" does not exist (SQLSTATE 42P01)
+[0m[33m[1.057ms] [34;1m[rows:0][0m SELECT count(*) FROM "branches"
+[GIN] 2025/11/28 - 01:14:55 | 500 |    2.547771ms |             ::1 | GET      "/api/erp/branches"
 
-2025/11/17 23:00:58 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[1.946ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:00:58 | 500 |     3.17259ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:01:12 | 200 |      94.151µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:12 | 200 |      122.19µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:01:27 | 200 |      93.166µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:27 | 200 |     120.898µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:01:28 | 200 |      80.913µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:28 | 200 |     234.208µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:01:42 | 200 |     114.632µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:42 | 200 |     115.603µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:01:57 | 200 |     100.038µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:57 | 200 |     123.193µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:01:58 | 200 |      97.137µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:01:58 | 200 |     105.887µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:12 | 200 |     356.792µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:12 | 200 |     176.139µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:27 | 200 |      83.319µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:27 | 200 |     119.631µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:28 | 200 |     146.428µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:28 | 200 |     102.615µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:42 | 200 |      77.399µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:42 | 200 |     128.074µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:57 | 200 |     107.044µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:57 | 200 |     115.146µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:02:58 | 200 |      73.212µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:02:58 | 200 |     102.564µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:03:07 | 200 |      73.828µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:03:07 | 200 |     193.698µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:03:07 | 200 |      76.556µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:03:07 | 200 |     163.271µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:03:07 | 200 |      86.943µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:03:07 | 200 |     243.559µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:03:07 | 200 |     119.648µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:14:56 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/branch_handler.go:55 [35;1mERROR: relation "branches" does not exist (SQLSTATE 42P01)
+[0m[33m[0.524ms] [34;1m[rows:0][0m SELECT count(*) FROM "branches"
+[GIN] 2025/11/28 - 01:14:56 | 500 |     894.968µs |             ::1 | GET      "/api/erp/branches"
 
-2025/11/17 23:03:07 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[2.447ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:03:07 | 500 |     2.70058ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:03:07 | 200 |      99.716µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:03:07 | 404 |      79.998µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 23:03:07 | 200 |     146.648µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:03:07 | 500 |     667.901µs |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 23:03:12 | 200 |      83.113µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:03:12 | 200 |     141.432µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:03:37 | 200 |      97.834µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:03:37 | 200 |     283.312µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:03:38 | 200 |     131.164µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:03:38 | 200 |     122.394µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:04:07 | 200 |     428.474µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:04:07 | 200 |     144.088µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:04:08 | 200 |     122.474µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:04:08 | 200 |     185.757µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:04:12 | 200 |      84.718µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:04:12 | 200 |     112.841µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:04:37 | 200 |     153.275µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:04:37 | 200 |      199.65µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:04:38 | 200 |     161.706µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:04:38 | 200 |     108.208µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:05:07 | 200 |     194.998µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:05:07 | 200 |     154.629µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:05:08 | 200 |      87.215µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:05:08 | 200 |     113.339µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:05:12 | 200 |        63.2µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:05:12 | 200 |      102.38µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:05:37 | 200 |      75.304µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:05:37 | 200 |     110.829µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:05:38 | 200 |      76.528µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:05:38 | 200 |     127.101µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:06:07 | 200 |      78.295µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:06:07 | 200 |     258.366µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:06:08 | 200 |      98.204µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:06:08 | 200 |     134.441µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:06:12 | 200 |      72.319µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:06:12 | 200 |     169.186µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:06:38 | 200 |      67.826µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:06:38 | 200 |     108.768µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:07:08 | 200 |      76.018µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:07:08 | 200 |     108.006µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:07:12 | 200 |      65.025µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:07:12 | 200 |     145.149µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:07:12 | 200 |     105.107µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:07:12 | 200 |      98.623µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:08:12 | 200 |      81.899µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:08:12 | 200 |      79.396µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:08:12 | 200 |     127.526µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:08:12 | 200 |     108.066µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:08:12 | 200 |     113.121µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:08:12 | 200 |      95.062µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:09:12 | 200 |      69.206µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:09:12 | 200 |      78.463µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:09:12 | 200 |      59.694µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:09:12 | 200 |     182.137µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:09:12 | 200 |     102.249µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:09:12 | 200 |       107.4µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     170.268µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     162.035µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     224.624µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     280.514µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     205.429µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:10:12 | 200 |     113.692µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     109.191µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     163.229µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     242.691µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     121.931µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     154.622µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:11:12 | 200 |     183.362µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:12:12 | 200 |      74.314µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:12:12 | 200 |      95.646µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:12:12 | 200 |      94.503µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:12:12 | 200 |     138.084µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:12:12 | 200 |     143.458µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:12:12 | 200 |     113.069µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:13:12 | 200 |     176.395µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:13:12 | 200 |      70.731µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:13:12 | 200 |     100.341µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:13:12 | 200 |     111.474µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:13:12 | 200 |        29.8µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:13:12 | 200 |     151.417µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:12 | 200 |       86.77µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:12 | 200 |      76.416µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:12 | 200 |     311.106µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:12 | 200 |     128.269µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:12 | 200 |     109.535µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:12 | 200 |     100.934µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:43 | 200 |      93.342µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:43 | 200 |     133.082µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:46 | 200 |      71.098µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:46 | 200 |      118.19µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:46 | 200 |      232.68µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:46 | 200 |     228.075µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:14:47 | 200 |      89.891µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:14:47 | 200 |     139.772µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:14:47 | 200 |     279.247µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:14:58 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/branch_handler.go:55 [35;1mERROR: relation "branches" does not exist (SQLSTATE 42P01)
+[0m[33m[0.309ms] [34;1m[rows:0][0m SELECT count(*) FROM "branches"
+[GIN] 2025/11/28 - 01:14:58 | 500 |     502.556µs |             ::1 | GET      "/api/erp/branches"
+[GIN] 2025/11/28 - 01:14:59 | 200 |     162.477µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:14:59 | 200 |     158.393µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:14:59 | 200 |     179.363µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:14:59 | 200 |     177.175µs |             ::1 | GET      "/api/erp/pos/counters"
 
-2025/11/17 23:14:47 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[0.734ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:14:47 | 500 |     968.335µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:14:54 | 200 |      74.184µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     171.316µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     660.493µs |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 23:14:54 | 200 |    1.333337ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     962.528µs |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     808.129µs |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     230.943µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     545.696µs |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 23:14:54 | 200 |     137.653µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 23:14:56 | 200 |      71.157µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:56 | 200 |     886.932µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:59 | 200 |      156.66µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:14:59 | 200 |     274.196µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:14:59 | 200 |      84.822µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:14:59 | 404 |     234.645µs |             ::1 | GET      "/api/erp/dashboard/quick-actions"
-[GIN] 2025/11/17 - 23:14:59 | 200 |     211.288µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:14:59 | 500 |     636.494µs |             ::1 | GET      "/api/erp/notifications/recent"
-[GIN] 2025/11/17 - 23:15:16 | 200 |     126.794µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:15:17 | 200 |     108.806µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:15:20 | 404 |     134.838µs |       127.0.0.1 | POST     "/api/erp/uploads/process/purchase"
-[GIN] 2025/11/17 - 23:15:25 | 200 |      85.637µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:15:25 | 200 |     101.498µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:15:46 | 200 |     132.149µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:15:47 | 200 |     109.659µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:15:55 | 200 |      93.415µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:15:55 | 200 |      97.489µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:16:16 | 200 |      60.841µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:16:17 | 200 |      112.85µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:16:25 | 200 |     101.395µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:16:25 | 200 |     131.474µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:16:46 | 200 |      71.275µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:16:47 | 200 |     515.188µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:16:55 | 200 |      79.132µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:16:55 | 200 |     131.702µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:17:16 | 200 |      77.782µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:17:17 | 200 |     191.579µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:17:25 | 200 |     138.647µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:17:25 | 200 |     383.224µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:17:46 | 200 |     114.707µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:17:47 | 200 |     116.651µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:17:55 | 200 |      91.728µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:17:55 | 200 |      87.581µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:18:16 | 200 |     103.958µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:18:17 | 200 |     151.265µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:18:46 | 200 |     128.884µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:18:47 | 200 |     126.167µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:19:12 | 200 |     165.824µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:19:12 | 200 |     110.434µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:19:16 | 200 |     115.195µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:19:17 | 200 |     116.566µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:19:46 | 200 |     101.984µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:19:47 | 200 |     110.422µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:20:10 | 200 |      94.277µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:20:10 | 200 |     166.832µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:20:10 | 200 |     102.124µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:20:10 | 200 |     143.077µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:20:10 | 200 |     109.498µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:15:02 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/branch_handler.go:55 [35;1mERROR: relation "branches" does not exist (SQLSTATE 42P01)
+[0m[33m[0.703ms] [34;1m[rows:0][0m SELECT count(*) FROM "branches"
+[GIN] 2025/11/28 - 01:15:02 | 500 |    2.959561ms |             ::1 | GET      "/api/erp/branches"
+[GIN] 2025/11/28 - 01:15:07 | 204 |      54.686µs |             ::1 | OPTIONS  "/api/erp/rbac/roles"
+[GIN] 2025/11/28 - 01:15:07 | 200 |    2.647289ms |             ::1 | GET      "/api/erp/rbac/roles"
+[GIN] 2025/11/28 - 01:15:14 | 200 |      180.81µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:15:18 | 200 |     181.302µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:09 | 204 |     109.604µs |             ::1 | OPTIONS  "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:09 | 204 |      83.473µs |             ::1 | OPTIONS  "/api/auth/me"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     265.799µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     204.345µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:17:09 | 204 |      31.713µs |             ::1 | OPTIONS  "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:17:09 | 204 |     260.261µs |             ::1 | OPTIONS  "/api/erp/rbac/roles"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     801.408µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:17:09 | 200 |    1.150536ms |             ::1 | GET      "/api/erp/rbac/roles"
+[GIN] 2025/11/28 - 01:17:09 | 204 |      64.505µs |             ::1 | OPTIONS  "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     165.061µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:09 | 204 |       47.92µs |             ::1 | OPTIONS  "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     246.005µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:17:09 | 204 |     112.663µs |             ::1 | OPTIONS  "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     588.459µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:17:09 | 200 |      93.633µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     167.572µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:09 | 204 |     100.786µs |             ::1 | OPTIONS  "/api/erp/companies"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     421.274µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:17:09 | 404 |      59.583µs |             ::1 | GET      "/api/erp/companies"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     280.436µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     319.822µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     182.545µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     182.614µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:09 | 200 |     327.881µs |             ::1 | GET      "/api/auth/me"
+[GIN] 2025/11/28 - 01:17:10 | 200 |     156.588µs |             ::1 | GET      "/api/erp/dashboard/summary"
+[GIN] 2025/11/28 - 01:17:10 | 200 |     478.163µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
+[GIN] 2025/11/28 - 01:17:10 | 200 |     173.774µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
+[GIN] 2025/11/28 - 01:17:10 | 200 |     225.119µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:25 | 204 |      58.556µs |             ::1 | OPTIONS  "/api/erp/ai-models"
 
-2025/11/17 23:20:10 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[0.490ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:20:10 | 500 |     628.554µs |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:20:11 | 200 |      87.648µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:20:11 | 200 |      130.14µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:20:14 | 200 |       71.15µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     160.297µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     901.321µs |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     798.296µs |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     615.081µs |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     902.377µs |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     268.023µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     490.513µs |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 23:20:14 | 200 |     180.103µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 23:20:21 | 404 |      87.702µs |       127.0.0.1 | POST     "/api/erp/uploads/process/purchase"
-[GIN] 2025/11/17 - 23:20:40 | 200 |     127.817µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:20:40 | 200 |     151.888µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:20:45 | 200 |     140.021µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:20:45 | 200 |     144.032µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:21:10 | 200 |     100.027µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:21:10 | 200 |     157.869µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:21:15 | 200 |       62.38µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:21:15 | 200 |     112.625µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:21:40 | 200 |      100.73µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:21:40 | 200 |     127.731µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:21:45 | 200 |     101.528µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:21:45 | 200 |      98.928µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:22:10 | 200 |     129.988µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:22:10 | 200 |     115.769µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:22:15 | 200 |      73.076µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:22:15 | 200 |      98.434µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:22:40 | 200 |     248.992µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:22:40 | 200 |     148.094µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:22:45 | 200 |     143.661µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:22:45 | 200 |     444.102µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:23:10 | 200 |     113.195µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:23:10 | 200 |     160.902µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:23:15 | 200 |      97.385µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:23:15 | 200 |      98.044µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:23:22 | 200 |      75.486µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     215.545µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     3.77455ms |             ::1 | GET      "/api/erp/products?limit=100&page=1"
-[GIN] 2025/11/17 - 23:23:22 | 200 |    2.289786ms |             ::1 | GET      "/api/erp/products/stats"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     801.699µs |             ::1 | GET      "/api/erp/products?limit=1"
-[GIN] 2025/11/17 - 23:23:22 | 200 |    2.136398ms |             ::1 | GET      "/api/erp/categories"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     104.055µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     447.583µs |             ::1 | GET      "/api/erp/brands"
-[GIN] 2025/11/17 - 23:23:22 | 200 |     133.004µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=3"
-[GIN] 2025/11/17 - 23:23:34 | 404 |      66.602µs |             ::1 | POST     "/api/uploads/purchase"
-[GIN] 2025/11/17 - 23:23:40 | 200 |      77.726µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:23:40 | 200 |     101.912µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:23:50 | 404 |     130.941µs |             ::1 | POST     "/api/uploads/parse"
-[GIN] 2025/11/17 - 23:23:53 | 200 |      78.109µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:23:53 | 200 |     182.671µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:17:25 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/ai_models_handler.go:39 [35;1mERROR: relation "ai_model_configs" does not exist (SQLSTATE 42P01)
+[0m[33m[1.585ms] [34;1m[rows:0][0m SELECT count(*) FROM "ai_model_configs"
+[GIN] 2025/11/28 - 01:17:25 | 500 |     1.93602ms |             ::1 | GET      "/api/erp/ai-models"
 
-2025/11/17 23:23:54 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/uploads_handler.go:33 [35;1mERROR: column "uploaded_at" does not exist (SQLSTATE 42703)
-[0m[33m[0.781ms] [34;1m[rows:0][0m SELECT * FROM "upload_sessions" WHERE upload_type = 'purchase' AND approval_status = 'pending' ORDER BY uploaded_at DESC
-[GIN] 2025/11/17 - 23:23:54 | 500 |    1.185756ms |             ::1 | GET      "/api/uploads/purchase"
-[GIN] 2025/11/17 - 23:24:10 | 200 |     164.466µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:24:10 | 200 |     134.111µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:24:23 | 200 |     175.751µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:24:23 | 200 |      82.263µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:24:40 | 200 |      98.913µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:24:40 | 200 |     152.662µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:24:53 | 200 |      89.328µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:24:53 | 200 |     129.888µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:25:01 | 200 |      70.879µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:25:01 | 200 |      309.74µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:25:01 | 200 |     150.877µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:25:01 | 200 |     144.275µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:25:01 | 200 |     380.845µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:17:26 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/ai_models_handler.go:39 [35;1mERROR: relation "ai_model_configs" does not exist (SQLSTATE 42P01)
+[0m[33m[0.293ms] [34;1m[rows:0][0m SELECT count(*) FROM "ai_model_configs"
+[GIN] 2025/11/28 - 01:17:26 | 500 |     467.983µs |             ::1 | GET      "/api/erp/ai-models"
 
-2025/11/17 23:25:01 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[1.013ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:25:01 | 500 |    1.206878ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:25:09 | 200 |     126.568µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:25:09 | 200 |     120.437µs |             ::1 | GET      "/api/auth/me"
-[GIN] 2025/11/17 - 23:25:09 | 200 |     101.422µs |             ::1 | GET      "/api/erp/dashboard/summary"
-[GIN] 2025/11/17 - 23:25:09 | 200 |       163.1µs |             ::1 | GET      "/api/erp/dashboard/activity?limit=5"
-[GIN] 2025/11/17 - 23:25:09 | 200 |     101.182µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:17:28 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/ai_models_handler.go:39 [35;1mERROR: relation "ai_model_configs" does not exist (SQLSTATE 42P01)
+[0m[33m[0.348ms] [34;1m[rows:0][0m SELECT count(*) FROM "ai_model_configs"
+[GIN] 2025/11/28 - 01:17:28 | 500 |     638.529µs |             ::1 | GET      "/api/erp/ai-models"
 
-2025/11/17 23:25:09 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/services/expiry.go:77 [35;1mERROR: relation "core.inventory_batches" does not exist (SQLSTATE 42P01)
-[0m[33m[0.713ms] [34;1m[rows:-][0m 
-	WITH upcoming AS (
-	  SELECT 
-	    CASE
-	      WHEN expiry_date <= now() + interval '7 days' THEN '7_days'
-	      WHEN expiry_date <= now() + interval '1 month' THEN '1_month'
-	      WHEN expiry_date <= now() + interval '2 months' THEN '2_months'
-	      WHEN expiry_date <= now() + interval '3 months' THEN '3_months'
-	      WHEN expiry_date <= now() + interval '6 months' THEN '6_months'
-	      WHEN expiry_date <= now() + interval '1 year' THEN '1_year'
-	      WHEN expiry_date <= now() + interval '60 months' THEN '60_months'
-	      ELSE 'later'
-	    END AS window_label,
-	    qty - reserved_qty AS qty_left,
-	    qty * unit_cost AS value
-	  FROM core.inventory_batches
-	  WHERE shop_id = 'default'
-	    AND expiry_date IS NOT NULL
-	    AND expiry_date > now()
-	    AND (qty - reserved_qty) > 0
-	)
-	SELECT window_label,
-	       COUNT(*) AS count_batches,
-	       SUM(qty_left) AS count_items,
-	       COALESCE(SUM(value),0) AS total_value,
-	       now() as computed_at
-	FROM upcoming
-	GROUP BY window_label;
-[GIN] 2025/11/17 - 23:25:09 | 500 |    1.078196ms |             ::1 | GET      "/api/erp/dashboard/expiry-summary"
-[GIN] 2025/11/17 - 23:25:20 | 404 |      58.763µs |       127.0.0.1 | POST     "/api/uploads/purchase"
-[GIN] 2025/11/17 - 23:25:23 | 200 |      73.278µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:25:23 | 200 |     106.391µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:25:39 | 200 |     105.705µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:25:39 | 200 |      94.435µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:25:53 | 200 |      87.783µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:25:53 | 200 |     170.589µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:26:09 | 200 |      78.896µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:26:09 | 200 |     109.978µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:26:23 | 200 |      49.652µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:26:23 | 200 |     123.853µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:26:39 | 200 |      79.758µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:26:39 | 200 |     165.231µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:27:09 | 200 |     292.531µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:27:09 | 200 |     128.092µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:27:12 | 200 |      85.106µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:27:12 | 200 |      101.99µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:27:39 | 200 |      69.551µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:27:39 | 200 |     136.191µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:27:41 | 200 |     179.875µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:27:41 | 200 |     101.834µs |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:28:09 | 200 |      83.724µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:28:09 | 200 |    1.214131ms |             ::1 | GET      "/api/erp/pos/counters"
-[GIN] 2025/11/17 - 23:28:11 | 200 |      79.953µs |             ::1 | GET      "/api/v1/system/health"
-[GIN] 2025/11/17 - 23:28:11 | 200 |     117.711µs |             ::1 | GET      "/api/erp/pos/counters"
+2025/11/28 01:17:32 [31;1m/var/www/homeopathy-business-platform/services/api-golang-master/internal/handlers/ai_models_handler.go:39 [35;1mERROR: relation "ai_model_configs" does not exist (SQLSTATE 42P01)
+[0m[33m[0.372ms] [34;1m[rows:0][0m SELECT count(*) FROM "ai_model_configs"
+[GIN] 2025/11/28 - 01:17:32 | 500 |     590.988µs |             ::1 | GET      "/api/erp/ai-models"
+[GIN] 2025/11/28 - 01:17:39 | 200 |      210.36µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:39 | 200 |     277.498µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:40 | 200 |     263.038µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:40 | 200 |     199.736µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:17:40 | 200 |     321.644µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:17:40 | 200 |      288.44µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:09 | 200 |     171.335µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:09 | 200 |     186.361µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:10 | 200 |     123.774µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:10 | 200 |     155.012µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:10 | 200 |     167.985µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:10 | 200 |     177.614µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:39 | 200 |     282.673µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:39 | 200 |     136.937µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:40 | 200 |     126.521µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:40 | 200 |     126.502µs |             ::1 | GET      "/api/v1/system/health"
+[GIN] 2025/11/28 - 01:18:40 | 200 |     171.669µs |             ::1 | GET      "/api/erp/pos/counters"
+[GIN] 2025/11/28 - 01:18:40 | 200 |      179.53µs |             ::1 | GET      "/api/erp/pos/counters"

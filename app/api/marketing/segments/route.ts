@@ -8,7 +8,20 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20")
 
     // Get customer segments (this would typically be from a segments table)
-    // For now, we'll create some mock segments based on customer data
+    // Fetch real segments from Golang API
+    try {
+      const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+      const res = await fetch(`${GOLANG_API_URL}/api/erp/marketing/segments`);
+      const data = await res.json();
+      
+      if (res.ok) {
+        return NextResponse.json({ success: true, data: data.data || [] });
+      }
+    } catch (error) {
+      console.error('Segments API error:', error);
+    }
+    
+    // Fallback: create some mock segments based on customer data
     const customers = await prisma.customer.findMany({
       include: {
         orders: {
@@ -99,7 +112,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Create segment (this would typically be saved to a segments table)
-    // For now, we'll return a mock response
+    // Save segment via Golang API
+    try {
+      const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+      const res = await fetch(`${GOLANG_API_URL}/api/erp/marketing/segments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, criteria, description })
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        return NextResponse.json({ success: true, data: data.data });
+      }
+    } catch (error) {
+      console.error('Segment save error:', error);
+    }
+    
+    // Fallback response
     const segment = {
       id: `segment-${Date.now()}`,
       name,

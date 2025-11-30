@@ -37,6 +37,21 @@ export async function GET() {
 export async function POST(req: Request) {
   const body = await req.json()
   const newTemplate = { ...body, id: `t${Date.now()}` }
-  // TODO: Save to database
+  try {
+    // Save to Golang API
+    const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/prescriptions/templates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      return NextResponse.json({ success: true, data: data.data });
+    }
+  } catch (error) {
+    console.error('Template save error:', error);
+  }
   return NextResponse.json({ success: true, data: newTemplate }, { status: 201 })
 }

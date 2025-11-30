@@ -1,91 +1,66 @@
-/**
- * Individual customer API endpoints
- * GET /api/customers/[id] - Get customer by ID
- * PUT /api/customers/[id] - Update customer
- * DELETE /api/customers/[id] - Delete customer
- */
+import { NextRequest, NextResponse } from 'next/server';
 
-import type { NextRequest } from "next/server"
-import { getCustomerById, updateCustomer, deleteCustomer } from "@/lib/customers"
-import { createApiResponse, createErrorResponse, getUserFromRequest } from "@/lib/api-utils"
+const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = getUserFromRequest(request)
-    if (!user || !["admin", "staff", "marketer"].includes(user.role)) {
-      return createErrorResponse("Insufficient permissions", 403)
+    const customerId = params.id;
+    
+    // Fetch customer from Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`);
+    const data = await res.json();
+    
+    if (!res.ok) {
+      return NextResponse.json(
+        { success: false, error: data.error || 'Customer not found' },
+        { status: res.status }
+      );
     }
 
-    const customerId = Number.parseInt(params.id)
-    if (isNaN(customerId)) {
-      return createErrorResponse("Invalid customer ID", 400)
-    }
-
-    const customer = await getCustomerById(customerId)
-
-    if (!customer) {
-      return createErrorResponse("Customer not found", 404)
-    }
-
-    return createApiResponse(customer, "Customer retrieved successfully")
-  } catch (error) {
-    console.error("Get customer error:", error)
-    return createErrorResponse(error instanceof Error ? error.message : "Failed to get customer", 500)
+    return NextResponse.json({
+      success: true,
+      data: data.data
+    });
+  } catch (error: any) {
+    console.error('Customer fetch error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const user = getUserFromRequest(request)
-    if (!user || !["admin", "staff"].includes(user.role)) {
-      return createErrorResponse("Insufficient permissions", 403)
+    const customerId = params.id;
+    const body = await request.json();
+    
+    // Update customer via Golang API
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/customers/${customerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    const data = await res.json();
+    
+    if (!res.ok) {
+      return NextResponse.json(
+        { success: false, error: data.error || 'Failed to update customer' },
+        { status: res.status }
+      );
     }
 
-    const customerId = Number.parseInt(params.id)
-    if (isNaN(customerId)) {
-      return createErrorResponse("Invalid customer ID", 400)
-    }
-
-    const body = await request.json()
-
-    const updates: any = {}
-
-    // Only include fields that are provided and valid
-    if (body.name) updates.name = body.name.trim()
-    if (body.email !== undefined) updates.email = body.email?.trim()
-    if (Array.isArray(body.addresses)) updates.addresses = body.addresses
-    if (Array.isArray(body.tags)) updates.tags = body.tags
-    if (typeof body.consent_marketing === "boolean") updates.consent_marketing = body.consent_marketing
-    if (typeof body.consent_sms === "boolean") updates.consent_sms = body.consent_sms
-    if (typeof body.consent_whatsapp === "boolean") updates.consent_whatsapp = body.consent_whatsapp
-    if (body.preferred_language) updates.preferred_language = body.preferred_language
-
-    const customer = await updateCustomer(customerId, updates)
-
-    return createApiResponse(customer, "Customer updated successfully")
-  } catch (error) {
-    console.error("Update customer error:", error)
-    return createErrorResponse(error instanceof Error ? error.message : "Failed to update customer", 400)
-  }
-}
-
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    const user = getUserFromRequest(request)
-    if (!user || user.role !== "admin") {
-      return createErrorResponse("Admin access required", 403)
-    }
-
-    const customerId = Number.parseInt(params.id)
-    if (isNaN(customerId)) {
-      return createErrorResponse("Invalid customer ID", 400)
-    }
-
-    await deleteCustomer(customerId)
-
-    return createApiResponse(null, "Customer deleted successfully")
-  } catch (error) {
-    console.error("Delete customer error:", error)
-    return createErrorResponse(error instanceof Error ? error.message : "Failed to delete customer", 400)
+    return NextResponse.json({
+      success: true,
+      data: data.data,
+      message: 'Customer updated successfully'
+    });
+  } catch (error: any) {
+    console.error('Customer update error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
   }
 }

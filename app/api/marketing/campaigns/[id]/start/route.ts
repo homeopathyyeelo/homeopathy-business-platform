@@ -36,7 +36,21 @@ export async function POST(
       },
     })
 
-    // TODO: Trigger campaign execution
+    try {
+      // Trigger campaign execution via Golang API
+      const GOLANG_API_URL = process.env.NEXT_PUBLIC_GOLANG_API_URL || 'http://localhost:3005';
+      const res = await fetch(`${GOLANG_API_URL}/api/erp/marketing/campaigns/${id}/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        return NextResponse.json({ success: true, data: data.data });
+      }
+    } catch (error) {
+      console.error('Campaign start error:', error);
+    }
     // This would typically involve:
     // 1. Getting target audience
     // 2. Sending messages via appropriate channel

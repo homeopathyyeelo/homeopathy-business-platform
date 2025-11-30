@@ -1,0 +1,480 @@
+===============================================================================
+HOMEOPATHY POS & GST COMPLIANCE - API DOCUMENTATION
+===============================================================================
+
+BASE URL: http://localhost:8080/api/erp
+
+===============================================================================
+1. PRODUCT SEARCH & INVENTORY
+===============================================================================
+
+GET /pos/search-products?q={query}
+Description: Search products by name, SKU, or barcode with FEFO batch info
+Returns: Products with available batches sorted by expiry date (FEFO)
+Response:
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Sulphur 30C",
+      "sku": "SULPH-30C",
+      "barcode": "SULPH-30C",
+      "category": "Dilutions",
+      "brand": "SBL",
+      "potency": "30C",
+      "form": "Dilution",
+      "hsnCode": "30049014",
+      "gstRate": 5.0,
+      "mrp": 100.00,
+      "stock": 500.00,
+      "batches": [
+        {
+          "id": "batch-uuid",
+          "batchNumber": "BATCH001",
+          "expiryDate": "2025-12-31",
+          "availableQuantity": 100,
+          "sellingPrice": 95.00,
+          "mrp": 100.00,
+          "location": "Shelf-A1",
+          "daysToExpiry": 365
+        }
+      ]
+    }
+  ]
+}
+
+---
+
+GET /pos/product/:id/batches
+Description: Get all available batches for a product (FEFO sorted)
+Returns: List of batches sorted by expiry date
+
+===============================================================================
+2. INVOICE CREATION
+===============================================================================
+
+POST /pos/create-invoice
+Description: Create sales invoice with multi-rate GST calculation
+Request Body:
+{
+  "invoiceType": "RETAIL",  // RETAIL, WHOLESALE, B2B, B2C
+  "customerName": "Walk-in Customer",
+  "customerPhone": "+91 9876543210",
+  "customerGstNumber": "",  // Optional for B2B
+  "items": [
+    {
+      "productId": "uuid",
+      "productName": "Sulphur 30C",
+      "sku": "SULPH-30C",
+      "batchId": "batch-uuid",
+      "quantity": 2,
+      "unitPrice": 95.00,
+      "mrp": 100.00,
+      "discountPercent": 5.0,
+      "hsnCode": "30049014",
+      "gstRate": 5.0,
+      "category": "Dilutions",
+      "brand": "SBL"
+    }
+  ],
+  "billDiscount": 10.00,
+  "billDiscountType": "AMOUNT",  // AMOUNT or PERCENT
+  "paymentMethod": "CASH",  // CASH, CARD, UPI, CREDIT
+  "amountPaid": 200.00,
+  "notes": "",
+  "prescriptionNumber": "",
+  "doctorId": "",
+  "doctorName": "",
+  "counterId": "COUNTER-1",
+  "counterName": "Main Counter"
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "id": "invoice-uuid",
+    "invoiceNo": "INV-202412-0001",
+    "totalAmount": 190.00,
+    "invoice": { /* full invoice object */ },
+    "items": [ /* array of invoice items */ ]
+  }
+}
+
+---
+
+GET /pos/invoices?status=COMPLETED&from_date=2024-01-01&to_date=2024-12-31
+Description: List invoices with filters
+Query Params:
+  - status: DRAFT, COMPLETED, CANCELLED
+  - from_date: YYYY-MM-DD
+  - to_date: YYYY-MM-DD
+  - customer_id: UUID
+
+---
+
+GET /pos/invoice/:id
+Description: Get invoice details with items
+
+===============================================================================
+3. HELD BILLS (PARK & RESUME)
+===============================================================================
+
+POST /pos/hold-bill
+Description: Hold/park a bill for later completion
+Request Body:
+{
+  "customerId": "uuid",
+  "customerName": "John Doe",
+  "billData": {
+    /* Complete cart state as JSON */
+    "items": [...],
+    "subtotal": 500.00,
+    "discount": 50.00
+  },
+  "totalAmount": 450.00,
+  "itemsCount": 5,
+  "counterId": "COUNTER-1",
+  "notes": "Customer will return later"
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "holdNo": "HOLD-20241201-0001",
+    "status": "HELD",
+    "heldAt": "2024-12-01T10:30:00Z"
+  }
+}
+
+---
+
+GET /pos/held-bills
+Description: Get all held bills
+
+---
+
+POST /pos/resume-bill/:id
+Description: Resume a held bill
+Returns: Original bill data to restore cart state
+
+---
+
+DELETE /pos/held-bill/:id
+Description: Cancel/delete a held bill
+
+===============================================================================
+4. SALES RETURNS & REFUNDS
+===============================================================================
+
+POST /pos/create-return
+Description: Process sales return with GST reversal
+Request Body:
+{
+  "originalInvoiceId": "invoice-uuid",
+  "originalInvoiceNo": "INV-202412-0001",
+  "customerId": "uuid",
+  "customerName": "John Doe",
+  "customerPhone": "+91 9876543210",
+  "returnReason": "DAMAGED",  // DAMAGED, EXPIRED, WRONG_PRODUCT, CUSTOMER_REQUEST, QUALITY_ISSUE, OTHER
+  "returnRemarks": "Product packaging damaged",
+  "items": [
+    {
+      "originalItemId": "item-uuid",
+      "productId": "product-uuid",
+      "productName": "Sulphur 30C",
+      "batchId": "batch-uuid",
+      "returnedQuantity": 1,
+      "unitPrice": 95.00,
+      "discountAmount": 4.75,
+      "gstRate": 5.0,
+      "hsnCode": "30049014"
+    }
+  ],
+  "refundMethod": "CASH"  // CASH, CARD, CREDIT_NOTE, BANK_TRANSFER
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "return": {
+      "id": "return-uuid",
+      "returnNo": "RET-202412-0001",
+      "totalAmount": 95.00,
+      "totalGst": 4.53,
+      "creditNoteNo": "CN-RET-202412-0001"  // If refundMethod is CREDIT_NOTE
+    },
+    "items": [ /* return items */ ]
+  }
+}
+
+---
+
+GET /pos/returns?status=COMPLETED&from_date=2024-01-01
+Description: List returns with filters
+
+===============================================================================
+5. GST COMPLIANCE & REPORTING
+===============================================================================
+
+GET /gst/summary?period=2024-03
+Description: Get GST summary for a month
+Response:
+{
+  "success": true,
+  "data": {
+    "period": "2024-03",
+    "totalSales": 500000.00,
+    "taxableSales": 476190.48,
+    "gstCollected5": 23809.52,
+    "gstCollected18": 0.00,
+    "totalGstCollected": 23809.52,
+    "itcClaimed": 5000.00,
+    "netGstPayable": 18809.52
+  }
+}
+
+---
+
+GET /gst/gstr1?period=2024-03
+Description: Generate GSTR-1 report (Sales)
+Returns: B2B invoices, B2C summary, HSN summary, document issued summary
+
+---
+
+GET /gst/gstr3b?period=2024-03
+Description: Generate GSTR-3B report (Summary)
+Returns: Outward supply, inward supply, ITC available, tax payable
+
+---
+
+GET /gst/itc-ledger?period=2024-03
+Description: Get ITC ledger entries (Input Tax Credit from purchases)
+
+---
+
+POST /gst/itc-ledger
+Description: Add ITC entry for purchases
+Request Body:
+{
+  "entryType": "PURCHASE",  // PURCHASE, RETURN, ADJUSTMENT
+  "documentType": "PURCHASE_INVOICE",
+  "documentNo": "PI-2024-001",
+  "documentDate": "2024-03-15",
+  "vendorId": "vendor-uuid",
+  "vendorName": "SBL Pvt Ltd",
+  "vendorGstNumber": "27AAAAA0000A1Z5",
+  "hsnCode": "30049014",
+  "taxableAmount": 10000.00,
+  "cgstAmount": 250.00,
+  "sgstAmount": 250.00,
+  "igstAmount": 0.00,
+  "itcEligible": true
+}
+
+---
+
+GET /gst/hsn-wise-sales?period=2024-03
+Description: Get HSN-wise sales report
+Returns: Sales grouped by HSN code with qty, value, and GST
+
+---
+
+GET /gst/sales-register?from_date=2024-03-01&to_date=2024-03-31
+Description: Detailed sales register (last 500 invoices)
+
+---
+
+GET /gst/purchase-register?from_date=2024-03-01&to_date=2024-03-31
+Description: Detailed purchase register with ITC
+
+---
+
+GET /gst/export?type=gstr1&period=2024-03
+Description: Export GST data to JSON for external filing software
+Query Params:
+  - type: gstr1, gstr3b, itc
+  - period: YYYY-MM
+
+===============================================================================
+6. DOCTOR COMMISSIONS
+===============================================================================
+
+GET /pos/doctor-commissions?doctor_id=uuid&status=PENDING
+Description: Get doctor commission records
+Query Params:
+  - doctor_id: UUID
+  - status: PENDING, PAID, CANCELLED
+  - from_date: YYYY-MM-DD
+  - to_date: YYYY-MM-DD
+
+Response:
+{
+  "success": true,
+  "data": [ /* commission records */ ],
+  "summary": {
+    "total": 15000.00,
+    "paid": 10000.00,
+    "pending": 5000.00
+  }
+}
+
+---
+
+POST /pos/doctor-commissions/:id/mark-paid
+Description: Mark commission as paid
+Request Body:
+{
+  "paymentMethod": "BANK_TRANSFER",
+  "paymentReference": "TXN123456"
+}
+
+===============================================================================
+7. DASHBOARD STATISTICS
+===============================================================================
+
+GET /pos/dashboard-stats
+Description: Get POS dashboard statistics
+Response:
+{
+  "success": true,
+  "data": {
+    "today": {
+      "sales": 25000.00,
+      "gst": 1190.48,
+      "invoices": 45
+    },
+    "thisMonth": {
+      "sales": 500000.00,
+      "gst": 23809.52,
+      "invoices": 850
+    },
+    "pendingCommissions": 5000.00,
+    "heldBills": 3
+  }
+}
+
+===============================================================================
+FEATURE HIGHLIGHTS
+===============================================================================
+
+✅ Multi-Rate GST Support (5% for medicines, 18% for cosmetics)
+✅ CGST/SGST/IGST calculation (intra-state / inter-state)
+✅ FEFO (First Expiry First Out) batch selection
+✅ Item-level and bill-level discounts
+✅ Hold/Resume bills (park sales)
+✅ Sales returns with stock reversal
+✅ Credit notes for returns
+✅ ITC (Input Tax Credit) tracking
+✅ GSTR-1 & GSTR-3B report generation
+✅ HSN-wise sales reporting
+✅ Doctor commission tracking
+✅ Prescription linking
+✅ Multiple pricing tiers (MRP, DP, PTR, PTS)
+✅ Payment methods: Cash, Card, UPI, Credit
+✅ E-Invoice ready (IRN fields)
+✅ Sales & Purchase registers
+✅ GST compliance automation
+
+===============================================================================
+DATABASE TABLES CREATED
+===============================================================================
+
+1. sales_invoices - POS invoices with multi-rate GST
+2. sales_invoice_items - Invoice line items
+3. sales_returns - Sales returns/refunds
+4. sales_return_items - Return line items
+5. credit_notes - Credit notes for returns
+6. itc_ledger - Input Tax Credit tracking
+7. doctor_commission_rules - Commission rate rules
+8. doctor_commissions - Commission transactions
+9. prescriptions - Medical prescriptions
+10. prescription_items - Prescription medicines
+11. held_bills - Parked/held bills
+12. product_pricing_tiers - Multiple pricing levels
+13. gst_return_periods - GST period summaries
+
+===============================================================================
+FRONTEND INTEGRATION
+===============================================================================
+
+The existing POS frontend at /app/sales/pos/page.tsx needs to be updated
+to call these new APIs. Key integration points:
+
+1. Replace product search with: GET /api/erp/pos/search-products
+2. Replace invoice creation with: POST /api/erp/pos/create-invoice
+3. Add batch selection modal when adding products to cart
+4. Display multi-rate GST breakdown (5% and 18% separately)
+5. Add held bills feature: POST /pos/hold-bill, GET /pos/held-bills
+6. Add returns feature: POST /pos/create-return
+7. Add GST reports page: /gst/summary, /gst/gstr1, /gst/gstr3b
+
+===============================================================================
+DEPLOYMENT STEPS
+===============================================================================
+
+1. Run database migration:
+   $ cd services/api-golang-master
+   $ chmod +x scripts/run_pos_migration.sh
+   $ ./scripts/run_pos_migration.sh
+
+2. Register routes in main.go:
+   - Import: "github.com/yeelo/homeopathy-erp/internal/routes"
+   - Add: routes.RegisterPOSRoutes(apiRouter, db)
+
+3. Restart Go backend:
+   $ go build -o api-bin cmd/server/main.go
+   $ ./api-bin
+
+4. Test APIs using curl or Postman
+
+5. Update frontend to use new APIs
+
+===============================================================================
+TESTING EXAMPLES
+===============================================================================
+
+# Search products
+curl -X GET "http://localhost:8080/api/erp/pos/search-products?q=sulphur"
+
+# Create invoice
+curl -X POST "http://localhost:8080/api/erp/pos/create-invoice" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "invoiceType": "RETAIL",
+    "customerName": "Walk-in",
+    "items": [{
+      "productId": "uuid",
+      "productName": "Sulphur 30C",
+      "batchId": "batch-uuid",
+      "quantity": 2,
+      "unitPrice": 95,
+      "mrp": 100,
+      "discountPercent": 0,
+      "gstRate": 5,
+      "hsnCode": "30049014"
+    }],
+    "paymentMethod": "CASH",
+    "amountPaid": 200
+  }'
+
+# Get GST summary
+curl -X GET "http://localhost:8080/api/erp/gst/summary?period=2024-12"
+
+===============================================================================
+SUPPORT & CONTACT
+===============================================================================
+
+For issues or questions, please refer to:
+- API Handlers: services/api-golang-master/internal/handlers/pos_enhanced_handler.go
+- GST Handlers: services/api-golang-master/internal/handlers/gst_reports_handler.go
+- Database Schema: services/api-golang-master/migrations/013_pos_gst_compliance.sql
+- Routes: services/api-golang-master/internal/routes/pos_routes.go
+
+===============================================================================
+END OF DOCUMENTATION
+===============================================================================

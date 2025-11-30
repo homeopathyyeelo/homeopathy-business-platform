@@ -156,9 +156,30 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 
 	if search != "" {
 		searchPattern := "%" + strings.ToLower(search) + "%"
-		whereClause += fmt.Sprintf(" AND (LOWER(p.name) LIKE $%d OR LOWER(p.sku) LIKE $%d)", paramCount, paramCount+1)
-		args = append(args, searchPattern, searchPattern)
-		paramCount += 2
+		// Enhanced search across multiple fields including associated tables
+		whereClause += fmt.Sprintf(` AND (
+			LOWER(p.name) LIKE $%d OR 
+			LOWER(p.sku) LIKE $%d OR 
+			LOWER(p.barcode) LIKE $%d OR 
+			LOWER(p.description) LIKE $%d OR
+			LOWER(c.name) LIKE $%d OR 
+			LOWER(b.name) LIKE $%d OR 
+			LOWER(pot.code) LIKE $%d OR 
+			LOWER(pot.name) LIKE $%d OR
+			LOWER(f.name) LIKE $%d OR
+			LOWER(p.manufacturer) LIKE $%d OR
+			LOWER(p.tags) LIKE $%d
+		)`,
+			paramCount, paramCount+1, paramCount+2, paramCount+3,
+			paramCount+4, paramCount+5, paramCount+6, paramCount+7,
+			paramCount+8, paramCount+9, paramCount+10,
+		)
+		args = append(args,
+			searchPattern, searchPattern, searchPattern, searchPattern,
+			searchPattern, searchPattern, searchPattern, searchPattern,
+			searchPattern, searchPattern, searchPattern,
+		)
+		paramCount += 11
 	}
 	if category != "" {
 		whereClause += fmt.Sprintf(" AND LOWER(c.name) = $%d", paramCount)
@@ -207,6 +228,7 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 			p.pack_size, p.cost_price, p.selling_price, p.mrp, p.tax_rate as tax_percent,
 			COALESCE(h.code, '') as hsn_code,
 			p.manufacturer, p.description, p.barcode,
+			COALESCE(p.barcode_template, 'BarcodeT8') as barcode_template,
 			p.reorder_level, p.min_stock, p.max_stock, p.current_stock,
 			p.is_active, p.tags, p.created_at, p.updated_at
 		FROM products p
@@ -236,19 +258,19 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var products []gin.H
 	for rows.Next() {
 		var (
-			productID, sku, name                                        string
-			category, brand, potency, form, uom                         sql.NullString
-			packSize, hsnCode, manufacturer, description, barcode, tags sql.NullString
-			costPrice, sellingPrice, mrp, taxPercent, currentStock      float64
-			reorderLevel, minStock, maxStock                            int
-			isActive                                                    bool
-			createdAt, updatedAt                                        time.Time
+			productID, sku, name                                                         string
+			category, brand, potency, form, uom                                          sql.NullString
+			packSize, hsnCode, manufacturer, description, barcode, barcodeTemplate, tags sql.NullString
+			costPrice, sellingPrice, mrp, taxPercent, currentStock                       float64
+			reorderLevel, minStock, maxStock                                             int
+			isActive                                                                     bool
+			createdAt, updatedAt                                                         time.Time
 		)
 
 		err := rows.Scan(
 			&productID, &sku, &name, &category, &brand, &potency, &form, &uom,
 			&packSize, &costPrice, &sellingPrice, &mrp, &taxPercent, &hsnCode,
-			&manufacturer, &description, &barcode,
+			&manufacturer, &description, &barcode, &barcodeTemplate,
 			&reorderLevel, &minStock, &maxStock, &currentStock,
 			&isActive, &tags, &createdAt, &updatedAt,
 		)
@@ -259,33 +281,34 @@ func (h *ProductHandler) GetProducts(c *gin.Context) {
 		}
 
 		product := gin.H{
-			"id":           productID,
-			"sku":          sku,
-			"name":         name,
-			"category":     nullString(category),
-			"brand":        nullString(brand),
-			"potency":      nullString(potency),
-			"form":         nullString(form),
-			"uom":          nullString(uom),
-			"packSize":     nullString(packSize),
-			"costPrice":    costPrice,
-			"sellingPrice": sellingPrice,
-			"mrp":          mrp,
-			"taxPercent":   taxPercent,
-			"hsnCode":      nullString(hsnCode),
-			"manufacturer": nullString(manufacturer),
-			"description":  nullString(description),
-			"barcode":      nullString(barcode),
-			"reorderLevel": reorderLevel,
-			"minStock":     minStock,
-			"maxStock":     maxStock,
-			"currentStock": currentStock,
-			"stock_qty":    currentStock,
-			"unit_price":   sellingPrice,
-			"isActive":     isActive,
-			"tags":         nullString(tags),
-			"createdAt":    createdAt,
-			"updatedAt":    updatedAt,
+			"id":              productID,
+			"sku":             sku,
+			"name":            name,
+			"category":        nullString(category),
+			"brand":           nullString(brand),
+			"potency":         nullString(potency),
+			"form":            nullString(form),
+			"uom":             nullString(uom),
+			"packSize":        nullString(packSize),
+			"costPrice":       costPrice,
+			"sellingPrice":    sellingPrice,
+			"mrp":             mrp,
+			"taxPercent":      taxPercent,
+			"hsnCode":         nullString(hsnCode),
+			"manufacturer":    nullString(manufacturer),
+			"description":     nullString(description),
+			"barcode":         nullString(barcode),
+			"barcodeTemplate": nullString(barcodeTemplate),
+			"reorderLevel":    reorderLevel,
+			"minStock":        minStock,
+			"maxStock":        maxStock,
+			"currentStock":    currentStock,
+			"stock_qty":       currentStock,
+			"unit_price":      sellingPrice,
+			"isActive":        isActive,
+			"tags":            nullString(tags),
+			"createdAt":       createdAt,
+			"updatedAt":       updatedAt,
 		}
 
 		products = append(products, product)
