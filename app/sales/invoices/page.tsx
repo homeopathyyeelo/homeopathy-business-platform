@@ -166,11 +166,12 @@ export default function InvoicesPage() {
   // Download invoice PDF
   const downloadInvoice = async (invoice: Invoice) => {
     try {
-      const res = await golangAPI.get(`/api/erp/sales/invoices/${invoice.id}/download`, {
+      const res = await golangAPI.get(`/api/erp/invoices/${invoice.invoice_no}/download`, {
         responseType: 'blob',
       });
       
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `Invoice-${invoice.invoice_no}.pdf`);
@@ -180,13 +181,14 @@ export default function InvoicesPage() {
       window.URL.revokeObjectURL(url);
       
       toast({
-        title: 'Download Started',
-        description: `Invoice ${invoice.invoice_no} is downloading`,
+        title: '✅ PDF Downloaded',
+        description: `Invoice ${invoice.invoice_no} downloaded successfully`,
       });
     } catch (error) {
+      console.error('PDF download error:', error);
       toast({
         title: 'Error',
-        description: 'Failed to download invoice',
+        description: 'Failed to download invoice PDF',
         variant: 'destructive',
       });
     }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,7 @@ import (
 type OrdersHandler struct {
 	db             *gorm.DB
 	paymentService *services.PaymentTrackingService
+	thermalPrinter *services.ThermalPrinterService
 }
 
 // NewOrdersHandler creates a new orders handler
@@ -20,6 +22,7 @@ func NewOrdersHandler(db *gorm.DB) *OrdersHandler {
 	return &OrdersHandler{
 		db:             db,
 		paymentService: services.NewPaymentTrackingService(db),
+		thermalPrinter: services.NewThermalPrinterService(),
 	}
 }
 
@@ -186,7 +189,129 @@ func (h *OrdersHandler) RecordPayment(c *gin.Context) {
 	})
 }
 
-// Helper function to convert string to int
+// PrintOrderThermal generates thermal print for an order
+// POST /api/erp/orders/:id/print
+func (h *OrdersHandler) PrintOrderThermal(c *gin.Context) {
+	orderID := c.Param("id")
+
+	// Fetch order
+	var order map[string]interface{}
+	if err := h.db.Table("orders").Where("id = ?", orderID).Take(&order).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+
+	// Fetch order items
+	var items []map[string]interface{}
+	h.db.Table("order_items").Where("order_id = ?", orderID).Find(&items)
+
+	// Build print data
+	printData := services.OrderPrintData{
+		OrderNumber:    order["order_number"].(string),
+		InvoiceNumber:  getStringField(order, "invoice_number"),
+		OrderDate:      order["order_date"].(time.Time),
+		CustomerName:   getStringField(order, "customer_name"),
+		CustomerPhone:  getStringField(order, "customer_phone"),
+		Subtotal:       getFloatField(order, "subtotal"),
+		DiscountAmount: getFloatField(order, "discount_amount"),
+		TaxAmount:      getFloatField(order, "tax_amount"),
+		TotalAmount:    getFloatField(order, "total_amount"),
+		PaidAmount:     getFloatField(order, "paid_amount"),
+		PendingAmount:  getFloatField(order, "pending_amount"),
+		PaymentMethod:  getStringField(order, "payment_method"),
+		PaymentStatus:  getStringField(order, "payment_status"),
+		Source:         getStringField(order, "source"),
+		Notes:          getStringField(order, "notes"),
+		CompanyName:    "Yeelo Homeopathy",
+		CompanyPhone:   "8478019973",
+		CompanyAddress: "Sohna, Gurugram, Haryana",
+	}
+
+	// Convert items
+	for _, item := range items {
+		printData.Items = append(printData.Items, services.OrderItemPrint{
+			ProductName: getStringField(item, "product_name"),
+			SKU:         getStringField(item, "sku"),
+			Quantity:    getFloatField(item, "quantity"),
+			UnitPrice:   getFloatField(item, "unit_price"),
+			Discount:    getFloatField(item, "discount_amount"),
+			Total:       getFloatField(item, "total_price"),
+		})
+	}
+
+	// Generate ESC/POS commands
+	escposData := h.thermalPrinter.Generate3x5OrderSlip(printData)
+
+	// Return both raw ESC/POS and preview text
+	c.JSON(http.StatusOK, gin.H{
+		"success":     true,
+		"escposData":  escposData,
+		"previewText": h.thermalPrinter.FormatForDisplay(escposData),
+		"orderNumber": printData.OrderNumber,
+	})
+}
+
+// PrintInvoiceThermal generates thermal print for an invoice
+// POST /api/erp/invoices/:invoiceNo/print
+func (h *OrdersHandler) PrintInvoiceThermal(c *gin.Context) {
+	invoiceNo := c.Param("invoiceNo")
+
+	// Fetch invoice from sales_invoices
+	var invoice map[string]interface{}
+	if err := h.db.Table("sales_invoices").Where("invoice_no = ?", invoiceNo).Take(&invoice).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
+		return
+	}
+
+	// Fetch invoice items
+	var items []map[string]interface{}
+	h.db.Table("sales_invoice_items").Where("invoice_id = ?", invoice["id"]).Find(&items)
+
+	// Build print data
+	printData := services.OrderPrintData{
+		InvoiceNumber:  invoiceNo,
+		OrderDate:      invoice["invoice_date"].(time.Time),
+		CustomerName:   getStringField(invoice, "customer_name"),
+		CustomerPhone:  getStringField(invoice, "customer_phone"),
+		Subtotal:       getFloatField(invoice, "subtotal"),
+		DiscountAmount: getFloatField(invoice, "total_discount"),
+		TaxAmount:      getFloatField(invoice, "total_gst"),
+		TotalAmount:    getFloatField(invoice, "total_amount"),
+		PaidAmount:     getFloatField(invoice, "total_amount"), // Invoices are paid
+		PendingAmount:  0,
+		PaymentMethod:  getStringField(invoice, "payment_method"),
+		PaymentStatus:  "PAID",
+		Source:         "POS",
+		Notes:          getStringField(invoice, "notes"),
+		CompanyName:    "Yeelo Homeopathy",
+		CompanyPhone:   "8478019973",
+		CompanyAddress: "Sohna, Gurugram, Haryana",
+	}
+
+	// Convert items
+	for _, item := range items {
+		printData.Items = append(printData.Items, services.OrderItemPrint{
+			ProductName: getStringField(item, "product_name"),
+			SKU:         getStringField(item, "sku"),
+			Quantity:    getFloatField(item, "quantity"),
+			UnitPrice:   getFloatField(item, "unit_price"),
+			Discount:    getFloatField(item, "discount_amount"),
+			Total:       getFloatField(item, "line_total"),
+		})
+	}
+
+	// Generate ESC/POS commands
+	escposData := h.thermalPrinter.Generate3x5OrderSlip(printData)
+
+	c.JSON(http.StatusOK, gin.H{
+		"success":       true,
+		"escposData":    escposData,
+		"previewText":   h.thermalPrinter.FormatForDisplay(escposData),
+		"invoiceNumber": invoiceNo,
+	})
+}
+
+// Helper functions
 func atoi(s string) int {
 	var result int
 	for _, c := range s {
@@ -195,4 +320,69 @@ func atoi(s string) int {
 		}
 	}
 	return result
+}
+
+func getStringField(m map[string]interface{}, key string) string {
+	if val, ok := m[key]; ok && val != nil {
+		if str, ok := val.(string); ok {
+			return str
+		}
+	}
+	return ""
+}
+
+func getFloatField(m map[string]interface{}, key string) float64 {
+	if val, ok := m[key]; ok && val != nil {
+		switch v := val.(type) {
+		case float64:
+			return v
+		case float32:
+			return float64(v)
+		case int:
+			return float64(v)
+		case int64:
+			return float64(v)
+		}
+	}
+	return 0
+}
+
+// DownloadInvoicePDF - Download A4 PDF for invoice
+func (h *OrdersHandler) DownloadInvoicePDF(c *gin.Context) {
+	invoiceNo := c.Param("invoiceNo")
+
+	// Get invoice as model
+	var invoice models.SalesInvoice
+	err := h.db.Where("invoice_no = ?", invoiceNo).First(&invoice).Error
+
+	if err != nil {
+		c.JSON(404, gin.H{"success": false, "error": "Invoice not found"})
+		return
+	}
+
+	// Get invoice items as models
+	var items []models.SalesInvoiceItem
+	h.db.Where("invoice_id = ?", invoice.ID).Find(&items)
+
+	// Build PDF data
+	pdfData := services.InvoiceData{
+		Invoice:      &invoice,
+		Items:        items,
+		CompanyName:  "Yeelo Homeopathy",
+		CompanyGSTIN: "06BUAPG3815Q1ZH",
+		CompanyAddr:  "Shop No. 3, Khewat No. 213, Dhunela, Sohna, Gurugram, Haryana, 122103",
+		CompanyPhone: "8478019973",
+	}
+
+	// Generate A4 PDF
+	pdfService := services.NewInvoicePDFService()
+	pdfPath, err := pdfService.GenerateA4Invoice(pdfData)
+	if err != nil {
+		c.JSON(500, gin.H{"success": false, "error": "Failed to generate PDF"})
+		return
+	}
+
+	// Serve file for download
+	c.Header("Content-Disposition", "attachment; filename=Invoice-"+invoiceNo+".pdf")
+	c.File(pdfPath)
 }

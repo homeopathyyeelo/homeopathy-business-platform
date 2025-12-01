@@ -200,7 +200,7 @@ func prepareEInvoiceRequest(invoice *models.SalesInvoice) *EInvoiceRequest {
 			Loc:   "Mumbai",
 			Pin:   400001,
 			Stcd:  "27", // Maharashtra
-			Ph:    "9876543210",
+			Ph:    "8478019973",
 			Em:    "info@yeelo.com",
 		},
 		BuyerDtls: BuyerDetails{

@@ -7,9 +7,14 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { golangAPI } from '@/lib/api'
 import { formatDate, formatCurrency } from '@/lib/utils'
-import { Search, Filter, DollarSign, Package, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Search, Filter, DollarSign, Package, Clock, CheckCircle2, AlertCircle, Printer, Download } from 'lucide-react'
+import { useThermalPrinter, PrinterConfig } from '@/lib/thermal-printer'
+import { useToast } from '@/hooks/use-toast'
 
 export default function OrdersPage() {
+  const { toast } = useToast()
+  const { isConfigured, print, showPreview, printViaDialog } = useThermalPrinter()
+  
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
@@ -24,6 +29,7 @@ export default function OrdersPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('CASH')
+  const [printingOrder, setPrintingOrder] = useState<string | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -70,13 +76,72 @@ export default function OrdersPage() {
 
       setShowPaymentModal(false)
       setPaymentAmount('')
+      toast({ title: '✅ Payment Recorded' })
       fetchOrders()
       if (selectedOrder) {
         viewOrderDetails(selectedOrder.order.id)
       }
     } catch (error) {
       console.error('Error recording payment:', error)
-      alert('Failed to record payment')
+      toast({ title: 'Failed to record payment', variant: 'destructive' })
+    }
+  }
+
+  const printOrderThermal = async (orderId: string) => {
+    setPrintingOrder(orderId)
+    try {
+      const res = await golangAPI.post(`/api/erp/orders/${orderId}/print`)
+      if (res.data?.success) {
+        const printData = {
+          escposData: res.data.escposData,
+          previewText: res.data.previewText,
+          orderNumber: res.data.orderNumber,
+        }
+
+        if (isConfigured) {
+          const result = await print(printData)
+          if (result.success) {
+            toast({ title: '🖨️ Order Printed' })
+          } else {
+            showPreview(printData)
+          }
+        } else {
+          showPreview(printData)
+        }
+      }
+    } catch (error) {
+      toast({ title: 'Print failed', variant: 'destructive' })
+    } finally {
+      setPrintingOrder(null)
+    }
+  }
+
+  const downloadOrderInvoice = async (orderNumber: string) => {
+    try {
+      // Try to find invoice by order number (invoices created from orders often include order number in notes/reference)
+      // For now, we'll try using the order number as invoice number if it exists
+      const res = await golangAPI.get(`/api/erp/invoices/${orderNumber}/download`, {
+        responseType: 'blob',
+      })
+      
+      const blob = new Blob([res.data], { type: 'application/pdf' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `Order-Invoice-${orderNumber}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      
+      toast({ title: '✅ Invoice PDF Downloaded' })
+    } catch (error) {
+      console.error('Invoice download error:', error)
+      toast({ 
+        title: 'Invoice Not Found', 
+        description: 'This order may not have been converted to an invoice yet',
+        variant: 'destructive' 
+      })
     }
   }
 
@@ -203,19 +268,32 @@ export default function OrdersPage() {
                     <td className="px-6 py-4 text-right text-red-600">{formatCurrency(order.pendingAmount)}</td>
                     <td className="px-6 py-4 text-center">{getPaymentStatusBadge(order.paymentStatus)}</td>
                     <td className="px-6 py-4 text-center">
-                      {order.pendingAmount > 0 && (
+                      <div className="flex gap-2 justify-center">
+                        {order.pendingAmount > 0 && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedOrder({ order })
+                              setShowPaymentModal(true)
+                            }}
+                          >
+                            Add Payment
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setSelectedOrder({ order })
-                            setShowPaymentModal(true)
+                            printOrderThermal(order.id)
                           }}
+                          disabled={printingOrder === order.id}
                         >
-                          Add Payment
+                          <Printer className="h-4 w-4" />
                         </Button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -280,7 +358,26 @@ export default function OrdersPage() {
                 <h2 className="text-2xl font-bold">Order Details</h2>
                 <p className="text-gray-500">{selectedOrder.order?.orderNumber}</p>
               </div>
-              <Button onClick={() => setSelectedOrder(null)} variant="outline">Close</Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => printOrderThermal(selectedOrder.order?.id)}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Printer className="h-4 w-4 mr-2" />
+                  Print Thermal
+                </Button>
+                <Button
+                  onClick={() => downloadOrderInvoice(selectedOrder.order?.orderNumber)}
+                  variant="outline"
+                  size="sm"
+                  className="text-green-600"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Invoice PDF
+                </Button>
+                <Button onClick={() => setSelectedOrder(null)} variant="outline">Close</Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-6 mb-6">

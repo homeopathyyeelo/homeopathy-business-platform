@@ -47,7 +47,7 @@ INSERT INTO erp_settings (setting_key, setting_value, setting_type, category, la
 -- Business Settings
 ('BUSINESS_NAME', 'Yeelo Homeopathy', 'string', 'business', 'Business Name', 'Official business name'),
 ('BUSINESS_GSTIN', '06BUAPG3815Q1ZH', 'string', 'business', 'GSTIN', 'GST Identification Number'),
-('BUSINESS_PHONE', '9876543210', 'string', 'business', 'Phone Number', 'Business contact number'),
+('BUSINESS_PHONE', '8478019973', 'string', 'business', 'Phone Number', 'Business contact number'),
 ('BUSINESS_EMAIL', 'info@yeelo.com', 'string', 'business', 'Email', 'Business email address'),
 ('BUSINESS_ADDRESS', 'Shop No. 3, Khewat No. 213, Khatoni No. 215, Berka Road, Shiv Mandir, Dhunela, Sohna, Gurugram, Haryana, 122103', 'string', 'business', 'Business Address', 'Complete business address')
 

@@ -21,6 +21,8 @@ import {
 import { golangAPI } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import SmartInsights from '@/components/smart-insights/SmartInsights';
+import { useThermalPrinter, PrinterConfig } from '@/lib/thermal-printer';
+import ThermalPrinterConfig from '@/components/thermal-printer-config';
 
 // Billing Types
 type BillingType =
@@ -73,9 +75,17 @@ interface Customer {
 export default function UniversalPOSPage() {
   const { toast } = useToast();
   const barcodeInputRef = useRef<HTMLInputElement>(null);
+  const { isConfigured, print, showPreview, printViaDialog, configurePrinter } = useThermalPrinter();
 
   // BILLING TYPE - Main selector
   const [billingType, setBillingType] = useState<BillingType>('RETAIL');
+
+  // Printer configuration
+  const [showPrinterConfig, setShowPrinterConfig] = useState(false);
+  const [printerConfig, setPrinterConfig] = useState<PrinterConfig>({
+    name: 'TSE_TE244',
+    type: 'USB',
+  });
 
   // Cart & Billing (with localStorage persistence)
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -87,6 +97,74 @@ export default function UniversalPOSPage() {
   const [totalOutstanding, setTotalOutstanding] = useState(0);
   const [overdueAmount, setOverdueAmount] = useState(0);
   const [interestAmount, setInterestAmount] = useState(0);
+
+  // Barcode scanner auto-detection
+  const [barcodeBuffer, setBarcodeBuffer] = useState('');
+  const [lastKeyTime, setLastKeyTime] = useState(0);
+  const [barcodeInput, setBarcodeInput] = useState('');
+
+  // Auto-detect barcode scanner (fast typing = scanner)
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      const currentTime = new Date().getTime();
+      const timeDiff = currentTime - lastKeyTime;
+
+      // If Enter key and buffer has content (barcode complete)
+      if (e.key === 'Enter' && barcodeBuffer.length > 0) {
+        e.preventDefault();
+        searchByBarcode(barcodeBuffer);
+        setBarcodeBuffer('');
+        return;
+      }
+
+      // Detect rapid typing (< 50ms between keys = scanner)
+      if (timeDiff < 50 && e.key.length === 1) {
+        setBarcodeBuffer(prev => prev + e.key);
+        setLastKeyTime(currentTime);
+      } else if (timeDiff >= 50 && e.key.length === 1) {
+        // Reset buffer if typing is slow (human)
+        setBarcodeBuffer(e.key);
+        setLastKeyTime(currentTime);
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, [barcodeBuffer, lastKeyTime]);
+
+  // Search product by barcode
+  const searchByBarcode = async (barcode: string) => {
+    try {
+      const res = await golangAPI.get(`/api/erp/products/search`, {
+        params: { q: barcode, limit: 1 }
+      });
+
+      if (res.data?.products?.length > 0) {
+        const product = res.data.products[0];
+        selectProduct(product);
+        toast({ 
+          title: '📷 Barcode Scanned', 
+          description: `${product.name} added` 
+        });
+      } else {
+        toast({ 
+          title: 'Product Not Found', 
+          description: `Barcode: ${barcode}`,
+          variant: 'destructive' 
+        });
+      }
+    } catch (error) {
+      console.error('Barcode search error:', error);
+    }
+  };
+
+  // Manual barcode entry
+  const handleBarcodeInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && barcodeInput.trim()) {
+      searchByBarcode(barcodeInput.trim());
+      setBarcodeInput('');
+    }
+  };
 
   // Load cart from localStorage on mount and set default customer
   useEffect(() => {
@@ -626,6 +704,11 @@ export default function UniversalPOSPage() {
         setShowPaymentDialog(false);
         setShowInvoiceDialog(true);
 
+        // Auto-print thermal invoice (if printer configured)
+        if (isConfigured) {
+          setTimeout(() => printThermalInvoice(invoice.invoiceNo), 500);
+        }
+
         // Auto-generate E-Invoice for B2B (Wholesale/Distributor)
         if (['WHOLESALE', 'DISTRIBUTOR'].includes(billingType) && selectedCustomer?.gstin) {
           setTimeout(() => generateEInvoice(invoice.id), 1000);
@@ -743,6 +826,81 @@ export default function UniversalPOSPage() {
       setAiResponse('AI assistant is currently unavailable');
     } finally {
       setAiLoading(false);
+    }
+  };
+
+  // Print thermal invoice
+  const printThermalInvoice = async (invoiceNo: string) => {
+    try {
+      const res = await golangAPI.post(`/api/erp/invoices/${invoiceNo}/print`);
+      if (res.data?.success) {
+        const printData = {
+          escposData: res.data.escposData,
+          previewText: res.data.previewText,
+          invoiceNumber: invoiceNo,
+        };
+
+        // Auto-print to configured printer
+        const result = await print(printData);
+        if (result.success) {
+          toast({ title: '🖨️ Invoice Printed', description: `Printed to thermal printer` });
+        } else {
+          // Fallback to system dialog
+          await printViaDialog(printData);
+        }
+      }
+    } catch (error) {
+      console.error('Print error:', error);
+      // Silent fail - don't block invoice creation
+    }
+  };
+
+  // Manual print invoice
+  const manualPrintInvoice = async () => {
+    if (!lastCreatedInvoice) return;
+    try {
+      const res = await golangAPI.post(`/api/erp/invoices/${lastCreatedInvoice.invoiceNo}/print`);
+      if (res.data?.success) {
+        const printData = {
+          escposData: res.data.escposData,
+          previewText: res.data.previewText,
+          invoiceNumber: lastCreatedInvoice.invoiceNo,
+        };
+        showPreview(printData);
+      }
+    } catch (error) {
+      toast({ title: 'Print preview failed', variant: 'destructive' });
+    }
+  };
+
+  // Configure printer
+  const savePrinterConfig = () => {
+    configurePrinter(printerConfig);
+    setShowPrinterConfig(false);
+    toast({ title: '✅ Printer Configured', description: `${printerConfig.name} ready` });
+  };
+
+  // Download A4 PDF
+  const downloadA4PDF = async () => {
+    if (!lastCreatedInvoice) return;
+    try {
+      const response = await golangAPI.get(`/api/erp/invoices/${lastCreatedInvoice.invoiceNo}/download`, {
+        responseType: 'blob',
+      });
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Invoice-${lastCreatedInvoice.invoiceNo}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast({ title: '✅ PDF Downloaded', description: `Invoice ${lastCreatedInvoice.invoiceNo}` });
+    } catch (error) {
+      toast({ title: 'PDF download failed', variant: 'destructive' });
     }
   };
 
@@ -898,10 +1056,43 @@ export default function UniversalPOSPage() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col overflow-hidden">
+            {/* Barcode Scanner Input */}
+            <div className="mb-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm flex items-center gap-2">
+                  <Scan className="h-4 w-4 text-green-600" />
+                  Barcode Scanner
+                </Label>
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  onClick={() => window.open('/products/barcode', '_blank')}
+                  className="h-auto p-0 text-xs"
+                >
+                  Manage Barcodes →
+                </Button>
+              </div>
+              <div className="relative">
+                <Scan className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                <Input
+                  ref={barcodeInputRef}
+                  placeholder="Scan or enter barcode... (Press Enter)"
+                  value={barcodeInput}
+                  onChange={(e) => setBarcodeInput(e.target.value)}
+                  onKeyPress={handleBarcodeInputKeyPress}
+                  className="pl-10 border-green-300 focus:border-green-500"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                ✓ Auto-detects barcode scanner | Manual entry supported
+              </p>
+            </div>
+
+            {/* Product Search */}
             <div className="relative mb-3">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search products (name, SKU, barcode)..."
+                placeholder="Search products (name, SKU)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -1198,6 +1389,15 @@ export default function UniversalPOSPage() {
                   <Clock className="mr-2 h-4 w-4" />
                   Hold Bill
                 </Button>
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPrinterConfig(true)}
+                >
+                  <Printer className="mr-2 h-4 w-4" />
+                  {isConfigured ? 'Printer Settings' : 'Configure Printer'}
+                </Button>
               </>
             )}
           </div>
@@ -1318,23 +1518,40 @@ export default function UniversalPOSPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                <Button variant="outline" onClick={() => generateEInvoice(lastCreatedInvoice.id)}>
-                  <FileCheck className="mr-2 h-4 w-4" />
-                  E-Invoice
-                </Button>
+                {['WHOLESALE', 'DISTRIBUTOR'].includes(billingType) && selectedCustomer?.gstin && (
+                  <Button variant="outline" onClick={() => generateEInvoice(lastCreatedInvoice.id)}>
+                    <FileCheck className="mr-2 h-4 w-4" />
+                    E-Invoice
+                  </Button>
+                )}
                 <Button variant="outline" onClick={shareViaWhatsApp}>
                   <Send className="mr-2 h-4 w-4" />
                   WhatsApp
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={manualPrintInvoice}>
                   <Printer className="mr-2 h-4 w-4" />
-                  Print
+                  Print Thermal
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={downloadA4PDF}>
                   <Download className="mr-2 h-4 w-4" />
-                  PDF
+                  Download PDF
                 </Button>
               </div>
+              
+              {!isConfigured && (
+                <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
+                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                  <p className="text-sm text-orange-700">
+                    Thermal printer not configured. 
+                    <button 
+                      onClick={() => setShowPrinterConfig(true)} 
+                      className="underline ml-1 font-medium"
+                    >
+                      Configure now
+                    </button>
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
@@ -1534,6 +1751,12 @@ Examples:
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Thermal Printer Configuration */}
+      <ThermalPrinterConfig
+        open={showPrinterConfig}
+        onOpenChange={setShowPrinterConfig}
+      />
     </div>
   );
 }

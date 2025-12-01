@@ -224,7 +224,9 @@ func (h *BarcodeLabelHandler) GenerateBarcodeByString(c *gin.Context) {
 func (h *BarcodeLabelHandler) PrintBarcodeLabels(c *gin.Context) {
 	var req struct {
 		ProductIDs []string `json:"product_ids"`
-		Copies     int      `json:"copies"` // Number of copies per label
+		BarcodeIDs []string `json:"barcode_ids"` // Alternative field name
+		LabelSize  string   `json:"label_size"`  // small, medium, large
+		Copies     int      `json:"copies"`      // Number of copies per label
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -235,7 +237,13 @@ func (h *BarcodeLabelHandler) PrintBarcodeLabels(c *gin.Context) {
 		return
 	}
 
-	if len(req.ProductIDs) == 0 {
+	// Accept both product_ids and barcode_ids
+	productIDs := req.ProductIDs
+	if len(productIDs) == 0 && len(req.BarcodeIDs) > 0 {
+		productIDs = req.BarcodeIDs
+	}
+
+	if len(productIDs) == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"error":   "No products selected",
@@ -257,7 +265,7 @@ func (h *BarcodeLabelHandler) PrintBarcodeLabels(c *gin.Context) {
 	}
 
 	if err := h.db.Table("products").
-		Where("id IN ?", req.ProductIDs).
+		Where("id IN ?", productIDs).
 		Where("barcode IS NOT NULL AND barcode != ''").
 		Find(&products).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

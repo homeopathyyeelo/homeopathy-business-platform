@@ -258,6 +258,9 @@ func main() {
 				c.File("favicon.ico")
 			})
 
+			// Register Ledger Routes
+			routes.RegisterLedgerRoutes(erp, db)
+
 			// Products
 			erp.GET("/products/stats", productStatsHandler.GetProductStats) // MUST be before /:id
 			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)

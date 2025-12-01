@@ -4,364 +4,185 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 1972ms
+ ✓ Ready in 2.1s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 876ms (159 modules)
+ ✓ Compiled /middleware in 1045ms (159 modules)
  ○ Compiling /sales/pos ...
- ✓ Compiled /sales/pos in 11.3s (1409 modules)
- GET /sales/pos 200 in 12216ms
- ✓ Compiled in 670ms (581 modules)
- GET /sales/pos 200 in 695ms
- ✓ Compiled in 791ms (581 modules)
- GET /sales/pos 200 in 245ms
- ✓ Compiled in 592ms (581 modules)
- GET /sales/pos 200 in 314ms
- ✓ Compiled in 730ms (581 modules)
- GET /sales/pos 200 in 193ms
- ✓ Compiled in 742ms (581 modules)
- GET /sales/pos 200 in 647ms
- ✓ Compiled in 463ms (581 modules)
- GET /sales/pos 200 in 271ms
- ✓ Compiled in 676ms (581 modules)
- GET /sales/pos 200 in 222ms
- GET /sales/pos 200 in 389ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 558ms (1390 modules)
- GET /orders 404 in 1094ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 1487ms (582 modules)
- GET /orders 404 in 252ms
- GET /sales/pos 200 in 291ms
- ✓ Compiled in 613ms (582 modules)
- GET /orders 404 in 397ms
- GET /sales/pos 200 in 272ms
- GET /sales/pos 200 in 412ms
- ○ Compiling /sales/orders ...
- ✓ Compiled /sales/orders in 1162ms (1409 modules)
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET /sales/orders 200 in 1902ms
- GET /sales/pos 200 in 175ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 1931ms (1415 modules)
- ✓ Compiled in 4ms (829 modules)
- ✓ Compiled in 1ms (829 modules)
- ✓ Compiled in 0ms (829 modules)
- GET /sales/orders 200 in 1946ms
- GET /sales/orders 200 in 2258ms
- GET /sales/pos 200 in 2452ms
- ✓ Compiled in 551ms (586 modules)
- GET /sales/pos 200 in 576ms
- GET /sales/orders 200 in 487ms
- ✓ Compiled in 414ms (586 modules)
- GET /sales/pos 200 in 301ms
- GET /sales/orders 200 in 301ms
- ✓ Compiled in 313ms (586 modules)
- GET /sales/pos 200 in 298ms
- GET /sales/orders 200 in 299ms
- ✓ Compiled in 367ms (586 modules)
- GET /sales/pos 200 in 307ms
- GET /sales/orders 200 in 307ms
- GET /sales/orders 200 in 456ms
- ✓ Compiled in 362ms (586 modules)
- GET /sales/pos 200 in 302ms
- GET /sales/orders 200 in 302ms
- ✓ Compiled in 319ms (586 modules)
- GET /sales/pos 200 in 413ms
- GET /sales/orders 200 in 414ms
- GET /sales/orders 200 in 292ms
- ✓ Compiled in 497ms (586 modules)
- GET /sales/pos 200 in 367ms
- GET /sales/orders 200 in 160ms
- ✓ Compiled in 311ms (586 modules)
- GET /sales/pos 200 in 278ms
- GET /sales/orders 200 in 279ms
- ○ Compiling /sales/invoices ...
- ✓ Compiled /sales/invoices in 2.1s (1431 modules)
- GET /sales/invoices 200 in 2630ms
- GET /sales/pos 200 in 267ms
- GET /sales/invoices 200 in 181ms
- ✓ Compiled in 550ms (594 modules)
- GET /sales/pos 200 in 351ms
- GET /sales/invoices 200 in 271ms
- GET /sales/orders 200 in 164ms
- ✓ Compiled in 842ms (594 modules)
- GET /sales/pos 200 in 324ms
- GET /sales/orders 200 in 325ms
- ✓ Compiled in 318ms (594 modules)
- GET /sales/pos 200 in 255ms
- GET /sales/orders 200 in 256ms
- ✓ Compiled in 310ms (594 modules)
- GET /sales/pos 200 in 297ms
- GET /sales/orders 200 in 297ms
- ✓ Compiled in 377ms (594 modules)
- GET /sales/pos 200 in 289ms
- GET /sales/orders 200 in 290ms
- ✓ Compiled in 297ms (594 modules)
- GET /sales/pos 200 in 239ms
- GET /sales/orders 200 in 240ms
- GET /sales/invoices 200 in 125ms
- ✓ Compiled in 402ms (594 modules)
- GET /sales/pos 200 in 309ms
- GET /sales/invoices 200 in 259ms
- ✓ Compiled in 361ms (594 modules)
- GET /sales/pos 200 in 254ms
- GET /sales/invoices 200 in 254ms
- ✓ Compiled in 401ms (594 modules)
- GET /sales/invoices 200 in 464ms
- GET /sales/pos 200 in 465ms
- GET /sales/orders 200 in 502ms
- ✓ Compiled in 510ms (594 modules)
- GET /sales/orders 200 in 469ms
- GET /sales/pos 200 in 471ms
- GET /sales/invoices 200 in 472ms
- ✓ Compiled in 289ms (594 modules)
- GET /sales/orders 200 in 372ms
- GET /sales/pos 200 in 375ms
- GET /sales/invoices 200 in 375ms
- ✓ Compiled in 474ms (594 modules)
- GET /sales/orders 200 in 391ms
- GET /sales/invoices 200 in 391ms
- GET /sales/pos 200 in 393ms
- ✓ Compiled in 308ms (594 modules)
- GET /sales/orders 200 in 337ms
- GET /sales/pos 200 in 338ms
- GET /sales/invoices 200 in 339ms
- GET /sales/orders 200 in 234ms
- ✓ Compiled in 368ms (594 modules)
- GET /sales/pos 200 in 357ms
- GET /sales/orders 200 in 358ms
- GET /sales/invoices 200 in 358ms
- ✓ Compiled in 385ms (594 modules)
- GET /sales/orders 200 in 550ms
- GET /sales/invoices 200 in 551ms
- GET /sales/pos 200 in 552ms
- ✓ Compiled in 324ms (594 modules)
- GET /sales/orders 200 in 399ms
- GET /sales/invoices 200 in 401ms
- GET /sales/pos 200 in 402ms
- ✓ Compiled in 310ms (594 modules)
- GET /sales/orders 200 in 329ms
- GET /sales/invoices 200 in 330ms
- GET /sales/pos 200 in 330ms
- ✓ Compiled in 393ms (594 modules)
- GET /sales/orders 200 in 401ms
- GET /sales/invoices 200 in 400ms
- GET /sales/pos 200 in 402ms
- ✓ Compiled in 328ms (594 modules)
- GET /sales/orders 200 in 488ms
- GET /sales/pos 200 in 490ms
- GET /sales/invoices 200 in 491ms
- ✓ Compiled in 298ms (594 modules)
- GET /sales/orders 200 in 350ms
- GET /sales/invoices 200 in 350ms
- GET /sales/pos 200 in 352ms
- GET /sales/orders 200 in 253ms
- ✓ Compiled in 347ms (594 modules)
- GET /sales/pos 200 in 363ms
- GET /sales/orders 200 in 363ms
- GET /sales/invoices 200 in 364ms
- ✓ Compiled in 419ms (594 modules)
- GET /sales/orders 200 in 867ms
- GET /sales/pos 200 in 924ms
- GET /sales/invoices 200 in 925ms
- ⨯ SyntaxError: Unexpected end of JSON input
-    at JSON.parse (<anonymous>) {
-  page: '/sales/invoices'
+ ✓ Compiled /sales/orders in 16.9s (1419 modules)
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/orders/page.js:524:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/orders/page.tsx:18:78)
+    at (ssr)/./app/sales/orders/page.tsx (.next/server/app/sales/orders/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
 }
- ○ Compiling /_error ...
- ✓ Compiled /_error in 4.1s (1764 modules)
- GET /sales/invoices 500 in 4069ms
- GET /sales/invoices 200 in 383ms
- GET /sales/pos 200 in 602ms
- GET /sales/pos 200 in 212ms
- GET /sales/pos 200 in 158ms
- ✓ Compiled in 433ms (752 modules)
- GET /sales/pos 200 in 144ms
- ✓ Compiled in 2.3s (1778 modules)
- GET /sales/pos 200 in 344ms
- GET /sales/orders 200 in 742ms
- ✓ Compiled in 440ms (752 modules)
- GET /sales/orders 200 in 292ms
- GET /sales/pos 200 in 293ms
- GET /sales/orders 200 in 294ms
- ✓ Compiled in 372ms (752 modules)
- GET /sales/pos 200 in 361ms
- GET /sales/orders 200 in 361ms
- GET /sales/invoices 200 in 435ms
- ✓ Compiled in 373ms (752 modules)
- GET /sales/orders 200 in 669ms
- ✓ Compiled in 867ms (752 modules)
- GET /sales/pos 200 in 660ms
- GET /sales/invoices 200 in 665ms
- GET /sales/pos 200 in 598ms
- GET /sales/invoices 200 in 549ms
- GET /sales/orders 200 in 374ms
- GET /sales/invoices 200 in 247ms
- ✓ Compiled in 409ms (752 modules)
- GET /sales/orders 200 in 1271ms
- ✓ Compiled in 1467ms (752 modules)
- GET /sales/pos 200 in 1326ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET /sales/orders 200 in 770ms
- GET /sales/invoices 200 in 776ms
- GET /sales/pos 200 in 352ms
- GET /sales/invoices 200 in 219ms
- ✓ Compiled in 1010ms (752 modules)
- GET /sales/orders 200 in 465ms
- GET /sales/pos 200 in 467ms
- GET /sales/invoices 200 in 469ms
- ✓ Compiled in 314ms (752 modules)
- GET /sales/orders 200 in 313ms
- GET /sales/pos 200 in 314ms
- GET /sales/invoices 200 in 315ms
- ✓ Compiled in 425ms (751 modules)
- GET /sales/orders 200 in 336ms
- GET /sales/invoices 200 in 336ms
- GET /sales/pos 200 in 337ms
- ✓ Compiled in 406ms (751 modules)
- GET /sales/orders 200 in 797ms
- GET /sales/invoices 200 in 796ms
- GET /sales/pos 200 in 798ms
- ✓ Compiled in 353ms (751 modules)
- GET /sales/orders 200 in 334ms
- GET /sales/invoices 200 in 334ms
- GET /sales/pos 200 in 335ms
- GET /sales/orders 200 in 262ms
- ✓ Compiled in 363ms (751 modules)
- GET /sales/pos 200 in 500ms
- GET /sales/orders 200 in 564ms
- GET /sales/invoices 200 in 565ms
- GET /sales/invoices 200 in 414ms
- ✓ Compiled in 448ms (751 modules)
- GET /sales/orders 200 in 939ms
- ✓ Compiled in 1065ms (751 modules)
- GET /sales/invoices 200 in 468ms
- GET /sales/pos 200 in 471ms
- GET /sales/orders 200 in 436ms
- GET /sales/invoices 200 in 255ms
- GET /sales/pos 200 in 256ms
- GET /sales/invoices 200 in 334ms
- ✓ Compiled in 381ms (751 modules)
- GET /sales/orders 200 in 690ms
- GET /sales/pos 200 in 562ms
- GET /sales/invoices 200 in 564ms
- ✓ Compiled in 734ms (751 modules)
- GET /sales/pos 200 in 358ms
- GET /sales/invoices 200 in 378ms
- GET /sales/orders 200 in 217ms
- GET /sales/orders 200 in 269ms
- ✓ Compiled in 365ms (751 modules)
- GET /sales/pos 200 in 335ms
- GET /sales/orders 200 in 336ms
- GET /sales/invoices 200 in 336ms
- ✓ Compiled in 426ms (751 modules)
- GET /sales/orders 200 in 370ms
- GET /sales/invoices 200 in 371ms
- GET /sales/pos 200 in 372ms
- ✓ Compiled in 354ms (751 modules)
- GET /sales/pos 200 in 456ms
- GET /sales/invoices 200 in 458ms
- GET /sales/orders 200 in 458ms
- ✓ Compiled in 369ms (751 modules)
- GET /sales/orders 200 in 433ms
- GET /sales/pos 200 in 435ms
- GET /sales/invoices 200 in 435ms
- GET /sales/orders 200 in 326ms
- ✓ Compiled in 638ms (751 modules)
- GET /sales/pos 200 in 381ms
- GET /sales/invoices 200 in 382ms
- GET /sales/orders 200 in 383ms
- ✓ Compiled in 356ms (751 modules)
- GET /sales/pos 200 in 408ms
- GET /sales/orders 200 in 409ms
- GET /sales/invoices 200 in 410ms
- ✓ Compiled in 309ms (751 modules)
- GET /sales/orders 200 in 405ms
- GET /sales/pos 200 in 405ms
- GET /sales/invoices 200 in 407ms
- ✓ Compiled in 394ms (751 modules)
- GET /sales/orders 200 in 668ms
- GET /sales/invoices 200 in 670ms
- GET /sales/pos 200 in 672ms
- ✓ Compiled in 347ms (751 modules)
- GET /sales/orders 200 in 392ms
- GET /sales/pos 200 in 393ms
- GET /sales/invoices 200 in 394ms
- ✓ Compiled in 333ms (751 modules)
- GET /sales/pos 200 in 534ms
- GET /sales/orders 200 in 535ms
- GET /sales/invoices 200 in 535ms
- ✓ Compiled in 469ms (751 modules)
- GET /sales/pos 200 in 413ms
- GET /sales/invoices 200 in 414ms
- GET /sales/orders 200 in 415ms
- ✓ Compiled in 462ms (751 modules)
- GET /sales/pos 200 in 532ms
- GET /sales/orders 200 in 534ms
- GET /sales/invoices 200 in 535ms
- ✓ Compiled in 336ms (751 modules)
- GET /sales/pos 200 in 363ms
- GET /sales/orders 200 in 364ms
- GET /sales/invoices 200 in 365ms
- ✓ Compiled in 343ms (751 modules)
- GET /sales/pos 200 in 370ms
- GET /sales/orders 200 in 370ms
- GET /sales/invoices 200 in 371ms
- ✓ Compiled in 386ms (751 modules)
- GET /sales/orders 200 in 702ms
- GET /sales/pos 200 in 699ms
- GET /sales/invoices 200 in 701ms
- ✓ Compiled in 427ms (751 modules)
- GET /sales/orders 200 in 397ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/pos/page.tsx:44:79)
+    at (ssr)/./app/sales/pos/page.tsx (.next/server/app/sales/pos/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/orders 500 in 13752ms
+ GET /sales/pos 500 in 18459ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/pos/page.tsx:44:79)
+    at (ssr)/./app/sales/pos/page.tsx (.next/server/app/sales/pos/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/pos 500 in 551ms
+ ✓ Compiled in 1681ms (1419 modules)
+ GET /sales/orders 200 in 833ms
+ GET /sales/pos 200 in 834ms
+ ✓ Compiled in 1016ms (589 modules)
  GET /sales/pos 200 in 398ms
- GET /sales/invoices 200 in 401ms
- ✓ Compiled in 386ms (751 modules)
- GET /sales/orders 200 in 361ms
- GET /sales/pos 200 in 362ms
- GET /sales/invoices 200 in 363ms
- ✓ Compiled in 354ms (751 modules)
- GET /sales/pos 200 in 518ms
- GET /sales/orders 200 in 520ms
- GET /sales/invoices 200 in 522ms
- ✓ Compiled in 412ms (751 modules)
- GET /sales/pos 200 in 406ms
- GET /sales/invoices 200 in 406ms
- GET /sales/orders 200 in 408ms
- ✓ Compiled in 1577ms (1685 modules)
- GET /sales/orders 200 in 769ms
- GET /sales/pos 200 in 770ms
- GET /sales/invoices 200 in 771ms
- ✓ Compiled in 646ms (751 modules)
- GET /sales/pos 200 in 1116ms
- GET /sales/orders 200 in 1120ms
- GET /sales/invoices 200 in 1122ms
- ✓ Compiled in 3.6s (1685 modules)
- ✓ Compiled in 708ms (1685 modules)
- ✓ Compiled in 418ms (751 modules)
- ✓ Compiled in 700ms (1685 modules)
- ✓ Compiled in 531ms (1685 modules)
- ✓ Compiled in 371ms (751 modules)
- ✓ Compiled in 569ms (1685 modules)
- ✓ Compiled in 500ms (751 modules)
- ✓ Compiled in 1137ms (1685 modules)
- GET /sales/orders 200 in 600ms
- ✓ Compiled in 539ms (751 modules)
+ GET /sales/orders 200 in 407ms
+ ✓ Compiled in 400ms (589 modules)
+ GET /sales/orders 200 in 354ms
+ GET /sales/pos 200 in 357ms
+ ✓ Compiled in 660ms (589 modules)
+ GET /sales/pos 200 in 762ms
+ GET /sales/orders 200 in 767ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/pos/page.tsx:44:79)
+    at (ssr)/./app/sales/pos/page.tsx (.next/server/app/sales/pos/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/pos 500 in 821ms
  GET /sales/orders 200 in 159ms
- ✓ Compiled in 380ms (751 modules)
- GET /sales/orders 200 in 131ms
- GET /sales/invoices 200 in 451ms
- ✓ Compiled in 359ms (751 modules)
- GET /sales/orders 200 in 609ms
- GET /sales/invoices 200 in 368ms
- ✓ Compiled in 677ms (751 modules)
- GET /sales/invoices 200 in 277ms
- GET /sales/orders 200 in 168ms
- ✓ Compiled in 325ms (751 modules)
+ ○ Compiling /sales/invoices ...
+ ✓ Compiled /sales/invoices in 1247ms (1424 modules)
+ GET /sales/invoices 200 in 1530ms
+ ✓ Compiled in 2.1s (1438 modules)
+ GET /sales/orders 200 in 699ms
+ GET /sales/invoices 200 in 695ms
+ GET /sales/invoices 200 in 968ms
+ GET /sales/invoices 200 in 151ms
+ GET /sales/invoices 200 in 153ms
+ GET /sales/pos 200 in 182ms
+ GET /sales/orders 200 in 167ms
+ GET /sales/invoices 200 in 206ms
+ GET /sales/pos 200 in 159ms
+ ✓ Compiled in 2.1s (1438 modules)
+ GET /sales/orders 200 in 688ms
+ GET /sales/pos 200 in 691ms
+ ✓ Compiled in 973ms (1438 modules)
+ GET /sales/orders 200 in 300ms
+ GET /sales/pos 200 in 526ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/pos/page.tsx:44:79)
+    at (ssr)/./app/sales/pos/page.tsx (.next/server/app/sales/pos/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/pos 500 in 985ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/orders/page.tsx:19:78)
+    at (ssr)/./app/sales/orders/page.tsx (.next/server/app/sales/orders/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/orders 500 in 667ms
+ GET /sales/invoices 200 in 373ms
+ GET /sales/invoices 200 in 259ms
+ ○ Compiling /products/barcode ...
+ ✓ Compiled /products/barcode in 2.1s (1575 modules)
+ GET /products/barcode 200 in 2425ms
+ ✓ Compiled in 3.9s (1591 modules)
+ GET /sales/orders 200 in 962ms
+ GET /products/barcode 200 in 963ms
+ GET /sales/pos 200 in 965ms
+ ⨯ ReferenceError: localStorage is not defined
+    at ThermalPrinterService.loadPrinterConfig (lib/thermal-printer.ts:35:19)
+    at new ThermalPrinterService (lib/thermal-printer.ts:28:10)
+    at eval (lib/thermal-printer.ts:267:31)
+    at (ssr)/./lib/thermal-printer.ts (.next/server/app/sales/pos/page.js:590:1)
+    at eval (webpack-internal:///(ssr)/./app/sales/pos/page.tsx:45:79)
+    at (ssr)/./app/sales/pos/page.tsx (.next/server/app/sales/pos/page.js:194:1)
+  33 |    */
+  34 |   private loadPrinterConfig(): void {
+> 35 |     const saved = localStorage.getItem('thermal_printer_config');
+     |                   ^
+  36 |     if (saved) {
+  37 |       this.printerConfig = JSON.parse(saved);
+  38 |     } {
+  digest: '3487309217'
+}
+ GET /sales/pos 500 in 973ms
+ ✓ Compiled in 949ms (672 modules)
+ GET /sales/orders 200 in 652ms
+ GET /products/barcode 200 in 653ms
+ GET /sales/pos 200 in 660ms
+ ✓ Compiled in 460ms (672 modules)
  GET /sales/orders 200 in 532ms
- GET /sales/invoices 200 in 536ms
- ✓ Compiled in 439ms (751 modules)
- GET /sales/orders 200 in 254ms
- GET /sales/invoices 200 in 254ms
- ✓ Compiled in 425ms (751 modules)
- GET /sales/orders 200 in 347ms
- GET /sales/invoices 200 in 349ms
+ GET /products/barcode 200 in 535ms
+ GET /sales/pos 200 in 537ms
+ ✓ Compiled in 679ms (672 modules)
+ ✓ Compiled in 1165ms (672 modules)
+ GET /sales/orders 200 in 811ms
+ GET /products/barcode 200 in 827ms
+ GET /sales/pos 200 in 829ms
+ GET /sales/orders 200 in 643ms
+ GET /products/barcode 200 in 553ms
+ GET /sales/pos 200 in 560ms
+Killed

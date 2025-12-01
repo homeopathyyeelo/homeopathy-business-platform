@@ -483,10 +483,11 @@ export default function B2BBillingPage() {
       </head>
       <body>
         <div class="header">
-          <div class="company-name">HOMEOPATHY MEDICAL STORE</div>
-          <div>123 Main Street, City - 123456</div>
-          <div>Phone: +91 9876543210 | Email: info@homeopathystore.com</div>
-          <div>GSTIN: 29XXXXX1234X1ZX</div>
+          <div class="company-name">YEELO HOMEOPATHY</div>
+          <div>Dhunela, Sohna Road, Gurugram</div>
+          <div>Phone: +91 8478019973</div>
+          <div>Email: medicine@yeelohomeopathy.com</div>
+          <div>GSTIN: 06BUAPG3815Q1ZH</div>
         </div>
 
         <div class="invoice-title text-center">TAX INVOICE</div>

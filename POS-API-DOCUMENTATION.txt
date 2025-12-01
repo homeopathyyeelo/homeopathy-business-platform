@@ -60,7 +60,7 @@ Request Body:
 {
   "invoiceType": "RETAIL",  // RETAIL, WHOLESALE, B2B, B2C
   "customerName": "Walk-in Customer",
-  "customerPhone": "+91 9876543210",
+  "customerPhone": "+91 8478019973",
   "customerGstNumber": "",  // Optional for B2B
   "items": [
     {
@@ -178,7 +178,7 @@ Request Body:
   "originalInvoiceNo": "INV-202412-0001",
   "customerId": "uuid",
   "customerName": "John Doe",
-  "customerPhone": "+91 9876543210",
+  "customerPhone": "+91 8478019973",
   "returnReason": "DAMAGED",  // DAMAGED, EXPIRED, WRONG_PRODUCT, CUSTOMER_REQUEST, QUALITY_ISSUE, OTHER
   "returnRemarks": "Product packaging damaged",
   "items": [

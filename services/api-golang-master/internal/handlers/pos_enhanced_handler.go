@@ -15,11 +15,15 @@ import (
 )
 
 type POSEnhancedHandler struct {
-	db *gorm.DB
+	db             *gorm.DB
+	autoAccounting *services.AutoAccountingService
 }
 
 func NewPOSEnhancedHandler(db *gorm.DB) *POSEnhancedHandler {
-	return &POSEnhancedHandler{db: db}
+	return &POSEnhancedHandler{
+		db:             db,
+		autoAccounting: services.NewAutoAccountingService(db),
+	}
 }
 
 // ============================================================================
@@ -522,6 +526,63 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 		return
 	}
 
+	// Post to Accounting Ledger (Async)
+	go func() {
+		// Re-initialize auto-accounting with fresh DB connection for async operation
+		autoAccounting := services.NewAutoAccountingService(h.db)
+
+		// Calculate total GST components
+		totalCGST := cgst5 + cgst18
+		totalSGST := sgst5 + sgst18
+		totalIGST := igst5 + igst18
+
+		// 1. Post Invoice Journal Entry
+		err := autoAccounting.PostInvoiceJournalEntry(
+			invoice.ID,
+			invoiceNo,
+			time.Now(),
+			req.CustomerName,
+			subtotal,
+			totalCGST,
+			totalSGST,
+			totalIGST,
+			totalAmount,
+			string(req.InvoiceType),
+		)
+		if err != nil {
+			fmt.Printf("Error posting invoice journal entry: %v\n", err)
+		}
+
+		// 2. Post Payment Journal Entry (if paid)
+		// Note: CreateInvoiceRequest doesn't have PaymentStatus field, it's inferred or defaulted to PAID for POS
+		// For POS, we assume immediate payment unless specified otherwise
+		if invoice.PaymentStatus == "PAID" {
+			// Generate payment number
+			paymentNo := fmt.Sprintf("PAY-%s-%04d", time.Now().Format("20060102"), time.Now().Unix()%10000)
+
+			// Use order ID as payment reference if available, otherwise invoice ID
+			refID := invoice.ID
+			if order != nil {
+				if id, ok := order["id"].(string); ok {
+					refID = id
+				}
+			}
+
+			err = autoAccounting.PostPaymentJournalEntry(
+				refID,
+				paymentNo,
+				invoiceNo,
+				req.CustomerName,
+				req.PaymentMethod,
+				time.Now(),
+				totalAmount,
+			)
+			if err != nil {
+				fmt.Printf("Error posting payment journal entry: %v\n", err)
+			}
+		}
+	}()
+
 	// Generate PDFs (after commit)
 	pdfService := services.NewInvoicePDFService()
 	pdfData := services.InvoiceData{
@@ -530,7 +591,7 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 		CompanyName:  "Homeopathy Store",      // TODO: Get from company settings
 		CompanyGSTIN: "29XXXXX1234X1ZS",       // TODO: Get from settings
 		CompanyAddr:  "123 Main Street, City", // TODO: Get from settings
-		CompanyPhone: "+91 9876543210",        // TODO: Get from settings
+		CompanyPhone: "+91 8478019973",        // TODO: Get from settings
 	}
 
 	thermalPDF, err := pdfService.GenerateThermalReceipt(pdfData)

@@ -36,7 +36,7 @@ VALUES (
     '123 Main Street, Mumbai',  -- UPDATE YOUR ADDRESS
     'Mumbai',
     '400001',
-    '9876543210',
+    '8478019973',
     'info@yeelo.com'
 )
 ON CONFLICT DO NOTHING;

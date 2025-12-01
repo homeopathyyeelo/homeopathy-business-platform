@@ -192,6 +192,8 @@ const menuItems: MenuItem[] = [
     path: '/finance',
     color: 'from-emerald-500 to-emerald-600',
     submenus: [
+      { label: 'Ledger Dashboard', path: '/accounting/ledger' },
+      { label: 'Chart of Accounts', path: '/accounting/ledger' },
       { label: 'Sales Ledger', path: '/finance/sales-ledger' },
       { label: 'Purchase Ledger', path: '/finance/purchase-ledger' },
       { label: 'Cash Book', path: '/finance/cashbook' },
@@ -200,9 +202,9 @@ const menuItems: MenuItem[] = [
       { label: 'Petty Cash', path: '/finance/petty-cash' },
       { label: 'Journal Entries', path: '/finance/journal' },
       { label: 'GST Reports', path: '/finance/gst' },
-      { label: 'Trial Balance', path: '/finance/trial-balance' },
-      { label: 'Profit Loss', path: '/finance/pl' },
-      { label: 'Balance Sheet', path: '/finance/balance-sheet' },
+      { label: 'Trial Balance', path: '/accounting/reports/trial-balance' },
+      { label: 'Profit Loss', path: '/accounting/reports/profit-loss' },
+      { label: 'Balance Sheet', path: '/accounting/reports/balance-sheet' },
       { label: 'Bank Reconciliation', path: '/finance/bank-reconciliation' },
       { label: 'Payment/Receipt Vouchers', path: '/finance/vouchers' },
     ]

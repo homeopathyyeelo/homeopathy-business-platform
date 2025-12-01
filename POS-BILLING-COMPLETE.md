@@ -182,16 +182,16 @@ Click "Print Bill & Pay"
 
 ```
 ================================
-   HOMEOPATHY MEDICAL STORE
-   123 Main Street, City
-   Phone: +91 9876543210
-   GSTIN: 29XXXXX1234X1ZX
+   YEELO HOMEOPATHY
+   Dhunela, Sohna Road, Gurugram
+   Phone: +91 8478019973
+   GSTIN: 06BUAPG3815Q1ZH
 ================================
 
 Invoice: INV-2411-1234
 Date: 26/11/2024 11:30 PM
 Customer: John Doe
-Phone: 9876543210
+Phone: 8478019973
 Payment: CASH
 
 --------------------------------

@@ -120,5 +120,39 @@ func RegisterPOSRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		// Payment tracking
 		orders.GET("/:id/payments", ordersHandler.GetOrderPayments)
 		orders.POST("/:id/payments", ordersHandler.RecordPayment)
+
+		// Thermal printing (3x5 inch for TSE_TE244)
+		orders.POST("/:id/print", ordersHandler.PrintOrderThermal)
+	}
+
+	// ============================================================================
+	// INVOICE THERMAL PRINTING
+	// ============================================================================
+	invoices := router.Group("/invoices")
+	{
+		// Print invoice to thermal printer
+		invoices.POST("/:invoiceNo/print", ordersHandler.PrintInvoiceThermal)
+
+		// Download invoice A4 PDF
+		invoices.GET("/:invoiceNo/download", ordersHandler.DownloadInvoicePDF)
+	}
+
+	// ============================================================================
+	// BARCODE LABEL PRINTING
+	// ============================================================================
+	barcodeHandler := handlers.NewBarcodeLabelHandler(db)
+	products := router.Group("/products")
+	{
+		// Get all products with barcodes
+		products.GET("/barcode", barcodeHandler.GenerateAllBarcodeLabels)
+
+		// Generate barcode image for single product
+		products.GET("/:id/barcode-image", barcodeHandler.GenerateBarcodeImage)
+
+		// Generate barcode by barcode string (direct download)
+		products.GET("/barcode/generate", barcodeHandler.GenerateBarcodeByString)
+
+		// Print multiple barcode labels (bulk)
+		products.POST("/barcode/print", barcodeHandler.PrintBarcodeLabels)
 	}
 }

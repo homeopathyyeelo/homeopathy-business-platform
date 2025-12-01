@@ -547,7 +547,7 @@ WHERE NOT EXISTS (SELECT 1 FROM products WHERE sku = 'ARNICA-OINT-25GM-SBL');
 
 INSERT INTO customers (customer_code, name, email, phone, city, state, customer_type, is_active)
 VALUES 
-('CUST001', 'Dr. Rajesh Kumar', 'rajesh.kumar@email.com', '9876543210', 'Mumbai', 'Maharashtra', 'DOCTOR', true),
+('CUST001', 'Dr. Rajesh Kumar', 'rajesh.kumar@email.com', '8478019973', 'Mumbai', 'Maharashtra', 'DOCTOR', true),
 ('CUST002', 'Priya Medical Store', 'priya.medical@email.com', '9876543211', 'Delhi', 'Delhi', 'WHOLESALE', true),
 ('CUST003', 'Amit Sharma', 'amit.sharma@email.com', '9876543212', 'Bangalore', 'Karnataka', 'retail', true),
 ('CUST004', 'Health Plus Pharmacy', 'healthplus@email.com', '9876543213', 'Pune', 'Maharashtra', 'WHOLESALE', true),
