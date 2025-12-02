@@ -10,7 +10,7 @@ export default function ProductVariantsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch('/api/products/variants')
+    apiFetch('/api/erp/products/variants')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

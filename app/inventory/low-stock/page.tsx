@@ -60,19 +60,19 @@ export default function LowStockPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await apiFetch('/api/inventory/low-stock-alerts');
+      const response = await apiFetch('/api/erp/inventory/alerts/low-stock');
       const result = await response.json();
-      
+
       if (result.success) {
         setData(result.data || []);
-        
+
         // Calculate stats
         const critical = result.data?.filter((item: LowStockItem) => item.stock_status === 'critical').length || 0;
         const low = result.data?.filter((item: LowStockItem) => item.stock_status === 'low').length || 0;
         const outOfStock = result.data?.filter((item: LowStockItem) => item.stock_status === 'out_of_stock').length || 0;
-        const totalValue = result.data?.reduce((sum: number, item: LowStockItem) => 
+        const totalValue = result.data?.reduce((sum: number, item: LowStockItem) =>
           sum + (item.suggested_reorder * 100), 0) || 0; // Approximate value
-        
+
         setStats({
           critical,
           low,
@@ -118,8 +118,8 @@ export default function LowStockPage() {
     if (filters.category && item.category !== filters.category) return false;
     if (filters.status && item.stock_status !== filters.status) return false;
     if (filters.warehouse && item.warehouse_name !== filters.warehouse) return false;
-    if (filters.search && !item.product_name.toLowerCase().includes(filters.search.toLowerCase()) && 
-        !item.sku.toLowerCase().includes(filters.search.toLowerCase())) return false;
+    if (filters.search && !item.product_name.toLowerCase().includes(filters.search.toLowerCase()) &&
+      !item.sku.toLowerCase().includes(filters.search.toLowerCase())) return false;
     return true;
   });
 
@@ -273,8 +273,8 @@ export default function LowStockPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Actions</label>
               <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setFilters({ category: '', status: '', warehouse: '', search: '' })}
                 >
@@ -352,8 +352,8 @@ export default function LowStockPage() {
                       </TableCell>
                       <TableCell>{item.warehouse_name}</TableCell>
                       <TableCell>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           onClick={() => handleReorder(item)}
                           disabled={item.stock_status === 'out_of_stock'}
                         >

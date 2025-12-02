@@ -1,915 +1,428 @@
-'use client';
+"use client";
 
-import { useState, useRef } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from 'next/navigation';
-import { useToast } from "@/hooks/use-toast";
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Plus, Search, Printer, Download, Barcode as BarcodeIcon,
-  Package, Calendar, TrendingUp, QrCode, ArrowLeft, Settings 
-} from "lucide-react";
-import { golangAPI } from "@/lib/api";
-import Barcode from "react-barcode";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Search, Printer, Download, X, Eye, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { golangAPI } from '@/lib/api';
 
-interface BarcodeData {
+interface Product {
   id: string;
-  product_id: string;
-  product_name: string;
+  name: string;
   sku: string;
-  potency: string;
-  form: string;
-  brand: string;
-  category: string;
-  batch_id: string;
-  batch_no: string;
   barcode: string;
-  barcode_type: string;
-  mrp: number;
-  exp_date: string;
-  quantity: number;
-  warehouse: string;
-  generated_at: string;
-  status: string;
-  expiry_status: string;
-  created_by: string;
+  category?: string;
+  brand?: string;
+  mrp?: number;
 }
 
-export default function BarcodesPage() {
-  const { toast } = useToast();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const printRef = useRef<HTMLDivElement>(null);
+interface BarcodeTemplate {
+  id: string;
+  name: string;
+  type: string;
+  format: string;
+  width: number;
+  height: number;
+  description: string;
+}
+
+const barcodeTemplates: BarcodeTemplate[] = [
+  { id: '1', name: '1D Standard', type: '1D', format: 'CODE128', width: 50, height: 25, description: 'Standard 1D barcode (CODE128)' },
+  { id: '2', name: '1D Compact', type: '1D', format: 'CODE128', width: 40, height: 20, description: 'Compact 1D barcode' },
+  { id: '3', name: 'EAN-13', type: '1D', format: 'EAN13', width: 45, height: 25, description: 'EAN-13 retail barcode' },
+];
+
+const printLayouts = [
+  { id: 'thermal-3x5-10', name: '3x5" Thermal (10 per page)', width: 3, height: 5, perPage: 10, cols: 2, rows: 5 },
+  { id: 'thermal-3x5-single', name: '3x5" Thermal (Single Sticker)', width: 3, height: 2, perPage: 1, cols: 1, rows: 1 },
+];
+
+// Component to fetch and display barcode image
+const BarcodeImage = ({ productId, className }: { productId: string, className?: string }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        // Use the public endpoint since it doesn't require auth and returns JSON with base64
+        const response = await fetch(`http://localhost:3005/api/erp/products/${productId}/barcode-image`);
+        const data = await response.json();
+        if (data.data && data.data.image) {
+          setImageUrl(data.data.image);
+        }
+      } catch (error) {
+        console.error("Failed to load barcode image", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchImage();
+    }
+  }, [productId]);
+
+  if (loading) return <div className={`flex items-center justify-center bg-gray-100 ${className}`}><Loader2 className="h-4 w-4 animate-spin text-gray-400" /></div>;
+  if (!imageUrl) return <div className={`bg-gray-100 flex items-center justify-center text-[10px] text-gray-400 ${className}`}>No Image</div>;
+
+  return <img src={imageUrl} alt="Barcode" className={className} />;
+};
+
+// Visual representation of barcode templates
+const TemplateVisual = ({ templateId }: { templateId: string }) => {
+  if (templateId === '1') { // Standard
+    return (
+      <div className="w-32 h-12 border border-gray-200 bg-white p-1 flex flex-col items-center justify-center gap-0.5">
+        <div className="w-24 h-6 bg-black opacity-80" style={{ maskImage: 'repeating-linear-gradient(90deg, black, black 2px, transparent 2px, transparent 4px)' }}></div>
+        <div className="text-[8px] font-mono leading-none">CODE128</div>
+      </div>
+    );
+  }
+  if (templateId === '2') { // Compact
+    return (
+      <div className="w-24 h-10 border border-gray-200 bg-white p-1 flex flex-col items-center justify-center gap-0.5">
+        <div className="w-16 h-5 bg-black opacity-80" style={{ maskImage: 'repeating-linear-gradient(90deg, black, black 1px, transparent 1px, transparent 3px)' }}></div>
+        <div className="text-[6px] font-mono leading-none">COMPACT</div>
+      </div>
+    );
+  }
+  if (templateId === '3') { // EAN-13
+    return (
+      <div className="w-32 h-12 border border-gray-200 bg-white p-1 flex flex-col items-center justify-center gap-0.5">
+        <div className="w-24 h-6 bg-black opacity-80" style={{ maskImage: 'repeating-linear-gradient(90deg, black, black 2px, transparent 2px, transparent 3px)' }}></div>
+        <div className="flex justify-between w-24 text-[8px] font-mono leading-none px-1">
+          <span>1</span><span>234567</span><span>890128</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+export default function BarcodePrintPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
-  const [barcodeImages, setBarcodeImages] = useState<Record<string, string>>({});
-  const [generatingLabels, setGeneratingLabels] = useState(false);
-  const [selectedBarcodes, setSelectedBarcodes] = useState<string[]>([]);
-  const [isGenerateDialogOpen, setIsGenerateDialogOpen] = useState(false);
-  const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
-  const [labelSize, setLabelSize] = useState("medium");
-  const [copies, setCopies] = useState(1);
-  const [genProductId, setGenProductId] = useState<string>("");
-  const [genBatchId, setGenBatchId] = useState<string>("");
-  const [genBatchNo, setGenBatchNo] = useState("");
-  
-  // Pagination & Filters
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(100);
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [brandFilter, setBrandFilter] = useState("");
-  const [potencyFilter, setPotencyFilter] = useState("");
-  const [formFilter, setFormFilter] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(barcodeTemplates[0].id);
+  const [selectedLayout, setSelectedLayout] = useState<string>(printLayouts[0].id);
 
-  // Fetch barcodes with pagination and filters
-  const { data: response, isLoading, refetch } = useQuery({
-    queryKey: ['barcodes', page, perPage, searchTerm, categoryFilter, brandFilter, potencyFilter, formFilter],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      params.append('page', page.toString());
-      params.append('limit', perPage.toString());
-      if (searchTerm) params.append('search', searchTerm);
-      if (categoryFilter) params.append('category', categoryFilter);
-      if (brandFilter) params.append('brand', brandFilter);
-      if (potencyFilter) params.append('potency', potencyFilter);
-      if (formFilter) params.append('form', formFilter);
-      
-      const res = await golangAPI.get(`/api/erp/products/barcode?${params.toString()}`);
-      return res.data;
-    },
-    placeholderData: (previousData) => previousData,
-    staleTime: 0, // Always refetch when dependencies change
-  });
+  const printRef = useRef<HTMLDivElement>(null);
 
-  const barcodes: BarcodeData[] = (response && typeof response === 'object' && 'data' in response) ? response.data : [];
-  const pagination = (response && typeof response === 'object' && 'pagination' in response) ? response.pagination : { page: 1, limit: 100, total: 0, totalPages: 1 };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  // Fetch products for generation
-  const { data: productsResp } = useQuery({
-    queryKey: ['products-list'],
-    queryFn: async () => {
-      const res = await golangAPI.get('/api/erp/products');
-      return res.data;
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await golangAPI.get('/api/erp/products?limit=1000');
+
+      if (response.data.success && Array.isArray(response.data.data)) {
+        const productsWithBarcodes = response.data.data.filter((p: Product) => p.barcode);
+        setProducts(productsWithBarcodes);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
     }
-  });
-
-  const products: Array<{ id: string; name: string }>
-    = Array.isArray(productsResp?.data) ? productsResp.data : (Array.isArray(productsResp) ? productsResp : []);
-
-  // Fetch batches (we will filter by selected product)
-  const { data: batchesResp } = useQuery({
-    queryKey: ['batches-list'],
-    queryFn: async () => {
-      const res = await golangAPI.get('/api/products/batches');
-      // ensure uniform structure
-      return Array.isArray(res.data) ? res : res.data;
-    }
-  });
-
-  const allBatches: Array<{ id?: string; product_id?: string; batch_no?: string; batch_number?: string }>
-    = Array.isArray(batchesResp?.data) ? batchesResp.data : [];
-
-  const batchesForProduct = allBatches.filter((b) => (b.product_id || "") === genProductId);
-
-  // Generate barcode mutation
-  const generateMutation = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/erp/products/barcode/generate', payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['barcodes'] });
-      toast({ title: "Barcode Generated", description: "Barcode has been generated successfully" });
-      setIsGenerateDialogOpen(false);
-      setGenProductId("");
-      setGenBatchId("");
-      setGenBatchNo("");
-    },
-  });
-
-  // Print barcodes mutation
-  const printMutation = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/erp/products/barcode/print', payload),
-    onSuccess: (data) => {
-      toast({ title: "Print Ready", description: "Barcode labels are ready for printing" });
-      handlePrint();
-    },
-  });
-
-  // No need for client-side filtering - backend handles it
-  const filteredBarcodes = barcodes;
-
-  // Stats - use pagination total
-  const stats = {
-    total: pagination.total,
-    active: barcodes?.filter((b: BarcodeData) => b.status === 'active').length || 0,
-    expiring: barcodes?.filter((b: BarcodeData) => b.expiry_status === 'expiring_soon').length || 0,
-    expired: barcodes?.filter((b: BarcodeData) => b.expiry_status === 'expired').length || 0,
-    batches: new Set(barcodes?.map((b: BarcodeData) => b.batch_no).filter(Boolean) || []).size,
-    products: pagination.total, // Total unique products with barcodes
   };
-  
-  // Fetch filter options
-  const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const res = await golangAPI.get('/api/erp/categories');
-      return res.data;
-    }
-  });
-  
-  const { data: brandsData } = useQuery({
-    queryKey: ['brands'],
-    queryFn: async () => {
-      const res = await golangAPI.get('/api/erp/brands');
-      return res.data;
-    }
-  });
-  
-  const categories = Array.isArray(categoriesData?.data?.categories) ? categoriesData.data.categories : (Array.isArray(categoriesData?.data) ? categoriesData.data : []);
-  const brands = Array.isArray(brandsData?.data) ? brandsData.data : [];
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedBarcodes(filteredBarcodes.map(b => b.id));
+  const toggleProduct = (productId: string) => {
+    const newSelected = new Set(selectedProducts);
+    if (newSelected.has(productId)) {
+      newSelected.delete(productId);
     } else {
-      setSelectedBarcodes([]);
+      newSelected.add(productId);
     }
+    setSelectedProducts(newSelected);
   };
 
-  const handleSelectBarcode = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBarcodes([...selectedBarcodes, id]);
+  const toggleSelectAll = () => {
+    if (selectedProducts.size === filteredProducts.length) {
+      setSelectedProducts(new Set());
     } else {
-      setSelectedBarcodes(selectedBarcodes.filter(bid => bid !== id));
+      setSelectedProducts(new Set(filteredProducts.map(p => p.id)));
     }
   };
 
-  // Generate barcode images for selected products
-  const generateBarcodeLabels = async () => {
-    if (selectedBarcodes.length === 0) {
-      toast({
-        title: "No Selection",
-        description: "Please select barcodes to generate labels",
-        variant: "destructive"
-      });
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.barcode.includes(searchTerm)
+  );
+
+  const handlePrintClick = () => {
+    if (selectedProducts.size === 0) {
+      toast.error("Please select at least one product");
       return;
     }
-
-    setGeneratingLabels(true);
-    try {
-      const selectedProducts = barcodes.filter(b => selectedBarcodes.includes(b.id));
-      const images: Record<string, string> = {};
-
-      // Fetch barcode images from backend
-      for (const product of selectedProducts) {
-        try {
-          const res = await golangAPI.get(`/api/erp/products/${product.product_id}/barcode-image`);
-          if (res.data?.data?.image) {
-            images[product.id] = res.data.data.image;
-          }
-        } catch (err) {
-          console.error(`Failed to generate barcode for ${product.product_name}`);
-        }
-      }
-
-      setBarcodeImages(images);
-      toast({
-        title: "Success",
-        description: `Generated ${Object.keys(images).length} barcode labels`,
-      });
-      setIsPrintDialogOpen(true);
-    } catch (error) {
-      console.error('Failed to generate barcode labels:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate barcode labels",
-        variant: "destructive"
-      });
-    } finally {
-      setGeneratingLabels(false);
-    }
+    setShowTemplateDialog(true);
   };
 
-  const downloadAllBarcodes = () => {
-    Object.entries(barcodeImages).forEach(([id, image], index) => {
-      const barcode = barcodes.find(b => b.id === id);
-      if (barcode) {
-        const link = document.createElement('a');
-        link.href = image;
-        link.download = `barcode-${barcode.sku}-${index + 1}.png`;
-        link.click();
-      }
-    });
-
-    toast({
-      title: "Downloaded",
-      description: `Downloaded ${Object.keys(barcodeImages).length} barcode images`,
-    });
+  const handlePreview = () => {
+    setShowTemplateDialog(false);
+    setShowPreviewDialog(true);
   };
 
   const handlePrint = () => {
-    if (printRef.current) {
-      const printWindow = window.open('', '', 'width=800,height=600');
-      if (printWindow) {
-        printWindow.document.write('<html><head><title>Print Barcodes</title>');
-        printWindow.document.write('<style>');
-        printWindow.document.write(`
-          body { font-family: Arial, sans-serif; }
-          .label { 
-            display: inline-block; 
-            margin: 10px; 
-            padding: 10px; 
-            border: 1px solid #ccc;
-            text-align: center;
-            page-break-inside: avoid;
-          }
-          .label-small { width: 150px; }
-          .label-medium { width: 200px; }
-          .label-large { width: 250px; }
-          .product-name { font-size: 12px; font-weight: bold; margin-bottom: 5px; }
-          .batch-info { font-size: 10px; color: #666; }
-          .mrp { font-size: 11px; font-weight: bold; margin-top: 5px; }
-          @media print {
-            .label { break-inside: avoid; }
-          }
-        `);
-        printWindow.document.write('</style></head><body>');
-        printWindow.document.write(printRef.current.innerHTML);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => {
-          printWindow.print();
-          printWindow.close();
-        }, 250);
-      }
+    const printContent = printRef.current;
+    if (printContent) {
+      const originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContent.innerHTML;
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload(); // Reload to restore state
     }
   };
 
-  const handlePrintSelected = () => {
-    generateBarcodeLabels();
-  };
-
-  const handleRowClick = (barcode: BarcodeData) => {
-    router.push(`/products/${barcode.product_id}`);
-  };
-
-  const confirmPrint = () => {
-    printMutation.mutate({
-      barcode_ids: selectedBarcodes,
-      label_size: labelSize,
-      copies: copies,
-    });
-    setIsPrintDialogOpen(false);
-  };
-
-  const selectedBarcodesData = barcodes.filter(b => selectedBarcodes.includes(b.id));
+  const selectedProductsList = products.filter(p => selectedProducts.has(p.id));
+  const layout = printLayouts.find(l => l.id === selectedLayout);
+  const selectedTemplate_obj = barcodeTemplates.find(t => t.id === selectedTemplate);
+  const selectedLayout_obj = printLayouts.find(l => l.id === selectedLayout);
 
   return (
-    <div className="space-y-6">
-      {/* Navigation Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <button 
-          onClick={() => router.push('/products')}
-          className="flex items-center gap-1 hover:text-blue-600 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Products
-        </button>
-        <span>/</span>
-        <span className="text-gray-900 font-medium">Barcode Management</span>
-        <span>/</span>
-        <button 
-          onClick={() => router.push('/products/barcode-templates')}
-          className="flex items-center gap-1 hover:text-purple-600 transition-colors"
-        >
-          <Settings className="w-4 h-4" />
-          Templates
-        </button>
-      </div>
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Barcode Management</h1>
-          <p className="text-muted-foreground">Generate and print batch-level barcodes for your homeopathy products</p>
+          <h1 className="text-3xl font-bold tracking-tight">Barcode Printing</h1>
+          <p className="text-muted-foreground">Select products and print barcode labels</p>
         </div>
-        <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            onClick={() => router.push('/products/barcode-templates')}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setSelectedProducts(new Set())}
+            disabled={selectedProducts.size === 0}
           >
-            <Settings className="h-4 w-4 mr-2" />
-            Manage Templates
+            <X className="w-4 h-4 mr-2" />
+            Clear Selection
           </Button>
-          <Button 
-            variant="outline" 
-            onClick={handlePrintSelected}
-            disabled={selectedBarcodes.length === 0 || generatingLabels}
+          <Button
+            onClick={handlePrintClick}
+            disabled={selectedProducts.size === 0}
           >
-            <Printer className="h-4 w-4 mr-2" />
-            {generatingLabels ? 'Generating...' : `Print Selected (${selectedBarcodes.length})`}
-          </Button>
-          {Object.keys(barcodeImages).length > 0 && (
-            <Button variant="outline" onClick={downloadAllBarcodes}>
-              <Download className="h-4 w-4 mr-2" />
-              Download All
-            </Button>
-          )}
-          <Button onClick={() => setIsGenerateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Generate Barcode
+            <Printer className="w-4 h-4 mr-2" />
+            Print Labels ({selectedProducts.size})
           </Button>
         </div>
       </div>
 
-      {/* Help Section */}
-      <Card className="bg-blue-50 border-blue-200">
-        <CardHeader>
-          <CardTitle className="text-blue-900 flex items-center">
-            <BarcodeIcon className="h-5 w-5 mr-2" />
-            How to Use Barcode Features
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <h3 className="font-semibold text-blue-900 flex items-center">
-                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">1</span>
-                Generate Barcodes
-              </h3>
-              <p className="text-sm text-blue-800">
-                Click <strong>"Generate Barcode"</strong> button → Select product → Choose batch (or enter manually) → Click Generate.
-                Each batch gets a unique barcode for tracking.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-blue-900 flex items-center">
-                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">2</span>
-                Select & Print
-              </h3>
-              <p className="text-sm text-blue-800">
-                Check boxes next to barcodes you want to print → Click <strong>"Print Selected"</strong> → Choose label size (Small/Medium/Large) → Set copies → Print.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-blue-900 flex items-center">
-                <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 text-sm">3</span>
-                Scan & Track
-              </h3>
-              <p className="text-sm text-blue-800">
-                Use barcode scanner during billing to quickly add products. Track batch-wise inventory, expiry dates, and MRP automatically.
-              </p>
-            </div>
-          </div>
-          <div className="bg-white p-3 rounded border border-blue-200">
-            <p className="text-sm text-blue-900">
-              <strong>💡 Tip:</strong> Generate barcodes when you receive new stock batches. Print labels and stick them on bottles/boxes for easy scanning during sales.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Barcodes</CardTitle>
-            <BarcodeIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
-            <QrCode className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
-            <Calendar className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.expiring}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expired</CardTitle>
-            <Calendar className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.expired}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Batches</CardTitle>
-            <Package className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.batches}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Products</CardTitle>
-            <TrendingUp className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{stats.products}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search & Filters */}
       <Card>
-        <CardContent className="pt-6 space-y-4">
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex-1 min-w-[300px]">
-              <div className="flex items-center space-x-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Products with Barcodes</CardTitle>
+            <div className="flex items-center gap-4">
+              <div className="relative w-64">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by product name, SKU, barcode..."
+                  placeholder="Search products..."
+                  className="pl-8"
                   value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setPage(1); // Reset to page 1 on search
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="select-all"
+                  checked={selectedProducts.size === filteredProducts.length && filteredProducts.length > 0}
+                  onCheckedChange={toggleSelectAll}
+                />
+                <Label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+                  Select All ({selectedProducts.size}/{filteredProducts.length})
+                </Label>
+              </div>
             </div>
-            
-            <Select value={categoryFilter || "all"} onValueChange={(v) => { setCategoryFilter(v === "all" ? "" : v); setPage(1); }}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((cat: any) => (
-                  <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={brandFilter || "all"} onValueChange={(v) => { setBrandFilter(v === "all" ? "" : v); setPage(1); }}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="All Brands" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Brands</SelectItem>
-                {brands.map((brand: any) => (
-                  <SelectItem key={brand.id} value={brand.name}>{brand.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {(searchTerm || categoryFilter || brandFilter || potencyFilter || formFilter) && (
-              <Button variant="outline" onClick={() => {
-                setSearchTerm("");
-                setCategoryFilter("");
-                setBrandFilter("");
-                setPotencyFilter("");
-                setFormFilter("");
-                setPage(1);
-              }}>
-                Clear Filters
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Barcodes Table */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Products with Barcodes (Page {pagination.page} of {pagination.totalPages} - Showing {filteredBarcodes.length} of {pagination.total} total)</CardTitle>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Per page:</span>
-            <Select value={perPage.toString()} onValueChange={(v) => { setPerPage(parseInt(v)); setPage(1); }}>
-              <SelectTrigger className="w-[100px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-                <SelectItem value="200">200</SelectItem>
-                <SelectItem value="500">500</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading...</div>
-          ) : filteredBarcodes.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              {searchTerm ? "No barcodes found matching your search" : "No barcodes yet"}
-            </div>
+          {loading ? (
+            <div className="text-center py-8">Loading products...</div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox
-                      checked={selectedBarcodes.length === filteredBarcodes.length}
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  <TableHead>Product</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                  <TableHead>Product Name</TableHead>
                   <TableHead>SKU</TableHead>
-                  <TableHead>Potency</TableHead>
-                  <TableHead>Form</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Batch No</TableHead>
                   <TableHead>Barcode</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>MRP</TableHead>
-                  <TableHead>Exp Date</TableHead>
-                  <TableHead>Qty</TableHead>
-                  <TableHead>Warehouse</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Preview</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead className="text-right">MRP</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredBarcodes.map((barcode: BarcodeData) => (
-                  <TableRow 
-                    key={barcode.id} 
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={(e) => {
-                      // Don't trigger row click if clicking checkbox
-                      if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[role="checkbox"]')) {
-                        return;
-                      }
-                      handleRowClick(barcode);
-                    }}
-                  >
-                    <TableCell>
-                      <Checkbox
-                        checked={selectedBarcodes.includes(barcode.id)}
-                        onCheckedChange={(checked) => handleSelectBarcode(barcode.id, checked as boolean)}
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{barcode.product_name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-mono">{barcode.sku}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="font-mono">{barcode.potency || 'N/A'}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{barcode.form || 'N/A'}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{barcode.brand || 'N/A'}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{barcode.category || 'N/A'}</Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">{barcode.batch_no}</TableCell>
-                    <TableCell className="font-mono text-sm font-bold">{barcode.barcode}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{barcode.barcode_type}</Badge>
-                    </TableCell>
-                    <TableCell>₹{barcode.mrp?.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <span className={barcode.expiry_status === 'expired' ? 'text-red-600 font-bold' :
-                                     barcode.expiry_status === 'expiring_soon' ? 'text-yellow-600 font-bold' : ''}>
-                        {barcode.exp_date ? new Date(barcode.exp_date).toLocaleDateString() : '-'}
-                        {barcode.expiry_status === 'expired' && <span className="ml-1">⚠️</span>}
-                        {barcode.expiry_status === 'expiring_soon' && <span className="ml-1">🔔</span>}
-                      </span>
-                    </TableCell>
-                    <TableCell>{barcode.quantity}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{barcode.warehouse}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={barcode.status === 'active' ? 'default' : 'secondary'}>
-                        {barcode.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="w-24">
-                        <Barcode 
-                          value={barcode.barcode} 
-                          width={1}
-                          height={30}
-                          fontSize={8}
-                          displayValue={false}
-                        />
-                      </div>
+                {filteredProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      {searchTerm ? "No products found matching search" : "No products with barcodes"}
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filteredProducts.map((product) => (
+                    <TableRow key={product.id} className="hover:bg-muted/50">
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedProducts.has(product.id)}
+                          onCheckedChange={() => toggleProduct(product.id)}
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell className="font-mono text-sm">{product.sku}</TableCell>
+                      <TableCell className="font-mono text-sm">{product.barcode}</TableCell>
+                      <TableCell>{product.category || '-'}</TableCell>
+                      <TableCell>{product.brand || '-'}</TableCell>
+                      <TableCell className="text-right">₹{product.mrp?.toFixed(2) || '0.00'}</TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
-          )}
-          
-          {/* Pagination */}
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4 pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} products
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setPage(1)}
-                  disabled={pagination.page === 1}
-                >
-                  First
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={pagination.page === 1}
-                >
-                  Previous
-                </Button>
-                <span className="text-sm px-3">
-                  Page {pagination.page} of {pagination.totalPages}
-                </span>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setPage(page + 1)}
-                  disabled={pagination.page >= pagination.totalPages}
-                >
-                  Next
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setPage(pagination.totalPages)}
-                  disabled={pagination.page >= pagination.totalPages}
-                >
-                  Last
-                </Button>
-              </div>
-            </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Barcode Labels Preview */}
-      {Object.keys(barcodeImages).length > 0 && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Generated Barcode Labels ({Object.keys(barcodeImages).length})</CardTitle>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={downloadAllBarcodes}>
-                <Download className="h-4 w-4 mr-2" />
-                Download All
-              </Button>
-              <Button onClick={handlePrint}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print Labels
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              {Object.entries(barcodeImages).map(([id, image]) => {
-                const barcode = barcodes.find(b => b.id === id);
-                if (!barcode) return null;
-                return (
-                  <div key={id} className="border rounded-lg p-4 text-center bg-white">
-                    <div className="text-xs font-semibold mb-2 truncate">
-                      {barcode.product_name}
-                    </div>
-                    <img src={image} alt={`Barcode ${barcode.barcode}`} className="w-full h-auto mb-2" />
-                    <div className="text-xs text-muted-foreground">{barcode.barcode}</div>
-                    {barcode.mrp > 0 && (
-                      <div className="text-sm font-bold mt-1">MRP: ₹{barcode.mrp}</div>
-                    )}
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {barcode.potency} | {barcode.form}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Hidden Print Area */}
-      <div ref={printRef} style={{ display: 'none' }}>
-        {Object.entries(barcodeImages).map(([id, image]) => {
-          const barcode = barcodes.find(b => b.id === id);
-          if (!barcode) return null;
-          return Array.from({ length: copies }).map((_, copyIndex) => (
-            <div key={`${id}-${copyIndex}`} className={`label label-${labelSize}`}>
-              <div className="product-name">{barcode.product_name}</div>
-              <div className="batch-info">
-                Potency: {barcode.potency || 'N/A'} | Form: {barcode.form || 'N/A'}
-              </div>
-              <div className="batch-info">Brand: {barcode.brand || 'N/A'} | Category: {barcode.category || 'N/A'}</div>
-              <img src={image} alt={`Barcode ${barcode.barcode}`} style={{ width: '100%', height: 'auto', margin: '10px 0' }} />
-              <div className="mrp">MRP: ₹{barcode.mrp?.toFixed(2)}</div>
-              <div className="batch-info">SKU: {barcode.sku}</div>
-            </div>
-          ));
-        })}
-      </div>
-
-      {/* Generate Dialog */}
-      <Dialog open={isGenerateDialogOpen} onOpenChange={setIsGenerateDialogOpen}>
-        <DialogContent>
+      {/* Template Selection Dialog */}
+      <Dialog open={showTemplateDialog} onOpenChange={setShowTemplateDialog}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Generate Barcode</DialogTitle>
+            <DialogTitle>Select Barcode Template & Print Layout</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Product</Label>
-              <Select
-                value={genProductId || "none"}
-                onValueChange={(v) => {
-                  setGenProductId(v === "none" ? "" : v);
-                  setGenBatchId("");
-                  setGenBatchNo("");
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select product" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Select product</SelectItem>
-                  {products.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+
+          <div className="space-y-6 py-4">
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Barcode Template</h3>
+              <RadioGroup value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                <div className="grid grid-cols-1 gap-3">
+                  {barcodeTemplates.map((template) => (
+                    <div key={template.id} className="flex items-center space-x-4 border p-3 rounded-md hover:bg-accent cursor-pointer transition-colors" onClick={() => setSelectedTemplate(template.id)}>
+                      <RadioGroupItem value={template.id} id={template.id} />
+                      <div className="flex-1 grid gap-1.5">
+                        <Label htmlFor={template.id} className="font-medium cursor-pointer">
+                          {template.name}
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {template.description}
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <TemplateVisual templateId={template.id} />
+                      </div>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              </RadioGroup>
             </div>
 
-            <div className="space-y-2">
-              <Label>Batch (optional)</Label>
-              <Select
-                value={genBatchId || "manual"}
-                onValueChange={(v) => {
-                  if (v === "manual") {
-                    setGenBatchId("");
-                  } else {
-                    setGenBatchId(v);
-                    setGenBatchNo("");
-                  }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={genProductId ? "Select batch" : "Select product first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="manual">Enter batch manually</SelectItem>
-                  {genProductId && batchesForProduct.map((b) => (
-                    <SelectItem key={b.id || (b.batch_no || b.batch_number || "")} value={(b.id || "") as string}>
-                      {b.batch_no || b.batch_number}
-                    </SelectItem>
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Print Layout</h3>
+              <RadioGroup value={selectedLayout} onValueChange={setSelectedLayout}>
+                <div className="space-y-2">
+                  {printLayouts.map((layout) => (
+                    <div key={layout.id} className="flex items-start space-x-2 border p-3 rounded-md hover:bg-accent cursor-pointer" onClick={() => setSelectedLayout(layout.id)}>
+                      <RadioGroupItem value={layout.id} id={layout.id} />
+                      <div className="grid gap-1.5 leading-none">
+                        <Label htmlFor={layout.id} className="font-medium cursor-pointer">
+                          {layout.name}
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          {layout.perPage} labels per page ({layout.width}" x {layout.height}")
+                        </p>
+                      </div>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
-              {(!genBatchId) && (
-                <div className="mt-2">
-                  <Input
-                    placeholder="Enter batch number"
-                    value={genBatchNo}
-                    onChange={(e) => setGenBatchNo(e.target.value)}
-                  />
                 </div>
-              )}
+              </RadioGroup>
             </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsGenerateDialogOpen(false)}>Cancel</Button>
-            <Button
-              onClick={() => {
-                if (!genProductId) {
-                  toast({ title: "Select product", description: "Please select a product", variant: "destructive" });
-                  return;
-                }
-                const payload: any = { product_id: genProductId };
-                if (genBatchId) payload.batch_id = genBatchId;
-                if (!genBatchId && genBatchNo) payload.batch_no = genBatchNo;
-                if (!payload.batch_id && !payload.batch_no) {
-                  toast({ title: "Batch required", description: "Select a batch or enter batch number", variant: "destructive" });
-                  return;
-                }
-                generateMutation.mutate(payload);
-              }}
-            >
-              Generate
+            <Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handlePreview}>
+              <Eye className="w-4 h-4 mr-2" />
+              Preview & Print
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Print Dialog */}
-      <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
-        <DialogContent>
+      {/* Preview Dialog */}
+      <Dialog open={showPreviewDialog} onOpenChange={setShowPreviewDialog}>
+        <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle>Print Barcode Labels</DialogTitle>
+            <DialogTitle>Print Preview</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Label Size</Label>
-              <Select value={labelSize} onValueChange={setLabelSize}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="small">Small (150px)</SelectItem>
-                  <SelectItem value="medium">Medium (200px)</SelectItem>
-                  <SelectItem value="large">Large (250px)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Copies per Barcode</Label>
-              <Input
-                type="number"
-                min="1"
-                max="10"
-                value={copies}
-                onChange={(e) => setCopies(parseInt(e.target.value) || 1)}
-              />
-            </div>
+          <div className="flex-1 overflow-auto bg-gray-100 p-8 flex justify-center">
+            <div
+              ref={printRef}
+              className="bg-white shadow-lg"
+              style={{
+                width: layout?.id.includes('3x5') ? '3in' : '8.27in',
+                minHeight: layout?.id.includes('3x5') ? '5in' : '11.69in',
+                padding: layout?.id.includes('3x5') ? '0' : '0.4in', // Zero padding for thermal
+              }}
+            >
+              <style jsx global>{`
+                @media print {
+                  @page {
+                    size: ${layout?.width}in ${layout?.height}in;
+                    margin: 0;
+                  }
+                  body {
+                    margin: 0;
+                    padding: 0;
+                  }
+                  .print-container {
+                    width: 100% !important;
+                    height: 100% !important;
+                  }
+                  /* Hide borders when printing thermal labels as they add width/height */
+                  .thermal-cell {
+                    border: none !important;
+                  }
+                }
+              `}</style>
 
-            <div className="text-sm text-muted-foreground">
-              Total labels: {selectedBarcodes.length} × {copies} = {selectedBarcodes.length * copies}
+              <div className="grid" style={{
+                gridTemplateColumns: `repeat(${layout?.cols || 1}, 1fr)`,
+                gridTemplateRows: `repeat(${layout?.rows || 1}, 1fr)`,
+                gap: layout?.id.includes('3x5') ? '0' : '0.5rem', // Zero gap for thermal
+                height: layout?.id.includes('3x5') ? '100%' : 'auto',
+              }}>
+                {selectedProductsList.map((product, idx) => (
+                  <div key={`${product.id}-${idx}`} className={`border border-gray-200 flex flex-col items-center justify-center text-center h-full overflow-hidden ${layout?.id.includes('3x5') ? 'thermal-cell' : ''}`} style={{ padding: '2px' }}>
+                    <div className="text-[9px] font-bold leading-tight w-full truncate px-1">{product.name}</div>
+                    <div className="text-[7px] leading-none text-gray-500">{product.sku}</div>
+                    <BarcodeImage productId={product.id} className="h-6 max-w-full object-contain my-0.5" />
+                    <div className="text-[7px] font-mono leading-none">{product.barcode}</div>
+                    <div className="text-[9px] font-bold leading-tight mt-0.5">₹{product.mrp?.toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPrintDialogOpen(false)}>Cancel</Button>
-            <Button onClick={confirmPrint}>
-              <Printer className="h-4 w-4 mr-2" />
-              Print Labels
+            <Button variant="outline" onClick={() => setShowPreviewDialog(false)}>
+              Close
+            </Button>
+            <Button onClick={handlePrint}>
+              <Printer className="w-4 h-4 mr-2" />
+              Print
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -10,16 +10,16 @@ const mockLowStock = [
 export async function GET() {
   try {
     // Fetch from Golang API
-    const res = await fetch(`${GOLANG_API_URL}/api/erp/inventory/low-stock`);
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/inventory/alerts/low-stock`);
     const data = await res.json();
-    
+
     if (res.ok) {
       return NextResponse.json({ success: true, data: data.data || [], total: data.total || 0 });
     }
   } catch (error) {
     console.error('Low stock API error:', error);
   }
-  
+
   // Fallback to mock data
   return NextResponse.json({ success: true, data: mockLowStock, total: mockLowStock.length });
 }

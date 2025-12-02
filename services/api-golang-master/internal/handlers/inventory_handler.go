@@ -20,32 +20,32 @@ func NewInventoryHandler(db interface{}) *InventoryHandler {
 func (h *InventoryHandler) GetStock(c *gin.Context) {
 	stock := []gin.H{
 		{
-			"id":            uuid.New().String(),
-			"productName":   "Arnica Montana 30C",
-			"productCode":   "ARM-30C-10ML",
-			"category":      "Dilutions",
-			"brand":         "SBL",
-			"currentStock":  150,
-			"minStock":      20,
-			"maxStock":      500,
-			"reorderLevel":  30,
-			"unit":          "bottle",
-			"status":        "adequate",
-			"lastUpdated":   time.Now().Format(time.RFC3339),
+			"id":           uuid.New().String(),
+			"productName":  "Arnica Montana 30C",
+			"productCode":  "ARM-30C-10ML",
+			"category":     "Dilutions",
+			"brand":        "SBL",
+			"currentStock": 150,
+			"minStock":     20,
+			"maxStock":     500,
+			"reorderLevel": 30,
+			"unit":         "bottle",
+			"status":       "adequate",
+			"lastUpdated":  time.Now().Format(time.RFC3339),
 		},
 		{
-			"id":            uuid.New().String(),
-			"productName":   "Belladonna 200C",
-			"productCode":   "BEL-200C-10ML",
-			"category":      "Dilutions",
-			"brand":         "Dr. Reckeweg",
-			"currentStock":  15,
-			"minStock":      25,
-			"maxStock":      600,
-			"reorderLevel":  40,
-			"unit":          "bottle",
-			"status":        "low",
-			"lastUpdated":   time.Now().Format(time.RFC3339),
+			"id":           uuid.New().String(),
+			"productName":  "Belladonna 200C",
+			"productCode":  "BEL-200C-10ML",
+			"category":     "Dilutions",
+			"brand":        "Dr. Reckeweg",
+			"currentStock": 15,
+			"minStock":     25,
+			"maxStock":     600,
+			"reorderLevel": 40,
+			"unit":         "bottle",
+			"status":       "low",
+			"lastUpdated":  time.Now().Format(time.RFC3339),
 		},
 	}
 
@@ -108,7 +108,7 @@ func (h *InventoryHandler) GetBatches(c *gin.Context) {
 	})
 }
 
-// GET /api/erp/inventory/low-stock - Low stock products
+// GET /api/erp/inventory/alerts/low-stock - Low stock products
 func (h *InventoryHandler) GetLowStock(c *gin.Context) {
 	lowStock := []gin.H{
 		{
@@ -133,14 +133,14 @@ func (h *InventoryHandler) GetLowStock(c *gin.Context) {
 func (h *InventoryHandler) GetAdjustments(c *gin.Context) {
 	adjustments := []gin.H{
 		{
-			"id":          uuid.New().String(),
+			"id":           uuid.New().String(),
 			"adjustmentNo": "ADJ-2024-001",
-			"date":        time.Now().Format("2006-01-02"),
-			"productName": "Arnica Montana 30C",
-			"type":        "increase",
-			"quantity":    10,
-			"reason":      "Stock count correction",
-			"createdBy":   "Admin",
+			"date":         time.Now().Format("2006-01-02"),
+			"productName":  "Arnica Montana 30C",
+			"type":         "increase",
+			"quantity":     10,
+			"reason":       "Stock count correction",
+			"createdBy":    "Admin",
 		},
 	}
 
@@ -222,7 +222,7 @@ func (h *InventoryHandler) CreateTransfer(c *gin.Context) {
 	})
 }
 
-// POST /api/products/batches - Create batch
+// POST /api/erp/products/batches - Create batch
 func (h *InventoryHandler) CreateBatch(c *gin.Context) {
 	var req map[string]interface{}
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -231,25 +231,25 @@ func (h *InventoryHandler) CreateBatch(c *gin.Context) {
 	}
 
 	batch := gin.H{
-		"id":                uuid.New().String(),
-		"product_id":        req["product_id"],
-		"batch_no":          req["batch_no"],
-		"mfg_date":          req["mfg_date"],
-		"exp_date":          req["exp_date"],
-		"mrp":               req["mrp"],
-		"purchase_rate":     req["purchase_rate"],
-		"sale_rate":         req["sale_rate"],
-		"quantity":          req["quantity"],
-		"reserved_quantity": 0,
-		"available_quantity": req["quantity"],
-		"warehouse_id":      req["warehouse_id"],
-		"rack_location":     req["rack_location"],
-		"supplier_id":       req["supplier_id"],
+		"id":                  uuid.New().String(),
+		"product_id":          req["product_id"],
+		"batch_no":            req["batch_no"],
+		"mfg_date":            req["mfg_date"],
+		"exp_date":            req["exp_date"],
+		"mrp":                 req["mrp"],
+		"purchase_rate":       req["purchase_rate"],
+		"sale_rate":           req["sale_rate"],
+		"quantity":            req["quantity"],
+		"reserved_quantity":   0,
+		"available_quantity":  req["quantity"],
+		"warehouse_id":        req["warehouse_id"],
+		"rack_location":       req["rack_location"],
+		"supplier_id":         req["supplier_id"],
 		"purchase_invoice_no": req["purchase_invoice_no"],
-		"purchase_date":     req["purchase_date"],
-		"notes":             req["notes"],
-		"is_active":         true,
-		"created_at":        time.Now().Format(time.RFC3339),
+		"purchase_date":       req["purchase_date"],
+		"notes":               req["notes"],
+		"is_active":           true,
+		"created_at":          time.Now().Format(time.RFC3339),
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
@@ -259,7 +259,7 @@ func (h *InventoryHandler) CreateBatch(c *gin.Context) {
 	})
 }
 
-// PUT /api/products/batches/:id - Update batch
+// PUT /api/erp/products/batches/:id - Update batch
 func (h *InventoryHandler) UpdateBatch(c *gin.Context) {
 	id := c.Param("id")
 	var req map[string]interface{}
@@ -269,19 +269,19 @@ func (h *InventoryHandler) UpdateBatch(c *gin.Context) {
 	}
 
 	batch := gin.H{
-		"id":                id,
-		"product_id":        req["product_id"],
-		"batch_no":          req["batch_no"],
-		"mfg_date":          req["mfg_date"],
-		"exp_date":          req["exp_date"],
-		"mrp":               req["mrp"],
-		"purchase_rate":     req["purchase_rate"],
-		"sale_rate":         req["sale_rate"],
-		"quantity":          req["quantity"],
-		"warehouse_id":      req["warehouse_id"],
-		"rack_location":     req["rack_location"],
-		"notes":             req["notes"],
-		"updated_at":        time.Now().Format(time.RFC3339),
+		"id":            id,
+		"product_id":    req["product_id"],
+		"batch_no":      req["batch_no"],
+		"mfg_date":      req["mfg_date"],
+		"exp_date":      req["exp_date"],
+		"mrp":           req["mrp"],
+		"purchase_rate": req["purchase_rate"],
+		"sale_rate":     req["sale_rate"],
+		"quantity":      req["quantity"],
+		"warehouse_id":  req["warehouse_id"],
+		"rack_location": req["rack_location"],
+		"notes":         req["notes"],
+		"updated_at":    time.Now().Format(time.RFC3339),
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -291,7 +291,7 @@ func (h *InventoryHandler) UpdateBatch(c *gin.Context) {
 	})
 }
 
-// DELETE /api/products/batches/:id - Delete batch
+// DELETE /api/erp/products/batches/:id - Delete batch
 func (h *InventoryHandler) DeleteBatch(c *gin.Context) {
 	id := c.Param("id")
 
@@ -405,24 +405,24 @@ func (h *InventoryHandler) DeleteWarehouse(c *gin.Context) {
 func (h *InventoryHandler) GetInventory(c *gin.Context) {
 	inventory := []gin.H{
 		{
-			"id":            uuid.New().String(),
-			"productName":   "Arnica Montana 30C",
-			"batchNo":       "BATCH-001",
-			"quantity":      500,
-			"unit":          "bottles",
-			"location":      "Warehouse A",
-			"reorderLevel":  100,
-			"status":        "sufficient",
+			"id":           uuid.New().String(),
+			"productName":  "Arnica Montana 30C",
+			"batchNo":      "BATCH-001",
+			"quantity":     500,
+			"unit":         "bottles",
+			"location":     "Warehouse A",
+			"reorderLevel": 100,
+			"status":       "sufficient",
 		},
 		{
-			"id":            uuid.New().String(),
-			"productName":   "Belladonna 200C",
-			"batchNo":       "BATCH-002",
-			"quantity":      50,
-			"unit":          "bottles",
-			"location":      "Warehouse B",
-			"reorderLevel":  100,
-			"status":        "low",
+			"id":           uuid.New().String(),
+			"productName":  "Belladonna 200C",
+			"batchNo":      "BATCH-002",
+			"quantity":     50,
+			"unit":         "bottles",
+			"location":     "Warehouse B",
+			"reorderLevel": 100,
+			"status":       "low",
 		},
 	}
 
@@ -466,14 +466,14 @@ func (h *InventoryHandler) TransferStock(c *gin.Context) {
 	}
 
 	transfer := gin.H{
-		"id":           uuid.New().String(),
-		"productID":    req["product_id"],
-		"fromLocation": req["from_location"],
-		"toLocation":   req["to_location"],
-		"quantity":     req["quantity"],
+		"id":            uuid.New().String(),
+		"productID":     req["product_id"],
+		"fromLocation":  req["from_location"],
+		"toLocation":    req["to_location"],
+		"quantity":      req["quantity"],
 		"transferredBy": req["transferred_by"],
 		"transferredAt": time.Now().Format(time.RFC3339),
-		"status":       "completed",
+		"status":        "completed",
 	}
 
 	c.JSON(http.StatusCreated, gin.H{

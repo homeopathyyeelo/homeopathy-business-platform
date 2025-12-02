@@ -75,8 +75,8 @@ export function useProducts({ page = 1, perPage = 100, search, category, brand, 
           // Override pagination with barcode pagination if present
           if (barcodePagination) {
             (pagination as any).total = barcodePagination.total ?? pagination.total
-            ;(pagination as any).page = barcodePagination.page ?? pagination.page
-            ;(pagination as any).limit = barcodePagination.limit ?? pagination.limit
+              ; (pagination as any).page = barcodePagination.page ?? pagination.page
+              ; (pagination as any).limit = barcodePagination.limit ?? pagination.limit
           }
         }
       }
@@ -135,7 +135,7 @@ export function useProductBatches() {
   return useQuery({
     queryKey: ['products', 'batches'],
     queryFn: async () => {
-      const res = await golangAPI.get('/api/products/batches')
+      const res = await golangAPI.get('/api/erp/products/batches')
       const data = res.data?.data?.batches || res.data?.batches || res.data?.data || res.data || []
       return Array.isArray(data) ? data : []
     },
@@ -148,7 +148,7 @@ export function useProductVariants(productId?: string) {
     queryKey: ['products', 'variants', productId],
     queryFn: async () => {
       if (!productId) return []
-      const res = await golangAPI.get(`/api/products/${productId}/variants`)
+      const res = await golangAPI.get(`/api/erp/products/${productId}/variants`)
       const data = res.data?.data?.variants || res.data?.variants || res.data?.data || res.data || []
       return Array.isArray(data) ? data : []
     },
@@ -162,7 +162,7 @@ export function useProductImages(productId?: string) {
     queryKey: ['products', 'images', productId],
     queryFn: async () => {
       if (!productId) return []
-      const res = await golangAPI.get(`/api/products/${productId}/images`)
+      const res = await golangAPI.get(`/api/erp/products/${productId}/images`)
       const data = res.data?.data?.images || res.data?.images || res.data?.data || res.data || []
       return Array.isArray(data) ? data : []
     },
@@ -218,7 +218,7 @@ export function useProductMutations() {
     mutationFn: (file: File) => {
       const formData = new FormData()
       formData.append('file', file)
-      return golangAPI.post('/api/products/import', formData, {
+      return golangAPI.post('/api/erp/products/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
     },
@@ -348,13 +348,13 @@ export function useBatchMutations() {
   const qc = useQueryClient()
 
   const create = useMutation({
-    mutationFn: (payload: any) => golangAPI.post('/api/products/batches', payload),
+    mutationFn: (payload: any) => golangAPI.post('/api/erp/products/batches', payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'batches'] }),
   })
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
-      golangAPI.put(`/api/products/batches/${id}`, data),
+      golangAPI.put(`/api/erp/products/batches/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', 'batches'] }),
   })
 

@@ -1,6 +1,6 @@
 /**
  * Product search API endpoint
- * GET /api/products/search?q=search_term&shop_id=1&limit=20
+ * GET /api/erp/products/search?q=search_term&shop_id=1&limit=20
  */
 
 import type { NextRequest } from "next/server"

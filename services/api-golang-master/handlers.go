@@ -812,7 +812,7 @@ func handleGetProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for product data",
+		"message": "Use /api/erp/products/:id endpoint for product data",
 	})
 }
 
@@ -828,7 +828,7 @@ func handleUpdateProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for updating products",
+		"message": "Use /api/erp/products/:id endpoint for updating products",
 	})
 }
 
@@ -836,7 +836,7 @@ func handleDeleteProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for deleting products",
+		"message": "Use /api/erp/products/:id endpoint for deleting products",
 	})
 }
 
@@ -844,7 +844,7 @@ func handleGetProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for product data",
+		"message": "Use /api/erp/products/:id endpoint for product data",
 	})
 }
 
@@ -860,7 +860,7 @@ func handleUpdateProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for updating products",
+		"message": "Use /api/erp/products/:id endpoint for updating products",
 	})
 }
 
@@ -868,7 +868,7 @@ func handleDeleteProduct(c *gin.Context) {
 	// Handled by product service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/products/:id endpoint for deleting products",
+		"message": "Use /api/erp/products/:id endpoint for deleting products",
 	})
 }
 
@@ -1012,6 +1012,6 @@ func handleGetLowStock(c *gin.Context) {
 	// Handled by inventory service - redirect to service layer
 	c.JSON(200, gin.H{
 		"success": true,
-		"message": "Use /api/inventory/low-stock endpoint for low stock data",
+		"message": "Use /api/erp/inventory/alerts/low-stock endpoint for low stock data",
 	})
 }

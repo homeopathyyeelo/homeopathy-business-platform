@@ -245,10 +245,10 @@ export const api = {
     },
     products: {
       getAll: (params?: any) => fastifyAPI.get('/api/products', { params }),
-      getById: (id: string) => fastifyAPI.get(`/api/products/${id}`),
+      getById: (id: string) => fastifyAPI.get(`/api/erp/products/${id}`),
       create: (data: any) => fastifyAPI.post('/api/products', data),
-      update: (id: string, data: any) => fastifyAPI.put(`/api/products/${id}`, data),
-      delete: (id: string) => fastifyAPI.delete(`/api/products/${id}`),
+      update: (id: string, data: any) => fastifyAPI.put(`/api/erp/products/${id}`, data),
+      delete: (id: string) => fastifyAPI.delete(`/api/erp/products/${id}`),
     },
   },
 

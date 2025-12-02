@@ -41,7 +41,7 @@ func main() {
 	// Initialize handlers (only ones we actually use)
 	authHandler := handlers.NewAuthHandler(db)
 	aiModelHandler := handlers.NewAIModelHandler()
-	barcodeHandler := handlers.NewBarcodeHandler(db)
+	// barcodeHandler := handlers.NewBarcodeHandler(db) // Moved to POS routes
 	bugsHandler := handlers.NewBugHandler(bugService)
 	categoriesHandler := handlers.NewCategoryHandler(db)
 	customerGroupHandler := handlers.NewCustomerGroupHandler()
@@ -57,7 +57,7 @@ func main() {
 	productStatsHandler := handlers.NewProductStatsHandler(db)
 	quickActionsHandler := handlers.NewQuickActionsHandler(db)
 	batchBarcodeHandler := handlers.NewBatchBarcodeHandler(db)
-	barcodeLabelHandler := handlers.NewBarcodeLabelHandler(db)
+	// barcodeLabelHandler := handlers.NewBarcodeLabelHandler(db) // Moved to POS routes
 	enhancedPurchaseHandler := handlers.NewEnhancedPurchaseHandler(db)
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
@@ -263,19 +263,20 @@ func main() {
 
 			// Products
 			erp.GET("/products/stats", productStatsHandler.GetProductStats) // MUST be before /:id
-			erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)
-			erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
-			erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
-			erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
-			erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
-			erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats)               // MUST be before /:id
-			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct)        // MUST be before /:id
-			erp.GET("/products/:id/barcode-image", barcodeLabelHandler.GenerateBarcodeImage) // Generate barcode image for single product
 			erp.GET("/products", productHandler.GetProducts)
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
+
+			// Barcode routes moved to POS routes to avoid duplication
+			// erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)
+			// erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
+			// erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
+			// erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
+			// erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
+			// erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats) // MUST be before /:id
+			// erp.GET("/products/:id/barcode-image", barcodeLabelHandler.GenerateBarcodeImage)
 
 			// Products - order matters! Specific routes before :id
 			erp.GET("/products/template", productImportHandler.DownloadTemplate)                     // Must be before /:id
@@ -289,16 +290,8 @@ func main() {
 				productImportStreamingHandler.StreamingImport(c)
 			})
 
-			// erp.GET("/barcodes", barcodeHandler.GetBarcodes)
-			// erp.POST("/barcodes/print", barcodeHandler.PrintBarcodes)
-			// erp.PUT("/barcodes/:id", barcodeHandler.UpdateBarcode)
-			// erp.DELETE("/barcodes/:id", barcodeHandler.DeleteBarcode)
-			// erp.GET("/barcodes/stats", barcodeHandler.GetBarcodeStats)
-			// erp.GET("/barcode/generate", barcodeLabelHandler.GenerateBarcodeByString)    // Generate barcode by string
-			// erp.GET("/barcode/labels/all", barcodeLabelHandler.GenerateAllBarcodeLabels) // Bulk generate all
-			// erp.POST("/barcode/labels/print", barcodeLabelHandler.PrintBarcodeLabels)    // Print selected labels
-
 			// Batch Management
+			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct) // MUST be before /:id
 			erp.POST("/inventory/batches", batchBarcodeHandler.CreateBatch)
 			erp.POST("/inventory/batches/allocate", batchBarcodeHandler.AllocateBatch)
 			erp.GET("/inventory/batches/expiring", batchBarcodeHandler.GetExpiringBatches)

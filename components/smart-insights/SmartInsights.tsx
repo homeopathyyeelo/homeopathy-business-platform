@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle,
   Lightbulb,
   Target,
   Zap,
@@ -84,15 +84,15 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
 
   const getDashboardInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     try {
       // Fetch dashboard stats
       const response = await fetch('/api/dashboard/stats');
       const stats = await response.json();
-      
+
       if (stats.success) {
         const { data: dashboardData } = stats;
-        
+
         // Revenue trend insight
         if (dashboardData.month_revenue > dashboardData.today_revenue * 30) {
           insights.push({
@@ -105,7 +105,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
             priority: 'high'
           });
         }
-        
+
         // Low stock alert
         if (dashboardData.low_stock_items > 0) {
           insights.push({
@@ -118,7 +118,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
             priority: 'high'
           });
         }
-        
+
         // Customer growth
         if (dashboardData.total_customers > 100) {
           insights.push({
@@ -135,25 +135,25 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
     } catch (error) {
       console.error('Dashboard insights error:', error);
     }
-    
+
     return insights;
   };
 
   const getCustomerInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     try {
       const response = await fetch('/api/customers?limit=100');
       const customers = await response.json();
-      
+
       if (customers.success) {
         const customerData = customers.data;
-        
+
         // Customer type distribution
         const retailCount = customerData.filter((c: any) => c.customerType === 'RETAIL').length;
         const wholesaleCount = customerData.filter((c: any) => c.customerType === 'WHOLESALE').length;
         const doctorCount = customerData.filter((c: any) => c.customerType === 'DOCTOR').length;
-        
+
         insights.push({
           id: 'customer-mix',
           type: 'info',
@@ -161,7 +161,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
           description: `${retailCount} Retail, ${wholesaleCount} Wholesale, ${doctorCount} Doctors`,
           priority: 'medium'
         });
-        
+
         // Outstanding balances
         const outstandingCustomers = customerData.filter((c: any) => c.outstandingBalance > 0);
         if (outstandingCustomers.length > 0) {
@@ -176,7 +176,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
             priority: 'high'
           });
         }
-        
+
         // New customer opportunity
         if (customerData.length < 50) {
           insights.push({
@@ -192,28 +192,28 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
     } catch (error) {
       console.error('Customer insights error:', error);
     }
-    
+
     return insights;
   };
 
   const getProductInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     try {
-      const response = await fetch('/api/products?limit=100');
+      const response = await fetch('/api/erp/products?limit=100');
       const products = await response.json();
-      
+
       if (products.success) {
         const productData = products.data;
-        
+
         // Category analysis
         const categories = productData.reduce((acc: any, product: any) => {
           const category = product.category || 'Uncategorized';
           acc[category] = (acc[category] || 0) + 1;
           return acc;
         }, {});
-        
-        const topCategory = Object.entries(categories).sort(([,a], [,b]) => (b as number) - (a as number))[0];
+
+        const topCategory = Object.entries(categories).sort(([, a], [, b]) => (b as number) - (a as number))[0];
         if (topCategory) {
           insights.push({
             id: 'top-category',
@@ -223,7 +223,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
             priority: 'medium'
           });
         }
-        
+
         // Pricing insights
         const productsWithMRP = productData.filter((p: any) => p.mrp > 0);
         if (productsWithMRP.length > 0) {
@@ -237,7 +237,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
             priority: 'low'
           });
         }
-        
+
         // Missing barcodes
         const missingBarcodes = productData.filter((p: any) => !p.barcode);
         if (missingBarcodes.length > 0) {
@@ -254,13 +254,13 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
     } catch (error) {
       console.error('Product insights error:', error);
     }
-    
+
     return insights;
   };
 
   const getInventoryInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     // Add inventory-specific insights
     insights.push({
       id: 'fefo-reminder',
@@ -269,13 +269,13 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
       description: 'First Expiry First Out is maintaining product quality',
       priority: 'low'
     });
-    
+
     return insights;
   };
 
   const getSalesInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     // Add sales-specific insights
     insights.push({
       id: 'sales-trend',
@@ -285,13 +285,13 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
       action: { label: 'View Reports', href: '/reports/sales' },
       priority: 'medium'
     });
-    
+
     return insights;
   };
 
   const getPOSInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     // Add POS-specific insights
     insights.push({
       id: 'pos-efficiency',
@@ -300,13 +300,13 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
       description: 'All systems operational for quick billing',
       priority: 'low'
     });
-    
+
     return insights;
   };
 
   const getReportsInsights = async (data?: any): Promise<Insight[]> => {
     const insights: Insight[] = [];
-    
+
     // Add reports-specific insights
     insights.push({
       id: 'report-automation',
@@ -315,7 +315,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
       description: 'Daily, weekly, and monthly reports available',
       priority: 'low'
     });
-    
+
     return insights;
   };
 

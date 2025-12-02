@@ -1,8 +1,8 @@
 /**
  * Individual product API endpoints
- * GET /api/products/[id] - Get product by ID
- * PUT /api/products/[id] - Update product
- * DELETE /api/products/[id] - Delete product
+ * GET /api/erp/products/[id] - Get product by ID
+ * PUT /api/erp/products/[id] - Update product
+ * DELETE /api/erp/products/[id] - Delete product
  */
 
 import type { NextRequest } from "next/server"

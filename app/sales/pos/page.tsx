@@ -117,11 +117,11 @@ export default function UniversalPOSPage() {
         return;
       }
 
-      // Detect rapid typing (< 50ms between keys = scanner)
-      if (timeDiff < 50 && e.key.length === 1) {
+      // Detect rapid typing (< 100ms between keys = scanner)
+      if (timeDiff < 100 && e.key.length === 1) {
         setBarcodeBuffer(prev => prev + e.key);
         setLastKeyTime(currentTime);
-      } else if (timeDiff >= 50 && e.key.length === 1) {
+      } else if (timeDiff >= 100 && e.key.length === 1) {
         // Reset buffer if typing is slow (human)
         setBarcodeBuffer(e.key);
         setLastKeyTime(currentTime);
@@ -142,15 +142,15 @@ export default function UniversalPOSPage() {
       if (res.data?.products?.length > 0) {
         const product = res.data.products[0];
         selectProduct(product);
-        toast({ 
-          title: '📷 Barcode Scanned', 
-          description: `${product.name} added` 
+        toast({
+          title: '📷 Barcode Scanned',
+          description: `${product.name} added`
         });
       } else {
-        toast({ 
-          title: 'Product Not Found', 
+        toast({
+          title: 'Product Not Found',
           description: `Barcode: ${barcode}`,
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       }
     } catch (error) {
@@ -887,7 +887,7 @@ export default function UniversalPOSPage() {
       const response = await golangAPI.get(`/api/erp/invoices/${lastCreatedInvoice.invoiceNo}/download`, {
         responseType: 'blob',
       });
-      
+
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -897,7 +897,7 @@ export default function UniversalPOSPage() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       toast({ title: '✅ PDF Downloaded', description: `Invoice ${lastCreatedInvoice.invoiceNo}` });
     } catch (error) {
       toast({ title: 'PDF download failed', variant: 'destructive' });
@@ -1063,9 +1063,9 @@ export default function UniversalPOSPage() {
                   <Scan className="h-4 w-4 text-green-600" />
                   Barcode Scanner
                 </Label>
-                <Button 
-                  variant="link" 
-                  size="sm" 
+                <Button
+                  variant="link"
+                  size="sm"
                   onClick={() => window.open('/products/barcode', '_blank')}
                   className="h-auto p-0 text-xs"
                 >
@@ -1537,14 +1537,14 @@ export default function UniversalPOSPage() {
                   Download PDF
                 </Button>
               </div>
-              
+
               {!isConfigured && (
                 <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
                   <AlertCircle className="h-4 w-4 text-orange-500" />
                   <p className="text-sm text-orange-700">
-                    Thermal printer not configured. 
-                    <button 
-                      onClick={() => setShowPrinterConfig(true)} 
+                    Thermal printer not configured.
+                    <button
+                      onClick={() => setShowPrinterConfig(true)}
                       className="underline ml-1 font-medium"
                     >
                       Configure now

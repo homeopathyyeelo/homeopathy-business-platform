@@ -10,7 +10,7 @@ export default function TaxSettingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiFetch('/api/products/tax')
+    apiFetch('/api/erp/products/tax')
       .then(res => res.json())
       .then(data => {
         setData(Array.isArray(data) ? data : []);

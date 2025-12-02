@@ -42,7 +42,7 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Product Catalog',
         icon: '📦',
-        dataFetcher: '/api/products?limit=5',
+        dataFetcher: '/api/erp/products?limit=5',
         priority: 8
       },
       {
@@ -68,25 +68,25 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Product Statistics',
         icon: '📦',
-        dataFetcher: '/api/products/stats',
+        dataFetcher: '/api/erp/products/stats',
         priority: 10
       },
       {
         title: 'Product Categories',
         icon: '📂',
-        dataFetcher: '/api/products/categories',
+        dataFetcher: '/api/erp/categories',
         priority: 9
       },
       {
         title: 'Low Stock Items',
         icon: '⚠️',
-        dataFetcher: '/api/inventory/low-stock',
+        dataFetcher: '/api/erp/inventory/alerts/low-stock',
         priority: 8
       },
       {
         title: 'Recent Products',
         icon: '🆕',
-        dataFetcher: '/api/products?limit=5&sort=created_at',
+        dataFetcher: '/api/erp/products?limit=5&sort=created_at',
         priority: 7
       }
     ]
@@ -106,13 +106,13 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Low Stock Alerts',
         icon: '⚠️',
-        dataFetcher: '/api/inventory/low-stock',
+        dataFetcher: '/api/erpinventory/low-stock',
         priority: 9
       },
       {
         title: 'Product Categories',
         icon: '📂',
-        dataFetcher: '/api/products/categories',
+        dataFetcher: '/api/erp/categories',
         priority: 8
       },
       {
@@ -170,7 +170,7 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Product Performance',
         icon: '📦',
-        dataFetcher: '/api/products/stats',
+        dataFetcher: '/api/erp/products/stats',
         priority: 8
       }
     ]
@@ -233,10 +233,10 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
  * Get insights configuration for current page
  */
 export function getInsightsForPage(pathname: string): PageInsightsConfig {
-  const match = PAGE_INSIGHTS_MAP.find(config => 
+  const match = PAGE_INSIGHTS_MAP.find(config =>
     config.pagePattern.test(pathname)
   );
-  
+
   return match || PAGE_INSIGHTS_MAP[PAGE_INSIGHTS_MAP.length - 1]; // Return default if no match
 }
 
@@ -244,7 +244,7 @@ export function getInsightsForPage(pathname: string): PageInsightsConfig {
  * Get prioritized insights (top N by priority)
  */
 export function getPrioritizedInsights(
-  insights: InsightConfig[], 
+  insights: InsightConfig[],
   limit: number = 5
 ): InsightConfig[] {
   return [...insights]

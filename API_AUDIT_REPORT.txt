@@ -101,12 +101,12 @@ HR:
 - /api/hr/shifts
 
 INVENTORY (Additional):
-- /api/inventory/dead-stock
-- /api/inventory/history
-- /api/inventory/low-stock
-- /api/inventory/reconciliation
-- /api/inventory/valuation
-- /api/inventory/upload
+- /api/erp/inventory/dead-stock
+- /api/erp/inventory/history
+- /api/erp/inventory/alerts/low-stock
+- /api/erp/inventory/reconciliation
+- /api/erp/inventory/valuation
+- /api/erp/inventory/upload
 
 MARKETING:
 - /api/marketing/announcements
@@ -146,9 +146,9 @@ UPLOADS/APPROVALS:
 - /api/uploads/session/:id
 
 PRODUCTS (Additional):
-- /api/products/bulk
-- /api/products/tax
-- /api/products/variants
+- /api/erp/products/bulk
+- /api/erp/products/tax
+- /api/erp/products/variants
 
 PRESCRIPTIONS:
 - /api/prescriptions/*

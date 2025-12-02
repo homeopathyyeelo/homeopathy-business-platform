@@ -15,9 +15,9 @@ const mockCategories = [
 export async function GET() {
   try {
     // Fetch from Golang API
-    const res = await fetch(`${GOLANG_API_URL}/api/erp/products/categories`);
+    const res = await fetch(`${GOLANG_API_URL}/api/erp/categories`);
     const data = await res.json();
-    
+
     if (res.ok) {
       return NextResponse.json({
         success: true,
@@ -29,7 +29,7 @@ export async function GET() {
   } catch (error) {
     console.error('Categories API error:', error);
   }
-  
+
   // Fallback to mock data
   return NextResponse.json({
     success: true,

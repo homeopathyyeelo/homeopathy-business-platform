@@ -13,10 +13,10 @@ const golangAPI = axios.create({
 golangAPI.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     // Try multiple token sources
-    let token = localStorage.getItem('auth_token') || 
-                localStorage.getItem('token') ||
-                getCookie('auth-token')
-    
+    let token = localStorage.getItem('auth_token') ||
+      localStorage.getItem('token') ||
+      getCookie('auth-token')
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -36,10 +36,10 @@ function getCookie(name: string): string | null {
 // Products API
 export const productsAPI = {
   getAll: () => golangAPI.get('/api/products'),
-  getById: (id: string) => golangAPI.get(`/api/products/${id}`),
+  getById: (id: string) => golangAPI.get(`/api/erp/products/${id}`),
   create: (data: any) => golangAPI.post('/api/products', data),
-  update: (id: string, data: any) => golangAPI.put(`/api/products/${id}`, data),
-  delete: (id: string) => golangAPI.delete(`/api/products/${id}`),
+  update: (id: string, data: any) => golangAPI.put(`/api/erp/products/${id}`, data),
+  delete: (id: string) => golangAPI.delete(`/api/erp/products/${id}`),
 }
 
 // Customers API
@@ -56,16 +56,16 @@ export const ordersAPI = {
   getAll: () => golangAPI.get('/api/orders'),
   getById: (id: string) => golangAPI.get(`/api/orders/${id}`),
   create: (data: any) => golangAPI.post('/api/orders', data),
-  updateStatus: (id: string, status: string) => 
+  updateStatus: (id: string, status: string) =>
     golangAPI.put(`/api/orders/${id}/status`, { status }),
   delete: (id: string) => golangAPI.delete(`/api/orders/${id}`),
 }
 
 // Inventory API
 export const inventoryAPI = {
-  getAll: () => golangAPI.get('/api/inventory'),
-  getLowStock: () => golangAPI.get('/api/inventory/low-stock'),
-  adjust: (data: any) => golangAPI.post('/api/inventory/adjust', data),
+  getAll: () => golangAPI.get('/api/erp/inventory'),
+  getLowStock: () => golangAPI.get('/api/erp/inventory/alerts/low-stock'),
+  adjust: (data: any) => golangAPI.post('/api/erp/inventory/adjust', data),
 }
 
 // Analytics API
@@ -86,7 +86,7 @@ export const campaignsAPI = {
 
 // Auth API
 export const authAPI = {
-  login: (email: string, password: string) => 
+  login: (email: string, password: string) =>
     golangAPI.post('/api/auth/login', { email, password }),
   me: () => golangAPI.get('/api/auth/me'),
   logout: () => golangAPI.post('/api/auth/logout'),
