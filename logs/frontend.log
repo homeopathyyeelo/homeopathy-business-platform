@@ -1471,3 +1471,7 @@
  GET /social/gmb?connected=true 200 in 425ms
  GET /social/gmb 200 in 444ms
  GET /social/gmb 200 in 327ms
+ ✓ Compiled in 14.2s (1303 modules)
+ GET /social/gmb?connected=true 200 in 847ms
+ GET /social/gmb 200 in 829ms
+ GET /social/gmb 200 in 244ms
