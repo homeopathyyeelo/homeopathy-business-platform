@@ -320,7 +320,8 @@ const menuItems: MenuItem[] = [
     path: '/settings',
     color: 'from-gray-500 to-gray-600',
     submenus: [
-      { label: 'Global ERP Settings', path: '/settings/global' },
+      { label: 'Default Settings', path: '/settings' },
+      { label: 'ERP Settings', path: '/settings/global' },
       { label: 'Company Profile', path: '/settings/company' },
       { label: 'Branch Management', path: '/settings/branches' },
       { label: 'Roles Permissions', path: '/settings/roles' },

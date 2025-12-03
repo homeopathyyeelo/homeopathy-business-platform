@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Database, Server, Download, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Database, Server, Download, CheckCircle, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { getDatabaseConfig, switchToPostgreSQL, switchToSupabase } from "@/lib/config/database-connection";
+import { getDatabaseConfig, switchToPostgreSQL } from "@/lib/config/database-connection";
+import { golangAPI } from "@/lib/api";
+import { JobStatusToast } from "@/components/jobs/JobStatusToast";
+import { toast as sonnerToast } from "sonner";
 
 interface PostgreSQLConfig {
   host: string;
@@ -22,10 +24,10 @@ interface PostgreSQLConfig {
 
 export function DatabaseSettings() {
   const { toast } = useToast();
-  const [currentSource, setCurrentSource] = useState<'supabase' | 'postgresql'>('supabase');
   const [loading, setLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'testing' | 'success' | 'error' | null>(null);
-  
+  const [backupJobId, setBackupJobId] = useState<string | null>(null);
+
   const [postgresConfig, setPostgresConfig] = useState<PostgreSQLConfig>({
     host: 'localhost',
     port: 5433,
@@ -35,25 +37,6 @@ export function DatabaseSettings() {
     ssl: false
   });
 
-  useEffect(() => {
-    loadCurrentConfig();
-  }, []);
-
-  const loadCurrentConfig = async () => {
-    try {
-      const config = await getDatabaseConfig();
-      setCurrentSource(config.type);
-      
-      if (config.postgresql) {
-        setPostgresConfig({
-          ...config.postgresql,
-          ssl: config.postgresql.ssl || false
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load database config:', error);
-    }
-  };
 
   const testPostgreSQLConnection = async () => {
     setConnectionStatus('testing');
@@ -63,7 +46,7 @@ export function DatabaseSettings() {
       // In a real implementation, you would test the connection
       // For now, we'll simulate a connection test
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       setConnectionStatus('success');
       toast({
         title: "Connection Successful",
@@ -81,27 +64,18 @@ export function DatabaseSettings() {
     }
   };
 
-  const handleSwitchToPostgreSQL = async () => {
+  const savePostgreSQLConfig = async () => {
     setLoading(true);
     try {
-      const success = await switchToPostgreSQL(postgresConfig);
-      if (success) {
-        setCurrentSource('postgresql');
-        toast({
-          title: "Database Switched",
-          description: "Successfully switched to PostgreSQL database.",
-        });
-      } else {
-        toast({
-          title: "Switch Failed",
-          description: "Failed to switch to PostgreSQL. Please check your configuration.",
-          variant: "destructive"
-        });
-      }
+      await switchToPostgreSQL(postgresConfig);
+      toast({
+        title: "Configuration Saved",
+        description: "PostgreSQL configuration saved successfully.",
+      });
     } catch (error) {
       toast({
         title: "Error",
-        description: "An error occurred while switching databases.",
+        description: "Failed to save PostgreSQL configuration.",
         variant: "destructive"
       });
     } finally {
@@ -109,27 +83,6 @@ export function DatabaseSettings() {
     }
   };
 
-  const handleSwitchToSupabase = async () => {
-    setLoading(true);
-    try {
-      const success = await switchToSupabase();
-      if (success) {
-        setCurrentSource('supabase');
-        toast({
-          title: "Database Switched",
-          description: "Successfully switched to Supabase database.",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred while switching databases.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const exportDatabaseSchema = () => {
     // Create downloadable SQL file
@@ -169,6 +122,21 @@ export function DatabaseSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Render job status toast if backup is running */}
+      {backupJobId && (
+        <JobStatusToast
+          jobId={backupJobId}
+          jobType="backup_create"
+          onComplete={(job) => {
+            setBackupJobId(null);
+            // Refresh will happen automatically when user switches to backup tab
+          }}
+          onError={() => {
+            setBackupJobId(null);
+          }}
+        />
+      )}
+      
       <div className="flex items-center space-x-2">
         <Database className="h-6 w-6" />
         <h2 className="text-2xl font-bold">Database Settings</h2>
@@ -177,66 +145,16 @@ export function DatabaseSettings() {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          <strong>Current Database:</strong> {currentSource === 'supabase' ? 'Supabase (Cloud)' : 'PostgreSQL (Local/Production)'}
+          <strong>Database:</strong> PostgreSQL (localhost:5433/yeelo_homeopathy)
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="config" className="w-full">
+      <Tabs defaultValue="postgresql" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="config">Configuration</TabsTrigger>
           <TabsTrigger value="postgresql">PostgreSQL Setup</TabsTrigger>
+          <TabsTrigger value="backups">Backups</TabsTrigger>
           <TabsTrigger value="export">Database Export</TabsTrigger>
         </TabsList>
-
-        <TabsContent value="config">
-          <Card>
-            <CardHeader>
-              <CardTitle>Database Source Configuration</CardTitle>
-              <CardDescription>
-                Choose between Supabase (cloud) or PostgreSQL (local/production) database
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className={`cursor-pointer transition-all ${currentSource === 'supabase' ? 'ring-2 ring-primary' : ''}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <Database className="h-8 w-8 text-blue-500" />
-                      <div>
-                        <h3 className="font-medium">Supabase</h3>
-                        <p className="text-sm text-muted-foreground">Cloud database (current)</p>
-                      </div>
-                      {currentSource === 'supabase' && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
-                    </div>
-                    {currentSource !== 'supabase' && (
-                      <Button 
-                        onClick={handleSwitchToSupabase}
-                        disabled={loading}
-                        className="w-full mt-3"
-                        variant="outline"
-                      >
-                        Switch to Supabase
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card className={`cursor-pointer transition-all ${currentSource === 'postgresql' ? 'ring-2 ring-primary' : ''}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-3">
-                      <Server className="h-8 w-8 text-blue-700" />
-                      <div>
-                        <h3 className="font-medium">PostgreSQL</h3>
-                        <p className="text-sm text-muted-foreground">Local/Production database</p>
-                      </div>
-                      {currentSource === 'postgresql' && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
         <TabsContent value="postgresql">
           <Card>
@@ -311,18 +229,18 @@ export function DatabaseSettings() {
               </div>
 
               <div className="flex space-x-2">
-                <Button 
+                <Button
                   onClick={testPostgreSQLConnection}
                   disabled={loading}
                   variant="outline"
                 >
                   {connectionStatus === 'testing' ? 'Testing...' : 'Test Connection'}
                 </Button>
-                <Button 
-                  onClick={handleSwitchToPostgreSQL}
-                  disabled={loading || connectionStatus !== 'success'}
+                <Button
+                  onClick={savePostgreSQLConfig}
+                  disabled={loading}
                 >
-                  Switch to PostgreSQL
+                  Save Configuration
                 </Button>
               </div>
 
@@ -345,6 +263,10 @@ export function DatabaseSettings() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="backups">
+          <BackupsTab />
         </TabsContent>
 
         <TabsContent value="export">
@@ -392,9 +314,9 @@ export function DatabaseSettings() {
                   <AlertDescription>
                     <strong>Note:</strong> Complete schema and master data files are located in:
                     <br />
-                     <code>database/postgresql/schema.sql</code> - Full database structure
+                    <code>database/postgresql/schema.sql</code> - Full database structure
                     <br />
-                     <code>database/postgresql/master_data.sql</code> - Initial data for YEELO HOMEOPATHY
+                    <code>database/postgresql/master_data.sql</code> - Initial data for YEELO HOMEOPATHY
                   </AlertDescription>
                 </Alert>
               </div>
@@ -402,6 +324,304 @@ export function DatabaseSettings() {
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// BackupsTab component for managing database backups
+function BackupsTab() {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [backups, setBackups] = useState<any[]>([]);
+  const [status, setStatus] = useState<any>(null);
+  const [config, setConfig] = useState({
+    enabled: false,
+    schedule: '0 2 * * *',
+    backup_path: '/var/www/homeopathy-business-platform/backups',
+    retention_days: 30,
+    compress: true,
+    db_host: 'localhost',
+    db_port: 5433,
+    db_name: 'yeelo_homeopathy',
+    db_user: 'postgres',
+    db_password: 'postgres'
+  });
+
+  useEffect(() => {
+    loadBackupConfig();
+    loadBackups();
+    loadBackupStatus();
+  }, []);
+
+  const loadBackupConfig = async () => {
+    try {
+      const res = await golangAPI.get('/api/erp/backups/config');
+      if (res.data?.success && res.data.data) {
+        setConfig(res.data.data);
+      }
+    } catch (error) {
+      console.error('Failed to load backup config:', error);
+    }
+  };
+
+  const loadBackups = async () => {
+    try {
+      const res = await golangAPI.get('/api/erp/backups/list');
+      if (res.data?.success) {
+        setBackups(res.data.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to load backups:', error);
+    }
+  };
+
+  const loadBackupStatus = async () => {
+    try {
+      const res = await golangAPI.get('/api/erp/backups/status');
+      if (res.data?.success) {
+        setStatus(res.data.data);
+      }
+    } catch (error) {
+      console.error('Failed to load backup status:', error);
+    }
+  };
+
+  const saveConfig = async () => {
+    setLoading(true);
+    try {
+      const res = await golangAPI.put('/api/erp/backups/config', config);
+
+      if (!res.data?.success) throw new Error('Failed to save');
+
+      toast({
+        title: "Success",
+        description: "Backup configuration saved successfully",
+      });
+
+      loadBackupStatus();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save backup configuration",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createBackup = async () => {
+    setLoading(true);
+    try {
+      const res = await golangAPI.post('/api/erp/backups/create', {
+        description: 'Manual backup'
+      });
+
+      if (!res.data?.success) throw new Error('Failed to create backup job');
+
+      // Set job ID to start monitoring
+      const jobId = res.data.job_id;
+      setBackupJobId(jobId);
+
+      sonnerToast.info('Backup Started', {
+        description: 'Database backup is running in the background. You can continue working.',
+        duration: 3000,
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.error || "Failed to start backup",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteBackup = async (filename: string) => {
+    if (!confirm(`Delete backup ${filename}?`)) return;
+
+    try {
+      const res = await golangAPI.delete(`/api/erp/backups/${filename}`);
+
+      if (!res.data?.success) throw new Error('Failed to delete');
+
+      toast({
+        title: "Success",
+        description: "Backup deleted successfully",
+      });
+
+      loadBackups();
+      loadBackupStatus();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete backup",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Backup Status */}
+      {status && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Backup Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground">Last Backup</p>
+                <p className="font-medium">
+                  {status.last_backup_time
+                    ? new Date(status.last_backup_time).toLocaleString()
+                    : 'Never'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Next Backup</p>
+                <p className="font-medium">
+                  {status.next_backup_time
+                    ? new Date(status.next_backup_time).toLocaleString()
+                    : 'Not scheduled'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Backups</p>
+                <p className="font-medium">{status.total_backups}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Size</p>
+                <p className="font-medium">{formatBytes(status.total_backup_size)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Backup Configuration */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Backup Configuration</CardTitle>
+          <CardDescription>
+            Configure automated database backups
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="backup-enabled"
+              checked={config.enabled}
+              onCheckedChange={(checked) => setConfig(prev => ({ ...prev, enabled: checked }))}
+            />
+            <Label htmlFor="backup-enabled">Enable Automated Backups</Label>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Backup Path</Label>
+              <Input
+                value={config.backup_path}
+                onChange={(e) => setConfig(prev => ({ ...prev, backup_path: e.target.value }))}
+                placeholder="/var/www/homeopathy-business-platform/backups"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Schedule (Cron)</Label>
+              <Input
+                value={config.schedule}
+                onChange={(e) => setConfig(prev => ({ ...prev, schedule: e.target.value }))}
+                placeholder="0 2 * * *"
+              />
+              <p className="text-xs text-muted-foreground">Default: Daily at 2:00 AM</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Retention Period (Days)</Label>
+              <Input
+                type="number"
+                value={config.retention_days}
+                onChange={(e) => setConfig(prev => ({ ...prev, retention_days: parseInt(e.target.value) }))}
+              />
+            </div>
+            <div className="flex items-center space-x-2 pt-8">
+              <Switch
+                id="compress"
+                checked={config.compress}
+                onCheckedChange={(checked) => setConfig(prev => ({ ...prev, compress: checked }))}
+              />
+              <Label htmlFor="compress">Compress Backups (gzip)</Label>
+            </div>
+          </div>
+
+          <div className="flex space-x-2">
+            <Button onClick={saveConfig} disabled={loading}>
+              {loading ? 'Saving...' : 'Save Configuration'}
+            </Button>
+            <Button onClick={createBackup} disabled={loading} variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Backup Now
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Backup Files List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Backup Files</CardTitle>
+          <CardDescription>
+            Manage your database backup files
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {backups.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">No backups found</p>
+          ) : (
+            <div className="space-y-2">
+              {backups.map((backup) => (
+                <div key={backup.filename} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium">{backup.filename}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(backup.created_at).toLocaleString()} • {formatBytes(backup.size)}
+                    </p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open(`/api/erp/backups/${backup.filename}/download`, '_blank')}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteBackup(backup.filename)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

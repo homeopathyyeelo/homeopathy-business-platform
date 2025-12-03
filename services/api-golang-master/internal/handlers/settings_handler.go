@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type AppSetting struct {
+type LegacyAppSetting struct {
 	ID          string          `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Key         string          `gorm:"uniqueIndex;size:200;not null" json:"key"`
 	Category    string          `gorm:"index;size:100;not null" json:"category"`
@@ -36,14 +36,18 @@ func (h *SettingsHandler) GetSettings(c *gin.Context) {
 	limit := 100
 	offset := 0
 	if v := c.Query("limit"); v != "" {
-		if n, err := strconv.Atoi(v); err == nil { limit = n }
+		if n, err := strconv.Atoi(v); err == nil {
+			limit = n
+		}
 	}
 	if v := c.Query("offset"); v != "" {
-		if n, err := strconv.Atoi(v); err == nil { offset = n }
+		if n, err := strconv.Atoi(v); err == nil {
+			offset = n
+		}
 	}
 
-	var list []AppSetting
-	q := h.DB.Model(&AppSetting{})
+	var list []LegacyAppSetting
+	q := h.DB.Model(&LegacyAppSetting{})
 	if category != "" {
 		q = q.Where("category = ?", strings.ToLower(category))
 	}
@@ -59,7 +63,7 @@ func (h *SettingsHandler) GetSettings(c *gin.Context) {
 // GET /api/erp/settings/:key
 func (h *SettingsHandler) GetSetting(c *gin.Context) {
 	key := c.Param("key")
-	var s AppSetting
+	var s LegacyAppSetting
 	if err := h.DB.Where("key = ?", key).First(&s).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"success": false, "error": "not found"})
@@ -87,11 +91,17 @@ func (h *SettingsHandler) UpsertSetting(c *gin.Context) {
 
 	if body.Category == "" {
 		// infer category from key prefix e.g. ai.inventoryAgentThreshold -> ai
-		if i := strings.Index(key, "."); i > 0 { body.Category = key[:i] } else { body.Category = "system" }
+		if i := strings.Index(key, "."); i > 0 {
+			body.Category = key[:i]
+		} else {
+			body.Category = "system"
+		}
 	}
-	if body.Type == "" { body.Type = "json" }
+	if body.Type == "" {
+		body.Type = "json"
+	}
 
-	var s AppSetting
+	var s LegacyAppSetting
 	err := h.DB.Where("key = ?", key).First(&s).Error
 	if err == nil {
 		// update
@@ -111,11 +121,11 @@ func (h *SettingsHandler) UpsertSetting(c *gin.Context) {
 		return
 	}
 	// create
-	s = AppSetting{
-		Key: key,
-		Category: strings.ToLower(body.Category),
-		Type: body.Type,
-		Value: body.Value,
+	s = LegacyAppSetting{
+		Key:         key,
+		Category:    strings.ToLower(body.Category),
+		Type:        body.Type,
+		Value:       body.Value,
 		Description: body.Description,
 	}
 	if err := h.DB.Create(&s).Error; err != nil {

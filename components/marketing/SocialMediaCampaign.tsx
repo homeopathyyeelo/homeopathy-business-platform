@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Facebook, Instagram, CalendarIcon, ImageIcon } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { golangAPI } from "@/lib/api";
 
 const SocialMediaCampaign = () => {
   const { toast } = useToast();

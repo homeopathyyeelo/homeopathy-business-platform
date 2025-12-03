@@ -87,7 +87,7 @@ export default function SmartInsights({ pageType, data, className = "" }: SmartI
 
     try {
       // Fetch dashboard stats
-      const response = await fetch('/api/dashboard/stats');
+      const response = await fetch('/api/erp/dashboard/stats');
       const stats = await response.json();
 
       if (stats.success) {

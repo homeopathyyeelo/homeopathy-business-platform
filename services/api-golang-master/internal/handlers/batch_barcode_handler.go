@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -21,15 +22,15 @@ func NewBatchBarcodeHandler(db *gorm.DB) *BatchBarcodeHandler {
 // Creates new batch with optional barcode generation
 func (h *BatchBarcodeHandler) CreateBatch(c *gin.Context) {
 	var req struct {
-		ProductID       string    `json:"product_id" binding:"required"`
-		BatchNumber     string    `json:"batch_number" binding:"required"`
-		Quantity        float64   `json:"quantity" binding:"required"`
-		UnitCost        float64   `json:"unit_cost"`
-		SellingPrice    float64   `json:"selling_price"`
-		MRP             float64   `json:"mrp"`
-		ExpiryDate      time.Time `json:"expiry_date"`
+		ProductID         string    `json:"product_id" binding:"required"`
+		BatchNumber       string    `json:"batch_number" binding:"required"`
+		Quantity          float64   `json:"quantity" binding:"required"`
+		UnitCost          float64   `json:"unit_cost"`
+		SellingPrice      float64   `json:"selling_price"`
+		MRP               float64   `json:"mrp"`
+		ExpiryDate        time.Time `json:"expiry_date"`
 		ManufacturingDate time.Time `json:"manufacturing_date"`
-		GenerateBarcode bool      `json:"generate_barcode"` // Option 2: batch-level barcode
+		GenerateBarcode   bool      `json:"generate_barcode"` // Option 2: batch-level barcode
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -52,18 +53,18 @@ func (h *BatchBarcodeHandler) CreateBatch(c *gin.Context) {
 
 	// Create batch record
 	batch := map[string]interface{}{
-		"id":                  uuid.New().String(),
-		"product_id":          req.ProductID,
-		"batch_number":        req.BatchNumber,
-		"quantity":            req.Quantity,
-		"available_quantity":  req.Quantity,
-		"unit_cost":           req.UnitCost,
-		"selling_price":       req.SellingPrice,
-		"mrp":                 req.MRP,
-		"expiry_date":         req.ExpiryDate,
-		"manufacturing_date":  req.ManufacturingDate,
-		"is_active":           true,
-		"created_at":          time.Now(),
+		"id":                 uuid.New().String(),
+		"product_id":         req.ProductID,
+		"batch_number":       req.BatchNumber,
+		"quantity":           req.Quantity,
+		"available_quantity": req.Quantity,
+		"unit_cost":          req.UnitCost,
+		"selling_price":      req.SellingPrice,
+		"mrp":                req.MRP,
+		"expiry_date":        req.ExpiryDate,
+		"manufacturing_date": req.ManufacturingDate,
+		"is_active":          true,
+		"created_at":         time.Now(),
 	}
 
 	// Option 2: Generate unique barcode for this batch
@@ -152,11 +153,11 @@ func (h *BatchBarcodeHandler) AllocateBatch(c *gin.Context) {
 		}
 
 		allocations = append(allocations, map[string]interface{}{
-			"batch_id":       batch.ID,
-			"batch_number":   batch.BatchNumber,
-			"quantity":       remainingQty,
-			"selling_price":  batch.SellingPrice,
-			"expiry_date":    batch.ExpiryDate,
+			"batch_id":      batch.ID,
+			"batch_number":  batch.BatchNumber,
+			"quantity":      remainingQty,
+			"selling_price": batch.SellingPrice,
+			"expiry_date":   batch.ExpiryDate,
 		})
 	} else {
 		// Auto-allocate using FEFO/FIFO
@@ -194,11 +195,11 @@ func (h *BatchBarcodeHandler) AllocateBatch(c *gin.Context) {
 			}
 
 			allocations = append(allocations, map[string]interface{}{
-				"batch_id":       batch.ID,
-				"batch_number":   batch.BatchNumber,
-				"quantity":       allocQty,
-				"selling_price":  batch.SellingPrice,
-				"expiry_date":    batch.ExpiryDate,
+				"batch_id":      batch.ID,
+				"batch_number":  batch.BatchNumber,
+				"quantity":      allocQty,
+				"selling_price": batch.SellingPrice,
+				"expiry_date":   batch.ExpiryDate,
 			})
 
 			remainingQty -= allocQty
@@ -206,10 +207,10 @@ func (h *BatchBarcodeHandler) AllocateBatch(c *gin.Context) {
 
 		if remainingQty > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error":         "Insufficient stock",
-				"requested":     req.Quantity,
-				"available":     req.Quantity - remainingQty,
-				"short_by":      remainingQty,
+				"error":     "Insufficient stock",
+				"requested": req.Quantity,
+				"available": req.Quantity - remainingQty,
+				"short_by":  remainingQty,
 			})
 			return
 		}
@@ -219,6 +220,103 @@ func (h *BatchBarcodeHandler) AllocateBatch(c *gin.Context) {
 		"success":     true,
 		"allocations": allocations,
 		"strategy":    strategy,
+	})
+}
+
+// GetAllBatches - GET /api/erp/products/batches
+// Returns all inventory batches with product details, filtering, and pagination
+func (h *BatchBarcodeHandler) GetAllBatches(c *gin.Context) {
+	// Query parameters
+	search := c.Query("search")
+	status := c.DefaultQuery("status", "all") // all, active, expired, low_stock
+	limit := c.DefaultQuery("limit", "100")
+	offset := c.DefaultQuery("offset", "0")
+
+	type BatchResult struct {
+		ID                string     `json:"id"`
+		ProductID         string     `json:"product_id"`
+		ProductName       string     `json:"product_name"`
+		SKU               string     `json:"sku"`
+		Barcode           string     `json:"barcode"`
+		CategoryName      string     `json:"category_name"`
+		BrandName         string     `json:"brand_name"`
+		BatchNumber       string     `json:"batch_number"`
+		Quantity          float64    `json:"quantity"`
+		AvailableQuantity float64    `json:"available_quantity"`
+		UnitCost          float64    `json:"unit_cost"`
+		SellingPrice      float64    `json:"selling_price"`
+		MRP               float64    `json:"mrp"`
+		ExpiryDate        *time.Time `json:"expiry_date"`
+		ManufacturingDate *time.Time `json:"manufacturing_date"`
+		Location          string     `json:"location"`
+		IsActive          bool       `json:"is_active"`
+		IsExpired         bool       `json:"is_expired"`
+		DaysToExpiry      int        `json:"days_to_expiry"`
+		CreatedAt         time.Time  `json:"created_at"`
+	}
+
+	var batches []BatchResult
+	query := h.db.Table("inventory_batches AS ib").
+		Select(`
+			ib.id, ib.product_id, ib.batch_number,
+			ib.quantity, ib.available_quantity,
+			ib.unit_cost, ib.selling_price, ib.mrp,
+			ib.expiry_date, ib.manufacturing_date,
+			ib.location, ib.is_active, ib.is_expired,
+			ib.created_at,
+			p.name AS product_name, p.sku, p.barcode,
+			c.name AS category_name,
+			b.name AS brand_name,
+			CASE 
+				WHEN ib.expiry_date IS NULL THEN 999999
+				ELSE EXTRACT(DAY FROM (ib.expiry_date - NOW()))::int
+			END AS days_to_expiry
+		`).
+		Joins("LEFT JOIN products p ON p.id = ib.product_id").
+		Joins("LEFT JOIN categories c ON c.id = p.category_id").
+		Joins("LEFT JOIN brands b ON b.id = p.brand_id")
+
+	// Apply filters
+	if search != "" {
+		query = query.Where("LOWER(p.name) LIKE ? OR LOWER(p.sku) LIKE ? OR LOWER(ib.batch_number) LIKE ?",
+			"%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	switch status {
+	case "active":
+		query = query.Where("ib.is_active = true AND ib.is_expired = false")
+	case "expired":
+		query = query.Where("ib.is_expired = true OR ib.expiry_date < NOW()")
+	case "low_stock":
+		query = query.Where("ib.available_quantity > 0 AND ib.available_quantity < 10")
+	}
+
+	// Count total
+	var total int64
+	countQuery := *query
+	countQuery.Count(&total)
+
+	// Pagination
+	query = query.Limit(100).Offset(0)
+	if limit != "" {
+		query = query.Limit(100) // Max 100
+	}
+	if offset != "" {
+		query = query.Offset(0)
+	}
+
+	query = query.Order("ib.created_at DESC")
+
+	if err := query.Find(&batches).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch batches"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    batches,
+		"count":   len(batches),
+		"total":   total,
 	})
 }
 

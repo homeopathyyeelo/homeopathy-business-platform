@@ -13,8 +13,12 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 	gmb "google.golang.org/api/mybusinessaccountmanagement/v1"
+	gmbInfo "google.golang.org/api/mybusinessbusinessinformation/v1"
 	"google.golang.org/api/option"
 	"gorm.io/gorm"
+
+	"github.com/yeelo/homeopathy-erp/internal/models"
+	"github.com/yeelo/homeopathy-erp/internal/services"
 )
 
 const (
@@ -26,22 +30,8 @@ const (
 
 // GMBHandler provides endpoints for Google My Business automation
 type GMBHandler struct {
-	DB *gorm.DB
-}
-
-// GMBAccount represents a connected Google My Business account
-type GMBAccount struct {
-	gorm.Model
-	UserID       string    `json:"user_id" gorm:"index"`
-	AccountID    string    `json:"account_id" gorm:"uniqueIndex"`
-	AccountName  string    `json:"account_name"`
-	LocationID   string    `json:"location_id" gorm:"index"`
-	LocationName string    `json:"location_name"`
-	AccessToken  string    `json:"-"`
-	RefreshToken string    `json:"-"`
-	TokenExpiry  time.Time `json:"-"`
-	IsActive     bool      `json:"is_active" gorm:"default:true"`
-	LastSyncedAt time.Time `json:"last_synced_at"`
+	DB             *gorm.DB
+	ContentService *services.GMBContentService
 }
 
 // getOAuthConfig returns the OAuth2 configuration
@@ -61,12 +51,12 @@ func (h *GMBHandler) getOAuthConfig() *oauth2.Config {
 }
 
 // refreshToken refreshes the access token using the refresh token
-func (h *GMBHandler) refreshToken(account *GMBAccount) (*oauth2.Token, error) {
+func (h *GMBHandler) refreshToken(account *models.GMBAccount) (*oauth2.Token, error) {
 	// Create a token source from the stored refresh token
 	token := &oauth2.Token{
 		AccessToken:  account.AccessToken,
 		RefreshToken: account.RefreshToken,
-		Expiry:       account.TokenExpiry,
+		Expiry:       account.TokenExpiresAt,
 	}
 
 	// Get OAuth config
@@ -84,7 +74,7 @@ func (h *GMBHandler) refreshToken(account *GMBAccount) (*oauth2.Token, error) {
 	// Update the account with the new tokens
 	account.AccessToken = newToken.AccessToken
 	account.RefreshToken = newToken.RefreshToken
-	account.TokenExpiry = newToken.Expiry
+	account.TokenExpiresAt = newToken.Expiry
 
 	// Save the updated tokens
 	if err := h.DB.Save(account).Error; err != nil {
@@ -95,7 +85,14 @@ func (h *GMBHandler) refreshToken(account *GMBAccount) (*oauth2.Token, error) {
 }
 
 func NewGMBHandler(db *gorm.DB) *GMBHandler {
-	return &GMBHandler{DB: db}
+	// Get OpenAI API key from config service
+	configService := GetConfigService(db)
+	apiKey := configService.GetOpenAIAPIKey()
+
+	return &GMBHandler{
+		DB:             db,
+		ContentService: services.NewGMBContentService(apiKey),
+	}
 }
 
 // GetAccount returns basic connection info for the current GMB account
@@ -123,8 +120,8 @@ func (h *GMBHandler) GetAccount(c *gin.Context) {
 	}
 
 	// Get active account for user
-	var account GMBAccount
-	err := h.DB.Where("user_id = ? AND is_active = ?", userID, true).First(&account).Error
+	var account models.GMBAccount
+	err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).First(&account).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -146,7 +143,7 @@ func (h *GMBHandler) GetAccount(c *gin.Context) {
 	}
 
 	// Check if token is expired or about to expire (within 5 minutes)
-	tokenExpired := time.Now().Add(5 * time.Minute).After(account.TokenExpiry)
+	tokenExpired := time.Now().Add(5 * time.Minute).After(account.TokenExpiresAt)
 
 	status := "connected"
 	if tokenExpired {
@@ -160,7 +157,7 @@ func (h *GMBHandler) GetAccount(c *gin.Context) {
 			"businessName":   account.AccountName,
 			"locationId":     account.LocationID,
 			"connectedUser":  "",
-			"tokenExpiresAt": account.TokenExpiry.Format(time.RFC3339),
+			"tokenExpiresAt": account.TokenExpiresAt.Format(time.RFC3339),
 			"status":         status,
 		},
 	})
@@ -278,32 +275,77 @@ func (h *GMBHandler) OAuthCallback(c *gin.Context) {
 		return
 	}
 
-	// For simplicity, we'll use the first account
 	// In a production app, you might want to let the user choose
-	account := accountsResp.Accounts[0]
+	var account *gmb.Account
 
-	// Get location information (optional).
-	// NOTE: mybusinessaccountmanagement API does not expose locations directly on the account
-	// service in this client; for now we keep these empty and can later wire to the
-	// Business Information API if needed.
+	// Prioritize "YEELO Homeopathy" account
+	targetName := "YEELO HOMEOPATHY"
+	for _, acc := range accountsResp.Accounts {
+		if acc.AccountName == targetName {
+			account = acc
+			break
+		}
+	}
+
+	// If not found, fallback to first available account
+	if account == nil && len(accountsResp.Accounts) > 0 {
+		account = accountsResp.Accounts[0]
+	} else if account == nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "No valid GMB accounts found",
+		})
+		return
+	}
+
+	// Create Business Information service
+	infoSrv, err := gmbInfo.NewService(context.Background(), option.WithHTTPClient(client))
+	if err != nil {
+		log.Printf("Failed to create GMB Info service: %v", err)
+		// Continue without location info if service fails
+	}
+
 	var locationID, locationName string
 
+	// Fetch locations for the account
+	if infoSrv != nil && account != nil {
+		// The account.Name is in format "accounts/{accountId}"
+		locationsResp, err := infoSrv.Accounts.Locations.List(account.Name).ReadMask("name,title,storeCode").Do()
+		if err != nil {
+			log.Printf("Failed to fetch locations: %v", err)
+		} else if len(locationsResp.Locations) > 0 {
+			// Pick the first location or match by name if needed
+			// For now, we take the first one
+			loc := locationsResp.Locations[0]
+			locationID = loc.Name // Format: accounts/{accountId}/locations/{locationId}
+			locationName = loc.Title
+
+			// Try to find a location that matches "Homeopathy" or "Yeelo" if multiple exist
+			for _, l := range locationsResp.Locations {
+				if l.Title == "YEELO HOMEOPATHY" || l.Title == "Yeelo Homeopathy" {
+					locationID = l.Name
+					locationName = l.Title
+					break
+				}
+			}
+		}
+	}
+
 	// Create or update the account in our database
-	gmbAccount := GMBAccount{
-		UserID:       userID,
-		AccountID:    account.Name,
-		AccountName:  account.AccountName,
-		LocationID:   locationID,
-		LocationName: locationName,
-		AccessToken:  token.AccessToken,
-		RefreshToken: token.RefreshToken,
-		TokenExpiry:  token.Expiry,
-		IsActive:     true,
-		LastSyncedAt: time.Now(),
+	gmbAccount := models.GMBAccount{
+		CreatedBy:      userID,
+		AccountID:      account.Name,
+		AccountName:    account.AccountName,
+		LocationID:     locationID,
+		LocationName:   locationName,
+		AccessToken:    token.AccessToken,
+		RefreshToken:   token.RefreshToken,
+		TokenExpiresAt: token.Expiry,
+		IsActive:       true,
 	}
 
 	// Check if account already exists
-	var existingAccount GMBAccount
+	var existingAccount models.GMBAccount
 	result := h.DB.Where("account_id = ?", account.Name).First(&existingAccount)
 
 	if result.Error == nil {
@@ -345,8 +387,8 @@ func (h *GMBHandler) DisconnectAccount(c *gin.Context) {
 	}
 
 	// Get active account for user
-	var account GMBAccount
-	err := h.DB.Where("user_id = ? AND is_active = ?", userID, true).First(&account).Error
+	var account models.GMBAccount
+	err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).First(&account).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -393,8 +435,8 @@ func (h *GMBHandler) RefreshToken(c *gin.Context) {
 	}
 
 	// Get active account for user
-	var account GMBAccount
-	err := h.DB.Where("user_id = ? AND is_active = ?", userID, true).First(&account).Error
+	var account models.GMBAccount
+	err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).First(&account).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -426,7 +468,7 @@ func (h *GMBHandler) RefreshToken(c *gin.Context) {
 		"success": true,
 		"data": gin.H{
 			"access_token": newToken.AccessToken,
-			"expires_at":   account.TokenExpiry.Format(time.RFC3339),
+			"expires_at":   account.TokenExpiresAt.Format(time.RFC3339),
 		},
 	})
 }

@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { golangAPI } from "@/lib/api";
 import { getDatabaseConfig, switchToPostgreSQL, switchToSupabase } from "@/lib/config/database-connection";
 import { checkProductionHealth } from "@/lib/config/production-db";
 

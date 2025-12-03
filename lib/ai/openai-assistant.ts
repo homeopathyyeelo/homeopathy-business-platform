@@ -11,10 +11,18 @@
  */
 
 import OpenAI from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/openai-config';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// OpenAI client will be initialized dynamically
+let openai: OpenAI | null = null;
+
+async function getOpenAIClient(): Promise<OpenAI> {
+  if (!openai) {
+    const apiKey = await getOpenAIApiKey();
+    openai = new OpenAI({ apiKey });
+  }
+  return openai;
+}
 
 // Assistant IDs (create once, reuse)
 let assistantIds = {

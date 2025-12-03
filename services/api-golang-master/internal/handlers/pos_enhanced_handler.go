@@ -66,8 +66,8 @@ type BatchInfo struct {
 func (h *POSEnhancedHandler) SearchProducts(c *gin.Context) {
 	query := c.Query("q")
 
-	if query == "" || len(query) < 2 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query too short"})
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
 		return
 	}
 

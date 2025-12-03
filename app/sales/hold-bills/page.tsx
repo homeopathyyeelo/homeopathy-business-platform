@@ -94,36 +94,49 @@ export default function HoldBillsPage() {
   const fetchHoldBills = async () => {
     setLoading(true);
     try {
-      const params: any = {
-        page: currentPage,
-        limit: 20,
-      };
-
-      if (searchQuery) params.search = searchQuery;
-      if (statusFilter !== 'all') params.status = statusFilter;
-
-      const res = await golangAPI.get('/api/erp/sales/hold-bills', { params });
-      const data = res.data?.data || {};
+      const res = await golangAPI.get('/api/erp/pos/hold-bills');
+      const holdBillsData = res.data?.data || [];
       
-      setHoldBills(data.items || []);
-      setTotalPages(data.totalPages || 1);
-      setTotalHoldBills(data.total || 0);
+      console.log('📋 Fetched hold bills:', holdBillsData);
+      
+      // Filter locally based on search and status
+      let filteredBills = holdBillsData;
+      
+      if (searchQuery) {
+        filteredBills = filteredBills.filter((bill: any) =>
+          bill.bill_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          bill.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          bill.customer_phone?.includes(searchQuery)
+        );
+      }
+      
+      // Map to match interface
+      const mappedBills = filteredBills.map((bill: any) => ({
+        ...bill,
+        hold_bill_no: bill.bill_number,
+        hold_date: bill.created_at,
+        expiry_date: null,
+        status: 'ACTIVE',
+        items_count: bill.total_items,
+        items: bill.items || [],
+        hold_reason: bill.notes || 'No reason provided',
+        created_by: bill.held_by_name,
+      }));
+      
+      setHoldBills(mappedBills);
+      setTotalPages(1);
+      setTotalHoldBills(mappedBills.length);
       
       // Calculate stats
-      const holdBillsData = data.items || [];
-      const today = new Date().toISOString().split('T')[0];
-      
       setStats({
-        active: holdBillsData.filter((h: HoldBill) => h.status === 'ACTIVE').length,
-        expired: holdBillsData.filter((h: HoldBill) => h.status === 'EXPIRED').length,
-        converted: holdBillsData.filter((h: HoldBill) => h.status === 'CONVERTED').length,
-        cancelled: holdBillsData.filter((h: HoldBill) => h.status === 'CANCELLED').length,
-        totalHoldBills: holdBillsData.length,
-        totalHoldAmount: holdBillsData.reduce((sum: number, h: HoldBill) => sum + h.total_amount, 0),
-        avgHoldAmount: holdBillsData.length > 0 ? holdBillsData.reduce((sum: number, h: HoldBill) => sum + h.total_amount, 0) / holdBillsData.length : 0,
-        expiringToday: holdBillsData.filter((h: HoldBill) => 
-          h.status === 'ACTIVE' && h.expiry_date && h.expiry_date.split('T')[0] === today
-        ).length,
+        active: mappedBills.filter((h: HoldBill) => h.status === 'ACTIVE').length,
+        expired: mappedBills.filter((h: HoldBill) => h.status === 'EXPIRED').length,
+        converted: mappedBills.filter((h: HoldBill) => h.status === 'CONVERTED').length,
+        cancelled: mappedBills.filter((h: HoldBill) => h.status === 'CANCELLED').length,
+        totalHoldBills: mappedBills.length,
+        totalHoldAmount: mappedBills.reduce((sum: number, h: HoldBill) => sum + h.total_amount, 0),
+        avgHoldAmount: mappedBills.length > 0 ? mappedBills.reduce((sum: number, h: HoldBill) => sum + h.total_amount, 0) / mappedBills.length : 0,
+        expiringToday: 0,
       });
     } catch (error) {
       console.error('Failed to fetch hold bills:', error);
@@ -247,12 +260,26 @@ export default function HoldBillsPage() {
     }
   };
 
+  // Resume bill in POS
+  const resumeInPOS = (holdBillId: string) => {
+    // Store the hold bill ID in sessionStorage so POS can load it
+    sessionStorage.setItem('resume_hold_bill_id', holdBillId);
+    
+    toast({
+      title: 'Redirecting to POS',
+      description: 'Loading bill into POS...',
+    });
+    
+    // Redirect to POS page
+    router.push('/sales/pos');
+  };
+
   // Delete hold bill
   const deleteHoldBill = async (holdBillId: string) => {
     if (!confirm('Are you sure you want to delete this hold bill? This action cannot be undone.')) return;
 
     try {
-      const res = await golangAPI.delete(`/api/erp/sales/hold-bills/${holdBillId}`);
+      const res = await golangAPI.delete(`/api/erp/pos/hold-bills/${holdBillId}`);
       
       if (res.data?.success) {
         toast({
@@ -262,10 +289,11 @@ export default function HoldBillsPage() {
         
         fetchHoldBills();
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Failed to delete hold bill:', error);
       toast({
         title: 'Error',
-        description: 'Failed to delete hold bill',
+        description: error?.response?.data?.error || 'Failed to delete hold bill',
         variant: 'destructive',
       });
     }
@@ -537,13 +565,11 @@ export default function HoldBillsPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => {
-                                  setSelectedHoldBill(holdBill);
-                                  setShowConvertDialog(true);
-                                }}
-                                className="h-8 w-8 p-0 text-green-600"
+                                onClick={() => resumeInPOS(holdBill.id)}
+                                className="h-8 w-8 p-0 text-blue-600"
+                                title="Resume in POS"
                               >
-                                <Play className="w-4 h-4" />
+                                <ShoppingCart className="w-4 h-4" />
                               </Button>
                             )}
                             {holdBill.status === 'ACTIVE' && (

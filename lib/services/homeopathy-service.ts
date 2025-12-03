@@ -2,13 +2,21 @@
 // Specialized for homeopathic pharmacy management
 
 import { PrismaClient } from '@prisma/client'
-import { OpenAI } from 'openai'
-import { z } from 'zod'
+import OpenAI from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/openai-config';
 
 const prisma = new PrismaClient()
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+
+// Initialize OpenAI client dynamically
+let openai: OpenAI | null = null;
+
+async function getOpenAIClient(): Promise<OpenAI> {
+  if (!openai) {
+    const apiKey = await getOpenAIApiKey();
+    openai = new OpenAI({ apiKey });
+  }
+  return openai;
+}
 
 // ============================================================================
 // HOMEOPATHY-SPECIFIC INTERFACES

@@ -28,11 +28,28 @@ interface Batch {
   manufacturing_date: string;
   expiry_date: string;
   quantity: number;
-  remaining_quantity: number;
-  cost_price: number;
+  available_quantity: number;
+  remaining_quantity?: number;
+  unit_cost: number;
+  cost_price?: number;
   selling_price: number;
-  status: 'active' | 'expired' | 'low_stock' | 'out_of_stock';
+  mrp: number;
+  is_active: boolean;
+  is_expired: boolean;
+  days_to_expiry: number;
+  status?: 'active' | 'expired' | 'low_stock' | 'out_of_stock';
   location?: string;
+}
+
+// Helper function to calculate batch status
+function getBatchStatus(batch: Batch): string {
+  if (batch.status) return batch.status; // Use existing status if available
+  
+  if (batch.is_expired || batch.days_to_expiry < 0) return 'expired';
+  if (!batch.is_active) return 'out_of_stock';
+  if (batch.available_quantity === 0) return 'out_of_stock';
+  if (batch.available_quantity < 10) return 'low_stock';
+  return 'active';
 }
 
 export default function BatchesPage() {
@@ -69,7 +86,8 @@ export default function BatchesPage() {
       batch.batch_number?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesProduct = selectedProduct === "all" || batch.product_id === selectedProduct;
-    const matchesStatus = selectedStatus === "all" || batch.status === selectedStatus;
+    const batchStatus = getBatchStatus(batch);
+    const matchesStatus = selectedStatus === "all" || batchStatus === selectedStatus;
 
     return matchesSearch && matchesProduct && matchesStatus;
   });
@@ -129,10 +147,14 @@ export default function BatchesPage() {
 
   // Calculate stats
   const totalBatches = batches.length;
-  const activeBatches = batches.filter((b: Batch) => b.status === 'active').length;
-  const expiredBatches = batches.filter((b: Batch) => b.status === 'expired').length;
-  const lowStockBatches = batches.filter((b: Batch) => b.status === 'low_stock').length;
-  const totalValue = batches.reduce((sum: number, b: Batch) => sum + (b.remaining_quantity * b.cost_price), 0);
+  const activeBatches = batches.filter((b: Batch) => getBatchStatus(b) === 'active').length;
+  const expiredBatches = batches.filter((b: Batch) => getBatchStatus(b) === 'expired').length;
+  const lowStockBatches = batches.filter((b: Batch) => getBatchStatus(b) === 'low_stock').length;
+  const totalValue = batches.reduce((sum: number, b: Batch) => {
+    const qty = b.available_quantity ?? b.remaining_quantity ?? 0;
+    const cost = b.unit_cost ?? b.cost_price ?? 0;
+    return sum + (qty * cost);
+  }, 0);
 
   return (
     <div className="space-y-6">
@@ -275,20 +297,29 @@ export default function BatchesPage() {
                   <TableRow key={batch.id}>
                     <TableCell className="font-medium">{batch.product_name}</TableCell>
                     <TableCell>{batch.batch_number}</TableCell>
-                    <TableCell>{new Date(batch.manufacturing_date).toLocaleDateString()}</TableCell>
-                    <TableCell>{new Date(batch.expiry_date).toLocaleDateString()}</TableCell>
-                    <TableCell>{batch.quantity}</TableCell>
-                    <TableCell>{batch.remaining_quantity}</TableCell>
-                    <TableCell>{batch.cost_price}</TableCell>
-                    <TableCell>{batch.selling_price}</TableCell>
                     <TableCell>
-                      <Badge variant={
-                        batch.status === 'active' ? 'default' :
-                        batch.status === 'low_stock' ? 'secondary' :
-                        batch.status === 'expired' ? 'destructive' : 'outline'
-                      }>
-                        {batch.status.replace('_', ' ')}
-                      </Badge>
+                      {batch.manufacturing_date ? new Date(batch.manufacturing_date).toLocaleDateString() : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                      {batch.expiry_date ? new Date(batch.expiry_date).toLocaleDateString() : 'No Expiry'}
+                    </TableCell>
+                    <TableCell>{batch.quantity}</TableCell>
+                    <TableCell>{batch.available_quantity ?? batch.remaining_quantity ?? 0}</TableCell>
+                    <TableCell>₹{batch.unit_cost ?? batch.cost_price ?? 0}</TableCell>
+                    <TableCell>₹{batch.selling_price}</TableCell>
+                    <TableCell>
+                      {(() => {
+                        const status = getBatchStatus(batch);
+                        return (
+                          <Badge variant={
+                            status === 'active' ? 'default' :
+                            status === 'low_stock' ? 'secondary' :
+                            status === 'expired' ? 'destructive' : 'outline'
+                          }>
+                            {status.replace('_', ' ')}
+                          </Badge>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell>{batch.location || 'N/A'}</TableCell>
                   </TableRow>

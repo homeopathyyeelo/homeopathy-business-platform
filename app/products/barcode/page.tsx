@@ -9,9 +9,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Printer, Download, X, Eye, Loader2 } from "lucide-react";
+import { Search, Printer, Download, X, Eye, Loader2, Filter, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { golangAPI } from '@/lib/api';
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Product {
   id: string;
@@ -20,6 +22,10 @@ interface Product {
   barcode: string;
   category?: string;
   brand?: string;
+  potency?: string;
+  form?: string;
+  pack_size?: string;
+  stock?: number;
   mrp?: number;
 }
 
@@ -40,7 +46,7 @@ const barcodeTemplates: BarcodeTemplate[] = [
 ];
 
 const printLayouts = [
-  { id: 'thermal-3x5-10', name: '3x5" Thermal (10 per page)', width: 3, height: 5, perPage: 10, cols: 2, rows: 5 },
+  { id: 'thermal-4x6-12', name: '4x6" Thermal (12 per page)', width: 4, height: 6, perPage: 12, cols: 2, rows: 6 },
   { id: 'thermal-3x5-single', name: '3x5" Thermal (Single Sticker)', width: 3, height: 2, perPage: 1, cols: 1, rows: 1 },
 ];
 
@@ -116,6 +122,15 @@ export default function BarcodePrintPage() {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(barcodeTemplates[0].id);
   const [selectedLayout, setSelectedLayout] = useState<string>(printLayouts[0].id);
+  
+  // Filter states
+  const [showFilters, setShowFilters] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [selectedPotency, setSelectedPotency] = useState<string>("all");
+  const [selectedForm, setSelectedForm] = useState<string>("all");
+  const [selectedPackSize, setSelectedPackSize] = useState<string>("all");
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("TSE_TE244");
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -158,23 +173,267 @@ export default function BarcodePrintPage() {
     }
   };
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.barcode.includes(searchTerm)
-  );
+  // Quick select functions
+  const quickSelectTop = (count: number) => {
+    const topProducts = filteredProducts.slice(0, count);
+    setSelectedProducts(new Set(topProducts.map(p => p.id)));
+    toast.success(`Selected top ${count} products`);
+  };
+
+  const selectLowStock = () => {
+    const lowStockProducts = filteredProducts.filter(p => (p.stock || 0) < 10);
+    setSelectedProducts(new Set(lowStockProducts.map(p => p.id)));
+    toast.success(`Selected ${lowStockProducts.length} low stock products`);
+  };
+
+  const clearFilters = () => {
+    setSelectedCategory("all");
+    setSelectedBrand("all");
+    setSelectedPotency("all");
+    setSelectedForm("all");
+    setSelectedPackSize("all");
+    setSearchTerm("");
+    toast.success("Filters cleared");
+  };
+
+  // Extract unique filter values
+  const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
+  const brands = Array.from(new Set(products.map(p => p.brand).filter(Boolean)));
+  const potencies = Array.from(new Set(products.map(p => p.potency).filter(Boolean)));
+  const forms = Array.from(new Set(products.map(p => p.form).filter(Boolean)));
+  const packSizes = Array.from(new Set(products.map(p => p.pack_size).filter(Boolean)));
+
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.barcode.includes(searchTerm);
+    
+    const matchesCategory = selectedCategory === "all" || p.category === selectedCategory;
+    const matchesBrand = selectedBrand === "all" || p.brand === selectedBrand;
+    const matchesPotency = selectedPotency === "all" || p.potency === selectedPotency;
+    const matchesForm = selectedForm === "all" || p.form === selectedForm;
+    const matchesPackSize = selectedPackSize === "all" || p.pack_size === selectedPackSize;
+    
+    return matchesSearch && matchesCategory && matchesBrand && matchesPotency && matchesForm && matchesPackSize;
+  });
 
   const handlePrintClick = () => {
     if (selectedProducts.size === 0) {
       toast.error("Please select at least one product");
       return;
     }
+    
+    // Show template selection modal (old style)
     setShowTemplateDialog(true);
   };
 
   const handlePreview = () => {
     setShowTemplateDialog(false);
     setShowPreviewDialog(true);
+  };
+
+  // Direct thermal print function - 12 labels per 3x5 sheet
+  const handleDirectThermalPrint = async () => {
+    try {
+      setShowPreviewDialog(false);
+      toast.loading("Generating barcodes...");
+      
+      const selectedProductsList = products.filter(p => selectedProducts.has(p.id));
+      
+      // Create hidden iframe for silent printing
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!iframeDoc) {
+        toast.error("Failed to create print document");
+        return;
+      }
+
+      // Build HTML for 4x6 inch label sheets - 12 labels per sheet (2 columns × 6 rows)
+      let printHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Barcode Labels</title>
+          <style>
+            /* 4x6 inch thermal label sheet - 12 labels (2 cols × 6 rows) */
+            @page {
+              size: 4in 6in;
+              margin: 0;
+            }
+            
+            @media print {
+              html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+              
+              .page {
+                margin: 0 !important;
+                padding: 0 !important;
+              }
+            }
+            
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            html, body {
+              margin: 0;
+              padding: 0;
+              font-family: Arial, sans-serif;
+              background: white;
+            }
+            
+            .page {
+              width: 4in;
+              height: 6in;
+              padding: 0;
+              display: grid;
+              grid-template-columns: 2in 2in;
+              grid-template-rows: repeat(6, 1in);
+              gap: 0;
+              page-break-after: always;
+              page-break-inside: avoid;
+            }
+            
+            .page:last-child {
+              page-break-after: auto;
+            }
+            
+            .label {
+              width: 100%;
+              height: 100%;
+              padding: 2px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              border: 0.2px dotted #ccc;
+              overflow: hidden;
+            }
+            
+            .product-name {
+              font-size: 8pt;
+              font-weight: 700;
+              text-align: center;
+              margin: 0;
+              line-height: 1.1;
+              max-height: 0.3in;
+              overflow: hidden;
+              color: #000;
+              width: 100%;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+            
+            .barcode-image {
+              width: 1.6in;
+              height: auto;
+              max-height: 0.4in;
+              margin: 2px 0;
+            }
+            
+            .barcode-number {
+              font-family: 'Courier New', monospace;
+              font-size: 7pt;
+              font-weight: 600;
+              margin: 0;
+              letter-spacing: 0.5px;
+              color: #000;
+              line-height: 1;
+            }
+            
+            .mrp {
+              font-size: 9pt;
+              font-weight: 800;
+              margin-top: 2px;
+              color: #000;
+              line-height: 1;
+            }
+          </style>
+        </head>
+        <body>
+      `;
+
+      // Fetch all barcode images first
+      const labelsData = [];
+      for (const product of selectedProductsList) {
+        try {
+          const response = await fetch(`http://localhost:3005/api/erp/products/${product.id}/barcode-image`);
+          const data = await response.json();
+          labelsData.push({
+            name: product.name,
+            sku: product.sku,
+            barcode: product.barcode,
+            mrp: product.mrp,
+            image: data.data?.image || ''
+          });
+        } catch (error) {
+          console.error(`Failed to load barcode for ${product.name}`, error);
+        }
+      }
+
+      // Generate pages with 12 labels each (2 columns × 6 rows)
+      const labelsPerPage = 12;
+      const totalPages = Math.ceil(labelsData.length / labelsPerPage);
+      
+      for (let page = 0; page < totalPages; page++) {
+        printHTML += '<div class="page">';
+        
+        const startIdx = page * labelsPerPage;
+        const endIdx = Math.min(startIdx + labelsPerPage, labelsData.length);
+        
+        for (let i = startIdx; i < endIdx; i++) {
+          const label = labelsData[i];
+          printHTML += `
+            <div class="label">
+              <div class="product-name">${label.name}</div>
+              <img src="${label.image}" alt="Barcode" class="barcode-image" />
+              <div class="barcode-number">${label.barcode}</div>
+              <div class="mrp">₹${label.mrp ? label.mrp.toFixed(2) : '0.00'}</div>
+            </div>
+          `;
+        }
+        
+        // Fill remaining cells with empty labels
+        for (let i = endIdx; i < startIdx + labelsPerPage; i++) {
+          printHTML += '<div class="label"></div>';
+        }
+        
+        printHTML += '</div>';
+      }
+
+      printHTML += `
+        </body>
+        </html>
+      `;
+
+      // Write to iframe
+      iframeDoc.open();
+      iframeDoc.write(printHTML);
+      iframeDoc.close();
+
+      // Wait for images to load, then print directly
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        
+        // Remove iframe after printing
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          toast.success(`Printed ${labelsData.length} labels on ${totalPages} sheet(s)`);
+        }, 1000);
+      }, 2000);
+      
+    } catch (error) {
+      console.error("Print error:", error);
+      toast.error("Failed to print barcodes");
+    }
   };
 
   const handlePrint = () => {
@@ -198,7 +457,7 @@ export default function BarcodePrintPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Barcode Printing</h1>
-          <p className="text-muted-foreground">Select products and print barcode labels</p>
+          <p className="text-muted-foreground">12 labels per 4×6 inch thermal sheet (Safe Fit)</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -212,12 +471,171 @@ export default function BarcodePrintPage() {
           <Button
             onClick={handlePrintClick}
             disabled={selectedProducts.size === 0}
+            className="bg-primary"
           >
             <Printer className="w-4 h-4 mr-2" />
-            Print Labels ({selectedProducts.size})
+            Print Barcodes ({selectedProducts.size})
           </Button>
         </div>
       </div>
+
+      {/* Printer Setup Info */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-3">
+            <Printer className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div className="space-y-2">
+              <h3 className="font-semibold text-blue-900">Thermal Printer: TSE_TE244</h3>
+              <p className="text-sm text-blue-800">
+                ✅ <strong>12 labels per 4×6 inch sheet</strong> (Safe Fit)<br/>
+                ✅ Click "Print Barcodes" → Select printer → Click "Print Now"<br/>
+                ✅ System automatically handles margins and formatting<br/>
+                ✅ No browser print dialog - prints directly to selected printer
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Select Buttons */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">Quick Select</h3>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)}>
+              <Filter className="w-4 h-4 mr-2" />
+              {showFilters ? 'Hide' : 'Show'} Filters
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => quickSelectTop(25)}>
+              Top 25
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => quickSelectTop(50)}>
+              Top 50
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => quickSelectTop(100)}>
+              Top 100
+            </Button>
+            <Button variant="outline" size="sm" onClick={selectLowStock}>
+              Low Stock
+            </Button>
+            <Button variant="outline" size="sm" onClick={toggleSelectAll}>
+              {selectedProducts.size === filteredProducts.length ? 'Deselect' : 'Select'} All
+            </Button>
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              <X className="w-4 h-4 mr-2" />
+              Clear Filters
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Advanced Filters */}
+      {showFilters && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              Advanced Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Brand</Label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Brands" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Brands</SelectItem>
+                    {brands.map((brand) => (
+                      <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Potency</Label>
+                <Select value={selectedPotency} onValueChange={setSelectedPotency}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Potencies" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Potencies</SelectItem>
+                    {potencies.map((pot) => (
+                      <SelectItem key={pot} value={pot}>{pot}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Form</Label>
+                <Select value={selectedForm} onValueChange={setSelectedForm}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Forms" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Forms</SelectItem>
+                    {forms.map((form) => (
+                      <SelectItem key={form} value={form}>{form}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Pack Size</Label>
+                <Select value={selectedPackSize} onValueChange={setSelectedPackSize}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Sizes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sizes</SelectItem>
+                    {packSizes.map((size) => (
+                      <SelectItem key={size} value={size}>{size}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex items-center gap-2">
+              <Badge variant="secondary">
+                {filteredProducts.length} products
+              </Badge>
+              {selectedProducts.size > 0 && (
+                <Badge variant="default">
+                  {selectedProducts.size} selected
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -345,15 +763,35 @@ export default function BarcodePrintPage() {
                 </div>
               </RadioGroup>
             </div>
+            
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Select Thermal Printer</h3>
+              <Select value={selectedPrinter} onValueChange={setSelectedPrinter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select printer" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="TSE_TE244">TSE_TE244 (Default Thermal Printer)</SelectItem>
+                  <SelectItem value="system_default">System Default Printer</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-2">
+                Selected: <strong>{selectedPrinter}</strong>
+              </p>
+            </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
               Cancel
             </Button>
-            <Button onClick={handlePreview}>
+            <Button variant="outline" onClick={handlePreview}>
               <Eye className="w-4 h-4 mr-2" />
-              Preview & Print
+              Preview First
+            </Button>
+            <Button onClick={handleDirectThermalPrint} className="bg-primary">
+              <Printer className="w-4 h-4 mr-2" />
+              Print Now to {selectedPrinter}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -420,9 +858,9 @@ export default function BarcodePrintPage() {
             <Button variant="outline" onClick={() => setShowPreviewDialog(false)}>
               Close
             </Button>
-            <Button onClick={handlePrint}>
+            <Button onClick={handleDirectThermalPrint} className="bg-primary">
               <Printer className="w-4 h-4 mr-2" />
-              Print
+              Print to {selectedPrinter}
             </Button>
           </DialogFooter>
         </DialogContent>

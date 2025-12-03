@@ -99,62 +99,112 @@ export default function UniversalPOSPage() {
   const [interestAmount, setInterestAmount] = useState(0);
 
   // Barcode scanner auto-detection
-  const [barcodeBuffer, setBarcodeBuffer] = useState('');
-  const [lastKeyTime, setLastKeyTime] = useState(0);
+  const barcodeBufferRef = useRef('');
+  const lastKeyTimeRef = useRef(0);
   const [barcodeInput, setBarcodeInput] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
+  const [debugBuffer, setDebugBuffer] = useState(''); // Just for UI display
+
+  // Track if component has loaded from storage (prevents overwriting on mount)
+  const hasLoadedFromStorage = useRef(false);
 
   // Auto-detect barcode scanner (fast typing = scanner)
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       const currentTime = new Date().getTime();
-      const timeDiff = currentTime - lastKeyTime;
+      const timeDiff = currentTime - lastKeyTimeRef.current;
 
-      // If Enter key and buffer has content (barcode complete)
-      if (e.key === 'Enter' && barcodeBuffer.length > 0) {
+      console.log('🔑 Key:', e.key, 'TimeDiff:', timeDiff, 'Buffer:', barcodeBufferRef.current);
+
+      // CRITICAL: Always prevent Enter to avoid page refresh/form submission
+      if (e.key === 'Enter') {
         e.preventDefault();
-        searchByBarcode(barcodeBuffer);
-        setBarcodeBuffer('');
+        e.stopPropagation();
+
+        if (barcodeBufferRef.current.length > 0) {
+          const fullBarcode = barcodeBufferRef.current;
+          console.log('✅ FULL BARCODE CAPTURED:', fullBarcode, 'Length:', fullBarcode.length);
+
+          setIsScanning(true);
+          searchByBarcode(fullBarcode);
+
+          // Reset
+          barcodeBufferRef.current = '';
+          setDebugBuffer('');
+          lastKeyTimeRef.current = 0;
+
+          setTimeout(() => setIsScanning(false), 500);
+        }
         return;
       }
 
-      // Detect rapid typing (< 100ms between keys = scanner)
-      if (timeDiff < 100 && e.key.length === 1) {
-        setBarcodeBuffer(prev => prev + e.key);
-        setLastKeyTime(currentTime);
-      } else if (timeDiff >= 100 && e.key.length === 1) {
-        // Reset buffer if typing is slow (human)
-        setBarcodeBuffer(e.key);
-        setLastKeyTime(currentTime);
+      // Detect rapid typing (< 150ms between keys = scanner)
+      // Increased to 150ms for more reliability
+      if (timeDiff < 150 && timeDiff > 0 && e.key.length === 1) {
+        // CRITICAL: Prevent key from going to input fields
+        e.preventDefault();
+        e.stopPropagation();
+        barcodeBufferRef.current += e.key;
+        setDebugBuffer(barcodeBufferRef.current);
+        lastKeyTimeRef.current = currentTime;
+        console.log('📦 Building barcode:', barcodeBufferRef.current);
+      } else if ((timeDiff >= 150 || timeDiff === 0) && e.key.length === 1) {
+        // Reset buffer if typing is slow (human) or first key
+        barcodeBufferRef.current = e.key;
+        setDebugBuffer(e.key);
+        lastKeyTimeRef.current = currentTime;
+        console.log('🔄 Buffer reset, new scan starting:', e.key);
       }
     };
 
-    window.addEventListener('keypress', handleKeyPress);
-    return () => window.removeEventListener('keypress', handleKeyPress);
-  }, [barcodeBuffer, lastKeyTime]);
+    // Use keydown instead of keypress (keypress is deprecated)
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []); // Empty deps = stable event listener (no re-binding)
 
   // Search product by barcode
   const searchByBarcode = async (barcode: string) => {
+    console.log('🔍 Searching for barcode:', barcode);
     try {
-      const res = await golangAPI.get(`/api/erp/products/search`, {
+      const res = await golangAPI.get(`/api/erp/pos/search-products`, {
         params: { q: barcode, limit: 1 }
       });
 
-      if (res.data?.products?.length > 0) {
-        const product = res.data.products[0];
-        selectProduct(product);
+      console.log('📦 API Response:', res.data);
+
+      if (res.data?.data?.length > 0) {
+        const product = res.data.data[0];
+
+        console.log('✅ Product found:', product.name, 'Batches:', product.batches?.length || 0);
+
+        // Auto-add to cart with first batch (FEFO)
+        if (product.batches && product.batches.length > 0) {
+          addToCart(product, product.batches[0]);
+        } else {
+          addToCart(product, null);
+        }
+
         toast({
-          title: '📷 Barcode Scanned',
-          description: `${product.name} added`
+          title: '✅ Added to Cart',
+          description: `${product.name}`,
+          duration: 1000,
         });
       } else {
         toast({
-          title: 'Product Not Found',
+          title: '❌ Product Not Found',
           description: `Barcode: ${barcode}`,
-          variant: 'destructive'
+          variant: 'destructive',
+          duration: 3000
         });
       }
-    } catch (error) {
-      console.error('Barcode search error:', error);
+    } catch (error: any) {
+      console.error('❌ Barcode search error:', error);
+      toast({
+        title: '⚠️ Search Failed',
+        description: error.response?.data?.error || 'Failed to search product',
+        variant: 'destructive',
+        duration: 3000
+      });
     }
   };
 
@@ -166,13 +216,27 @@ export default function UniversalPOSPage() {
     }
   };
 
-  // Load cart from localStorage on mount and set default customer
+  // Load cart from sessionStorage on mount and set default customer
+  // Using sessionStorage instead of localStorage for better crash recovery
   useEffect(() => {
-    const savedCart = localStorage.getItem('pos_cart');
-    const savedDiscount = localStorage.getItem('pos_discount');
-    const savedBillingType = localStorage.getItem('pos_billing_type');
+    console.log('🔄 Loading cart from sessionStorage...');
+    const savedCart = sessionStorage.getItem('pos_cart');
+    const savedDiscount = sessionStorage.getItem('pos_discount');
+    const savedBillingType = sessionStorage.getItem('pos_billing_type');
 
-    if (savedCart) setCart(JSON.parse(savedCart));
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart);
+        setCart(parsedCart);
+        console.log('✅ Cart loaded from sessionStorage:', parsedCart.length, 'items');
+      } catch (error) {
+        console.error('❌ Error parsing saved cart:', error);
+        sessionStorage.removeItem('pos_cart');
+      }
+    } else {
+      console.log('📦 No saved cart found in sessionStorage (starting fresh)');
+    }
+
     if (savedDiscount) setBillDiscount(parseFloat(savedDiscount));
     if (savedBillingType) setBillingType(savedBillingType as BillingType);
 
@@ -180,13 +244,36 @@ export default function UniversalPOSPage() {
     if (!selectedCustomer && (billingType === 'RETAIL' || billingType === 'TOKEN_SALE')) {
       setSelectedCustomer(WALK_IN_CUSTOMER);
     }
+
+    // Check if we need to resume a held bill
+    const resumeHoldBillId = sessionStorage.getItem('resume_hold_bill_id');
+    if (resumeHoldBillId) {
+      console.log('📦 Auto-resuming held bill:', resumeHoldBillId);
+      // Clear the flag
+      sessionStorage.removeItem('resume_hold_bill_id');
+      // Load the bill
+      resumeBill(resumeHoldBillId);
+    }
+
+    // Mark as loaded to allow saves
+    hasLoadedFromStorage.current = true;
+    console.log('✅ Storage load complete, saves now enabled');
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to sessionStorage whenever it changes
+  // sessionStorage survives page refresh but clears on browser close
   useEffect(() => {
-    localStorage.setItem('pos_cart', JSON.stringify(cart));
-    localStorage.setItem('pos_discount', billDiscount.toString());
-    localStorage.setItem('pos_billing_type', billingType);
+    // CRITICAL: Don't save on initial mount (before load completes)
+    // This prevents overwriting saved cart with empty initial state
+    if (!hasLoadedFromStorage.current) {
+      console.log('⏭️ Skipping save (not loaded yet)');
+      return;
+    }
+
+    sessionStorage.setItem('pos_cart', JSON.stringify(cart));
+    sessionStorage.setItem('pos_discount', billDiscount.toString());
+    sessionStorage.setItem('pos_billing_type', billingType);
+    console.log('💾 Cart saved to sessionStorage:', cart.length, 'items');
   }, [cart, billDiscount, billingType]);
 
   // Product Search
@@ -439,62 +526,69 @@ export default function UniversalPOSPage() {
     const gstRate = getGSTRateForType(product, billingType);
     const unitPrice = batch?.sellingPrice || getPriceForType(product);
 
-    // Check if EXACT same product+batch+price already in cart
-    // Different sizes/batches should be separate items
-    const existingItemIndex = cart.findIndex(
-      item => item.product_id === product.id &&
-        item.batch_id === batch?.id &&
-        item.unit_price === unitPrice
-    );
+    // CRITICAL: Use functional setState to avoid stale closure issues
+    // The scanner event listener captures initial cart state, so we must use prevCart
+    setCart(prevCart => {
+      const existingItemIndex = prevCart.findIndex(
+        item => item.product_id === product.id &&
+          item.batch_id === batch?.id &&
+          item.unit_price === unitPrice
+      );
 
-    if (existingItemIndex >= 0) {
-      // Update quantity of existing item
-      const updatedCart = [...cart];
-      updatedCart[existingItemIndex].quantity += (billingType === 'RETURN' ? -1 : 1);
-      const item = updatedCart[existingItemIndex];
-      const qty = item.quantity;
-      const taxableAmount = (item.unit_price * Math.abs(qty)) - item.discount_amount;
-      const taxAmount = Math.abs(taxableAmount) * (item.tax_percent / 100);
-      item.taxable_amount = taxableAmount;
-      item.tax_amount = qty < 0 ? -taxAmount : taxAmount;
-      item.total = taxableAmount + (qty < 0 ? -taxAmount : taxAmount);
-      setCart(updatedCart);
+      if (existingItemIndex >= 0) {
+        // Update quantity of existing item
+        const updatedCart = [...prevCart];
+        updatedCart[existingItemIndex].quantity += (billingType === 'RETURN' ? -1 : 1);
+        const item = updatedCart[existingItemIndex];
+        const qty = item.quantity;
+        const taxableAmount = (item.unit_price * Math.abs(qty)) - item.discount_amount;
+        const taxAmount = Math.abs(taxableAmount) * (item.tax_percent / 100);
+        item.taxable_amount = taxableAmount;
+        item.tax_amount = qty < 0 ? -taxAmount : taxAmount;
+        item.total = taxableAmount + (qty < 0 ? -taxAmount : taxAmount);
 
-      toast({
-        title: 'Quantity updated',
-        description: `${product.name} x${Math.abs(qty)}`,
-      });
-    } else {
-      // Add new item
-      const newItem: CartItem = {
-        id: `cart-${product.id}-${batch?.id || 'nobatch'}-${Date.now()}`,
-        product_id: product.id,
-        name: product.name,
-        sku: product.sku || '',
-        batch_id: batch?.id,
-        batch_no: batch?.batchNumber || '',
-        quantity: billingType === 'RETURN' ? -1 : 1,
-        unit_price: unitPrice,
-        mrp: product.mrp || 0,
-        discount_percent: 0,
-        discount_amount: 0,
-        tax_percent: gstRate,
-        taxable_amount: unitPrice,
-        tax_amount: unitPrice * (gstRate / 100),
-        total: unitPrice * (1 + gstRate / 100),
-        stock: batch?.availableQuantity || product.stock || 0,
-        hsn_code: product.hsnCode || '',
-        gst_rate: gstRate,
-        composition: product.composition || '',
-      };
+        console.log('✅ Quantity updated:', product.name, 'New qty:', Math.abs(qty));
+        toast({
+          title: '✅ Quantity Updated',
+          description: `${product.name} x${Math.abs(qty)}`,
+          duration: 1000,
+        });
 
-      setCart([...cart, newItem]);
+        return updatedCart;
+      } else {
+        // Add new item
+        const newItem: CartItem = {
+          id: `cart-${product.id}-${batch?.id || 'nobatch'}-${Date.now()}`,
+          product_id: product.id,
+          name: product.name,
+          sku: product.sku || '',
+          batch_id: batch?.id,
+          batch_no: batch?.batchNumber || '',
+          quantity: billingType === 'RETURN' ? -1 : 1,
+          unit_price: unitPrice,
+          mrp: product.mrp || 0,
+          discount_percent: 0,
+          discount_amount: 0,
+          tax_percent: gstRate,
+          taxable_amount: unitPrice,
+          tax_amount: unitPrice * (gstRate / 100),
+          total: unitPrice * (1 + gstRate / 100),
+          stock: batch?.availableQuantity || product.stock || 0,
+          hsn_code: product.hsnCode || '',
+          gst_rate: gstRate,
+          composition: product.composition || '',
+        };
 
-      toast({
-        title: 'Added to cart',
-        description: `${product.name} x${Math.abs(newItem.quantity)}`,
-      });
-    }
+        console.log('✅ New item added:', product.name);
+        toast({
+          title: '✅ Added to Cart',
+          description: `${product.name} x${Math.abs(newItem.quantity)}`,
+          duration: 1000,
+        });
+
+        return [...prevCart, newItem];
+      }
+    });
 
     setShowBatchDialog(false);
     setSearchQuery('');
@@ -508,7 +602,7 @@ export default function UniversalPOSPage() {
       return;
     }
 
-    setCart(cart.map(item => {
+    setCart(prevCart => prevCart.map(item => {
       if (item.id === itemId) {
         const qty = billingType === 'RETURN' ? -Math.abs(newQuantity) : Math.abs(newQuantity);
         const taxableAmount = (item.unit_price * qty) - item.discount_amount;
@@ -527,7 +621,7 @@ export default function UniversalPOSPage() {
 
   // Update discount
   const updateItemDiscount = (itemId: string, discountPercent: number) => {
-    setCart(cart.map(item => {
+    setCart(prevCart => prevCart.map(item => {
       if (item.id === itemId) {
         const discountAmount = (item.unit_price * Math.abs(item.quantity)) * (discountPercent / 100);
         const taxableAmount = (item.unit_price * item.quantity) - (item.quantity < 0 ? -discountAmount : discountAmount);
@@ -547,7 +641,8 @@ export default function UniversalPOSPage() {
 
   // Remove from cart
   const removeFromCart = (itemId: string) => {
-    setCart(cart.filter(item => item.id !== itemId));
+    setCart(prevCart => prevCart.filter(item => item.id !== itemId));
+    console.log('🗑️ Item removed from cart');
   };
 
   // Clear cart
@@ -556,9 +651,15 @@ export default function UniversalPOSPage() {
       setCart([]);
       setBillDiscount(0);
       setNotes('');
-      // Clear localStorage
-      localStorage.removeItem('pos_cart');
-      localStorage.removeItem('pos_discount');
+      // Clear sessionStorage
+      sessionStorage.removeItem('pos_cart');
+      sessionStorage.removeItem('pos_discount');
+      console.log('🗑️ Cart cleared and sessionStorage removed');
+      toast({
+        title: '🗑️ Cart Cleared',
+        description: 'All items removed',
+        duration: 1500,
+      });
     }
   };
 
@@ -570,41 +671,133 @@ export default function UniversalPOSPage() {
     }
 
     try {
-      await golangAPI.post('/api/erp/pos/hold-bill', {
-        customerName: selectedCustomer?.name || 'Walk-in',
-        billData: { cart, billDiscount, billDiscountType, notes, billingType },
-        totalAmount: grandTotal,
-        itemsCount: cart.length,
-        counterId: 'COUNTER-1',
+      const response = await golangAPI.post('/api/erp/pos/hold-bill', {
+        customer_id: selectedCustomer?.id || null,
+        customer_name: selectedCustomer?.name || 'Walk-in Customer',
+        customer_phone: selectedCustomer?.phone || '',
+        items: cart,
+        sub_total: subtotal,
+        discount_amount: billDiscountType === 'amount' ? billDiscount : (subtotal * billDiscount / 100),
+        discount_percent: billDiscountType === 'percent' ? billDiscount : 0,
+        tax_amount: totalTax,
+        total_amount: grandTotal,
+        billing_type: billingType,
+        notes: notes,
+        held_by_name: 'Current User', // TODO: Get from auth
       });
 
-      toast({ title: '✅ Bill held successfully' });
+      console.log('✅ Bill held:', response.data);
+
+      toast({
+        title: '✅ Bill Held Successfully',
+        description: `Bill ${response.data?.data?.bill_number || ''} saved`,
+        duration: 2000,
+      });
+
+      // Clear cart after successful hold
       setCart([]);
-    } catch (error) {
-      toast({ title: 'Failed to hold bill', variant: 'destructive' });
+      setBillDiscount(0);
+      setNotes('');
+      sessionStorage.removeItem('pos_cart');
+      sessionStorage.removeItem('pos_discount');
+    } catch (error: any) {
+      console.error('❌ Failed to hold bill:', error);
+      toast({
+        title: 'Failed to hold bill',
+        description: error?.response?.data?.error || 'Unknown error',
+        variant: 'destructive'
+      });
     }
   };
 
   // Get held bills
   const fetchHeldBills = async () => {
     try {
-      const res = await golangAPI.get('/api/erp/pos/held-bills');
+      const res = await golangAPI.get('/api/erp/pos/hold-bills');
+      console.log('📋 Held bills fetched:', res.data);
       setHeldBills(res.data?.data || []);
       setShowHeldBillsDialog(true);
-    } catch (error) {
-      toast({ title: 'Failed to fetch held bills', variant: 'destructive' });
+    } catch (error: any) {
+      console.error('❌ Failed to fetch held bills:', error);
+      toast({
+        title: 'Failed to fetch held bills',
+        description: error?.response?.data?.error || 'Unknown error',
+        variant: 'destructive'
+      });
     }
   };
 
   // Resume bill
-  const resumeBill = (bill: any) => {
-    const billData = typeof bill.billData === 'string' ? JSON.parse(bill.billData) : bill.billData;
-    setCart(billData.cart || []);
-    setBillDiscount(billData.billDiscount || 0);
-    setNotes(billData.notes || '');
-    if (billData.billingType) setBillingType(billData.billingType);
-    setShowHeldBillsDialog(false);
-    toast({ title: 'Bill resumed' });
+  const resumeBill = async (billId: string) => {
+    try {
+      const res = await golangAPI.get(`/api/erp/pos/hold-bills/${billId}`);
+      const billData = res.data?.data;
+
+      console.log('📦 Resuming bill:', billData);
+
+      // Load cart items
+      const items = billData.items || [];
+      setCart(items);
+
+      // Load other data
+      setBillDiscount(billData.discount_amount || 0);
+      setBillDiscountType('amount');
+      setNotes(billData.notes || '');
+      setBillingType(billData.billing_type || 'RETAIL');
+
+      // Load customer if available
+      if (billData.customer_id) {
+        // You can optionally fetch and set the customer
+        // For now, we'll just show the name
+        setSelectedCustomer({
+          id: billData.customer_id,
+          name: billData.customer_name,
+          phone: billData.customer_phone,
+        } as any);
+      }
+
+      setShowHeldBillsDialog(false);
+
+      toast({
+        title: '✅ Bill Resumed',
+        description: `Loaded ${items.length} items from ${billData.bill_number}`,
+        duration: 2000,
+      });
+    } catch (error: any) {
+      console.error('❌ Failed to resume bill:', error);
+      toast({
+        title: 'Failed to resume bill',
+        description: error?.response?.data?.error || 'Unknown error',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  // Delete held bill
+  const deleteHeldBill = async (billId: string) => {
+    if (!confirm('Delete this held bill? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await golangAPI.delete(`/api/erp/pos/hold-bills/${billId}`);
+
+      toast({
+        title: '✅ Held Bill Deleted',
+        description: 'Bill removed successfully',
+        duration: 2000,
+      });
+
+      // Refresh the list
+      fetchHeldBills();
+    } catch (error: any) {
+      console.error('❌ Failed to delete held bill:', error);
+      toast({
+        title: 'Failed to delete bill',
+        description: error?.response?.data?.error || 'Unknown error',
+        variant: 'destructive'
+      });
+    }
   };
 
   // Create Order First (Order → Invoice workflow) - Simplified
@@ -620,23 +813,27 @@ export default function UniversalPOSPage() {
 
   // Direct Invoice (or Convert Order to Invoice)
   const processPayment = async () => {
+    console.log('🔵 processPayment called', { cartLength: cart.length, lastCreatedOrder });
+
     if (cart.length === 0 && !lastCreatedOrder) {
       toast({ title: 'Cart is empty', variant: 'destructive' });
       return;
     }
 
     // Validate all items have batch_id
-    const invalidItems = cart.filter(item => !item.batch_id);
-    if (invalidItems.length > 0) {
-      toast({
-        title: 'Invalid Items',
-        description: `${invalidItems.length} items missing batch information`,
-        variant: 'destructive'
-      });
-      return;
-    }
+    // Backend will auto-assign batch if missing (FEFO)
+    // const invalidItems = cart.filter(item => !item.batch_id);
+    // if (invalidItems.length > 0) {
+    //   toast({
+    //     title: 'Invalid Items',
+    //     description: `${invalidItems.length} items missing batch information`,
+    //     variant: 'destructive'
+    //   });
+    //   return;
+    // }
 
     setIsProcessing(true);
+    console.log('🟢 Starting invoice creation...');
     try {
       // Use Walk-in Customer if no customer selected for retail/token billing
       const effectiveCustomer = selectedCustomer ||
@@ -661,7 +858,7 @@ export default function UniversalPOSPage() {
           productId: item.product_id,
           productName: item.name,
           sku: item.sku,
-          batchId: item.batch_id,
+          batchId: item.batch_id || '', // Empty string triggers auto-batch selection (FEFO)
           quantity: Math.abs(item.quantity),
           unitPrice: item.unit_price,
           mrp: item.mrp,
@@ -683,6 +880,7 @@ export default function UniversalPOSPage() {
         invoiceData.orderId = lastCreatedOrder.id;
       }
 
+      console.log('🧾 Creating invoice with data:', invoiceData);
       const res = await golangAPI.post('/api/erp/pos/create-invoice', invoiceData);
 
       if (res.data?.success) {
@@ -697,9 +895,9 @@ export default function UniversalPOSPage() {
         setCart([]);
         setBillDiscount(0);
         setNotes('');
-        // Clear localStorage
-        localStorage.removeItem('pos_cart');
-        localStorage.removeItem('pos_discount');
+        // Clear sessionStorage
+        sessionStorage.removeItem('pos_cart');
+        sessionStorage.removeItem('pos_discount');
 
         setShowPaymentDialog(false);
         setShowInvoiceDialog(true);
@@ -720,11 +918,16 @@ export default function UniversalPOSPage() {
         }
       }
     } catch (error: any) {
+      console.error('❌ Invoice creation error:', error);
+      console.error('Error response:', error.response?.data);
+      const errorMessage = error.response?.data?.error || error.message || 'Invoice creation failed';
       toast({
-        title: 'Failed',
-        description: error.response?.data?.error || 'Invoice creation failed',
+        title: '❌ Invoice Creation Failed',
+        description: errorMessage,
         variant: 'destructive',
+        duration: 5000,
       });
+      alert(`ERROR: ${errorMessage}\n\nCheck browser console for details.`);
     } finally {
       setIsProcessing(false);
     }
@@ -987,6 +1190,12 @@ export default function UniversalPOSPage() {
                     setCustomerSearch(e.target.value);
                     searchCustomers(e.target.value);
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
                   className="flex-1"
                 />
                 <Button variant="outline" onClick={() => setShowCustomerDialog(true)}>
@@ -1060,8 +1269,9 @@ export default function UniversalPOSPage() {
             <div className="mb-3 space-y-2">
               <div className="flex items-center justify-between">
                 <Label className="text-sm flex items-center gap-2">
-                  <Scan className="h-4 w-4 text-green-600" />
+                  <Scan className={`h-4 w-4 ${isScanning ? 'text-blue-600 animate-pulse' : 'text-green-600'}`} />
                   Barcode Scanner
+                  {isScanning && <span className="text-xs text-blue-600 animate-pulse">Scanning...</span>}
                 </Label>
                 <Button
                   variant="link"
@@ -1073,18 +1283,20 @@ export default function UniversalPOSPage() {
                 </Button>
               </div>
               <div className="relative">
-                <Scan className="absolute left-3 top-3 h-4 w-4 text-green-600" />
+                <Scan className={`absolute left-3 top-3 h-4 w-4 ${isScanning ? 'text-blue-600 animate-pulse' : 'text-green-600'}`} />
                 <Input
+                  id="barcode-scanner-input"
                   ref={barcodeInputRef}
                   placeholder="Scan or enter barcode... (Press Enter)"
                   value={barcodeInput}
                   onChange={(e) => setBarcodeInput(e.target.value)}
                   onKeyPress={handleBarcodeInputKeyPress}
-                  className="pl-10 border-green-300 focus:border-green-500"
+                  className={`pl-10 ${isScanning ? 'border-blue-500 ring-2 ring-blue-300' : 'border-green-300 focus:border-green-500'}`}
+                  autoComplete="off"
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                ✓ Auto-detects barcode scanner | Manual entry supported
+                {debugBuffer && !isScanning ? `📝 Buffer: ${debugBuffer}` : '✓ Auto-detects barcode scanner | Manual entry supported'}
               </p>
             </div>
 
@@ -1095,6 +1307,12 @@ export default function UniversalPOSPage() {
                 placeholder="Search products (name, SKU)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
                 className="pl-10"
               />
             </div>
@@ -1641,36 +1859,83 @@ export default function UniversalPOSPage() {
 
       {/* Held Bills Dialog */}
       <Dialog open={showHeldBillsDialog} onOpenChange={setShowHeldBillsDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Held Bills</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Held Bills ({heldBills.length})
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+          <div className="space-y-3 max-h-[500px] overflow-y-auto">
             {heldBills.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No held bills</p>
+              <div className="text-center py-12">
+                <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                <p className="text-muted-foreground">No held bills</p>
+                <p className="text-sm text-muted-foreground">Bills you hold will appear here</p>
+              </div>
             ) : (
               heldBills.map((bill) => (
-                <Card key={bill.id} className="p-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">{bill.holdNo}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {bill.customerName} • {bill.itemsCount} items
+                <Card key={bill.id} className="p-4 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="outline" className="font-mono">
+                          {bill.bill_number}
+                        </Badge>
+                        <Badge variant="secondary">
+                          {bill.billing_type || 'RETAIL'}
+                        </Badge>
+                      </div>
+                      <p className="font-medium text-lg mb-1">
+                        {bill.customer_name || 'Walk-in Customer'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(bill.heldAt).toLocaleString()}
+                      <div className="flex gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Package className="h-3 w-3" />
+                          {bill.total_items} items
+                        </span>
+                        {bill.customer_phone && (
+                          <span className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {bill.customer_phone}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Held: {new Date(bill.created_at).toLocaleString()}
+                        {bill.held_by_name && ` • By ${bill.held_by_name}`}
                       </p>
+                      {bill.notes && (
+                        <p className="text-xs text-muted-foreground mt-1 italic">
+                          Note: {bill.notes}
+                        </p>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">₹{bill.totalAmount?.toFixed(2)}</p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => resumeBill(bill)}
-                        className="mt-2"
-                      >
-                        Resume
-                      </Button>
+                    <div className="text-right flex flex-col items-end gap-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total Amount</p>
+                        <p className="font-bold text-2xl text-primary">
+                          ₹{bill.total_amount?.toFixed(2)}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => resumeBill(bill.id)}
+                          className="gap-1"
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                          Resume
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteHeldBill(bill.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </Card>

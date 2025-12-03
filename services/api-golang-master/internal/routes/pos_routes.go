@@ -34,10 +34,12 @@ func RegisterPOSRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		// ============================================================================
 		// HELD BILLS (PARK & RESUME)
 		// ============================================================================
-		pos.POST("/hold-bill", posHandler.HoldBill)
-		pos.GET("/held-bills", posHandler.GetHeldBills)
-		pos.POST("/resume-bill/:id", posHandler.ResumeBill)
-		pos.DELETE("/held-bill/:id", posHandler.DeleteHeldBill)
+		// NOTE: Hold bill routes moved to main.go (using new HoldBillHandler)
+		// Old routes commented out to prevent duplicate registration
+		// pos.POST("/hold-bill", posHandler.HoldBill)
+		// pos.GET("/held-bills", posHandler.GetHeldBills)
+		// pos.POST("/resume-bill/:id", posHandler.ResumeBill)
+		// pos.DELETE("/held-bill/:id", posHandler.DeleteHeldBill)
 
 		// ============================================================================
 		// SALES RETURNS & REFUNDS

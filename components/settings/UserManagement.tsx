@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Edit, Trash2, Save } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { golangAPI } from "@/lib/api";
 import {
   Dialog,
   DialogContent,
@@ -67,13 +67,10 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setUsers(data || []);
+      const response = await golangAPI.get('/api/erp/users');
+      if (response.data?.success) {
+        setUsers(response.data.data || []);
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -97,21 +94,20 @@ const UserManagement = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from('users')
-        .insert([{
-          email: newUser.email,
-          first_name: newUser.first_name,
-          last_name: newUser.last_name,
-          phone: newUser.phone,
-          role: newUser.role,
-          password_hash: newUser.password // In production, this should be properly hashed
-        }])
-        .select();
+      const response = await golangAPI.post('/api/erp/users', {
+        email: newUser.email,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        phone: newUser.phone,
+        role: newUser.role,
+        password: newUser.password
+      });
 
-      if (error) throw error;
-
-      setUsers([data[0], ...users]);
+      if (response.data?.success) {
+        setUsers([response.data.data, ...users]);
+      } else {
+        throw new Error(response.data?.error || 'Failed to create user');
+      }
       setIsCreateDialogOpen(false);
       setNewUser({
         email: "",
@@ -138,13 +134,11 @@ const UserManagement = () => {
 
   const handleUpdateUser = async (userId: string, updates: Partial<User>) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', userId)
-        .select();
+      const response = await golangAPI.put(`/api/erp/users/${userId}`, updates);
 
-      if (error) throw error;
+      if (!response.data?.success) {
+        throw new Error(response.data?.error || 'Failed to update user');
+      }
 
       setUsers(users.map(user => 
         user.id === userId ? { ...user, ...updates } : user
@@ -172,12 +166,11 @@ const UserManagement = () => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const { error } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', userId);
+      const response = await golangAPI.delete(`/api/erp/users/${userId}`);
 
-      if (error) throw error;
+      if (!response.data?.success) {
+        throw new Error(response.data?.error || 'Failed to delete user');
+      }
 
       setUsers(users.filter(user => user.id !== userId));
 

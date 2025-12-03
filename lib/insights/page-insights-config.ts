@@ -30,13 +30,13 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Dashboard Summary',
         icon: '💰',
-        dataFetcher: '/api/dashboard/stats',
+        dataFetcher: '/api/erp/dashboard/stats',
         priority: 10
       },
       {
         title: 'Customer Overview',
         icon: '👥',
-        dataFetcher: '/api/customers?limit=5',
+        dataFetcher: '/api/erp/customers?limit=5',
         priority: 9
       },
       {
@@ -138,7 +138,7 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Customer Statistics',
         icon: '📊',
-        dataFetcher: '/api/dashboard/stats',
+        dataFetcher: '/api/erp/dashboard/stats',
         priority: 9
       },
       {
@@ -158,13 +158,13 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Sales Summary',
         icon: '💰',
-        dataFetcher: '/api/dashboard/stats',
+        dataFetcher: '/api/erp/dashboard/stats',
         priority: 10
       },
       {
         title: 'Customer Overview',
         icon: '👥',
-        dataFetcher: '/api/customers?limit=5',
+        dataFetcher: '/api/erp/customers?limit=5',
         priority: 9
       },
       {
@@ -184,7 +184,7 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Business Overview',
         icon: '📊',
-        dataFetcher: '/api/dashboard/stats',
+        dataFetcher: '/api/erp/dashboard/stats',
         priority: 10
       },
       {
@@ -210,13 +210,13 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
       {
         title: 'Business Overview',
         icon: '🏪',
-        dataFetcher: '/api/dashboard/stats',
+        dataFetcher: '/api/erp/dashboard/stats',
         priority: 10
       },
       {
         title: 'Customer Base',
         icon: '👥',
-        dataFetcher: '/api/customers?limit=5',
+        dataFetcher: '/api/erp/customers?limit=5',
         priority: 9
       },
       {

@@ -64,8 +64,9 @@ func (h *BarcodeLabelHandler) GenerateBarcodeImage(c *gin.Context) {
 		return
 	}
 
-	// Scale barcode to appropriate size (300px wide, 100px height)
-	scaledBarcode, err := barcode.Scale(barcodeImg, 300, 100)
+	// Scale barcode to LARGER size for thermal printing (800px wide, 250px height)
+	// Bigger = clearer and more scannable on 3x5 labels
+	scaledBarcode, err := barcode.Scale(barcodeImg, 800, 250)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,

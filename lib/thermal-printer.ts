@@ -32,9 +32,11 @@ export class ThermalPrinterService {
    * Load printer configuration from localStorage
    */
   private loadPrinterConfig(): void {
-    const saved = localStorage.getItem('thermal_printer_config');
-    if (saved) {
-      this.printerConfig = JSON.parse(saved);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('thermal_printer_config');
+      if (saved) {
+        this.printerConfig = JSON.parse(saved);
+      }
     }
   }
 
@@ -43,7 +45,9 @@ export class ThermalPrinterService {
    */
   savePrinterConfig(config: PrinterConfig): void {
     this.printerConfig = config;
-    localStorage.setItem('thermal_printer_config', JSON.stringify(config));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('thermal_printer_config', JSON.stringify(config));
+    }
   }
 
   /**
@@ -208,10 +212,7 @@ export class ThermalPrinterService {
             </style>
           </head>
           <body>
-            <h3>Thermal Print Preview (3x5")</h3>
-            <div class="preview">${printData.previewText.replace(/\n/g, '<br>')}</div>
-            <button onclick="window.print()">Print</button>
-            <button onclick="window.close()">Close</button>
+             <div class="preview">${printData.previewText.replace(/\n/g, '<br>')}</div>            
           </body>
         </html>
       `);

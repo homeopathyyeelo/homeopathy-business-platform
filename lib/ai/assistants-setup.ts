@@ -4,10 +4,18 @@
  */
 
 import OpenAI from 'openai';
+import { getOpenAIApiKey } from '@/lib/config/openai-config';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// OpenAI client will be initialized dynamically
+let openai: OpenAI | null = null;
+
+async function getOpenAIClient(): Promise<OpenAI> {
+  if (!openai) {
+    const apiKey = await getOpenAIApiKey();
+    openai = new OpenAI({ apiKey });
+  }
+  return openai;
+}
 
 // Store assistant IDs (save these to database after creation)
 export const ASSISTANT_IDS = {
@@ -23,7 +31,8 @@ export const ASSISTANT_IDS = {
  * Helps with POS billing, pricing, discounts, margins
  */
 export async function createBillingAssistant() {
-  const assistant = await openai.beta.assistants.create({
+  const client = await getOpenAIClient();
+  const assistant = await client.beta.assistants.create({
     name: 'Yeelo Billing Assistant',
     instructions: `You are an expert billing assistant for Yeelo Homeopathy ERP.
 
@@ -93,7 +102,8 @@ Always:
  * Helps with stock management, FEFO, reorder points
  */
 export async function createInventoryAssistant() {
-  const assistant = await openai.beta.assistants.create({
+  const client = await getOpenAIClient();
+  const assistant = await client.beta.assistants.create({
     name: 'Yeelo Inventory Assistant',
     instructions: `You are an inventory management expert for Yeelo Homeopathy.
 
@@ -142,7 +152,8 @@ Key considerations:
  * Helps with GSTR filing, ITC, reconciliation
  */
 export async function createGSTAssistant() {
-  const assistant = await openai.beta.assistants.create({
+  const client = await getOpenAIClient();
+  const assistant = await client.beta.assistants.create({
     name: 'Yeelo GST Compliance Assistant',
     instructions: `You are a GST compliance expert for Yeelo Homeopathy.
 
@@ -197,7 +208,8 @@ Always ensure:
  * Predicts future demand using ML
  */
 export async function createForecastAssistant() {
-  const assistant = await openai.beta.assistants.create({
+  const client = await getOpenAIClient();
+  const assistant = await client.beta.assistants.create({
     name: 'Yeelo Demand Forecast Assistant',
     instructions: `You are a demand forecasting expert for Yeelo Homeopathy.
 
@@ -261,7 +273,8 @@ Provide:
  * Handles customer queries about homeopathy
  */
 export async function createSupportAssistant() {
-  const assistant = await openai.beta.assistants.create({
+  const client = await getOpenAIClient();
+  const assistant = await client.beta.assistants.create({
     name: 'Yeelo Customer Support Assistant',
     instructions: `You are a knowledgeable customer support agent for Yeelo Homeopathy.
 

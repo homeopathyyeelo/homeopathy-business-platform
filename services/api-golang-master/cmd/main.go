@@ -21,6 +21,17 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// maskAPIKey masks sensitive API keys for logging
+func maskAPIKey(key string) string {
+	if key == "" {
+		return "[NOT SET]"
+	}
+	if len(key) < 10 {
+		return "[INVALID]"
+	}
+	return key[:7] + "..." + key[len(key)-4:]
+}
+
 func main() {
 	// Load configuration
 	cfg := config.Load()
@@ -38,6 +49,22 @@ func main() {
 	bugService := services.NewBugService(db)
 	expiryService := services.NewExpiryService(db)
 
+	// Initialize config service for centralized configuration
+	configService := services.GetConfigService(db)
+	openaiAPIKey := configService.GetOpenAIAPIKey()
+	log.Printf("🔑 OpenAI API Key loaded: %s", maskAPIKey(openaiAPIKey))
+
+	// Initialize job service for background tasks (5 workers)
+	jobService := services.NewJobService(db, 5)
+	backupService := services.NewBackupService(db)
+
+	// Register job handlers
+	services.RegisterBackupJobHandler(jobService, backupService)
+
+	// Start job service workers
+	jobService.Start()
+	log.Printf("✅ Background job service started with 5 workers")
+
 	// Initialize handlers (only ones we actually use)
 	authHandler := handlers.NewAuthHandler(db)
 	aiModelHandler := handlers.NewAIModelHandler()
@@ -46,12 +73,15 @@ func main() {
 	categoriesHandler := handlers.NewCategoryHandler(db)
 	customerGroupHandler := handlers.NewCustomerGroupHandler()
 	dashboardHandler := handlers.NewDashboardHandler(db)
+	dashboardActivityHandler := handlers.NewDashboardActivityHandler(db)
 	_ = expiryService // TODO: Use when inventory module is ready
 	// expiryHandler := handlers.NewExpiryHandler(expiryService)
 	inventoryHandler := handlers.NewInventoryHandler(db)
 	enhancedInventoryHandler := handlers.NewEnhancedInventoryHandler(db)
 	inventoryAlertsHandler := handlers.NewInventoryAlertsHandler(db)
 	posSessionHandler := handlers.NewPOSSessionHandler()
+	holdBillHandler := handlers.NewHoldBillHandler(db)
+	aiPOSHandler := handlers.NewAIPOSHandler(db, openaiAPIKey)
 	searchHandler := handlers.NewSearchHandler(db)
 	productHandler := handlers.NewProductHandler(db)
 	productStatsHandler := handlers.NewProductStatsHandler(db)
@@ -74,10 +104,13 @@ func main() {
 	gatewayHandler := handlers.NewGatewayHandler(db)
 	integrationHandler := handlers.NewIntegrationHandler(db)
 	aiModelsHandler := handlers.NewAIModelsHandler(db)
-	backupHandler := handlers.NewBackupHandler(db)
+	backupHandler := handlers.NewBackupHandler(db, jobService)
+	jobHandler := handlers.NewJobHandler(jobService)
 	unitsHandler := handlers.NewUnitsHandler(db)
 	settingsHandler := handlers.NewSettingsHandler(db)
 	erpSettingsHandler := handlers.NewERPSettingsHandler(db)
+	companySettingsHandler := handlers.NewCompanySettingsHandler(db)
+	appSettingsHandler := handlers.NewAppSettingsHandler(db)
 
 	// Additional handlers
 	enrichHandler := handlers.NewEnrichHandler(db)
@@ -142,6 +175,9 @@ func main() {
 	// API routes
 	api := r.Group("/api")
 	{
+		// Dashboard Activity Feed (Direct Route)
+		api.GET("/dashboard/activity-feed", middleware.RequireAuth(), dashboardActivityHandler.GetActivityFeed)
+
 		// Social / GMB Automation
 		social := api.Group("/social")
 		social.Use(middleware.RequireAuth())
@@ -245,6 +281,7 @@ func main() {
 			// Dashboard
 			erp.GET("/dashboard/stats", dashboardHandler.GetStats)
 			erp.GET("/dashboard/activity", dashboardHandler.GetActivity)
+			erp.GET("/dashboard/activity-feed", dashboardActivityHandler.GetActivityFeed) // Activity feed route
 			erp.GET("/dashboard/recent-sales", dashboardHandler.GetRecentSales)
 			erp.GET("/dashboard/top-products", dashboardHandler.GetTopProducts)
 			erp.GET("/dashboard/alerts", dashboardHandler.GetAlerts)
@@ -261,27 +298,19 @@ func main() {
 			// Register Ledger Routes
 			routes.RegisterLedgerRoutes(erp, db)
 
-			// Products
-			erp.GET("/products/stats", productStatsHandler.GetProductStats) // MUST be before /:id
+			// Products - order matters! Specific routes MUST be before /:id
+			erp.GET("/products/stats", productStatsHandler.GetProductStats)                          // Stats - before /:id
+			erp.GET("/products/template", productImportHandler.DownloadTemplate)                     // Template download - before /:id
+			erp.GET("/products/batches", batchBarcodeHandler.GetAllBatches)                          // List all batches - before /:id
+			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts)                  // Grouped view - before /:id
+			erp.GET("/products/grouped/:baseName/variants", groupedProductsHandler.GetGroupVariants) // Variants for group
+
+			// Generic products routes
 			erp.GET("/products", productHandler.GetProducts)
 			erp.GET("/products/:id", productHandler.GetProduct)
 			erp.POST("/products", productHandler.CreateProduct)
 			erp.PUT("/products/:id", productHandler.UpdateProduct)
 			erp.DELETE("/products/:id", productHandler.DeleteProduct)
-
-			// Barcode routes moved to POS routes to avoid duplication
-			// erp.GET("/products/barcode", productHandler.GetProductsWithBarcodes)
-			// erp.POST("/products/barcode/generate", barcodeHandler.GenerateBarcode)
-			// erp.POST("/products/barcode/print", barcodeHandler.PrintBarcodes)
-			// erp.PUT("/products/barcode/:id", barcodeHandler.UpdateBarcode)
-			// erp.DELETE("/products/barcode/:id", barcodeHandler.DeleteBarcode)
-			// erp.GET("/products/barcode/stats", barcodeHandler.GetBarcodeStats) // MUST be before /:id
-			// erp.GET("/products/:id/barcode-image", barcodeLabelHandler.GenerateBarcodeImage)
-
-			// Products - order matters! Specific routes before :id
-			erp.GET("/products/template", productImportHandler.DownloadTemplate)                     // Must be before /:id
-			erp.GET("/products/grouped", groupedProductsHandler.GetGroupedProducts)                  // Grouped view
-			erp.GET("/products/grouped/:baseName/variants", groupedProductsHandler.GetGroupVariants) // Variants for group
 
 			// Product Import (no timeout for streaming)
 			erp.POST("/products/import/stream", func(c *gin.Context) {
@@ -291,7 +320,7 @@ func main() {
 			})
 
 			// Batch Management
-			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct) // MUST be before /:id
+			erp.GET("/products/:id/batches", batchBarcodeHandler.GetBatchesByProduct) // Get batches for specific product
 			erp.POST("/inventory/batches", batchBarcodeHandler.CreateBatch)
 			erp.POST("/inventory/batches/allocate", batchBarcodeHandler.AllocateBatch)
 			erp.GET("/inventory/batches/expiring", batchBarcodeHandler.GetExpiringBatches)
@@ -403,6 +432,17 @@ func main() {
 				pos.PUT("/sessions/:id", posSessionHandler.UpdatePOSSession)
 				pos.DELETE("/sessions/:id", posSessionHandler.DeletePOSSession)
 				pos.GET("/counters", systemHandler.GetPOSCounters)
+
+				// Hold Bills
+				pos.POST("/hold-bill", holdBillHandler.HoldBill)
+				pos.GET("/hold-bills", holdBillHandler.GetHoldBills)
+				pos.GET("/hold-bills/stats", holdBillHandler.GetHoldBillStats)
+				pos.GET("/hold-bills/:id", holdBillHandler.GetHoldBill)
+				pos.DELETE("/hold-bills/:id", holdBillHandler.DeleteHoldBill)
+
+				// AI Smart Suggestions
+				pos.POST("/ai-suggestions", aiPOSHandler.GetAISuggestions)
+				pos.POST("/disease-suggestions", aiPOSHandler.GetDiseaseSuggestions)
 			}
 
 			// Purchase Management
@@ -558,8 +598,23 @@ func main() {
 
 			// Settings: Backup
 			erp.GET("/backups", backupHandler.GetBackups)
-			erp.POST("/backups", backupHandler.CreateBackup)
+			erp.GET("/backups/list", backupHandler.ListBackups)
+			erp.GET("/backups/config", backupHandler.GetBackupConfig)
+			erp.PUT("/backups/config", backupHandler.SaveBackupConfig)
+			erp.GET("/backups/status", backupHandler.GetBackupStatus)
+			erp.POST("/backups/create", backupHandler.CreateBackup)
+			erp.GET("/backups/:filename/download", backupHandler.DownloadBackup)
+			erp.DELETE("/backups/:filename", backupHandler.DeleteBackup)
 			erp.POST("/backups/:id/restore", backupHandler.RestoreBackup)
+			erp.POST("/settings/database/test", backupHandler.TestDatabaseConnection)
+
+			// Background Jobs
+			erp.GET("/jobs", jobHandler.ListJobs)
+			erp.GET("/jobs/stats", jobHandler.GetJobStats)
+			erp.GET("/jobs/:id", jobHandler.GetJob)
+			erp.GET("/jobs/:id/status", jobHandler.GetJobStatus)
+			erp.GET("/jobs/notifications", jobHandler.GetNotifications)
+			erp.POST("/jobs/notifications/:id/read", jobHandler.MarkNotificationRead)
 
 			// Settings: Units
 			erp.GET("/units-settings", unitsHandler.GetUnits)
@@ -568,8 +623,24 @@ func main() {
 			erp.PUT("/units-settings/:id", unitsHandler.UpdateUnit)
 			erp.DELETE("/units-settings/:id", unitsHandler.DeleteUnit)
 
-			// Settings: App Key-Value
-			erp.PUT("/settings/:key", settingsHandler.UpsertSetting)
+			// Settings: Company
+			erp.GET("/companies", companySettingsHandler.GetCompanies)
+			erp.GET("/companies/:id", companySettingsHandler.GetCompany)
+			erp.POST("/companies", companySettingsHandler.CreateCompany)
+			erp.PUT("/companies/:id", companySettingsHandler.UpdateCompany)
+			erp.DELETE("/companies/:id", companySettingsHandler.DeleteCompany)
+
+			// Settings: App Settings (Key-Value Storage)
+			erp.GET("/settings", appSettingsHandler.GetAllSettings)
+			erp.GET("/settings/categories", appSettingsHandler.GetCategories)
+			erp.GET("/settings/category/:category", appSettingsHandler.GetSettingsByCategory)
+			erp.GET("/settings/:key", appSettingsHandler.GetSetting)
+			erp.PUT("/settings/:key", appSettingsHandler.UpsertSetting)
+			erp.POST("/settings/bulk", appSettingsHandler.BulkUpsertSettings)
+			erp.DELETE("/settings/:key", appSettingsHandler.DeleteSetting)
+
+			// Settings: Legacy Key-Value (keeping for backward compatibility)
+			erp.PUT("/settings-old/:key", settingsHandler.UpsertSetting)
 
 			// ERP Settings (Centralized Configuration) - Write operations only (read is public)
 			erp.PUT("/erp-settings/:key", erpSettingsHandler.UpdateSetting)

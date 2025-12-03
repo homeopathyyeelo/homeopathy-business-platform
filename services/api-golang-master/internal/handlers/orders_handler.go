@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -225,22 +226,27 @@ func (h *OrdersHandler) PrintOrderThermal(c *gin.Context) {
 		CompanyName:    "Yeelo Homeopathy",
 		CompanyPhone:   "8478019973",
 		CompanyAddress: "Sohna, Gurugram, Haryana",
+		PaperSize:      h.getPrinterPaperSize(),
+		CustomerGST:    getStringField(order, "customer_gst_number"),
 	}
 
 	// Convert items
 	for _, item := range items {
 		printData.Items = append(printData.Items, services.OrderItemPrint{
-			ProductName: getStringField(item, "product_name"),
-			SKU:         getStringField(item, "sku"),
-			Quantity:    getFloatField(item, "quantity"),
-			UnitPrice:   getFloatField(item, "unit_price"),
-			Discount:    getFloatField(item, "discount_amount"),
-			Total:       getFloatField(item, "total_price"),
+			ProductName:     getStringField(item, "product_name"),
+			SKU:             getStringField(item, "sku"),
+			Quantity:        getFloatField(item, "quantity"),
+			UnitPrice:       getFloatField(item, "unit_price"),
+			Discount:        getFloatField(item, "discount_amount"),
+			DiscountPercent: getFloatField(item, "discount_percent"),
+			TaxPercent:      getFloatField(item, "tax_percent"),
+			TaxAmount:       getFloatField(item, "tax_amount"),
+			Total:           getFloatField(item, "total_price"),
 		})
 	}
 
 	// Generate ESC/POS commands
-	escposData := h.thermalPrinter.Generate3x5OrderSlip(printData)
+	escposData := h.thermalPrinter.GenerateOrderSlip(printData)
 
 	// Return both raw ESC/POS and preview text
 	c.JSON(http.StatusOK, gin.H{
@@ -286,22 +292,27 @@ func (h *OrdersHandler) PrintInvoiceThermal(c *gin.Context) {
 		CompanyName:    "Yeelo Homeopathy",
 		CompanyPhone:   "8478019973",
 		CompanyAddress: "Sohna, Gurugram, Haryana",
+		PaperSize:      h.getPrinterPaperSize(),
+		CustomerGST:    getStringField(invoice, "customer_gst_number"),
 	}
 
 	// Convert items
 	for _, item := range items {
 		printData.Items = append(printData.Items, services.OrderItemPrint{
-			ProductName: getStringField(item, "product_name"),
-			SKU:         getStringField(item, "sku"),
-			Quantity:    getFloatField(item, "quantity"),
-			UnitPrice:   getFloatField(item, "unit_price"),
-			Discount:    getFloatField(item, "discount_amount"),
-			Total:       getFloatField(item, "line_total"),
+			ProductName:     getStringField(item, "product_name"),
+			SKU:             getStringField(item, "sku"),
+			Quantity:        getFloatField(item, "quantity"),
+			UnitPrice:       getFloatField(item, "unit_price"),
+			Discount:        getFloatField(item, "discount_amount"),
+			DiscountPercent: getFloatField(item, "discount_percent"),
+			TaxPercent:      getFloatField(item, "gst_rate"),
+			TaxAmount:       getFloatField(item, "total_gst"),
+			Total:           getFloatField(item, "line_total"),
 		})
 	}
 
 	// Generate ESC/POS commands
-	escposData := h.thermalPrinter.Generate3x5OrderSlip(printData)
+	escposData := h.thermalPrinter.GenerateOrderSlip(printData)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success":       true,
@@ -345,6 +356,18 @@ func getFloatField(m map[string]interface{}, key string) float64 {
 		}
 	}
 	return 0
+}
+
+func (h *OrdersHandler) getPrinterPaperSize() string {
+	var s AppSetting
+	if err := h.db.Where("key = ?", "pos.printer.paperSize").First(&s).Error; err == nil {
+		// Value is json.RawMessage, e.g. "3x5" (with quotes)
+		var size string
+		if err := json.Unmarshal(s.Value, &size); err == nil {
+			return size
+		}
+	}
+	return "3x5" // Default
 }
 
 // DownloadInvoicePDF - Download A4 PDF for invoice
