@@ -60,4 +60,4 @@ logs/
 
 # Go binaries
 services/api-golang-master/api-golang
-services/api-golang-master/main
+services/api-golang-master/mainbackend-server
