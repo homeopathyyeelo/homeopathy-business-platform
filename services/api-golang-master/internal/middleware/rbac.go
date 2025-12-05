@@ -5,10 +5,11 @@ import (
 	"strings"
 	"time"
 
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"gorm.io/gorm"
-	"os"
 )
 
 // Claims structure for JWT
@@ -168,8 +169,8 @@ func RequireRole(requiredRoles ...string) gin.HandlerFunc {
 
 		if !hasRole {
 			c.JSON(http.StatusForbidden, gin.H{
-				"success": false,
-				"error":   "Insufficient permissions",
+				"success":        false,
+				"error":          "Insufficient permissions",
 				"required_roles": requiredRoles,
 			})
 			c.Abort()
@@ -200,7 +201,7 @@ func RequirePermission(requiredPermissions ...string) gin.HandlerFunc {
 		}
 
 		permissions := userPermissions.([]string)
-		
+
 		// Check if user has all required permissions
 		for _, required := range requiredPermissions {
 			hasPermission := false
@@ -210,11 +211,11 @@ func RequirePermission(requiredPermissions ...string) gin.HandlerFunc {
 					break
 				}
 			}
-			
+
 			if !hasPermission {
 				c.JSON(http.StatusForbidden, gin.H{
-					"success": false,
-					"error":   "Insufficient permissions",
+					"success":  false,
+					"error":    "Insufficient permissions",
 					"required": required,
 				})
 				c.Abort()
@@ -263,8 +264,8 @@ func RequireMinRole(minRole string) gin.HandlerFunc {
 
 		if userLevel < minLevel {
 			c.JSON(http.StatusForbidden, gin.H{
-				"success": false,
-				"error":   "Insufficient role level",
+				"success":      false,
+				"error":        "Insufficient role level",
 				"required_min": minRole,
 			})
 			c.Abort()
@@ -279,15 +280,15 @@ func RequireMinRole(minRole string) gin.HandlerFunc {
 func AuditLog(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
-		
+
 		// Process request
 		c.Next()
-		
+
 		// Log after request
 		duration := time.Since(start)
-		
+
 		userID, _ := c.Get("user_id")
-		
+
 		// Simple audit log (can be enhanced to write to DB)
 		if c.Request.Method != "GET" {
 			// Log only non-GET requests for audit purposes
@@ -299,7 +300,35 @@ func AuditLog(db *gorm.DB) gin.HandlerFunc {
 				`, userID, c.FullPath(), c.Request.URL.Path, c.Request.Method, c.Writer.Status(), duration.Milliseconds(), c.ClientIP())
 			}()
 		}
-		
+
 		c.Next()
 	}
+}
+
+// HasPermission checks if the user has a specific permission
+func HasPermission(c *gin.Context, requiredPermission string) bool {
+	// Super admins have all permissions
+	if isSuperAdmin, exists := c.Get("is_super_admin"); exists && isSuperAdmin.(bool) {
+		return true
+	}
+
+	// Get user permissions from context
+	permissions, exists := c.Get("user_permissions")
+	if !exists {
+		return false
+	}
+
+	permList, ok := permissions.([]string)
+	if !ok {
+		return false
+	}
+
+	// Check if user has the required permission
+	for _, perm := range permList {
+		if perm == requiredPermission {
+			return true
+		}
+	}
+
+	return false
 }

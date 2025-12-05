@@ -58,6 +58,14 @@ next-env.d.ts
 logs/
 *.log
 
-# Go binaries
+# Go binaries and build artifacts
 services/api-golang-master/api-golang
-services/api-golang-master/mainbackend-server
+services/api-golang-master/main
+services/api-golang-master/backend-server
+services/api-golang-master/api-bin
+services/api-golang-master/api-server
+services/api-golang-master/test_unified_schema
+services/api-golang-master/verify_schema
+*.exe
+*.test
+

@@ -98,6 +98,13 @@ export enum PermissionCode {
   FINANCE_VIEW = "PERM_FINANCE_VIEW",
   FINANCE_READ = "PERM_FINANCE_READ",
   FINANCE_WRITE = "PERM_FINANCE_WRITE",
+
+  // Social Media (GMB)
+  SOCIAL_GMB_VIEW = "PERM_SOCIAL_GMB_VIEW",
+  SOCIAL_GMB_CREATE = "PERM_SOCIAL_GMB_CREATE",
+  SOCIAL_GMB_PUBLISH = "PERM_SOCIAL_GMB_PUBLISH",
+  SOCIAL_GMB_ACCOUNTS = "PERM_SOCIAL_GMB_ACCOUNTS",
+  SOCIAL_GMB_AUDIT = "PERM_SOCIAL_GMB_AUDIT",
   FINANCE_LEDGERS = "PERM_FINANCE_LEDGERS",
   FINANCE_EXPENSES = "PERM_FINANCE_EXPENSES",
   FINANCE_COMMISSION = "PERM_FINANCE_COMMISSION",
@@ -579,7 +586,7 @@ export function hasRole(user: User, requiredRole: UserRole): boolean {
     [UserRole.CASHIER]: 1,
     [UserRole.CUSTOMER]: 0,
   }
-  
+
   return roleHierarchy[user.role] >= roleHierarchy[requiredRole]
 }
 
@@ -671,7 +678,7 @@ export function requireRole(requiredRole: UserRole, handler: (request: NextReque
     if (!hasRole(user, requiredRole)) {
       return createErrorResponse('Insufficient permissions', 403)
     }
-    
+
     return handler(request, user)
   })
 }
@@ -684,7 +691,7 @@ export function requireAnyRole(requiredRoles: UserRole[], handler: (request: Nex
     if (!hasAnyRole(user, requiredRoles)) {
       return createErrorResponse('Insufficient permissions', 403)
     }
-    
+
     return handler(request, user)
   })
 }
@@ -694,27 +701,27 @@ export function requireAnyRole(requiredRoles: UserRole[], handler: (request: Nex
  */
 export function validatePasswordStrength(password: string): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   if (password.length < 8) {
     errors.push('Password must be at least 8 characters long');
   }
-  
+
   if (!/[A-Z]/.test(password)) {
     errors.push('Password must contain at least one uppercase letter');
   }
-  
+
   if (!/[a-z]/.test(password)) {
     errors.push('Password must contain at least one lowercase letter');
   }
-  
+
   if (!/[0-9]/.test(password)) {
     errors.push('Password must contain at least one number');
   }
-  
+
   if (!/[^A-Za-z0-9]/.test(password)) {
     errors.push('Password must contain at least one special character');
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors

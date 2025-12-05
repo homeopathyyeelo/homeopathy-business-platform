@@ -451,7 +451,7 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 		CounterID:           req.CounterID,
 		CounterName:         req.CounterName,
 		Status:              "COMPLETED",
-		CreatedBy:           "POS User", // TODO: Get from auth
+		CreatedBy:           c.GetString("user_id"),
 		CreatedAt:           time.Now(),
 		UpdatedAt:           time.Now(),
 	}
@@ -585,13 +585,22 @@ func (h *POSEnhancedHandler) CreateInvoice(c *gin.Context) {
 
 	// Generate PDFs (after commit)
 	pdfService := services.NewInvoicePDFService()
+	// Get company details from database
+	var company struct {
+		Name    string `gorm:"column:name"`
+		GSTIN   string `gorm:"column:gstin"`
+		Address string `gorm:"column:address"`
+		Phone   string `gorm:"column:phone"`
+	}
+	h.db.Table("company_settings").Select("name, gstin, address, phone").Limit(1).Scan(&company)
+
 	pdfData := services.InvoiceData{
 		Invoice:      &invoice,
 		Items:        invoiceItems,
-		CompanyName:  "Homeopathy Store",      // TODO: Get from company settings
-		CompanyGSTIN: "29XXXXX1234X1ZS",       // TODO: Get from settings
-		CompanyAddr:  "123 Main Street, City", // TODO: Get from settings
-		CompanyPhone: "+91 8478019973",        // TODO: Get from settings
+		CompanyName:  company.Name,
+		CompanyGSTIN: company.GSTIN,
+		CompanyAddr:  company.Address,
+		CompanyPhone: company.Phone,
 	}
 
 	thermalPDF, err := pdfService.GenerateThermalReceipt(pdfData)

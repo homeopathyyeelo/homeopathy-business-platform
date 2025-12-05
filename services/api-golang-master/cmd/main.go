@@ -92,7 +92,7 @@ func main() {
 	salesHandler := handlers.NewSalesHandler(db)
 	systemHandler := handlers.NewSystemHandler()
 	userHandler := handlers.NewUserHandler()
-	gmbHandler := handlers.NewGMBHandler(db)
+
 	socialHandler := handlers.NewSocialHandler(db)
 	aiRecommendationHandler := handlers.NewAIRecommendationHandler(db)
 
@@ -137,9 +137,24 @@ func main() {
 	uploadsHandler := handlers.NewUploadsHandler(db)
 	enhancedUploadsHandler := handlers.NewEnhancedUploadsHandler(db)
 	purchaseUploadHandler := handlers.NewPurchaseUploadHandler(db)
+	// Initialize services
+	gmbService := services.NewGMBService(db)
+	auditService := services.NewAuditService(db)
+
+	// Initialize handlers
+	gmbHandler := handlers.NewGMBHandler(db, gmbService, auditService)
 	approveUploadHandler := handlers.NewApproveUploadHandler(db)
 	inventoryUploadHandler := handlers.NewInventoryUploadHandler(db)
 	marketingHandler := handlers.NewMarketingHandler(db)
+	returnsHandler := handlers.NewReturnsHandler(db)
+	gmbContentService := services.NewGMBContentService(os.Getenv("OPENAI_API_KEY"))
+	gmbContentHandler := handlers.NewGMBContentHandler(db, gmbContentService)
+	gmbSchedulerService := services.NewGMBSchedulerService(db, gmbService)
+	gmbSchedulerHandler := handlers.NewGMBSchedulerHandler(db)
+	auditHandler := handlers.NewAuditHandler(db)
+
+	// Start the scheduler
+	gmbSchedulerService.Start()
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -207,8 +222,31 @@ func main() {
 			social.POST("/gmb/generate", gmbHandler.GeneratePost)
 			social.POST("/gmb/validate", gmbHandler.ValidatePost)
 			social.POST("/gmb/post", gmbHandler.PostToGMB)
+			social.POST("/gmb/quick-post", gmbHandler.QuickPostToGMB) // Quick instant post
+
+			// NEW: Paginated publishing history
+			social.GET("/gmb/posts", gmbHandler.GetPostsHistory)            // Get paginated posts
+			social.POST("/gmb/posts/:id/retry", gmbHandler.RetryFailedPost) // Retry failed post
+
+			// AI Content Generation
+			social.POST("/gmb/generate/topic", gmbContentHandler.GenerateByTopic)
+			social.POST("/gmb/generate/season", gmbContentHandler.GenerateBySeason)
+			social.POST("/gmb/generate/disease", gmbContentHandler.GenerateByDisease)
+
+			// Scheduling
+			social.POST("/gmb/schedule", gmbSchedulerHandler.CreateScheduledPost)
+			social.GET("/gmb/schedule", gmbSchedulerHandler.GetScheduledPosts)
+			social.PUT("/gmb/schedule/:id", gmbSchedulerHandler.UpdateScheduledPost)
+			social.DELETE("/gmb/schedule/:id", gmbSchedulerHandler.DeleteScheduledPost)
+
+			// Account Management
+			social.GET("/gmb/accounts", gmbHandler.GetAccounts)
+			social.DELETE("/gmb/accounts/:id", gmbHandler.DisconnectAccountByID)
 
 			social.GET("/gmb/suggestions", gmbHandler.GetSuggestions)
+
+			// Audit Logs
+			social.GET("/gmb/audit", auditHandler.GetAuditLogs)
 		}
 
 		// Authentication routes
@@ -419,6 +457,18 @@ func main() {
 			erp.PUT("/racks/:id", rackHandler.UpdateRack)
 			erp.DELETE("/racks/:id", rackHandler.DeleteRack)
 
+			// Sales Returns
+			sales := erp.Group("/sales")
+			{
+				sales.GET("/returns", returnsHandler.GetReturns)
+				sales.POST("/returns", returnsHandler.CreateReturn)
+				sales.GET("/returns/stats", returnsHandler.GetStats)
+				sales.GET("/returns/fraud-alerts", returnsHandler.GetFraudAlerts)
+				sales.GET("/returns/:id", returnsHandler.GetReturnByID)
+				sales.POST("/returns/:id/approve", returnsHandler.ApproveReturn)
+				sales.POST("/returns/:id/process-refund", returnsHandler.ProcessRefund)
+				sales.GET("/invoices/:invoiceNo/eligible-for-return", returnsHandler.CheckEligibility)
+			}
 			// Sales (methods need implementation - most don't exist)
 			// erp.GET("/sales/orders", salesHandler.GetSalesOrders)
 			// erp.GET("/sales/orders/:id", salesHandler.GetSalesOrder)

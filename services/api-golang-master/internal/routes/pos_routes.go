@@ -157,4 +157,48 @@ func RegisterPOSRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		// Print multiple barcode labels (bulk)
 		products.POST("/barcode/print", barcodeHandler.PrintBarcodeLabels)
 	}
+
+	// ============================================================================
+	// BILL SNAPSHOTS & CUSTOMER HISTORY
+	// ============================================================================
+	billSnapshotHandler := handlers.NewBillSnapshotHandler(db)
+	billSnapshots := router.Group("/bill-snapshots")
+	{
+		// Create bill snapshot
+		billSnapshots.POST("", billSnapshotHandler.CreateBillSnapshot)
+
+		// Get bill snapshot by ID
+		billSnapshots.GET("/:id", billSnapshotHandler.GetBillSnapshot)
+
+		// Get bill snapshot by reference
+		billSnapshots.GET("/by-reference/:type/:id", billSnapshotHandler.GetBillSnapshotByReference)
+
+		// Mark as printed
+		billSnapshots.POST("/:id/mark-printed", billSnapshotHandler.MarkBillAsPrinted)
+	}
+
+	// Customer bill history routes
+	customers := router.Group("/customers")
+	{
+		// Get customer bill history
+		customers.GET("/:id/bill-history", billSnapshotHandler.GetCustomerBillHistory)
+
+		// Get customer's last ending bill
+		customers.GET("/:id/last-bill", billSnapshotHandler.GetCustomerLastBill)
+
+		// Get return visit data (last bill + history)
+		customers.GET("/:id/return-visit", billSnapshotHandler.GetCustomerReturnVisitData)
+	}
+
+	// ============================================================================
+	// PRINTER SETTINGS
+	// ============================================================================
+	printerSettings := router.Group("/printer-settings")
+	{
+		// Get printer settings for counter
+		printerSettings.GET("/:counterId", billSnapshotHandler.GetPrinterSettings)
+
+		// Update printer settings
+		printerSettings.PUT("/:counterId", billSnapshotHandler.UpdatePrinterSettings)
+	}
 }

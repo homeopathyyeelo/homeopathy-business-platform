@@ -17,6 +17,7 @@ import (
 	"google.golang.org/api/option"
 	"gorm.io/gorm"
 
+	"github.com/yeelo/homeopathy-erp/internal/middleware"
 	"github.com/yeelo/homeopathy-erp/internal/models"
 	"github.com/yeelo/homeopathy-erp/internal/services"
 )
@@ -32,6 +33,7 @@ const (
 type GMBHandler struct {
 	DB             *gorm.DB
 	ContentService *services.GMBContentService
+	AuditService   *services.AuditService
 }
 
 // getOAuthConfig returns the OAuth2 configuration
@@ -84,14 +86,11 @@ func (h *GMBHandler) refreshToken(account *models.GMBAccount) (*oauth2.Token, er
 	return newToken, nil
 }
 
-func NewGMBHandler(db *gorm.DB) *GMBHandler {
-	// Get OpenAI API key from config service
-	configService := GetConfigService(db)
-	apiKey := configService.GetOpenAIAPIKey()
-
+func NewGMBHandler(db *gorm.DB, gmbService *services.GMBService, auditService *services.AuditService) *GMBHandler {
 	return &GMBHandler{
 		DB:             db,
-		ContentService: services.NewGMBContentService(apiKey),
+		ContentService: services.NewGMBContentService(os.Getenv("OPENAI_API_KEY")),
+		AuditService:   auditService,
 	}
 }
 
@@ -611,38 +610,83 @@ func (h *GMBHandler) UpdateSchedules(c *gin.Context) {
 	})
 }
 
-// GetHistory returns post history
+// GetHistory returns the history of GMB posts and actions
 func (h *GMBHandler) GetHistory(c *gin.Context) {
-	var history []map[string]interface{}
+	// Check if table exists
+	var tableExists bool
+	h.DB.Raw("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'gmb_posts')").Scan(&tableExists)
 
-	// Check if gmb_posts table exists
-	if h.DB.Migrator().HasTable("gmb_posts") {
-		h.DB.Table("gmb_posts").
-			Select("id, title, status, scheduled_for, published_at, created_at").
-			Order("created_at DESC").
-			Limit(50).
-			Find(&history)
+	if !tableExists {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    []interface{}{},
+		})
+		return
 	}
 
-	// If no history in database, return sample data
-	if len(history) == 0 {
-		now := time.Now()
-		history = []map[string]interface{}{
-			{
-				"id":           uuid.New().String(),
-				"title":        "Sample Post 1",
-				"status":       "PUBLISHED",
-				"published_at": now.Add(-24 * time.Hour),
-				"created_at":   now.Add(-25 * time.Hour),
-			},
-			{
-				"id":            uuid.New().String(),
-				"title":         "Sample Post 2",
-				"status":        "SCHEDULED",
-				"scheduled_for": now.Add(24 * time.Hour),
-				"created_at":    now.Add(-1 * time.Hour),
-			},
+	// Get user ID from context
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   "User not authenticated",
+		})
+		return
+	}
+
+	// Get GMB account for this user
+	var account models.GMBAccount
+	err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).First(&account).Error
+	if err != nil {
+		// No account, return empty history
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    []interface{}{},
+		})
+		return
+	}
+
+	// Query posts for this account
+	var posts []models.GMBPost
+	// Use gmb_account_id (bigint) instead of account_id (uuid) for the foreign key
+	err = h.DB.Where("gmb_account_id = ?", account.ID).
+		Order("created_at DESC").
+		Limit(50).
+		Find(&posts).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch post history: " + err.Error(),
+		})
+		return
+	}
+
+	// Convert to response format
+	history := make([]map[string]interface{}, 0, len(posts))
+	for _, post := range posts {
+		historyItem := map[string]interface{}{
+			"id":         post.ID,
+			"title":      post.Title,
+			"content":    post.Content,
+			"status":     post.Status,
+			"created_at": post.CreatedAt,
 		}
+
+		if post.ScheduledFor != nil {
+			historyItem["scheduled_for"] = post.ScheduledFor
+		}
+		if post.PublishedAt != nil {
+			historyItem["published_at"] = post.PublishedAt
+		}
+		if post.PostURL != "" {
+			historyItem["post_url"] = post.PostURL
+		}
+		if post.ErrorMessage != "" {
+			historyItem["error_message"] = post.ErrorMessage
+		}
+
+		history = append(history, historyItem)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -675,12 +719,33 @@ func (h *GMBHandler) GeneratePost(c *gin.Context) {
 		return
 	}
 
-	// In a real implementation, this would call OpenAI API
-	// For now, return a generated post
+	var title, content string
+	if h.ContentService != nil {
+		// Use tone from request or default
+		tone := req.Tone
+		if tone == "" {
+			tone = "educational"
+		}
+
+		// Generate content using AI (returns title, content, error)
+		var err error
+		title, content, err = h.ContentService.GenerateHealthPost(req.Topic, tone, []models.Product{})
+		if err != nil {
+			log.Printf("AI generation failed: %v", err)
+			// Fallback to simple template
+			title = fmt.Sprintf("Homeopathy and %s", req.Topic)
+			content = fmt.Sprintf("Discover natural healing with homeopathy for %s. Visit Yeelo Homeopathy for personalized treatment.", req.Topic)
+		}
+	} else {
+		// Fallback if content service not available
+		title = fmt.Sprintf("Homeopathy Tips for %s", req.Topic)
+		content = fmt.Sprintf("This is a sample post about %s. Homeopathy offers natural, safe, and effective remedies for this condition. Visit Yeelo Homeopathy for expert consultation.", req.Topic)
+	}
+
 	post := map[string]interface{}{
 		"id":      uuid.New().String(),
-		"title":   fmt.Sprintf("Homeopathy Tips for %s", req.Topic),
-		"content": fmt.Sprintf("This is a sample post about %s. In a real implementation, this would be generated by AI based on the topic, preset, and tone.", req.Topic),
+		"title":   title,
+		"content": content,
 		"status":  "DRAFT",
 		"preset":  req.Preset,
 		"tone":    req.Tone,
@@ -740,8 +805,8 @@ func (h *GMBHandler) PostToGMB(c *gin.Context) {
 		Title       string    `json:"title"`
 		Content     string    `json:"content"`
 		ScheduledAt time.Time `json:"scheduled_at,omitempty"`
-		// ScheduleType is currently not used but kept for future implementation
-		// ScheduleType string   `json:"schedule_type,omitempty"`
+		AutoApprove bool      `json:"autoApprove"`
+		Schedule    string    `json:"schedule"` // "now", "daily", "weekly", "monthly"
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -752,19 +817,84 @@ func (h *GMBHandler) PostToGMB(c *gin.Context) {
 		return
 	}
 
-	// In a real implementation, this would post to GMB API
-	// For now, return a success response with a mock post ID
-	postID := uuid.New().String()
+	// Get user ID from context
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"error":   "User not authenticated",
+		})
+		return
+	}
+
+	// Get active GMB account for this user
+	var account models.GMBAccount
+	err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).First(&account).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "No active GMB account found. Please connect your GMB account first.",
+		})
+		return
+	}
+
+	// Create post record
+	post := models.GMBPost{
+		AccountID: account.ID,
+		Title:     req.Title,
+		Content:   req.Content,
+		Status:    "DRAFT",
+	}
+
+	// Determine status based on schedule
+	now := time.Now()
+	if req.Schedule == "now" || req.ScheduledAt.IsZero() {
+		// Post immediately
+		post.Status = "PUBLISHING"
+		publishedAt := now
+		post.PublishedAt = &publishedAt
+	} else {
+		// Schedule for later
+		post.Status = "SCHEDULED"
+		post.ScheduledFor = &req.ScheduledAt
+	}
+
+	// Save post to database
+	if err := h.DB.Create(&post).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to save post: " + err.Error(),
+		})
+		return
+	}
+
+	// If posting now, attempt to post to GMB API
+	if post.Status == "PUBLISHING" {
+		go h.publishToGMB(&post, &account)
+	}
+
+	// Log action to history
+	history := models.GMBHistory{
+		AccountID: account.ID,
+		Action:    "POST_CREATED",
+		Details: map[string]any{
+			"post_id": post.ID,
+			"title":   post.Title,
+			"status":  post.Status,
+		},
+	}
+	h.DB.Create(&history)
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data": gin.H{
-			"id":           postID,
-			"title":        req.Title,
-			"scheduled_at": req.ScheduledAt,
-			"status":       "SCHEDULED",
-			"message":      "Post scheduled successfully",
+			"id":           post.ID,
+			"title":        post.Title,
+			"scheduled_at": post.ScheduledFor,
+			"status":       post.Status,
+			"message":      "Post created successfully",
 		},
+		"postId": post.ID,
 	})
 }
 
@@ -782,4 +912,72 @@ func (h *GMBHandler) GetSuggestions(c *gin.Context) {
 		"success": true,
 		"data":    suggestions,
 	})
+}
+
+// GetAccounts returns all connected GMB accounts for the user
+func (h *GMBHandler) GetAccounts(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+
+	var accounts []models.GMBAccount
+	if err := h.DB.Where("created_by = ? AND is_active = ?", userID, true).Find(&accounts).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch accounts"})
+		return
+	}
+
+	// Map to response format
+	var response []gin.H
+	for _, acc := range accounts {
+		status := "connected"
+		if time.Now().After(acc.TokenExpiresAt) {
+			status = "expired"
+		} else if time.Now().Add(24 * time.Hour).After(acc.TokenExpiresAt) {
+			status = "expiring_soon"
+		}
+
+		response = append(response, gin.H{
+			"id":             acc.ID,
+			"businessName":   acc.AccountName,
+			"locationName":   acc.LocationName,
+			"locationId":     acc.LocationID,
+			"status":         status,
+			"tokenExpiresAt": acc.TokenExpiresAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "data": response})
+}
+
+// DisconnectAccountByID disconnects a specific GMB account
+func (h *GMBHandler) DisconnectAccountByID(c *gin.Context) {
+	// Check permission
+	if !middleware.HasPermission(c, "SOCIAL_GMB_ACCOUNTS") {
+		c.JSON(http.StatusForbidden, gin.H{
+			"success": false,
+			"error":   "You don't have permission to manage GMB accounts",
+		})
+		return
+	}
+
+	id := c.Param("id")
+	userID, _ := c.Get("user_id")
+
+	var account models.GMBAccount
+	if err := h.DB.Where("id = ? AND created_by = ?", id, userID).First(&account).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Account not found"})
+		return
+	}
+
+	account.IsActive = false
+	if err := h.DB.Save(&account).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to disconnect account"})
+		return
+	}
+
+	// Log audit
+	uid := userID.(string)
+	h.AuditService.LogAction(&uid, "ACCOUNT_DISCONNECTED", "GMB_ACCOUNT", account.ID, map[string]string{
+		"account_name": account.AccountName,
+	})
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Account disconnected"})
 }

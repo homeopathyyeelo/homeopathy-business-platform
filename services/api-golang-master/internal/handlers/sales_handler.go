@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -116,80 +117,81 @@ func (h *SalesHandler) GetInvoices(c *gin.Context) {
 func (h *SalesHandler) GetInvoiceDetails(c *gin.Context) {
 	invoiceID := c.Param("id")
 
-	// Mock invoice data with items for A4 printing
-	invoice := gin.H{
-		"id":        invoiceID,
-		"invoiceNo": "INV-2024-" + invoiceID[:6],
-		"date":      time.Now().Format("2006-01-02"),
-		"dueDate":   time.Now().AddDate(0, 0, 30).Format("2006-01-02"),
+	// Fetch real invoice from database
+	var invoice struct {
+		ID              string    `gorm:"column:id"`
+		InvoiceNo       string    `gorm:"column:invoice_no"`
+		InvoiceDate     time.Time `gorm:"column:invoice_date"`
+		CustomerID      *string   `gorm:"column:customer_id"`
+		CustomerName    string    `gorm:"column:customer_name"`
+		CustomerPhone   string    `gorm:"column:customer_phone"`
+		CustomerAddress string    `gorm:"column:customer_address"`
+		CustomerGSTIN   string    `gorm:"column:customer_gstin"`
+		CustomerEmail   string    `gorm:"column:customer_email"`
+		Subtotal        float64   `gorm:"column:subtotal"`
+		DiscountAmount  float64   `gorm:"column:discount_amount"`
+		TaxAmount       float64   `gorm:"column:tax_amount"`
+		TotalAmount     float64   `gorm:"column:total_amount"`
+		PaidAmount      float64   `gorm:"column:paid_amount"`
+		BalanceAmount   float64   `gorm:"column:balance_amount"`
+		PaymentStatus   string    `gorm:"column:payment_status"`
+		Status          string    `gorm:"column:status"`
+	}
+
+	if err := h.db.Table("sales_invoices").Where("id = ?", invoiceID).First(&invoice).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Invoice not found"})
+		return
+	}
+
+	// Fetch invoice items
+	var items []map[string]interface{}
+	h.db.Raw(`
+		SELECT 
+			sii.id,
+			sii.product_id,
+			sii.product_name,
+			sii.sku,
+			sii.batch_number,
+			sii.hsn_code,
+			sii.quantity,
+			sii.unit_price,
+			sii.discount_amount,
+			sii.discount_percent,
+			sii.tax_percent,
+			sii.tax_amount,
+			sii.total_price
+		FROM sales_invoice_items sii
+		WHERE sii.invoice_id = ?
+		ORDER BY sii.created_at
+	`, invoiceID).Scan(&items)
+
+	// Format response
+	invoiceData := gin.H{
+		"id":        invoice.ID,
+		"invoiceNo": invoice.InvoiceNo,
+		"date":      invoice.InvoiceDate.Format("2006-01-02"),
+		"dueDate":   invoice.InvoiceDate.AddDate(0, 0, 30).Format("2006-01-02"),
 		"customer": gin.H{
-			"name":      "Dr. Sharma Clinic",
-			"address":   "123 Medical Complex, MG Road, Bangalore, Karnataka 560001",
-			"phone":     "+91 98765 43210",
-			"email":     "drsharma@clinic.com",
-			"gstNumber": "29AAAPL1234C1ZV",
+			"name":      invoice.CustomerName,
+			"address":   invoice.CustomerAddress,
+			"phone":     invoice.CustomerPhone,
+			"email":     invoice.CustomerEmail,
+			"gstNumber": invoice.CustomerGSTIN,
 		},
-		"items": []gin.H{
-			{
-				"id": uuid.New().String(),
-				"product": gin.H{
-					"name":         "Arnica Montana 30C",
-					"potency":      "30C",
-					"manufacturer": "SBL",
-				},
-				"hsnCode":       "30049014",
-				"batchNumber":   "ARN-30C-2024-01",
-				"quantity":      2,
-				"unitPrice":     125.00,
-				"gstPercentage": 5,
-				"gstAmount":     12.50,
-				"total":         250.00,
-			},
-			{
-				"id": uuid.New().String(),
-				"product": gin.H{
-					"name":         "Rhus Toxicodendron 200C",
-					"potency":      "200C",
-					"manufacturer": "Schwabe",
-				},
-				"hsnCode":       "30049014",
-				"batchNumber":   "RHU-200C-2024-02",
-				"quantity":      1,
-				"unitPrice":     180.00,
-				"gstPercentage": 5,
-				"gstAmount":     9.00,
-				"total":         189.00,
-			},
-			{
-				"id": uuid.New().String(),
-				"product": gin.H{
-					"name":         "Calendula Mother Tincture",
-					"potency":      "Q",
-					"manufacturer": "Reckeweg",
-				},
-				"hsnCode":       "30049014",
-				"batchNumber":   "CAL-Q-2024-03",
-				"quantity":      1,
-				"unitPrice":     220.00,
-				"gstPercentage": 5,
-				"gstAmount":     11.00,
-				"total":         231.00,
-			},
-		},
-		"subtotal":       525.00,
-		"discountAmount": 0.00,
-		"gstAmount":      32.50,
-		"total":          557.50,
-		"paymentStatus":  "PAID",
-		"paymentMethod":  "CASH",
-		"placeOfSupply":  "Karnataka",
-		"salesExecutive": "John Doe",
-		"notes":          "Payment received via cash. Thank you for your business!",
+		"items":          items,
+		"subtotal":       invoice.Subtotal,
+		"discountAmount": invoice.DiscountAmount,
+		"gstAmount":      invoice.TaxAmount,
+		"total":          invoice.TotalAmount,
+		"paidAmount":     invoice.PaidAmount,
+		"balanceAmount":  invoice.BalanceAmount,
+		"paymentStatus":  invoice.PaymentStatus,
+		"status":         invoice.Status,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    invoice,
+		"data":    invoiceData,
 	})
 }
 
@@ -551,32 +553,120 @@ func (h *SalesHandler) DeleteSalesOrder(c *gin.Context) {
 	})
 }
 
-// GetSalesInvoices returns list of sales invoices
+// GetSalesInvoices returns list of sales invoices from database
 func (h *SalesHandler) GetSalesInvoices(c *gin.Context) {
-	invoices := []gin.H{
-		{
-			"id":           uuid.New().String(),
-			"invoiceNo":    "INV-2024-001",
-			"date":         time.Now().Format("2006-01-02"),
-			"customerName": "Walk-in Customer",
-			"totalAmount":  2500.00,
-			"status":       "paid",
-			"paymentMode":  "Cash",
-		},
-		{
-			"id":           uuid.New().String(),
-			"invoiceNo":    "INV-2024-002",
-			"date":         time.Now().Format("2006-01-02"),
-			"customerName": "Dr. Sharma Clinic",
-			"totalAmount":  6800.00,
-			"status":       "paid",
-			"paymentMode":  "UPI",
-		},
+	// Get query parameters
+	page := c.DefaultQuery("page", "1")
+	limit := c.DefaultQuery("limit", "20")
+	search := c.Query("search")
+	status := c.Query("status")
+	invoiceType := c.Query("invoice_type")
+	paymentStatus := c.Query("payment_status")
+
+	// Build query
+	query := h.db.Table("sales_invoices").
+		Select(`
+			sales_invoices.id,
+			sales_invoices.invoice_no,
+			sales_invoices.invoice_type,
+			sales_invoices.customer_id,
+			sales_invoices.customer_name,
+			sales_invoices.customer_phone,
+			sales_invoices.customer_address,
+			sales_invoices.customer_gst_number as customer_gstin,
+			sales_invoices.invoice_date,
+			NULL as due_date,
+			sales_invoices.status,
+			sales_invoices.payment_status,
+			sales_invoices.payment_method,
+			sales_invoices.subtotal,
+			sales_invoices.total_discount as discount,
+			sales_invoices.total_gst as tax,
+			sales_invoices.total_amount,
+			sales_invoices.amount_paid,
+			(sales_invoices.total_amount - sales_invoices.amount_paid) as balance_due,
+			sales_invoices.notes,
+			sales_invoices.created_at,
+			sales_invoices.created_at as updated_at,
+			COUNT(sales_invoice_items.id) as items_count
+		`).
+		Joins("LEFT JOIN sales_invoice_items ON sales_invoices.id = sales_invoice_items.invoice_id").
+		Group(`sales_invoices.id, sales_invoices.invoice_no, sales_invoices.invoice_type, 
+			sales_invoices.customer_id, sales_invoices.customer_name, sales_invoices.customer_phone,
+			sales_invoices.customer_address, sales_invoices.customer_gst_number, sales_invoices.invoice_date,
+			sales_invoices.status, sales_invoices.payment_status, sales_invoices.payment_method,
+			sales_invoices.subtotal, sales_invoices.total_discount, sales_invoices.total_gst,
+			sales_invoices.total_amount, sales_invoices.amount_paid, sales_invoices.notes,
+			sales_invoices.created_at`)
+
+	// Apply filters
+	if search != "" {
+		searchPattern := "%" + search + "%"
+		query = query.Where("sales_invoices.invoice_no ILIKE ? OR sales_invoices.customer_name ILIKE ? OR sales_invoices.customer_phone ILIKE ?",
+			searchPattern, searchPattern, searchPattern)
 	}
+
+	if status != "" && status != "all" {
+		query = query.Where("sales_invoices.status = ?", status)
+	}
+
+	if invoiceType != "" && invoiceType != "all" {
+		query = query.Where("sales_invoices.invoice_type = ?", invoiceType)
+	}
+
+	if paymentStatus != "" && paymentStatus != "all" {
+		query = query.Where("sales_invoices.payment_status = ?", paymentStatus)
+	}
+
+	// Count total
+	var total int64
+	countQuery := h.db.Table("sales_invoices")
+	if search != "" {
+		searchPattern := "%" + search + "%"
+		countQuery = countQuery.Where("invoice_no ILIKE ? OR customer_name ILIKE ? OR customer_phone ILIKE ?",
+			searchPattern, searchPattern, searchPattern)
+	}
+	if status != "" && status != "all" {
+		countQuery = countQuery.Where("status = ?", status)
+	}
+	if invoiceType != "" && invoiceType != "all" {
+		countQuery = countQuery.Where("invoice_type = ?", invoiceType)
+	}
+	if paymentStatus != "" && paymentStatus != "all" {
+		countQuery = countQuery.Where("payment_status = ?", paymentStatus)
+	}
+	countQuery.Count(&total)
+
+	// Pagination
+	pageInt := 1
+	limitInt := 20
+	fmt.Sscanf(page, "%d", &pageInt)
+	fmt.Sscanf(limit, "%d", &limitInt)
+
+	offset := (pageInt - 1) * limitInt
+	query = query.Offset(offset).Limit(limitInt)
+
+	// Execute query
+	var invoices []map[string]interface{}
+	if err := query.Order("sales_invoices.invoice_date DESC, sales_invoices.created_at DESC").Find(&invoices).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to fetch invoices",
+		})
+		return
+	}
+
+	totalPages := (int(total) + limitInt - 1) / limitInt
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data":    invoices,
+		"data": gin.H{
+			"items":      invoices,
+			"total":      total,
+			"page":       pageInt,
+			"limit":      limitInt,
+			"totalPages": totalPages,
+		},
 	})
 }
 

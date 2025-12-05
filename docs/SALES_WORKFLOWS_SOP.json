@@ -1,0 +1,742 @@
+{
+  "document_metadata": {
+    "title": "Sales & Billing Workflows - Standard Operating Procedures",
+    "version": "1.0.0",
+    "created_date": "2025-12-04",
+    "company": "Yeelo Homeopathy",
+    "purpose": "Comprehensive SOPs and technical specifications for all sales workflow modules",
+    "modules_covered": ["Hold Bills", "Returns & Credit", "B2B & E-Invoice", "Payments", "Commission Tracking"]
+  },
+  
+  "modules": [
+    {
+      "module": "Hold Bill (/sales/hold-bills)",
+      "priority": "IMMEDIATE",
+      "complexity": "MEDIUM",
+      "reasoning": [
+        "In homeopathy retail, customers frequently need to consult doctors, verify prescriptions, or check with family before completing purchases. Hold bills are essential for customer experience.",
+        "INVENTORY CONCERN: Homeopathic medicines have batch numbers, expiry dates, and FEFO (First Expired First Out) logic. Holding a bill must NOT reserve inventory permanently, as this blocks other sales and distorts stock reports.",
+        "TIMING ISSUE: Held bills can become stale - prices may change, batches may expire, stock may run out. System must handle these scenarios gracefully on resume.",
+        "USER CONFUSION: Multiple counters (POS 1, POS 2, etc.) may have held bills. Users must easily identify which bills belong to which counter/session to avoid cross-counter confusion.",
+        "DATA INTEGRITY: Held bills contain complete cart state (items, customer info, discounts, GST calculations) - all must be preserved exactly but NOT committed to accounting until finalized.",
+        "SECURITY: Held bills should be session/user-specific. One cashier should not accidentally resume another's held bill unless explicitly authorized by supervisor.",
+        "PERFORMANCE: Large number of old held bills can clutter UI and database. Need auto-purge mechanism after configurable period (default: 7 days) with notification before deletion.",
+        "EDGE CASES: Customer returns after stock depleted, customer returns after price change, customer never returns, system crash before holding completes, duplicate hold attempts due to network lag.",
+        "BUSINESS RULE: In homeopathy retail, prescription medicines may be held pending doctor verification. Non-prescription items should ideally complete immediately for better cash flow.",
+        "REGULATORY: No GST liability or sales reporting until bill is finalized. Held bills are NOT invoices and must never appear in tax filings or revenue reports."
+      ],
+      "final_guidelines": {
+        "must_do": [
+          "1. SAVE COMPLETE STATE: Persist entire cart (items with full details: product_id, product_name, sku, batch_id, batch_number, quantity, unit_price, discount, tax, expiry_date) to database table 'held_bills'.",
+          "2. GENERATE UNIQUE HOLD ID: Create unique identifier format 'HOLD-YYYYMMDD-XXXX' for easy reference and retrieval. Ensure uniqueness with database constraint.",
+          "3. TIMESTAMP & USER TAG: Record hold_at timestamp, counter_id, counter_name, user_id, user_name for audit trail and filtering. Essential for multi-counter operations.",
+          "4. NO INVENTORY IMPACT: Do NOT reduce inventory_batches.available_quantity. Do NOT create sales_invoices or sales_invoice_items records. Do NOT post to accounting or tax ledgers.",
+          "5. UI VISIBILITY: Show held bills list on POS page with filters (by counter, by user, by date range). Display: hold_number, bill_total, customer_name (if any), items_count, hold_time, expires_in.",
+          "6. RESUME FUNCTIONALITY: Allow one-click resume that restores full cart state. BEFORE resume, validate: (a) All items still in stock with sufficient quantity, (b) Batches still available and not expired, (c) Prices unchanged or show price change alert.",
+          "7. DISCARD/DELETE: Allow explicit discard action with mandatory confirmation dialog. Capture discard_reason (dropdown + free text). Log who discarded and when for audit.",
+          "8. AUTO-CLEANUP: Implement scheduled job (cron/background worker) to auto-expire held bills older than X days (configurable in settings, default 7 days). Send notification to counter/user 24 hours before auto-expiry.",
+          "9. VALIDATION ON HOLD: Ensure cart is not empty (at least 1 item). Ensure total_amount > 0. Optionally require minimum customer info (phone number) for held bills above ₹1000 to enable follow-up.",
+          "10. CONFLICT DETECTION: If item stock becomes zero after hold, show clear warning on resume: 'Item X is out of stock. Remove or choose alternative?'. Provide option to proceed with partial bill.",
+          "11. PRICE CHANGE HANDLING: If item price changed since hold, show side-by-side comparison (old_price vs new_price, difference, % change). Let user choose: 'Accept new price' or 'Cancel resume'. Log decision.",
+          "12. BATCH EXPIRY CHECK: On resume, verify all batches are still valid (expiry_date > today). If any batch expired, automatically replace with fresh batch using FEFO logic. If no fresh batch available, alert user and offer alternatives.",
+          "13. SESSION PERSISTENCE: Even if browser crashes or user logs out, held bills must persist in database and be retrievable on next login. Use server-side storage, not localStorage.",
+          "14. COUNTER-SPECIFIC VIEW: By default, show only held bills from current_counter_id. Provide 'All Counters' toggle for supervisors/managers to see organization-wide held bills.",
+          "15. SEARCH CAPABILITY: Allow search by: hold_number (exact match), customer_phone (partial match), customer_name (fuzzy match), hold_date range. Implement using database indexes for performance."
+        ],
+        "must_not_do": [
+          "1. DO NOT reduce inventory_batches.available_quantity on hold. Stock must remain available for other sales. Holding is NOT reservation.",
+          "2. DO NOT create sales_invoices or generate invoice numbers on hold. Invoice creation happens only on final payment.",
+          "3. DO NOT calculate GST liability or update gstr_reports on hold. Tax liability arises only on supply of goods (invoice generation).",
+          "4. DO NOT trigger payment processing, e-invoice IRN generation, or customer notifications (WhatsApp/SMS) on hold.",
+          "5. DO NOT allow indefinite holding without cleanup mechanism. Stale holds clutter database and confuse users. Must have expiry.",
+          "6. DO NOT mix held bills with completed sales in reports (daily sales, revenue, GST reports). Keep separate 'Held Bills Report'.",
+          "7. DO NOT allow resuming held bill if critical items are out of stock without explicit user acknowledgment and decision.",
+          "8. DO NOT auto-resume on page load (could confuse user who is starting new sale). Require explicit 'Resume' button click.",
+          "9. DO NOT allow holding bills with zero items or negative totals. Validate business logic before saving.",
+          "10. DO NOT share held bills across different company branches without proper access control. Branch A should not see Branch B's holds."
+        ],
+        "edge_cases_handling": {
+          "stock_depleted_on_resume": {
+            "scenario": "Customer returns to complete held bill but item is now out of stock",
+            "solution": "Show item-wise stock status in modal. Highlight unavailable items in red. Provide options: (1) Remove out-of-stock items and proceed with partial bill, (2) Cancel entire resume, (3) Notify when stock arrives. Log decision.",
+            "ui_behavior": "Modal dialog with item list, stock availability column, checkboxes to select items to keep, 'Proceed with Selected' and 'Cancel' buttons."
+          },
+          "price_increased": {
+            "scenario": "Product price increased from ₹100 to ₹120 since hold",
+            "solution": "Show price comparison table. Calculate new total. Highlight increases in amber. Get customer explicit confirmation. If customer rejects, offer to call manager for discount approval. Log entire conversation.",
+            "ui_behavior": "Comparison table with columns: Item, Old Price, New Price, Difference, % Change. Show old_total vs new_total. 'Accept New Prices' button (primary) and 'Cancel' button (secondary)."
+          },
+          "batch_expired": {
+            "scenario": "Batch held in bill has now crossed expiry date",
+            "solution": "Auto-replace with fresh batch using FEFO. If no fresh batch available for that product, show alert: 'Product X batch expired. No fresh stock available. Remove or choose alternative?'. Offer similar products if available.",
+            "ui_behavior": "Notification bar showing batch replacement: 'Batch ABC expired, replaced with Batch XYZ (Exp: 2026-05-15)'. If no replacement, show modal with product alternatives."
+          },
+          "customer_never_returns": {
+            "scenario": "Bill held 7 days ago, customer hasn't returned",
+            "solution": "Auto-expire after configured days (default 7). Before expiry, send SMS/WhatsApp reminder if customer phone available: 'Your held bill HOLD-XXX worth ₹YYY will expire on DD-MM-YYYY. Please visit to complete purchase.' On expiry, move status from ACTIVE to EXPIRED.",
+            "technical": "Scheduled job runs daily at 1 AM, finds bills with expires_at < NOW(), sends notifications for bills expiring within 24 hours, marks expired bills."
+          },
+          "system_crash_during_hold": {
+            "scenario": "Network failure or crash while saving held bill",
+            "solution": "Use database transactions. If hold save incomplete, treat as never held. Show error to user: 'Failed to hold bill due to network issue. Please retry.' Use idempotency keys to prevent duplicate holds on retry.",
+            "technical": "Wrap hold creation in transaction. On error, rollback. Return 500 status. Client shows error and keeps cart in memory for retry."
+          },
+          "duplicate_hold_click": {
+            "scenario": "User double-clicks 'Hold Bill' button due to slow network",
+            "solution": "Client-side debouncing (disable button for 2 seconds after click). Server-side idempotency check using unique request_id sent by client. If duplicate request_id received within 10 seconds, return original held_bill without creating new one.",
+            "technical": "Frontend: disable button after click. Backend: check if request with same request_id exists in cache (Redis) with 10-second TTL. If exists, return cached response."
+          },
+          "held_bill_limit_reached": {
+            "scenario": "Counter has 50 held bills (system limit)",
+            "solution": "Show warning: 'Maximum 50 held bills reached for this counter. Please clear old holds before creating new ones.' Provide 'View & Clear Holds' button that opens held bills list with bulk actions.",
+            "ui_behavior": "Counter turns amber when 40 holds reached, red when 50 reached. Block new holds at 50 until some are cleared."
+          },
+          "discount_expired": {
+            "scenario": "Bill had 15% Diwali festival discount which ended yesterday",
+            "solution": "Recalculate bill at current applicable discounts. Show comparison: 'Festival discount no longer valid. Total increased from ₹850 to ₹1000.' Offer to call manager if customer disputes. Log as discount dispute.",
+            "technical": "Validate discount codes/rules on resume. If rule expired, recalculate. Store original_total and new_total for audit."
+          },
+          "gst_rate_changed": {
+            "scenario": "Government changed GST from 5% to 12% for certain products",
+            "solution": "Rare but possible. Recalculate GST on resume using current rates. Show comparison: 'Tax rates updated. Old GST: ₹50, New GST: ₹120'. Always use current tax rates, not held rates, for compliance.",
+            "regulatory": "Tax point is at supply time (invoice generation), not hold time. Always use current GST rates."
+          },
+          "unauthorized_access_attempt": {
+            "scenario": "User from Counter A tries to resume hold from Counter B",
+            "solution": "Check user permissions. If user is regular cashier (not supervisor), block access and show: 'This held bill belongs to Counter B. You cannot resume it.' If supervisor, allow with warning and log action.",
+            "security": "Implement role-based access. Regular users see only their counter's holds. Supervisors see all with audit logging."
+          }
+        },
+        "technical_implementation": {
+          "database_schema": {
+            "table": "held_bills",
+            "columns": [
+              "id UUID PRIMARY KEY",
+              "hold_number VARCHAR(50) UNIQUE NOT NULL",
+              "counter_id VARCHAR(50)",
+              "counter_name VARCHAR(100)",
+              "user_id UUID",
+              "user_name VARCHAR(100)",
+              "customer_id UUID NULLABLE",
+              "customer_name VARCHAR(200)",
+              "customer_phone VARCHAR(20)",
+              "cart_data JSONB NOT NULL (stores complete cart array)",
+              "subtotal NUMERIC(15,2)",
+              "discount_amount NUMERIC(15,2)",
+              "tax_amount NUMERIC(15,2)",
+              "total_amount NUMERIC(15,2)",
+              "items_count INTEGER",
+              "notes TEXT",
+              "status VARCHAR(20) DEFAULT 'ACTIVE' (ACTIVE/RESUMED/DISCARDED/EXPIRED)",
+              "hold_at TIMESTAMP DEFAULT NOW()",
+              "expires_at TIMESTAMP DEFAULT NOW() + INTERVAL '7 days'",
+              "resumed_at TIMESTAMP NULLABLE",
+              "discarded_at TIMESTAMP NULLABLE",
+              "discarded_by VARCHAR(100)",
+              "discard_reason TEXT",
+              "created_at TIMESTAMP DEFAULT NOW()",
+              "updated_at TIMESTAMP DEFAULT NOW()"
+            ],
+            "indexes": [
+              "idx_held_bills_counter ON counter_id",
+              "idx_held_bills_user ON user_id",
+              "idx_held_bills_status ON status",
+              "idx_held_bills_expires ON expires_at (for cleanup job)"
+            ]
+          },
+          "api_endpoints": [
+            {
+              "method": "POST",
+              "path": "/api/erp/pos/hold-bill",
+              "description": "Create held bill",
+              "request_body": {
+                "counterId": "string",
+                "counterName": "string",
+                "userId": "string",
+                "userName": "string",
+                "customerId": "string|null",
+                "customerName": "string",
+                "customerPhone": "string",
+                "cartItems": "array",
+                "subtotal": "number",
+                "discountAmount": "number",
+                "taxAmount": "number",
+                "totalAmount": "number",
+                "notes": "string"
+              },
+              "response": {
+                "success": "boolean",
+                "data": "HoldBill object",
+                "message": "string"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/pos/held-bills",
+              "description": "List held bills with filters",
+              "query_params": {
+                "counter_id": "string (optional)",
+                "user_id": "string (optional)",
+                "status": "string (optional: ACTIVE|RESUMED|DISCARDED|EXPIRED)",
+                "page": "number",
+                "limit": "number"
+              },
+              "response": {
+                "success": "boolean",
+                "data": {
+                  "items": "array of HoldBill",
+                  "total": "number",
+                  "page": "number",
+                  "totalPages": "number"
+                }
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/pos/held-bills/:id",
+              "description": "Get single held bill details",
+              "response": "HoldBill object with parsed cart_data"
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/pos/held-bills/:id/resume",
+              "description": "Resume held bill (validates stock, price, expiry)",
+              "response": {
+                "success": "boolean",
+                "data": "HoldBill with validation results",
+                "validation": {
+                  "valid": "boolean",
+                  "issues": "array of issues",
+                  "canProceed": "boolean"
+                }
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/pos/held-bills/:id/discard",
+              "description": "Discard held bill",
+              "request_body": {
+                "discardedBy": "string",
+                "reason": "string"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/pos/held-bills/cleanup",
+              "description": "Manual cleanup of expired bills (admin only)",
+              "response": {
+                "cleaned": "number (count of cleaned bills)"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/pos/held-bills/stats",
+              "description": "Get hold bill statistics",
+              "query_params": {
+                "counter_id": "string (optional)"
+              },
+              "response": {
+                "activeHolds": "number",
+                "totalValue": "number",
+                "expiringSoon": "number",
+                "todayHolds": "number"
+              }
+            }
+          ],
+          "frontend_components": [
+            "HoldBillsList.tsx - Main listing page",
+            "HoldBillCard.tsx - Individual hold card with actions",
+            "ResumeConfirmationDialog.tsx - Shows validation results before resume",
+            "StockValidationWarning.tsx - Displays stock issues",
+            "PriceChangeAlert.tsx - Shows price comparison",
+            "DiscardBillDialog.tsx - Capture discard reason",
+            "HoldBillStats.tsx - Statistics widget for dashboard"
+          ],
+          "background_jobs": [
+            {
+              "name": "hold_bills_cleanup",
+              "schedule": "Daily at 1:00 AM",
+              "function": "Mark expired bills, send notifications for expiring soon",
+              "implementation": "Cron job or Celery beat (if using Python workers)"
+            }
+          ]
+        }
+      }
+    },
+    
+    {
+      "module": "Returns and Credits (/sales/returns)",
+      "priority": "HIGH",
+      "complexity": "HIGH",
+      "reasoning": [
+        "REGULATORY CONTEXT: In India, homeopathy medicine returns are regulated by Drugs and Cosmetics Act. Some items (opened bottles, used medicines) cannot be returned. Must comply with state pharmacy laws.",
+        "INVENTORY IMPACT: Returns increase stock. However, returned medicines may not be resalable if tampered, near expiry, or opened. Need separate 'quarantine' or 'damaged' stock category to maintain inventory integrity.",
+        "GST IMPLICATIONS: Returns create Credit Notes (CN) which MUST be reported in GSTR-1 Form. Need proper documentation with original invoice reference, otherwise tax department may reject ITC claims.",
+        "PRESCRIPTION TRACKING: If medicine was sold against prescription, return must be validated. Cannot return Schedule H prescription-only medicine without documented reason and pharmacist approval.",
+        "BATCH TRACKING: Must return to same batch that was sold. If batch was sold 3 months ago and now expired, cannot add back to saleable stock. Needs quarantine for vendor return or disposal.",
+        "CUSTOMER VERIFICATION: Prevent fraudulent returns (customer claims to have bought from us but didn't). Must match invoice number, date, items, quantities exactly. Cross-check payment method.",
+        "REFUND METHODS: Cash refund vs Store Credit vs Exchange. Different tax and accounting treatment for each. Cash refunds need cash drawer reconciliation.",
+        "PARTIAL RETURNS: Customer bought 10 bottles, returns 7. Must handle partial quantities correctly with proportional discount and tax calculations.",
+        "TIME LIMIT: Industry standard is 7-30 days for returns depending on product type. After that, no return allowed unless product was defective or expired on arrival.",
+        "MANAGER APPROVAL: High-value returns (e.g., >₹5000) should require manager approval to prevent fraud and ensure policy compliance.",
+        "SERIAL RETURNS: Same customer returning same item multiple times within short period - red flag for fraud (buy-use-return cycle). Need pattern detection.",
+        "ORIGINAL PAYMENT METHOD: If original sale was card/UPI, refund should ideally go same route (not cash) to prevent money laundering and maintain audit trail."
+      ],
+      "final_guidelines": {
+        "must_do": [
+          "1. INVOICE VALIDATION: Require original invoice number (mandatory field). Fetch and display complete original sale details: date, items with quantities, amounts, payment method. Validate invoice exists and is not already fully returned.",
+          "2. QUANTITY CHECK: Validate return quantity ≤ sold quantity for each item. Show error if exceeds: 'You sold 5 units but trying to return 7 units'. Calculate already_returned from previous returns.",
+          "3. TIME LIMIT ENFORCEMENT: Check if return is within allowed period (configurable per product category, default 30 days from invoice date). If beyond limit, require manager override with reason capture.",
+          "4. ITEM CONDITION CHECK: Mandatory dropdown for each returned item: 'Unopened/Resalable', 'Opened/Non-resalable', 'Damaged', 'Expired on arrival'. Different stock handling and accounting for each condition.",
+          "5. RETURN REASON: Mandatory dropdown with options: 'Changed mind', 'Wrong item ordered', 'Defective product', 'Expired/Near expiry', 'Doctor changed prescription', 'Adverse reaction', 'Other (specify)'. Capture free text for 'Other'.",
+          "6. REFUND CALCULATION: Calculate refund amount based on ORIGINAL sale price (not current price). Include proportional discount reversal and GST reversal. Formula: (unit_price × qty_returned) - (proportional_discount) including proportional GST.",
+          "7. PAYMENT METHOD MATCHING: If original payment was Card/UPI (>₹2000), default refund method to same and show original transaction reference. Allow cash refund only with manager approval + capture reason ('Customer requested cash', 'Card expired', etc.).",
+          "8. STOCK ADJUSTMENT: Create stock adjustment entry. If condition='RESALABLE', add to inventory_batches.available_quantity for same batch_id. If 'DAMAGED' or 'EXPIRED', add to damaged_goods table (separate from saleable stock).",
+          "9. CREDIT NOTE GENERATION: Generate Credit Note with format 'CN-YYYYMMDD-XXXX' linked to original invoice_id. Include: CN number, date, original invoice reference, customer details, returned items with HSN codes, GST reversal breakup (CGST/SGST/IGST), total refund amount.",
+          "10. GST REVERSAL: Reduce GST liability. If original sale had CGST 2.5% + SGST 2.5%, credit note should reverse same. Update gst_liability_ledger. Ensure Credit Note appears in next GSTR-1 B2C/B2B section (Table 9B).",
+          "11. CUSTOMER LEDGER UPDATE: If customer has account (B2B customer), update customer_ledger with credit balance. Balance can be used in future purchases or refunded on request.",
+          "12. APPROVAL WORKFLOW: Returns >₹5000 OR beyond 30 days OR opened medicine returns require manager approval before refund processing. Capture approver name, timestamp, approval notes. Send notification to manager.",
+          "13. FRAUD DETECTION: Flag if same customer has >3 returns in last 30 days OR same product returned >2 times in 60 days OR return value >50% of purchase history. Show alert to supervisor: 'Possible fraud - review before processing'.",
+          "14. PRESCRIPTION VALIDATION: If original sale had prescription_number (Schedule H drugs), verify prescription before return. Check if partial consumption allowed per regulations. Some prescription items non-returnable per pharmacy law.",
+          "15. AUDIT TRAIL: Log complete return transaction to returns_audit_log: original invoice, returned items with batch numbers, quantities, condition, refund method, amount, reason, processing user, approver (if any), timestamp, customer acknowledgment signature (if in-store)."
+        ],
+        "must_not_do": [
+          "1. DO NOT allow returns without original invoice proof (unless store manager creates exception with full documentation and customer ID verification for amounts <₹500).",
+          "2. DO NOT allow return quantity to exceed sold quantity minus already_returned quantity. Check partial returns.",
+          "3. DO NOT add damaged/opened medicines back to saleable stock. Use separate damaged_goods table. Risking patient safety and regulatory violation.",
+          "4. DO NOT skip GST reversal and Credit Note generation. This is Income Tax Act and GST Act compliance requirement. Can lead to tax notices.",
+          "5. DO NOT allow cash refunds for high-value (>₹10,000) card/UPI sales without manager approval (RBI KYC/AML risk).",
+          "6. DO NOT bypass manager approval for high-value (>₹5000) or late (>30 days) returns. Creates fraud risk.",
+          "7. DO NOT allow returns of temperature-sensitive biologicals or prescription-only Schedule X drugs without pharmacist verification and documentation.",
+          "8. DO NOT forget to reduce sales figures in reports. Returns are contra-revenue (negative sales). Must reflect in P&L.",
+          "9. DO NOT allow backdated returns (e.g., return date before invoice date or >1 year old). Manipulation of books red flag.",
+          "10. DO NOT issue refund before completing all validations, getting necessary approvals, and customer signing return acknowledgment form."
+        ],
+        "edge_cases_handling": {
+          "invoice_not_found": {
+            "scenario": "Customer provides invoice number but not found in system",
+            "solution": "Show error: 'Invoice not found. Please verify number.' If customer insists they bought from us, allow supervisor to manually search by: customer_phone + date_range + approximate_amount. If found, proceed. If not found, politely decline unless manager creates manual exception with full customer ID verification and liability acceptance.",
+            "ui": "Search dialog with fields: phone, date range (from-to), amount range. Shows matching invoices."
+          },
+          "partial_return_different_batches": {
+            "scenario": "Original sale had 10 units from 3 different batches (Batch A: 4, B: 3, C: 3), customer returns 7 units",
+            "solution": "Ask customer which batches being returned OR use FIFO assumption (return from oldest batch first). Track per-batch return in sales_return_items. Credit stock back to specific batch_ids proportionally.",
+            "technical": "sales_return_items table has batch_id column. Create multiple rows if returning from multiple batches."
+          },
+          "original_batch_exhausted": {
+            "scenario": "Customer returns batch XYZ123 but that batch no longer exists in inventory (fully sold)",
+            "solution": "Still accept return. Add to 'unallocated_returns' temporary holding for that product_id. Show in separate UI for pharmacist to allocate to current batches or vendor return. Don't add to sold-out batch (would show negative stock).",
+            "technical": "Create inventory_adjustment with batch_id = NULL, product_id = XXX, quantity = YY, type = 'RETURN_UNALLOCATED'. Weekly review process to allocate or return to vendor."
+          },
+          "price_changed_since_sale": {
+            "scenario": "Original sale price was ₹100, current price is ₹120",
+            "solution": "Always refund at ORIGINAL sale price (₹100), not current price. Customer paid ₹100, so refund ₹100. Show on UI: 'Refunding at original price: ₹100 (Current price: ₹120)'.",
+            "principle": "Refund what customer paid, not current market value. Time value of money to seller's benefit."
+          },
+          "customer_lost_invoice": {
+            "scenario": "Customer wants to return but lost paper invoice",
+            "solution": "Search by customer_phone + purchase_date_range. Show matching invoices. Customer identifies correct one. Verify with additional details (items purchased, payment method). If confident match, proceed. Log as 'invoice-not-presented' return with higher scrutiny.",
+            "fraud_check": "If frequent 'lost invoice' returns from same customer, flag for investigation."
+          },
+          "exchange_vs_return": {
+            "scenario": "Customer wants to exchange product A for product B (e.g., Arnica 30 for Arnica 200)",
+            "solution": "Exchange is Return + New Sale in single flow. Process return first (generate CN), then new sale (generate new invoice). Net payment = new_invoice_amount - credit_note_amount. If net negative, refund difference. If net positive, collect difference.",
+            "ui": "Exchange wizard: Step 1: Select items to return → Step 2: Select items to purchase → Step 3: Show net amount → Step 4: Process payment/refund"
+          },
+          "cancelled_invoice_return": {
+            "scenario": "Customer provides invoice number that was cancelled (status = 'CANCELLED')",
+            "solution": "DO NOT allow return. Show error: 'This invoice was cancelled and refunded. Cannot process return.' If customer disputes, escalate to manager with full investigation (check if refund was already processed, payment reversed, etc.).",
+            "validation": "WHERE invoice_no = ? AND status NOT IN ('CANCELLED', 'VOID')"
+          },
+          "gst_rate_changed_since_sale": {
+            "scenario": "Original sale had 5% GST, now government changed to 12%",
+            "solution": "Refund GST at OLD rate (5% - rate applicable at time of sale), not current rate (12%). Credit Note should mirror original invoice tax structure. GST law: tax point is supply date (original invoice date).",
+            "technical": "Store original tax_percent in sales_invoice_items. Use that for credit note calculation, not product master's current tax rate."
+          },
+          "customer_wants_credit_not_refund": {
+            "scenario": "Customer prefers store credit over cash refund",
+            "solution": "Issue Store Credit voucher. Create record in customer_credits table with: customer_id, credit_amount, source='RETURN', source_reference_id=return_id, expiry_date=NOW() + 90 days. Print voucher with code. Auto-apply in next purchase.",
+            "advantage": "Better for cash flow. Customer likely to spend more than credit amount. Win-win."
+          },
+          "serial_returner_fraud": {
+            "scenario": "Customer has returned 8 times in last 2 months, high value",
+            "solution": "Flag account. Show warning to staff: 'This customer has 8 returns in 60 days totaling ₹15,000. Possible fraud pattern - verify carefully.' Require manager approval, photo ID verification, photo of returned items, signature on return form. If pattern continues, politely refuse service per store policy.",
+            "fraud_types": "Buy expensive items, use for event/function, return next day. Or buy, extract expensive component, return as defective."
+          },
+          "returned_item_now_expired": {
+            "scenario": "Customer returns item within 30 days but batch now expired",
+            "solution": "Accept return (within policy). Mark condition as 'EXPIRED'. Do not add to saleable stock. Add to damaged_goods with disposition='VENDOR_RETURN' or 'DISPOSE'. Process refund normally. Loss to seller.",
+            "vendor_return": "If vendor agreement allows, return expired stock to vendor for credit. Track in vendor_returns table."
+          },
+          "refund_exceeds_cash_in_drawer": {
+            "scenario": "Customer paid cash ₹8000, drawer has only ₹3000 cash",
+            "solution": "Options: (1) Issue cheque for ₹8000 against manager signature, (2) Bank transfer (NEFT) - collect bank details, (3) Offer store credit for immediate use, (4) Ask customer to return next day when cash available. Customer choice. Document agreement.",
+            "prevention": "Maintain adequate cash float. Refund high-value cash returns via cheque/bank as policy."
+          }
+        },
+        "technical_implementation": {
+          "database_schema": {
+            "sales_returns_table": {
+              "columns": [
+                "id UUID PRIMARY KEY",
+                "return_number VARCHAR(50) UNIQUE (CN-YYYYMMDD-XXXX)",
+                "original_invoice_id UUID NOT NULL REFERENCES sales_invoices(id)",
+                "original_invoice_no VARCHAR(50)",
+                "original_invoice_date TIMESTAMP",
+                "customer_id UUID",
+                "customer_name, customer_phone, customer_gstin",
+                "return_date TIMESTAMP DEFAULT NOW()",
+                "return_reason VARCHAR(50) (CHANGED_MIND, WRONG_ITEM, DEFECTIVE, EXPIRED, DOCTOR_CHANGED, ADVERSE_REACTION, OTHER)",
+                "return_reason_notes TEXT",
+                "subtotal, discount_amount, tax_amount, total_amount NUMERIC(15,2)",
+                "refund_method VARCHAR(20) (CASH, CARD, UPI, NEFT, STORE_CREDIT, EXCHANGE)",
+                "refund_status VARCHAR(20) DEFAULT 'PENDING' (PENDING, COMPLETED, FAILED)",
+                "refund_amount, refund_reference",
+                "refunded_at TIMESTAMP",
+                "requires_approval BOOLEAN DEFAULT FALSE",
+                "approved_by VARCHAR(100), approval_timestamp, approval_notes",
+                "status VARCHAR(20) DEFAULT 'COMPLETED'",
+                "cgst_amount, sgst_amount, igst_amount NUMERIC(15,2)",
+                "created_by, created_at, updated_at"
+              ]
+            },
+            "sales_return_items_table": {
+              "columns": [
+                "id UUID PRIMARY KEY",
+                "return_id UUID NOT NULL REFERENCES sales_returns(id) ON DELETE CASCADE",
+                "product_id UUID, product_name, sku, batch_id UUID, batch_number",
+                "original_sale_item_id UUID (link to sales_invoice_items)",
+                "quantity_sold NUMERIC(10,2), quantity_returned NUMERIC(10,2)",
+                "item_condition VARCHAR(20) (RESALABLE, DAMAGED, EXPIRED, OPENED)",
+                "unit_price, discount_amount, discount_percent, taxable_amount, tax_percent, tax_amount, total_amount",
+                "stock_adjusted BOOLEAN DEFAULT FALSE",
+                "stock_adjustment_id UUID",
+                "created_at"
+              ]
+            }
+          },
+          "api_endpoints": [
+            {
+              "method": "GET",
+              "path": "/api/erp/sales/invoices/:invoiceNo/eligible-for-return",
+              "description": "Check if invoice is eligible for return and return eligible items with quantities",
+              "response": {
+                "eligible": "boolean",
+                "reason": "string (if not eligible)",
+                "invoice": "Invoice details",
+                "items": "Array of items with sold_quantity, already_returned, available_for_return"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/sales/returns",
+              "description": "Create return/credit note",
+              "request_body": {
+                "originalInvoiceNo": "string",
+                "returnReason": "string",
+                "returnReasonNotes": "string",
+                "refundMethod": "string",
+                "items": [
+                  {
+                    "productId": "string",
+                    "batchId": "string",
+                    "quantityReturned": "number",
+                    "itemCondition": "string"
+                  }
+                ],
+                "createdBy": "string"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/sales/returns",
+              "description": "List all returns with filters",
+              "query_params": "customer_id, status, refund_status, date_from, date_to, page, limit"
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/sales/returns/:id",
+              "description": "Get return details with items"
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/sales/returns/:id/approve",
+              "description": "Manager approval for high-value/late returns",
+              "request_body": {
+                "approvedBy": "string",
+                "approvalNotes": "string"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/api/erp/sales/returns/:id/process-refund",
+              "description": "Process refund (mark as completed)",
+              "request_body": {
+                "refundReference": "string (transaction ID, cheque number, etc.)",
+                "refundedAt": "datetime"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/sales/returns/fraud-alerts",
+              "description": "Get list of customers flagged for serial returns"
+            },
+            {
+              "method": "GET",
+              "path": "/api/erp/sales/returns/stats",
+              "description": "Return statistics for dashboard",
+              "query_params": "date_from, date_to",
+              "response": {
+                "totalReturns": "number",
+                "totalValue": "number",
+                "pendingApproval": "number",
+                "pendingRefund": "number",
+                "returnRate": "percentage"
+              }
+            }
+          ]
+        }
+      }
+    },
+    
+    {
+      "module": "B2B & E-Invoice (/sales/b2b, /sales/e-invoice)",
+      "priority": "MEDIUM",
+      "complexity": "HIGH",
+      "reasoning": [
+        "REGULATORY MANDATE: E-invoicing mandatory for businesses with turnover >₹5 crore under GST law. Non-compliance attracts penalties up to ₹25,000.",
+        "GSTIN VALIDATION: Must validate customer GSTIN format (15 characters) and check if active on GST portal before invoice generation.",
+        "IRN REQUIREMENT: Invoice Reference Number (IRN) must be obtained from GST portal before printing invoice. Cannot cancel after 24 hours.",
+        "TAX CALCULATION: Inter-state sales use IGST. Intra-state use CGST+SGST. Place of supply rules determine which applies.",
+        "E-WAY BILL: Mandatory for inter-state transportation >₹50,000. Must be generated before goods dispatch.",
+        "HSN CODES: Mandatory 6-digit HSN for B2B invoices. Incorrect HSN can cause ITC rejection by buyer.",
+        "CREDIT TERMS: B2B customers get 30/60/90 days credit. Need robust outstanding tracking to prevent bad debts.",
+        "CREDIT LIMIT: Must enforce credit limits. Cannot allow sales if outstanding exceeds approved limit without senior approval.",
+        "PAYMENT REMINDERS: Automated reminders at 7 days before due, on due date, 7 days overdue, 15 days overdue, 30 days overdue.",
+        "INTEREST CALCULATION: Some B2B contracts have late payment interest (e.g., 2% per month). System must track and calculate."
+      ],
+      "final_guidelines": {
+        "must_do": [
+          "1. GSTIN VALIDATION: Validate format (2 digit state code + 10 digit PAN + 1 entity code + 1 default Z + 1 checksum). Check with GST portal API if active.",
+          "2. PLACE OF SUPPLY: Determine from customer GSTIN state code. If same as company state → Intra-state (CGST+SGST). If different → Inter-state (IGST).",
+          "3. IRN GENERATION: Call GST E-invoice API after invoice creation. Send JSON payload with invoice details. Store returned IRN, Ack No, Ack Date, QR Code.",
+          "4. QR CODE DISPLAY: GST returns QR code as base64 string. Display on printed invoice as per CBIC specifications (bottom right, 3cm x 3cm min).",
+          "5. HSN MANDATORY: All items must have 6-digit HSN codes. Validate before invoice submission to GST portal (will reject if missing).",
+          "6. E-WAY BILL: If inter-state AND total >₹50,000, generate E-way bill. Store EWB number on invoice. Print on delivery challan.",
+          "7. CREDIT TERMS: Capture payment_terms (NET_30, NET_60, NET_90, IMMEDIATE) on invoice. Calculate due_date = invoice_date + credit_period_days.",
+          "8. OUTSTANDING TRACKING: Maintain customer_ledger with opening_balance, invoices (debit), payments (credit), closing_balance. Update real-time on invoice/payment.",
+          "9. CREDIT LIMIT CHECK: Before creating B2B invoice, verify customer.outstanding_amount + new_invoice_amount <= customer.credit_limit. Block if exceeded.",
+          "10. PAYMENT REMINDERS: Scheduled job sends email/SMS reminders based on due_date. Template: 'Invoice INV-XXX for ₹YYY is due on DD-MM-YYYY. Please arrange payment.'",
+          "11. AGING REPORT: Generate weekly aging report showing invoices in buckets: 0-30 days, 31-60 days, 61-90 days, >90 days. Highlight risky accounts.",
+          "12. CANCELLATION WINDOW: Allow E-invoice cancellation only within 24 hours. After that, must issue Credit Note. Validate before cancellation attempt.",
+          "13. DUPLICATE PREVENTION: Check if invoice_no already has IRN. If yes, don't regenerate (GST portal will reject). Show existing IRN.",
+          "14. OFFLINE FALLBACK: If GST portal down, allow invoice creation with irn_status='PENDING'. Background job retries IRN generation every 30 mins.",
+          "15. AUDIT TRAIL: Log all E-invoice API calls (request, response, timestamp) to einvoice_audit_log for troubleshooting and compliance verification."
+        ],
+        "must_not_do": [
+          "1. DON'T create B2B invoice without valid GSTIN (15-char format check minimum).",
+          "2. DON'T skip IRN generation for applicable invoices (can face penalties in GST audit).",
+          "3. DON'T cancel E-invoice after 24 hours (GST portal will reject). Use Credit Note instead.",
+          "4. DON'T allow sales beyond credit limit without authorization (bad debt risk).",
+          "5. DON'T forget E-way bill for inter-state >₹50K (transportation violation, truck seizure risk).",
+          "6. DON'T use wrong place of supply (affects customer's ITC claim, can cause disputes).",
+          "7. DON'T skip HSN codes (E-invoice API will reject entire payload).",
+          "8. DON'T allow backdated B2B invoices >7 days without CFO approval (tax manipulation red flag).",
+          "9. DON'T forget to include complete buyer details (legal name, address, GSTIN) - required fields.",
+          "10. DON'T issue multiple invoices with same invoice_no (GST portal will detect duplicate)."
+        ],
+        "edge_cases_handling": {
+          "gst_portal_down": {
+            "scenario": "E-invoice API returning 503 Service Unavailable",
+            "solution": "Save invoice with irn_status='PENDING'. Show warning: 'Invoice created but E-invoice pending due to GST portal unavailability. Will auto-retry.' Background worker retries every 30 mins up to 48 hours. After 48h, manual intervention required.",
+            "technical": "CREATE TABLE einvoice_retry_queue (invoice_id UUID, retry_count INT, next_retry_at TIMESTAMP, last_error TEXT)"
+          },
+          "invalid_gstin": {
+            "scenario": "Customer provides GSTIN but validation API says inactive/invalid",
+            "solution": "Block invoice creation. Show error: 'GSTIN is inactive or cancelled per GST portal. Cannot create B2B invoice.' Allow manager override with documented risk acceptance (customer might not claim ITC, payment risk).",
+            "ui": "Red alert box with GSTIN status. 'Override Anyway' button (managers only) with reason capture text field."
+          },
+          "credit_limit_exceeded": {
+            "scenario": "Customer outstanding ₹90K, limit ₹1L, new invoice ₹15K (total ₹105K)",
+            "solution": "Block with message: 'Credit limit exceeded. Outstanding: ₹90K, Limit: ₹1L, New invoice: ₹15K = ₹105K total. Contact finance for approval.' Finance manager can: (1) Increase limit permanently, (2) One-time exception, (3) Require advance payment.",
+            "workflow": "Send approval request to finance manager via notification. Manager reviews payment history, DSO (Days Sales Outstanding), risk profile. Approve/reject with notes."
+          },
+          "irn_generation_timeout": {
+            "scenario": "IRN API call times out after 30 seconds",
+            "solution": "Don't retry immediately (might cause duplicate IRN). Wait 5 minutes, check IRN status using invoice_no lookup API. If IRN already generated, update local DB. If not, retry generation. Max 3 retries, then manual intervention.",
+            "technical": "Use idempotency - GST portal won't generate duplicate IRN for same invoice_no within 24 hours."
+          },
+          "wrong_hsn_code": {
+            "scenario": "Product has HSN 3004 in DB but should be 3303 (cream category)",
+            "solution": "E-invoice API will reject. Show detailed error: 'IRN generation failed: Invalid HSN code 3004 for Product X. Please correct HSN in product master and retry.' Allow inline HSN correction with audit log.",
+            "prevention": "Validate HSN codes during product import. Show warnings for unusual HSN selections."
+          },
+          "eway_bill_required_but_not_generated": {
+            "scenario": "Inter-state invoice ₹75K but user forgot to generate E-way bill",
+            "solution": "Block invoice printing/dispatch until E-way bill generated. Show mandatory step: 'E-way bill required for inter-state sale >₹50K. Generate now?' Button to generate inline. Store EWB number with invoice.",
+            "regulatory": "Transporting goods without E-way bill can lead to seizure and penalties equal to tax amount."
+          },
+          "customer_changed_gstin": {
+            "scenario": "Customer had GSTIN 06XXXXX, now provides new GSTIN 07YYYYY (shifted to different state)",
+            "solution": "Treat as new customer record or update with effective_date. Historical invoices remain with old GSTIN. New invoices use new GSTIN. Place of supply changes (was Haryana, now Delhi), affecting tax treatment (CGST+SGST vs IGST).",
+            "accounting": "Update customer master, maintain GSTIN change history table for audit trail."
+          },
+          "payment_received_before_due_date": {
+            "scenario": "Invoice due on 30th Jan, customer paid on 15th Jan",
+            "solution": "Mark invoice as paid. Optionally offer early payment discount (e.g., 2% if paid within 10 days). Calculate discount on payment_date. Adjust invoice balance. Issue credit note for discount amount if already invoiced.",
+            "business_benefit": "Improves cash flow. Many B2B customers prefer early payment discounts (2/10 net 30 terms)."
+          },
+          "irn_cancellation_after_24h": {
+            "scenario": "Customer wants to cancel invoice but 30 hours passed since IRN generation",
+            "solution": "Cannot cancel IRN. Show error: 'E-invoice cancellation allowed only within 24 hours. Please create Credit Note instead.' Guide user to Returns module to issue CN-XXX for full invoice amount.",
+            "regulatory": "GST law: IRN cancellation window is 24 hours from generation timestamp. No exceptions."
+          },
+          "duplicate_invoice_number": {
+            "scenario": "Accidentally trying to create invoice with number that already has IRN",
+            "solution": "System checks before IRN call: SELECT id FROM sales_invoices WHERE invoice_no = ? AND irn IS NOT NULL. If exists, block: 'Invoice number INV-XXX already has E-invoice IRN. Cannot duplicate. Generate new invoice number.' Auto-increment invoice sequence.",
+            "technical": "Use database UNIQUE constraint on invoice_no. Handle constraint violation gracefully."
+          },
+          "partial_payment_against_multiple_invoices": {
+            "scenario": "Customer sends ₹50K against 3 invoices (INV-001: ₹20K, INV-002: ₹25K, INV-003: ₹30K)",
+            "solution": "Payment allocation screen shows all pending invoices. User manually allocates: INV-001 fully paid (₹20K), INV-002 fully paid (₹25K), INV-003 partially paid (₹5K). Remaining ₹25K on INV-003. Update each invoice.balance_amount accordingly.",
+            "ui": "Payment allocation table with columns: Invoice No, Due Date, Amount, Allocated, Balance. Allow manual entry in 'Allocated' column. Show total allocation vs payment amount."
+          },
+          "interest_on_overdue": {
+            "scenario": "Contract specifies 2% per month interest on overdue amounts",
+            "solution": "Store interest_rate_monthly in customer master. Scheduled job calculates interest daily for overdue invoices: interest = (outstanding_amount × interest_rate × days_overdue) / (365 × 12). Create interest invoices monthly or quarterly per contract. Send statement showing principal + interest.",
+            "accounting": "Interest income is revenue. Book to 'Interest Income' account. Taxable under GST at 18%."
+          }
+        },
+        "technical_implementation": {
+          "database_enhancements": [
+            "ALTER TABLE sales_invoices ADD COLUMN e_invoice_generated BOOLEAN DEFAULT FALSE",
+            "ALTER TABLE sales_invoices ADD COLUMN irn VARCHAR(100) UNIQUE",
+            "ALTER TABLE sales_invoices ADD COLUMN ack_no VARCHAR(50)",
+            "ALTER TABLE sales_invoices ADD COLUMN ack_date TIMESTAMP",
+            "ALTER TABLE sales_invoices ADD COLUMN qr_code TEXT",
+            "ALTER TABLE sales_invoices ADD COLUMN irn_status VARCHAR(20) DEFAULT 'NOT_REQUIRED'",
+            "ALTER TABLE sales_invoices ADD COLUMN e_way_bill_no VARCHAR(50)",
+            "ALTER TABLE sales_invoices ADD COLUMN due_date DATE",
+            "ALTER TABLE sales_invoices ADD COLUMN credit_period_days INTEGER DEFAULT 0",
+            "CREATE TABLE b2b_customers (customer_id UUID PRIMARY KEY REFERENCES customers(id), gstin VARCHAR(15) UNIQUE NOT NULL, legal_name VARCHAR(200), credit_limit NUMERIC(15,2) DEFAULT 100000, credit_period_days INTEGER DEFAULT 30, outstanding_amount NUMERIC(15,2) DEFAULT 0, status VARCHAR(20) DEFAULT 'ACTIVE')",
+            "CREATE TABLE customer_ledger (id UUID PRIMARY KEY, customer_id UUID REFERENCES customers(id), transaction_date TIMESTAMP, transaction_type VARCHAR(20), reference_no VARCHAR(50), debit_amount NUMERIC(15,2), credit_amount NUMERIC(15,2), balance NUMERIC(15,2), narration TEXT)",
+            "CREATE TABLE einvoice_audit_log (id UUID PRIMARY KEY, invoice_id UUID REFERENCES sales_invoices(id), request_payload JSONB, response_payload JSONB, status_code INTEGER, error_message TEXT, created_at TIMESTAMP DEFAULT NOW())"
+          ],
+          "api_endpoints": [
+            {"method": "POST", "path": "/api/erp/sales/b2b/validate-gstin", "description": "Validate GSTIN format and check status on GST portal"},
+            {"method": "POST", "path": "/api/erp/sales/b2b/invoices", "description": "Create B2B invoice with credit limit check"},
+            {"method": "POST", "path": "/api/erp/sales/b2b/invoices/:id/generate-irn", "description": "Generate E-invoice IRN from GST portal"},
+            {"method": "POST", "path": "/api/erp/sales/b2b/invoices/:id/cancel-irn", "description": "Cancel E-invoice (24h window check)"},
+            {"method": "POST", "path": "/api/erp/sales/b2b/invoices/:id/generate-eway-bill", "description": "Generate E-way bill"},
+            {"method": "GET", "path": "/api/erp/sales/b2b/customers/:id/ledger", "description": "Get customer ledger with all transactions"},
+            {"method": "GET", "path": "/api/erp/sales/b2b/aging-report", "description": "Get outstanding invoices aging report"},
+            {"method": "POST", "path": "/api/erp/sales/b2b/credit-limit-approval", "description": "Request credit limit increase approval"}
+          ],
+          "external_integrations": [
+            {"name": "GST E-invoice API", "endpoint": "https://einv-apisandbox.nic.in", "auth": "Bearer token", "used_for": "IRN generation and cancellation"},
+            {"name": "E-way Bill API", "endpoint": "https://api.mastergst.com/ewaybillapi", "auth": "API key + username", "used_for": "E-way bill generation"},
+            {"name": "GSTIN Verification API", "endpoint": "https://einv-apisandbox.nic.in/gstinVerify", "auth": "Bearer token", "used_for": "GSTIN validation and status check"}
+          ]
+        }
+      }
+    },
+    
+    {
+      "module": "Payment Tracking (/sales/payments)",
+      "priority": "HIGH",
+      "complexity": "MEDIUM",
+      "reasoning": [
+        "MULTI-TENDER REALITY: Customers often split payments (₹500 cash + ₹1500 UPI + ₹1000 card). System must support multiple payment entries per invoice.",
+        "CHEQUE CLEARANCE: Cheques take 3-5 days to clear. Cannot mark invoice as 'paid' until clearance confirmed. Need cheque_status tracking: Received → Deposited → Cleared → Bounced.",
+        "RECONCILIATION PAIN: Daily cash counting vs system records mismatch causes stress. Need automated EOD (End of Day) reconciliation with variance reports.",
+        "ADVANCE PAYMENTS: B2B customers send advance before invoice. Must track advance payments (no invoice_id yet) and allocate when invoice created.",
+        "OVERPAYMENT HANDLING: Customer sends ₹1020 for ₹1000 invoice (includes bank charges or mistake). Create store credit for ₹20 or refund.",
+        "PAYMENT PROOF: Digital payment screenshots, bank receipts, cheque photos needed for audit. Must support file uploads against payments.",
+        "BANK DEPOSIT: Cash collected must be deposited in bank. Track when deposited, which bank, deposit slip number, clearance date.",
+        "PAYMENT GATEWAY CHARGES: UPI/Card have MDR (Merchant Discount Rate) like 1.5-2%. Option to pass to customer or absorb.",
+        "PARTIAL PAYMENTS: ₹50K invoice, customer pays ₹30K today, ₹20K after 15 days. Must track partial payment status correctly.",
+        "PAYMENT REMINDERS: Automated SMS/email reminders for pending payments. Escalation: Day 0 (soft reminder) → Day 7 (firm reminder) → Day 15 (final notice) → Day 30 (legal notice)."
+      ],
+      "final_guidelines": {
+        "must_do": [
+          "1. MULTI-TENDER SUPPORT: Allow adding multiple payment records per invoice. Table: payments(id, invoice_id, payment_method, amount, transaction_ref, payment_date). Sum of payments.amount should match invoice.total_amount.",
+          "2. TRANSACTION REFERENCE MANDATORY: For UPI: capture UPI ID + transaction ID. For Card: last 4 digits + approval code. For Cheque: cheque number + bank name + date. For Bank Transfer: NEFT/RTGS reference number.",
+          "3. CHEQUE STATUS WORKFLOW: When cheque received, status='RECEIVED'. When deposited in bank, status='DEPOSITED' + deposit_date. When cleared, status='CLEARED' + cleared_date. If bounced, status='BOUNCED' + bounce_reason, reverse payment, mark invoice unpaid.",
+          "4. PAYMENT PROOF UPLOAD: Allow uploading files (images, PDFs) against payment record. Store in cloud/local storage. Show in payment detail view. Essential for audit and dispute resolution.",
+          "5. ADVANCE PAYMENT TRACKING: Create payment with invoice_id=NULL, customer_id populated, payment_type='ADVANCE'. When invoice created, link payment: UPDATE payments SET invoice_id=? WHERE id=?. Reduce invoice balance.",
+          "6. OVERPAYMENT → STORE CREDIT: If sum(payments.amount) > invoice.total_amount, calculate overpayment. Create customer_credit record with amount=overpayment, expiry_date=NOW()+90 days. Auto-apply in next purchase.",
+          "7. DAILY RECONCILIATION: Generate EOD report showing: Opening cash, Cash sales, Cash payments, Total cash expected, Actual cash counted, Variance. If variance >₹100, flag for investigation. Manager sign-off required.",
+          "8. BANK DEPOSIT TRACKING: When cash deposited, create bank_deposit record with: deposit_date, amount, bank_name, deposit_slip_no, status='PENDING_CLEARANCE'. Update status='CLEARED' when confirmed. Link multiple payments to single deposit.",
+          "9. PAYMENT ALLOCATION: For B2B customers with multiple pending invoices, show allocation screen. User manually allocates payment amount across invoices. Create payment_allocations(payment_id, invoice_id, allocated_amount). Update each invoice balance.",
+          "10. PAYMENT REMINDERS: Scheduled job runs daily. For each invoice with payment_status='PENDING' AND due_date, check reminder_schedule: Send email/SMS at due_date-7, due_date, due_date+7, due_date+15, due_date+30. Log each reminder sent.",
+          "11. PAYMENT REVERSAL: Never allow deleting payments (audit trail violation). Instead, create reversal payment with amount=-original_amount, reason='Cheque bounced/Error/Duplicate'. Net effect zero. Both records visible in ledger.",
+          "12. MDR HANDLING: If payment_gateway_charges applicable, capture mdr_percent and mdr_amount. Either deduct from invoice (customer pays), or book to 'Bank Charges' expense (shop absorbs). Configurable setting.",
+          "13. PAYMENT METHOD RESTRICTIONS: For high-value sales >₹2L, RBI requires card/bank transfer (not cash) to comply with money laundering norms. Show warning if cash selected for >₹2L. Require manager approval override with PAN capture.",
+          "14. PARTIAL PAYMENT STATUS: Calculate payment_status dynamically: paid_amount=SUM(payments.amount), balance=invoice.total_amount - paid_amount. If balance=0: 'PAID'. If balance>0 AND paid_amount>0: 'PARTIAL'. If paid_amount=0: 'UNPAID'.",
+          "15. PAYMENT RECEIPT GENERATION: On payment recording, auto-generate payment receipt (REC-YYYYMMDD-XXX) PDF with: receipt number, date, customer details, invoice reference, amount received, payment method, balance due. Print and hand to customer."
+        ],
+        "must_not_do": [
+          "1. DON'T mark invoice as paid when cheque received - wait for clearance (can bounce).",
+          "2. DON'T allow payment without transaction reference (impossible to reconcile or verify).",
+          "3. DON'T allow deleting payments - always use reversal for audit trail.",
+          "4. DON'T allow backdating payments >7 days without CFO approval (accounting manipulation red flag).",
+          "5. DON'T skip EOD reconciliation - cash discrepancies indicate theft or errors.",
+          "6. DON'T allow cash payments >₹2L without PAN capture (Income Tax Act violation).",
+          "7. DON'T forget to send payment receipt to customer (disputes increase without proof).",
+          "8. DON'T allow overpayments to go untracked (customers will demand refund later).",
+          "9. DON'T mix different payment methods in single payment record - separate entries for each.",
+          "10. DON'T skip payment allocation for B2B customers (wrong invoice gets marked paid)."
+        ]
+      }
+    },
+    
+    {
+      "module": "Commission Tracking (/sales/commission)",
+      "priority": "MEDIUM",
+      "complexity": "MEDIUM",
+      "reasoning": [
+        "DOCTOR REFERRALS: Homeopathy doctors refer patients to shop. Commission agreed at 10-15% of sale value. Must track accurately for monthly payouts.",
+        "TIERED STRUCTURES: Different rates for different volumes. Example: 5% for 0-₹1L, 7% for ₹1L-5L, 10% above ₹5L. System must calculate tier-wise.",
+        "TDS COMPLIANCE: If commission >₹15,000 annually, must deduct TDS @10% per IT Act Section 194H. Must issue TDS certificate (Form 16A).",
+        "CLAWBACK SCENARIOS: If customer returns goods, commission must be reversed. If payment not received within 90 days, hold commission. Complex logic needed.",
+        "MULTIPLE BENEFICIARIES: Single sale can have multiple commissions - referring doctor 10%, area manager 2%, sales staff 3%. Total 15%. Must split correctly.",
+        "CALCULATION BASIS: Some want commission on sale amount, others on payment received amount. Contract terms vary. Must be configurable per beneficiary.",
+        "PAYOUT CYCLES: Monthly vs Quarterly vs on-demand. Some want immediate payout, others prefer quarterly accumulation. Must support multiple cycles.",
+        "APPROVAL WORKFLOWS: High-value payouts (>₹10K) need finance manager approval. System must have approval queue and notification mechanism.",
+        "COMMISSION DISPUTES: 'I brought 10 customers but commission shows only 8.' Need detailed transaction listing with customer names for verification.",
+        "PAN REQUIREMENT: Cannot pay commission without beneficiary PAN (TDS filing requirement). Must collect PAN before first payout."
+      ],
+      "final_guidelines": {
+        "must_do": [
+          "1. BENEFICIARY MASTER: Create commission_beneficiaries table with: beneficiary_code, name, beneficiary_type (DOCTOR/AGENT/STAFF/AFFILIATE), pan_number (mandatory), bank_account_number, ifsc_code, tds_applicable, status. Validate PAN format.",
+          "2. COMMISSION RULES: Define in commission_rules table: beneficiary_id, commission_type (PERCENTAGE/FLAT/TIERED), commission_rate, tier_config (JSONB for multiple tiers), calculation_basis (SALE_AMOUNT/PAYMENT_RECEIVED), monthly_cap_amount, valid_from, valid_to.",
+          "3. AUTO-CALCULATION: On invoice creation OR payment receipt (per calculation_basis), calculate commission. Create commission_transaction record with: transaction_number, beneficiary_id, invoice_id, sale_amount, commission_amount, tds_amount (10% if applicable), net_payable, status='PENDING'.",
+          "4. TIERED CALCULATION: For TIERED type, parse tier_config JSON: [{min:0, max:100000, rate:5}, {min:100001, max:500000, rate:7}, {min:500001, max:999999999, rate:10}]. Calculate cumulative amount in each tier. Sum up total commission.",
+          "5. TDS CALCULATION: At end of month/quarter, check cumulative commission for beneficiary. If >₹15,000, apply TDS @10% on all transactions. Update tds_amount column. Net payable = commission_amount - tds_amount.",
+          "6. CLAWBACK ON RETURNS: When sales return created, find original invoice's commission_transactions. Create reversal transaction with commission_amount = -original_amount, transaction_type='CLAWBACK_RETURN', status='COMPLETED'. Net commission reduces.",
+          "7. PAYMENT BASIS HOLD: If calculation_basis='PAYMENT_RECEIVED', commission calculated only when payment posted. If invoice unpaid for >90 days (configurable), hold commission (status='HELD'). Release when payment received.",
+          "8. PAYOUT BATCHES: Generate monthly/quarterly payout batches. Create commission_payout record with: payout_number, beneficiary_id, period_start, period_end, total_commission, total_tds, net_payout, status='PENDING_APPROVAL'. Link multiple transactions to payout.",
+          "9. APPROVAL WORKFLOW: Payouts >₹10K require finance manager approval. Send notification. Manager reviews transaction list, can approve/reject. On approve, status='APPROVED', ready for payment processing. On reject, status='REJECTED', add rejection_reason.",
+          "10. TDS CERTIFICATE: On quarterly payout, generate TDS certificate PDF (Form 16A format) with: deductor PAN, deductee PAN, period, total commission, TDS deducted, payment date, challan details. Email to beneficiary.",
+          "11. COMMISSION STATEMENT: Generate detailed statement showing: transaction_date, invoice_no, customer_name, sale_amount, commission_rate, commission_amount, tds_amount, net_amount. Total at bottom. Send monthly via email.",
+          "12. MULTI-BENEFICIARY SPLIT: If multiple beneficiaries on single invoice, create separate commission_transaction for each. Example: invoice ₹10K, doctor 10% = ₹1K, agent 3% = ₹300. Two transaction records.",
+          "13. MONTHLY CAP ENFORCEMENT: If rule has monthly_cap_amount, check cumulative commission this month. If exceeds cap, truncate to cap value. Show warning: 'Commission capped at ₹XX per monthly limit.' Alert beneficiary.",
+          "14. COMMISSION RATE CHANGES: When rate changes, update commission_rules with valid_to=yesterday, create new rule with valid_from=today. Historical transactions keep old rate. New transactions use new rate. Audit trail maintained.",
+          "15. DISPUTE RESOLUTION: Provide 'Commission Detail' page showing all transactions with customer names, invoice numbers, dates, amounts. Allow filtering, export to Excel for beneficiary verification. Attach invoice copies if needed."
+        ],
+        "must_not_do": [
+          "1. DON'T pay commission without PAN (TDS filing will fail, IT notice).",
+          "2. DON'T skip TDS deduction when cumulative >₹15K (IT Act violation).",
+          "3. DON'T allow manual commission overrides without audit trail and approval.",
+          "4. DON'T forget clawback on returns (double-paying commission).",
+          "5. DON'T issue TDS certificates without actually depositing TDS to government.",
+          "6. DON'T mix different calculation bases without clear contract terms.",
+          "7. DON'T allow deleting commission transactions (use reversal instead).",
+          "8. DON'T exceed monthly cap limits (contract violation).",
+          "9. DON'T pay commission on unpaid invoices if contract is payment-basis.",
+          "10. DON'T skip beneficiary bank verification (wrong account = lost money)."
+        ]
+      }
+    }
+  ]
+}

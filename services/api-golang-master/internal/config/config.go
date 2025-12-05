@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -24,9 +25,23 @@ func Load() *Config {
 		log.Printf("⚠️  No .env file found, using environment variables and defaults")
 	}
 
+	// Get DATABASE_URL from environment, or build it from individual components
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		// Build from individual env vars
+		host := getEnv("POSTGRES_HOST", "localhost")
+		port := getEnv("POSTGRES_PORT", "5432") // Changed from 5433 to 5432
+		user := getEnv("POSTGRES_USER", "postgres")
+		password := getEnv("POSTGRES_PASSWORD", "postgres")
+		dbname := getEnv("POSTGRES_DB", "yeelo_homeopathy")
+
+		databaseURL = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s",
+			user, password, host, port, dbname)
+	}
+
 	cfg := &Config{
 		Port:             getEnv("PORT", "3005"),
-		DatabaseURL:      getEnv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5433/yeelo_homeopathy"),
+		DatabaseURL:      databaseURL, // Use the constructed/fetched databaseURL
 		RedisURL:         getEnv("REDIS_URL", "redis://localhost:6380"),
 		JWTSecret:        getEnv("JWT_SECRET", "your-super-secret-jwt-key"),
 		Environment:      getEnv("ENVIRONMENT", "development"),

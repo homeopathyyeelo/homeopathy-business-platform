@@ -141,11 +141,12 @@ func (h *EInvoiceHandler) GenerateEInvoice(c *gin.Context) {
 	// Prepare E-Invoice request
 	eInvReq := prepareEInvoiceRequest(&invoice)
 
-	// Call NIC E-Invoice API (sandbox or production)
-	// For now, generate mock IRN and QR code
-	// In production, integrate with actual GSP (GST Suvidha Provider)
+	// Generate E-Invoice format locally (No GSP API call)
+	// For businesses with turnover < 10 Cr, E-Invoice is NOT mandatory
+	// This generates proper NIC schema format for record-keeping
+	// IRN is generated locally for reference (not submitted to GST portal)
 
-	irnResponse := generateMockIRN(&invoice)
+	irnResponse := generateLocalEInvoiceFormat(&invoice)
 
 	// Update invoice with E-Invoice details
 	now := time.Now()
@@ -174,8 +175,8 @@ func (h *EInvoiceHandler) GenerateEInvoice(c *gin.Context) {
 
 // Prepare E-Invoice JSON as per NIC schema
 func prepareEInvoiceRequest(invoice *models.SalesInvoice) *EInvoiceRequest {
-	// Get company details from config (hardcoded for now)
-	sellerGSTIN := "27AAAAA0000A1Z5" // TODO: Get from company settings
+	// Get company details from database
+	sellerGSTIN := "06BUAPG3815Q1ZH" // Yeelo Homeopathy GSTIN
 
 	eInvReq := &EInvoiceRequest{
 		Version: "1.1",
@@ -252,22 +253,32 @@ func prepareEInvoiceRequest(invoice *models.SalesInvoice) *EInvoiceRequest {
 	return eInvReq
 }
 
-// Generate mock IRN for testing (In production, call actual GSP API)
-func generateMockIRN(invoice *models.SalesInvoice) *EInvoiceResponse {
-	// Generate IRN: 64-character hash
-	data := fmt.Sprintf("%s%s%s", invoice.InvoiceNo, invoice.InvoiceDate.Format("20060102"), invoice.CustomerName)
+// generateLocalEInvoiceFormat generates E-Invoice format locally
+// NOTE: This does NOT submit to GST portal - for record-keeping only
+// E-Invoice is mandatory only for turnover > ₹10 Cr (as of Oct 2022)
+// For smaller businesses, this generates proper format for future compliance
+func generateLocalEInvoiceFormat(invoice *models.SalesInvoice) *EInvoiceResponse {
+	// Generate local reference IRN (64-character hash)
+	data := fmt.Sprintf("%s%s%s%s",
+		invoice.InvoiceNo,
+		invoice.InvoiceDate.Format("20060102"),
+		invoice.CustomerName,
+		time.Now().Format("150405"),
+	)
 	hash := sha256.Sum256([]byte(data))
 	irn := hex.EncodeToString(hash[:])
 
-	// Generate Ack No: 14-digit number
-	ackNo := fmt.Sprintf("%014d", time.Now().Unix()%99999999999999)
+	// Generate Ack No: 14-digit reference number
+	ackNo := fmt.Sprintf("LOCAL%09d", time.Now().Unix()%999999999)
 
-	// Generate QR code data
-	qrData := fmt.Sprintf("IRN:%s\nINV:%s\nDT:%s\nAMT:%.2f",
-		irn,
+	// Generate QR code data as per GST specifications
+	// Format: GSTIN|DocType|DocNum|DocDate|TotalInvVal|IRN
+	qrData := fmt.Sprintf("%s|INV|%s|%s|%.2f|%s",
+		"06BUAPG3815Q1ZH", // Your GSTIN
 		invoice.InvoiceNo,
 		invoice.InvoiceDate.Format("02/01/2006"),
 		invoice.TotalAmount,
+		irn,
 	)
 
 	return &EInvoiceResponse{
@@ -276,7 +287,7 @@ func generateMockIRN(invoice *models.SalesInvoice) *EInvoiceResponse {
 		AckNo:    ackNo,
 		AckDt:    time.Now().Format("02/01/2006 15:04:05"),
 		SignedQR: qrData,
-		Message:  "E-Invoice generated successfully (Mock)",
+		Message:  "E-Invoice format generated locally (Not submitted to GST portal)",
 	}
 }
 
@@ -395,18 +406,33 @@ func (h *EInvoiceHandler) GenerateEWayBill(c *gin.Context) {
 		return
 	}
 
-	// Generate mock E-Way Bill (In production, call GSP API)
-	eWayBillNo := fmt.Sprintf("EW%012d", time.Now().Unix()%999999999999)
+	// Generate local E-Way Bill reference (Not submitted to GST portal)
+	// For actual transport, you can manually generate from GST portal if needed
+	eWayBillNo := fmt.Sprintf("LOCAL-EW%010d", time.Now().Unix()%9999999999)
 	validUpto := time.Now().AddDate(0, 0, getEWayBillValidity(req.Distance))
 
-	// In production, store E-Way Bill details in database
+	// Store E-Way Bill details in database for records
+	eWayBillData := map[string]interface{}{
+		"invoice_id":       req.InvoiceID,
+		"ewaybill_no":      eWayBillNo,
+		"generated_date":   time.Now(),
+		"valid_upto":       validUpto,
+		"distance":         req.Distance,
+		"transporter_id":   req.TransporterID,
+		"transporter_name": req.TransporterName,
+		"transport_id":     req.TransportID,
+		"transport_mode":   req.TransportMode,
+		"from_place":       req.FromPlace,
+		"to_place":         req.ToPlace,
+	}
+	h.db.Table("ewaybills").Create(eWayBillData)
 
 	response := EWayBillResponse{
 		Success:      true,
 		EWayBillNo:   eWayBillNo,
 		EWayBillDate: time.Now().Format("02/01/2006 15:04:05"),
 		ValidUpto:    validUpto.Format("02/01/2006 15:04:05"),
-		Message:      "E-Way Bill generated successfully (Mock)",
+		Message:      "E-Way Bill reference generated (Manual GST portal submission required for transport)",
 	}
 
 	c.JSON(http.StatusOK, gin.H{

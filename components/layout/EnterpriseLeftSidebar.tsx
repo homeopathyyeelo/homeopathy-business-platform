@@ -6,7 +6,12 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Package, Warehouse, ShoppingCart, ShoppingBag, Users, Truck,
   DollarSign, UserCheck, BarChart3, FileText, Megaphone, Share2, Brain, Settings,
-  ChevronRight, ChevronDown, Pill, Stethoscope, Factory, Search
+  ChevronRight, ChevronDown,
+  TrendingUp,
+  Factory,
+  Pill,
+  Stethoscope,
+  Search
 } from 'lucide-react';
 
 interface EnterpriseLeftSidebarProps {
@@ -49,8 +54,13 @@ const menuItems: MenuItem[] = [
     path: '/social',
     color: 'from-sky-500 to-sky-600',
     submenus: [
-      { label: 'Post Scheduler', path: '/social/scheduler' },
       { label: 'GMB Posts', path: '/social/gmb' },
+      { label: 'GMB Dashboard', path: '/social/gmb' },
+      { label: 'GMB Accounts', path: '/social/gmb/accounts' },
+      { label: 'Calendar & Schedule', path: '/social/gmb/calendar' },
+      { label: 'Audit Logs', path: '/social/gmb/audit' },
+      { label: 'Content Library', path: '/social/gmb/content' },
+      { label: 'Post Scheduler', path: '/social/scheduler' },
       { label: 'Instagram', path: '/social/instagram' },
       { label: 'Facebook', path: '/social/facebook' },
       { label: 'AI Content', path: '/social/ai-content' },
@@ -229,7 +239,7 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'reports',
-    label: 'Reports',
+    label: 'Reports Analytics',
     icon: FileText,
     path: '/reports',
     color: 'from-amber-500 to-amber-600',
@@ -282,6 +292,54 @@ const menuItems: MenuItem[] = [
     ]
   },
   {
+    id: 'ai-lab',
+    label: 'AI Lab',
+    icon: Brain,
+    path: '/ai-lab',
+    color: 'from-indigo-600 to-purple-600',
+    badge: 'LAB',
+    submenus: [
+      { label: 'Playground', path: '/ai-lab/playground' },
+      { label: 'Model Training', path: '/ai-lab/training' },
+      { label: 'Fine Tuning', path: '/ai-lab/fine-tune' },
+      { label: 'Model Testing', path: '/ai-lab/test' },
+      { label: 'AI Models', path: '/ai-lab/models' },
+      { label: 'Integration', path: '/ai-lab/integration' },
+    ]
+  },
+  {
+    id: 'ai-insights',
+    label: 'AI Insights',
+    icon: BarChart3,
+    path: '/ai-insights',
+    color: 'from-cyan-600 to-blue-600',
+    badge: 'AI',
+    submenus: [
+      { label: 'Daily Insights', path: '/ai-insights/daily' },
+      { label: 'Customer Behavior', path: '/ai-insights/customer-behavior' },
+      { label: 'Product Insights', path: '/ai-insights/products' },
+      { label: 'Profit Leaks', path: '/ai-insights/profit-leaks' },
+      { label: 'Cash Flow', path: '/ai-insights/cashflow' },
+      { label: 'Action Items', path: '/ai-insights/actions' },
+    ]
+  },
+  {
+    id: 'ai-campaigns',
+    label: 'AI Campaigns',
+    icon: Megaphone,
+    path: '/ai-campaigns',
+    color: 'from-violet-600 to-fuchsia-600',
+    badge: 'AI',
+    submenus: [
+      { label: 'Campaign Dashboard', path: '/ai-campaigns' },
+      { label: 'Create Campaign', path: '/ai-campaigns/create' },
+      { label: 'Auto Content', path: '/ai-campaigns/auto-content' },
+      { label: 'Multi-Channel', path: '/ai-campaigns/multi-channel' },
+      { label: 'Schedule', path: '/ai-campaigns/schedule' },
+      { label: 'Performance', path: '/ai-campaigns/performance' },
+    ]
+  },
+  {
     id: 'marketing',
     label: 'Marketing',
     icon: Megaphone,
@@ -314,6 +372,19 @@ const menuItems: MenuItem[] = [
     ]
   },
   {
+    id: 'admin',
+    label: 'Admin',
+    icon: Settings,
+    path: '/admin',
+    color: 'from-red-500 to-red-600',
+    submenus: [
+      { label: 'Bug Reports', path: '/admin/bugs' },
+      { label: 'Upload Approvals', path: '/admin/approvals' },
+      { label: 'System Health', path: '/admin/health' },
+      { label: 'User Management', path: '/admin/users' },
+    ]
+  },
+  {
     id: 'settings',
     label: 'Settings',
     icon: Settings,
@@ -322,6 +393,7 @@ const menuItems: MenuItem[] = [
     submenus: [
       { label: 'Default Settings', path: '/settings' },
       { label: 'ERP Settings', path: '/settings/global' },
+      { label: 'GMB Automation', path: '/settings/gmb-automation' },
       { label: 'Company Profile', path: '/settings/company' },
       { label: 'Branch Management', path: '/settings/branches' },
       { label: 'Roles Permissions', path: '/settings/roles' },

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
 
@@ -14,16 +13,18 @@ import (
 // OrdersHandler handles order-related requests
 type OrdersHandler struct {
 	db             *gorm.DB
-	paymentService *services.PaymentTrackingService
+	paymentService *services.PaymentService
 	thermalPrinter *services.ThermalPrinterService
+	billSnapshot   *services.BillSnapshotService
 }
 
 // NewOrdersHandler creates a new orders handler
 func NewOrdersHandler(db *gorm.DB) *OrdersHandler {
 	return &OrdersHandler{
 		db:             db,
-		paymentService: services.NewPaymentTrackingService(db),
+		paymentService: services.NewPaymentService(db),
 		thermalPrinter: services.NewThermalPrinterService(),
+		billSnapshot:   services.NewBillSnapshotService(db),
 	}
 }
 
@@ -127,10 +128,20 @@ func (h *OrdersHandler) GetOrderDetails(c *gin.Context) {
 	h.db.Table("order_items").Where("order_id = ?", orderID).Find(&items)
 
 	// Fetch payments
-	payments, _ := h.paymentService.GetOrderPayments(orderID)
+	var payments []map[string]interface{}
+	h.db.Table("payments").Where("invoice_id = ?", orderID).Find(&payments)
 
-	// Fetch payment summary
-	summary, _ := h.paymentService.GetPaymentSummary(orderID)
+	// Calculate payment summary
+	var totalPaid float64
+	for _, p := range payments {
+		if amt, ok := p["amount"].(float64); ok {
+			totalPaid += amt
+		}
+	}
+	summary := map[string]interface{}{
+		"totalPaid": totalPaid,
+		"balance":   0,
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"order":          order,
@@ -145,13 +156,21 @@ func (h *OrdersHandler) GetOrderDetails(c *gin.Context) {
 func (h *OrdersHandler) GetOrderPayments(c *gin.Context) {
 	orderID := c.Param("id")
 
-	payments, err := h.paymentService.GetOrderPayments(orderID)
-	if err != nil {
+	var payments []map[string]interface{}
+	if err := h.db.Table("payments").Where("invoice_id = ?", orderID).Find(&payments).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	summary, _ := h.paymentService.GetPaymentSummary(orderID)
+	var totalPaid float64
+	for _, p := range payments {
+		if amt, ok := p["amount"].(float64); ok {
+			totalPaid += amt
+		}
+	}
+	summary := map[string]interface{}{
+		"totalPaid": totalPaid,
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"payments": payments,
@@ -170,8 +189,8 @@ func (h *OrdersHandler) RecordPayment(c *gin.Context) {
 		return
 	}
 
-	req.OrderID = orderID
-	// TODO: Get user from auth context
+	invoiceID := orderID
+	req.InvoiceID = &invoiceID
 	req.CreatedBy = "System"
 
 	payment, err := h.paymentService.RecordPayment(req)
@@ -180,13 +199,8 @@ func (h *OrdersHandler) RecordPayment(c *gin.Context) {
 		return
 	}
 
-	// Fetch updated summary
-	summary, _ := h.paymentService.GetPaymentSummary(orderID)
-
 	c.JSON(http.StatusOK, gin.H{
 		"payment": payment,
-		"summary": summary,
-		"message": "Payment recorded successfully",
 	})
 }
 
@@ -247,14 +261,74 @@ func (h *OrdersHandler) PrintOrderThermal(c *gin.Context) {
 
 	// Generate ESC/POS commands
 	escposData := h.thermalPrinter.GenerateOrderSlip(printData)
+	previewText := h.thermalPrinter.FormatForDisplay(escposData)
+
+	// Create bill snapshot
+	billData := map[string]interface{}{
+		"orderNumber":    printData.OrderNumber,
+		"invoiceNumber":  printData.InvoiceNumber,
+		"customerName":   printData.CustomerName,
+		"customerPhone":  printData.CustomerPhone,
+		"items":          printData.Items,
+		"subtotal":       printData.Subtotal,
+		"discountAmount": printData.DiscountAmount,
+		"taxAmount":      printData.TaxAmount,
+		"totalAmount":    printData.TotalAmount,
+		"paidAmount":     printData.PaidAmount,
+		"pendingAmount":  printData.PendingAmount,
+		"paymentMethod":  printData.PaymentMethod,
+		"paymentStatus":  printData.PaymentStatus,
+		"source":         printData.Source,
+	}
+
+	var customerID *string
+	if order["customer_id"] != nil {
+		if cid, ok := order["customer_id"].(string); ok && cid != "" {
+			customerID = &cid
+		}
+	}
+
+	snapshotReq := services.BillSnapshotRequest{
+		ReferenceType:   "ORDER",
+		ReferenceID:     orderID,
+		ReferenceNumber: printData.OrderNumber,
+		CustomerID:      customerID,
+		CustomerName:    printData.CustomerName,
+		CustomerPhone:   printData.CustomerPhone,
+		PaperSize:       printData.PaperSize,
+		BillData:        billData,
+		Subtotal:        printData.Subtotal,
+		DiscountAmount:  printData.DiscountAmount,
+		TaxAmount:       printData.TaxAmount,
+		TotalAmount:     printData.TotalAmount,
+		PaidAmount:      printData.PaidAmount,
+		BalanceAmount:   printData.PendingAmount,
+		Status:          getStringField(order, "status"),
+		PaymentStatus:   printData.PaymentStatus,
+		CreatedBy:       "system",
+	}
+
+	snapshot, err := h.billSnapshot.CreateBillSnapshot(snapshotReq)
+	if err != nil {
+		// Log error but don't fail the print
+		// c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create bill snapshot"})
+		// return
+	}
 
 	// Return both raw ESC/POS and preview text
-	c.JSON(http.StatusOK, gin.H{
+	response := gin.H{
 		"success":     true,
 		"escposData":  escposData,
-		"previewText": h.thermalPrinter.FormatForDisplay(escposData),
+		"previewText": previewText,
 		"orderNumber": printData.OrderNumber,
-	})
+		"paperSize":   printData.PaperSize,
+	}
+
+	if snapshot != nil {
+		response["snapshotId"] = snapshot.ID
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // PrintInvoiceThermal generates thermal print for an invoice
@@ -359,13 +433,10 @@ func getFloatField(m map[string]interface{}, key string) float64 {
 }
 
 func (h *OrdersHandler) getPrinterPaperSize() string {
-	var s AppSetting
-	if err := h.db.Where("key = ?", "pos.printer.paperSize").First(&s).Error; err == nil {
-		// Value is json.RawMessage, e.g. "3x5" (with quotes)
-		var size string
-		if err := json.Unmarshal(s.Value, &size); err == nil {
-			return size
-		}
+	// Get from printer settings
+	settings, err := h.billSnapshot.GetPrinterSettings("COUNTER-1")
+	if err == nil && settings != nil {
+		return settings.PaperSize
 	}
 	return "3x5" // Default
 }

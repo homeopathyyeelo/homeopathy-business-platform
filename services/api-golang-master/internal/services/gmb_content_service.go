@@ -4,13 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/sashabaranov/go-openai"
+	"github.com/yeelo/homeopathy-erp/internal/models"
 )
 
 // GMBContentService generates AI-powered content for GMB posts
 type GMBContentService struct {
-	client *openai.Client
+	client    *openai.Client
+	validator *GMBContentValidator
 }
 
 // NewGMBContentService creates a new GMB content service
@@ -20,18 +23,32 @@ func NewGMBContentService(apiKey string) *GMBContentService {
 	}
 
 	return &GMBContentService{
-		client: openai.NewClient(apiKey),
+		client:    openai.NewClient(apiKey),
+		validator: NewGMBContentValidator(),
 	}
 }
 
 // GenerateHealthPost generates a health-related post for GMB
-func (s *GMBContentService) GenerateHealthPost(topic, tone string) (title, content string, err error) {
+func (s *GMBContentService) GenerateHealthPost(topic, tone string, products []models.Product) (title, content string, err error) {
 	if topic == "" {
 		return "", "", fmt.Errorf("topic is required")
 	}
 
 	if tone == "" {
 		tone = "informative and friendly"
+	}
+
+	// Build product context
+	productContext := ""
+	if len(products) > 0 {
+		productContext = "\nFeature these products available at Yeelo Homeopathy:\n"
+		for _, p := range products {
+			price := p.MRP
+			if p.SellingPrice > 0 {
+				price = p.SellingPrice
+			}
+			productContext += fmt.Sprintf("- %s (Price: ₹%.2f): %s\n", p.Name, price, p.Description)
+		}
 	}
 
 	prompt := fmt.Sprintf(`Create a Google My Business post for Yeelo Homeopathy about "%s".
@@ -45,48 +62,62 @@ Requirements:
 - Use simple, accessible language for general public
 - Mention specific homeopathic remedies where appropriate
 - Add emotional appeal to connect with readers
-- Include a subtle call-to-action at the end
+- Include a subtle call-to-action at the end%s
 
 Format your response as:
 TITLE: [your title here]
-CONTENT: [your content here]`, topic, tone)
+CONTENT: [your content here]`, topic, tone, productContext)
 
-	resp, err := s.client.CreateChatCompletion(
-		context.Background(),
-		openai.ChatCompletionRequest{
-			Model: openai.GPT4oMini,
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleSystem,
-					Content: "You are an expert homeopathy content writer creating engaging Google My Business posts for Yeelo Homeopathy clinic in India. Focus on natural healing, preventive care, and homeopathic remedies.",
+	// Retry loop for validation
+	maxRetries := 3
+	for i := 0; i < maxRetries; i++ {
+		resp, err := s.client.CreateChatCompletion(
+			context.Background(),
+			openai.ChatCompletionRequest{
+				Model: openai.GPT4oMini,
+				Messages: []openai.ChatCompletionMessage{
+					{
+						Role:    openai.ChatMessageRoleSystem,
+						Content: "You are an expert homeopathy content writer creating engaging Google My Business posts for Yeelo Homeopathy clinic in India. Focus on natural healing, preventive care, and homeopathic remedies. Do NOT make claims about curing incurable diseases.",
+					},
+					{
+						Role:    openai.ChatMessageRoleUser,
+						Content: prompt,
+					},
 				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: prompt,
-				},
+				Temperature: 0.7,
+				MaxTokens:   500,
 			},
-			Temperature: 0.7,
-			MaxTokens:   500,
-		},
-	)
+		)
 
-	if err != nil {
-		return "", "", fmt.Errorf("failed to generate content: %w", err)
+		if err != nil {
+			return "", "", fmt.Errorf("failed to generate content: %w", err)
+		}
+
+		if len(resp.Choices) == 0 {
+			return "", "", fmt.Errorf("no content generated")
+		}
+
+		// Parse the response
+		responseText := resp.Choices[0].Message.Content
+		title, content = s.parseResponse(responseText)
+
+		// Validate content
+		validationResult := s.validator.ValidateContent(title, content)
+		if validationResult.IsValid {
+			return title, content, nil
+		}
+
+		// If validation failed, add error to prompt and retry
+		errorMsg := strings.Join(validationResult.Violations, ", ")
+		prompt += fmt.Sprintf("\n\nIMPORTANT: The previous attempt was rejected because: %s. Please rewrite the post to comply with these rules.", errorMsg)
 	}
 
-	if len(resp.Choices) == 0 {
-		return "", "", fmt.Errorf("no content generated")
-	}
-
-	// Parse the response
-	responseText := resp.Choices[0].Message.Content
-	title, content = s.parseResponse(responseText)
-
-	return title, content, nil
+	return "", "", fmt.Errorf("failed to generate compliant content after %d attempts", maxRetries)
 }
 
 // GenerateSeasonalPost generates a seasonal health post
-func (s *GMBContentService) GenerateSeasonalPost(season string) (title, content string, err error) {
+func (s *GMBContentService) GenerateSeasonalPost(season string, products []models.Product) (title, content string, err error) {
 	seasonTopics := map[string]string{
 		"winter":  "winter immunity and cold prevention with homeopathy",
 		"summer":  "summer heat management and hydration tips with homeopathic support",
@@ -99,17 +130,17 @@ func (s *GMBContentService) GenerateSeasonalPost(season string) (title, content 
 		topic = "seasonal health and wellness with homeopathy"
 	}
 
-	return s.GenerateHealthPost(topic, "caring and preventive")
+	return s.GenerateHealthPost(topic, "caring and preventive", products)
 }
 
 // GenerateDiseaseAwarenessPost generates a disease awareness post
-func (s *GMBContentService) GenerateDiseaseAwarenessPost(disease string) (title, content string, err error) {
+func (s *GMBContentService) GenerateDiseaseAwarenessPost(disease string, products []models.Product) (title, content string, err error) {
 	if disease == "" {
 		return "", "", fmt.Errorf("disease is required")
 	}
 
 	topic := fmt.Sprintf("%s prevention and homeopathic management", disease)
-	return s.GenerateHealthPost(topic, "informative and reassuring")
+	return s.GenerateHealthPost(topic, "informative and reassuring", products)
 }
 
 // parseResponse extracts title and content from AI response
@@ -164,6 +195,12 @@ func (s *GMBContentService) parseResponse(response string) (title, content strin
 	// Trim whitespace
 	title = trimSpace(title)
 	content = trimSpace(content)
+
+	// Clean up any markdown formatting in title
+	title = strings.TrimPrefix(title, "**")
+	title = strings.TrimSuffix(title, "**")
+	title = strings.TrimPrefix(title, "\"")
+	title = strings.TrimSuffix(title, "\"")
 
 	return title, content
 }
