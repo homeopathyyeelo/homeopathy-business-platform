@@ -80,22 +80,32 @@ export default function AccountsPage() {
 
     const handleConnect = async () => {
         try {
+            console.log('Starting OAuth flow...');
+            const token = document.cookie.split('auth-token=')[1]?.split(';')[0];
+            console.log('Auth token:', token ? 'Found' : 'Missing');
+
             const response = await fetch('http://localhost:3005/api/social/gmb/oauth/initiate', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Authorization': `Bearer ${document.cookie.split('auth-token=')[1]?.split(';')[0]}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
+
+            console.log('Response status:', response.status);
             const data = await response.json();
+            console.log('Response data:', data);
 
             if (data.success && data.authUrl) {
+                console.log('Redirecting to:', data.authUrl);
                 window.location.href = data.authUrl;
             } else {
-                toast.error('Failed to initialize connection');
+                console.error('OAuth init failed:', data);
+                toast.error(data.error || 'Failed to initialize connection');
             }
         } catch (error) {
+            console.error('OAuth error:', error);
             toast.error('Error starting OAuth flow');
         }
     };
@@ -152,16 +162,16 @@ export default function AccountsPage() {
                 <div className="flex justify-center py-12">
                     <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
                 </div>
-            ) : accounts.length === 0 ? (
+            ) : !accounts || accounts.length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                     <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900">No accounts connected</h3>
-                    <p className="text-gray-500 mb-6">Connect a Google My Business location to start automating posts.</p>
+                    <p className="text-gray-500 mt-2">Connect your Google My Business account to start posting</p>
                     <button
                         onClick={handleConnect}
-                        className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 shadow-sm"
+                        className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
                     >
-                        <Plus className="w-4 h-4 mr-2" />
+                        <Plus className="w-5 h-5" />
                         Connect Account
                     </button>
                 </div>

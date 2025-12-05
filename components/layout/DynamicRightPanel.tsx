@@ -11,11 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Skeleton } from '../ui/skeleton';
 import { ScrollArea } from '../ui/scroll-area';
-import { 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
+import {
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
   DollarSign,
   Package,
   Users,
@@ -100,6 +100,68 @@ function InsightContent({ data, title }: { data: any; title: string }) {
     );
   }
 
+  // Handle GMB Trends (Smart Insights)
+  if (Array.isArray(data) && data[0]?.disease && data[0]?.trend_this_week) {
+    return (
+      <div className="space-y-2">
+        {data.slice(0, 2).map((trend: any, idx: number) => (
+          <div key={idx} className="p-2 bg-blue-50 rounded border border-blue-200">
+            <div className="flex justify-between items-start">
+              <span className="text-sm font-medium text-blue-900">{trend.disease}</span>
+              <Badge variant={trend.severity === 'high' ? 'destructive' : 'secondary'} className="text-xs">
+                {trend.severity}
+              </Badge>
+            </div>
+            <p className="text-xs text-blue-700 mt-1">{trend.trend_this_week}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Handle GMB AI Suggestions
+  if (Array.isArray(data) && data[0]?.category && data[0]?.title && data[0]?.content) {
+    return (
+      <div className="space-y-2">
+        {data.slice(0, 2).map((suggestion: any, idx: number) => (
+          <div key={idx} className="p-2 bg-purple-50 rounded border border-purple-200">
+            <Badge variant="outline" className="text-xs mb-1">{suggestion.category}</Badge>
+            <p className="text-sm font-medium text-gray-900">{suggestion.title}</p>
+            <p className="text-xs text-gray-600 mt-1 line-clamp-2">{suggestion.content}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Handle GMB Category Stats
+  if (Array.isArray(data) && data[0]?.category && data[0]?.count) {
+    return (
+      <div className="space-y-2">
+        {data.slice(0, 3).map((stat: any, idx: number) => (
+          <div key={idx} className="flex justify-between items-center text-sm p-2 bg-slate-50 rounded">
+            <span className="truncate">{stat.category}</span>
+            <Badge variant="secondary">{stat.count} posts</Badge>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Handle GMB Monthly Stats
+  if (Array.isArray(data) && data[0]?.month && data[0]?.count) {
+    return (
+      <div className="space-y-2">
+        {data.slice(0, 3).map((stat: any, idx: number) => (
+          <div key={idx} className="flex justify-between items-center text-sm p-2 bg-slate-50 rounded">
+            <span>{stat.month} {stat.year}</span>
+            <Badge variant="secondary">{stat.count} posts</Badge>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   // Handle array data (list of items)
   if (Array.isArray(data)) {
     return (
@@ -167,13 +229,12 @@ function InsightContent({ data, title }: { data: any; title: string }) {
     return (
       <div className="space-y-2">
         {data.alerts.slice(0, 3).map((alert: any, idx: number) => (
-          <div 
-            key={idx} 
-            className={`p-2 rounded text-sm ${
-              alert.severity === 'critical' ? 'bg-red-50 text-red-700' :
-              alert.severity === 'warning' ? 'bg-orange-50 text-orange-700' :
-              'bg-yellow-50 text-yellow-700'
-            }`}
+          <div
+            key={idx}
+            className={`p-2 rounded text-sm ${alert.severity === 'critical' ? 'bg-red-50 text-red-700' :
+                alert.severity === 'warning' ? 'bg-orange-50 text-orange-700' :
+                  'bg-yellow-50 text-yellow-700'
+              }`}
           >
             <div className="font-medium truncate">
               {alert.productName || alert.name}
@@ -234,7 +295,7 @@ function InsightContent({ data, title }: { data: any; title: string }) {
   // Handle dashboard stats response (nested data object)
   if (data.data && typeof data.data === 'object') {
     const stats = data.data;
-    
+
     // Handle stats with multiple fields
     if (stats.total_sales !== undefined || stats.total_products !== undefined) {
       return (

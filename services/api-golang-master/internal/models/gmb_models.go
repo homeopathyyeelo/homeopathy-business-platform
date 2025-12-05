@@ -22,26 +22,35 @@ type GMBAccount struct {
 
 // GMBPost represents a post in Google My Business
 type GMBPost struct {
-	ID           string     `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
-	AccountID    string     `gorm:"column:gmb_account_id;not null" json:"account_id"` // Maps to gmb_account_id bigint in database
-	Title        string     `gorm:"not null" json:"title"`
-	Content      string     `gorm:"type:text;not null" json:"content"`
-	Status       string     `gorm:"type:varchar(50);default:'DRAFT'" json:"status"`
-	ScheduledFor *time.Time `gorm:"type:timestamp with time zone" json:"scheduled_for,omitempty"`
-	PublishedAt  *time.Time `gorm:"type:timestamp with time zone" json:"published_at,omitempty"`
-	PostURL      string     `gorm:"type:varchar(255)" json:"post_url,omitempty"`
-	ErrorMessage string     `gorm:"type:text" json:"error_message,omitempty"`
-	CreatedAt    time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt    time.Time  `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+	ID           string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
+	AccountID    string         `gorm:"column:gmb_account_id;not null" json:"account_id"` // Maps to gmb_account_id bigint in database
+	Title        string         `gorm:"not null" json:"title"`
+	Content      string         `gorm:"type:text;not null" json:"content"`
+	Status       string         `gorm:"type:varchar(50);default:'DRAFT'" json:"status"`
+	Category     string         `gorm:"type:varchar(50)" json:"category"` // Main Category
+	SubCategory  string         `gorm:"type:varchar(50)" json:"sub_category"`
+	Brand        string         `gorm:"type:varchar(50)" json:"brand"`
+	Purpose      string         `gorm:"type:varchar(50)" json:"purpose"`
+	AIAnalysis   map[string]any `gorm:"type:jsonb" json:"ai_analysis,omitempty"`
+	ScheduledFor *time.Time     `gorm:"type:timestamp with time zone" json:"scheduled_for,omitempty"`
+	PublishedAt  *time.Time     `gorm:"type:timestamp with time zone" json:"published_at,omitempty"`
+	PostURL      string         `gorm:"type:varchar(255)" json:"post_url,omitempty"`
+	ErrorMessage string         `gorm:"type:text" json:"error_message,omitempty"`
+	CreatedAt    time.Time      `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt    time.Time      `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
 
 // GMBHistory tracks actions taken on GMB
 type GMBHistory struct {
-	ID        string         `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
-	AccountID string         `gorm:"type:uuid;not null" json:"account_id"`
-	Action    string         `gorm:"type:varchar(50);not null" json:"action"`
-	Details   map[string]any `gorm:"type:jsonb" json:"details,omitempty"`
-	CreatedAt time.Time      `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
+	ID        uint64         `gorm:"primaryKey" json:"id"`
+	AccountID string         `json:"account_id"` // Changed from uint64 to string
+	Action    string         `json:"action"`
+	Details   map[string]any `gorm:"type:jsonb" json:"details"`
+	CreatedAt time.Time      `json:"created_at"`
+}
+
+func (GMBHistory) TableName() string {
+	return "gmb_history" // Fixed: was gmb_histories
 }
 
 // GMBSchedule represents the scheduling configuration

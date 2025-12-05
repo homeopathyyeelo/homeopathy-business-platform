@@ -135,3 +135,57 @@ func (s *GMBSchedulerService) scheduleNextRecurrence(post models.GMBScheduledPos
 		fmt.Printf("Scheduled next recurrence for post %s at %v\n", post.ID, nextTime)
 	}
 }
+
+// StartReCategorizationCron starts the daily re-categorization job
+func (s *GMBSchedulerService) StartReCategorizationCron(aiService *GMBAIService) {
+	// Run daily at 3 AM
+	go func() {
+		for {
+			now := time.Now()
+			nextRun := time.Date(now.Year(), now.Month(), now.Day(), 3, 0, 0, 0, now.Location())
+			if nextRun.Before(now) {
+				nextRun = nextRun.Add(24 * time.Hour)
+			}
+			duration := nextRun.Sub(now)
+
+			select {
+			case <-time.After(duration):
+				s.runReCategorization(aiService)
+			case <-s.stopChan:
+				return
+			}
+		}
+	}()
+	fmt.Println("GMB Re-categorization Cron started")
+}
+
+func (s *GMBSchedulerService) runReCategorization(aiService *GMBAIService) {
+	fmt.Println("Running daily re-categorization...")
+
+	// Find posts older than 7 days OR missing category
+	var posts []models.GMBPost
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7)
+
+	err := s.DB.Where("(created_at < ? OR category = '' OR category IS NULL)", sevenDaysAgo).Find(&posts).Error
+	if err != nil {
+		fmt.Printf("Error fetching posts for re-categorization: %v\n", err)
+		return
+	}
+
+	count := 0
+	for _, post := range posts {
+		result, err := aiService.CategorizePost(post.Content)
+		if err == nil {
+			if post.Category != result.MainCategory || post.SubCategory != result.SubCategory {
+				post.Category = result.MainCategory
+				post.SubCategory = result.SubCategory
+				post.Brand = result.Brand
+				post.Purpose = result.Purpose
+				s.DB.Save(&post)
+				count++
+			}
+		}
+	}
+
+	fmt.Printf("Re-categorization complete. Updated %d posts.\n", count)
+}

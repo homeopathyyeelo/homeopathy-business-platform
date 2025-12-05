@@ -151,10 +151,16 @@ func main() {
 	gmbContentHandler := handlers.NewGMBContentHandler(db, gmbContentService)
 	gmbSchedulerService := services.NewGMBSchedulerService(db, gmbService)
 	gmbSchedulerHandler := handlers.NewGMBSchedulerHandler(db)
+	gmbAnalyticsHandler := handlers.NewGMBAnalyticsHandler(db)
 	auditHandler := handlers.NewAuditHandler(db)
+
+	// AI Analytics
+	aiAnalyticsService := services.NewAIAnalyticsService(db, os.Getenv("OPENAI_API_KEY"))
+	aiInsightsHandler := handlers.NewAIInsightsHandler(db, aiAnalyticsService)
 
 	// Start the scheduler
 	gmbSchedulerService.Start()
+	gmbSchedulerService.StartReCategorizationCron(services.NewGMBAIService(os.Getenv("OPENAI_API_KEY")))
 
 	// Initialize Gin with Recovery middleware
 	r := gin.New()
@@ -243,10 +249,17 @@ func main() {
 			social.GET("/gmb/accounts", gmbHandler.GetAccounts)
 			social.DELETE("/gmb/accounts/:id", gmbHandler.DisconnectAccountByID)
 
+			// Sync posts from GMB
+			social.POST("/gmb/sync", gmbHandler.SyncGMBPosts)
+
 			social.GET("/gmb/suggestions", gmbHandler.GetSuggestions)
 
 			// Audit Logs
 			social.GET("/gmb/audit", auditHandler.GetAuditLogs)
+
+			// Analytics & AI
+			social.GET("/gmb/analytics", gmbAnalyticsHandler.GetAnalytics)
+			social.POST("/gmb/ai/categorize", gmbAnalyticsHandler.BatchCategorize)
 		}
 
 		// Authentication routes
@@ -328,6 +341,14 @@ func main() {
 			erp.GET("/dashboard/summary", dashboardHandler.GetSummary)
 			erp.GET("/dashboard/expiry-summary", dashboardHandler.GetExpirySummary)
 			erp.GET("/dashboard/quick-actions", quickActionsHandler.GetQuickActions) // Smart insights quick actions
+
+			// AI Insights Routes
+			erp.GET("/ai/insights", aiInsightsHandler.GetInsights)
+			erp.GET("/ai/anomalies", aiInsightsHandler.GetAnomalies)
+			erp.GET("/ai/predictions", aiInsightsHandler.GetPredictions)
+			erp.GET("/ai/nl-insights", aiInsightsHandler.GetNLInsights)
+			erp.GET("/ai/priorities", aiInsightsHandler.GetPriorities)
+
 			erp.GET("/notifications/recent", notificationHandler.GetRecentNotifications)
 			erp.GET("/favicon.ico", func(c *gin.Context) {
 				c.File("favicon.ico")
@@ -502,8 +523,46 @@ func main() {
 			erp.PUT("/purchases/orders/:id/approve", enhancedPurchaseHandler.ApproveEnhancedPurchase)
 			erp.PUT("/purchases/orders/:id/reject", enhancedPurchaseHandler.RejectEnhancedPurchase)
 			erp.GET("/purchases/pending", enhancedPurchaseHandler.GetPendingPurchases)
-			// erp.GET("/purchases/receipts", enhancedPurchaseHandler.GetPurchaseReceipts) // TODO
-			// erp.POST("/purchases/receipts", enhancedPurchaseHandler.CreatePurchaseReceipt) // TODO
+
+			// Purchase Bills
+			billsHandler := handlers.NewPurchaseBillsHandler(db)
+			erp.GET("/purchases/bills", billsHandler.GetBills)
+			erp.GET("/purchases/bills/:id", billsHandler.GetBill)
+			erp.POST("/purchases/bills", billsHandler.CreateBill)
+			erp.PUT("/purchases/bills/:id/pay", billsHandler.MarkAsPaid)
+			erp.DELETE("/purchases/bills/:id", billsHandler.DeleteBill)
+			erp.GET("/purchases/bills/stats", billsHandler.GetBillStats)
+
+			// Purchase Payments
+			paymentsHandler := handlers.NewPurchasePaymentsHandler(db)
+			erp.GET("/purchases/payments", paymentsHandler.GetPayments)
+			erp.POST("/purchases/payments", paymentsHandler.CreatePayment)
+			erp.GET("/purchases/payments/due", paymentsHandler.GetDuePayments)
+			erp.POST("/purchases/payments/:id/void", paymentsHandler.VoidPayment)
+			erp.GET("/purchases/payments/stats", paymentsHandler.GetPaymentStats)
+
+			// Purchase Returns
+			returnsHandler := handlers.NewPurchaseReturnsHandler(db)
+			erp.GET("/purchases/returns", returnsHandler.GetReturns)
+			erp.POST("/purchases/returns", returnsHandler.CreateReturn)
+			erp.PUT("/purchases/returns/:id/approve", returnsHandler.ApproveReturn)
+			erp.POST("/purchases/returns/:id/refund", returnsHandler.ProcessRefund)
+			erp.GET("/purchases/returns/stats", returnsHandler.GetReturnStats)
+
+			// Purchase GRN
+			grnHandler := handlers.NewPurchaseGRNHandler(db)
+			erp.GET("/purchases/grn", grnHandler.GetGRNs)
+			erp.GET("/purchases/grn/:id", grnHandler.GetGRN)
+			erp.POST("/purchases/grn", grnHandler.CreateGRN)
+			erp.PUT("/purchases/grn/:id/approve", grnHandler.ApproveGRN)
+			erp.POST("/purchases/grn/:id/qc", grnHandler.UpdateQCStatus)
+			erp.GET("/purchases/grn/stats", grnHandler.GetGRNStats)
+
+			// AI Reorder
+			aiReorderHandler := handlers.NewAIReorderHandler(db)
+			erp.GET("/purchases/ai-reorder/suggestions", aiReorderHandler.GetSuggestions)
+			erp.POST("/purchases/ai-reorder/generate", aiReorderHandler.GeneratePO)
+			erp.GET("/purchases/ai-reorder/stats", aiReorderHandler.GetStats)
 
 			// Finance & Payments (methods need implementation)
 			// erp.GET("/finance/ledgers", analyticsHandler.GetFinanceLedgers) // TODO
@@ -511,6 +570,10 @@ func main() {
 			erp.GET("/payments", productHandler.GetPayments)
 			erp.POST("/payments", productHandler.CreatePayment)
 			erp.PUT("/payments/:id", productHandler.UpdatePayment)
+
+			// AI Sales Forecasting
+			aiSalesHandler := handlers.NewAISalesHandler(db)
+			erp.POST("/ai/sales/forecast", aiSalesHandler.GetForecast)
 
 			// Price Management
 			erp.GET("/price-lists", priceListHandler.GetPriceLists)

@@ -473,37 +473,63 @@ func (h *GMBHandler) RefreshToken(c *gin.Context) {
 }
 
 func (h *GMBHandler) GetTrends(c *gin.Context) {
-	trends := []map[string]interface{}{
-		{
-			"disease":           "Dengue",
-			"severity":          "high",
-			"locations":         []string{"Mumbai", "Delhi", "Chennai"},
-			"recommendations":   []string{"Use Eupatorium Perf 30C", "Remove standing water", "Use mosquito nets"},
-			"related_products":  []string{"Eupatorium Perf 30C", "Arnica Montana 30C", "Rhus Tox 30C"},
-			"trend_this_week":   "increasing",
-			"cases_last_week":   1245,
-			"percent_change":    15.5,
-			"seasonal":          true,
-			"season":            "monsoon",
-			"prevention_tips":   "Use mosquito repellent, wear full sleeves, keep surroundings clean",
-			"home_remedies":     "Take Eupatorium Perf 30C, 4 pills twice daily as preventive",
-			"official_guidance": "As per National Health Portal guidelines",
-		},
-		{
-			"disease":           "Common Cold",
-			"severity":          "moderate",
-			"locations":         []string{"All regions"},
-			"recommendations":   []string{"Use Aconite 30C", "Stay warm", "Drink warm fluids"},
-			"related_products":  []string{"Aconite 30C", "Arsenicum Album 30C", "Belladonna 30C"},
-			"trend_this_week":   "stable",
-			"cases_last_week":   3567,
-			"percent_change":    2.3,
-			"seasonal":          true,
-			"season":            "winter",
-			"prevention_tips":   "Dress warmly, avoid cold drinks, use Aconite 30C as preventive",
-			"home_remedies":     "Ginger tea with honey, steam inhalation",
-			"official_guidance": "Rest and hydration recommended",
-		},
+	month := time.Now().Month()
+	var trends []map[string]interface{}
+
+	if month >= 6 && month <= 9 { // Monsoon
+		trends = []map[string]interface{}{
+			{
+				"disease":           "Dengue",
+				"severity":          "high",
+				"locations":         []string{"Mumbai", "Delhi", "Chennai"},
+				"recommendations":   []string{"Use Eupatorium Perf 30C", "Remove standing water", "Use mosquito nets"},
+				"related_products":  []string{"Eupatorium Perf 30C", "Arnica Montana 30C", "Rhus Tox 30C"},
+				"trend_this_week":   "increasing",
+				"cases_last_week":   1245,
+				"percent_change":    15.5,
+				"seasonal":          true,
+				"season":            "monsoon",
+				"prevention_tips":   "Use mosquito repellent, wear full sleeves, keep surroundings clean",
+				"home_remedies":     "Take Eupatorium Perf 30C, 4 pills twice daily as preventive",
+				"official_guidance": "As per National Health Portal guidelines",
+			},
+		}
+	} else if month >= 11 || month <= 2 { // Winter
+		trends = []map[string]interface{}{
+			{
+				"disease":           "Common Cold",
+				"severity":          "moderate",
+				"locations":         []string{"All regions"},
+				"recommendations":   []string{"Use Aconite 30C", "Stay warm", "Drink warm fluids"},
+				"related_products":  []string{"Aconite 30C", "Arsenicum Album 30C", "Belladonna 30C"},
+				"trend_this_week":   "stable",
+				"cases_last_week":   3567,
+				"percent_change":    2.3,
+				"seasonal":          true,
+				"season":            "winter",
+				"prevention_tips":   "Dress warmly, avoid cold drinks, use Aconite 30C as preventive",
+				"home_remedies":     "Ginger tea with honey, steam inhalation",
+				"official_guidance": "Rest and hydration recommended",
+			},
+		}
+	} else { // Summer/Spring
+		trends = []map[string]interface{}{
+			{
+				"disease":           "Heat Stroke",
+				"severity":          "moderate",
+				"locations":         []string{"North India"},
+				"recommendations":   []string{"Use Glonoinum 30C", "Stay hydrated", "Avoid direct sun"},
+				"related_products":  []string{"Glonoinum 30C", "Natrum Mur 30C"},
+				"trend_this_week":   "increasing",
+				"cases_last_week":   890,
+				"percent_change":    5.2,
+				"seasonal":          true,
+				"season":            "summer",
+				"prevention_tips":   "Drink plenty of water, wear light clothes",
+				"home_remedies":     "Raw mango drink (Aam Panna)",
+				"official_guidance": "Avoid going out during peak heat hours",
+			},
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": trends})
@@ -526,16 +552,16 @@ func (h *GMBHandler) GetSchedules(c *gin.Context) {
 	if h.DB.Migrator().HasTable("gmb_schedules") {
 		var dbSchedule struct {
 			ScheduleType   string     `gorm:"column:schedule_type"`
-			TimeOfDay      string     `gorm:"column:time_of_day"`
-			DayOfWeek      *int       `gorm:"column:day_of_week"`
-			DayOfMonth     *int       `gorm:"column:day_of_month"`
-			SeasonalPreset *string    `gorm:"column:seasonal_preset"`
-			NextRunAt      *time.Time `gorm:"column:next_run_at"`
+			ScheduleTime   string     `gorm:"column:schedule_time"` // Fixed: was time_of_day
+			ScheduleDay    *int       `gorm:"column:schedule_day"`  // Fixed: was day_of_week
+			ScheduleDate   *int       `gorm:"column:schedule_date"` // Fixed: was day_of_month
+			SeasonalPreset *string    `gorm:"column:season"`
+			NextRunAt      *time.Time `gorm:"column:next_run"`
 		}
 
 		err := h.DB.Table("gmb_schedules").
-			Select("schedule_type, time_of_day, day_of_week, day_of_month, seasonal_preset, next_run_at").
-			Where("is_active = ?", true).
+			Select("schedule_type, schedule_time, schedule_day, schedule_date, season, next_run").
+			Where("is_enabled = ?", true).
 			First(&dbSchedule).Error
 
 		if err == nil {
@@ -666,11 +692,15 @@ func (h *GMBHandler) GetHistory(c *gin.Context) {
 	history := make([]map[string]interface{}, 0, len(posts))
 	for _, post := range posts {
 		historyItem := map[string]interface{}{
-			"id":         post.ID,
-			"title":      post.Title,
-			"content":    post.Content,
-			"status":     post.Status,
-			"created_at": post.CreatedAt,
+			"id":           post.ID,
+			"title":        post.Title,
+			"content":      post.Content,
+			"status":       post.Status,
+			"created_at":   post.CreatedAt,
+			"category":     post.Category,
+			"sub_category": post.SubCategory,
+			"brand":        post.Brand,
+			"purpose":      post.Purpose,
 		}
 
 		if post.ScheduledFor != nil {

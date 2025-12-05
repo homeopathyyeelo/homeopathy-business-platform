@@ -4,17 +4,33 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 2s
+ ✓ Ready in 3.2s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 838ms (159 modules)
+ ✓ Compiled /middleware in 903ms (159 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 11.9s (1267 modules)
+ GET / 200 in 12674ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 10.4s (2189 modules)
- GET /dashboard 200 in 12163ms
- ✓ Compiled in 942ms (971 modules)
- GET /dashboard 200 in 210ms
- ✓ Compiled in 471ms (971 modules)
- GET /dashboard 200 in 483ms
- ✓ Compiled in 584ms (971 modules)
- GET /dashboard 200 in 150ms
- ✓ Compiled in 359ms (971 modules)
- GET /dashboard 200 in 204ms
+ ✓ Compiled /dashboard in 3.6s (2201 modules)
+ GET /dashboard 200 in 3920ms
+ GET /dashboard 200 in 175ms
+ ○ Compiling /dashboard/stats ...
+ ✓ Compiled /dashboard/stats in 549ms (2200 modules)
+ GET /dashboard/stats 200 in 734ms
+ ✓ Compiled in 458ms (986 modules)
+ GET /dashboard/stats 200 in 269ms
+ ✓ Compiled in 408ms (986 modules)
+ GET /dashboard/stats 200 in 304ms
+ ✓ Compiled in 528ms (986 modules)
+ GET /dashboard/stats 200 in 133ms
+ GET /dashboard/stats 200 in 754ms
+ ✓ Compiled in 2.6s (2362 modules)
+ GET /dashboard/stats 200 in 310ms
+ ✓ Compiled in 656ms (986 modules)
+ GET /dashboard/stats 200 in 219ms
+ ✓ Compiled in 475ms (986 modules)
+ GET /dashboard/stats 200 in 137ms
+ ✓ Compiled in 546ms (986 modules)
+ GET /dashboard/stats 200 in 248ms
+ ✓ Compiled in 700ms (986 modules)
+ GET /dashboard/stats 200 in 141ms

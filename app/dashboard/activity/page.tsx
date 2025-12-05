@@ -5,6 +5,10 @@ import { Badge } from '@/components/ui/badge'
 import { Activity, AlertTriangle, CheckCircle, XCircle, Zap, Database, TrendingUp, Package, DollarSign, ShoppingCart, Brain, Bug, Server, Clock, AlertCircle, RefreshCw } from 'lucide-react'
 import useSWR from 'swr'
 import { authFetch } from '@/lib/api/fetch-utils';
+import AIInsightsWidget from '@/components/dashboard/AIInsightsWidget'
+import AnomalyDetectionCard from '@/components/dashboard/AnomalyDetectionCard'
+import PredictiveInsightsPanel from '@/components/dashboard/PredictiveInsightsPanel'
+
 
 const fetcher = (url: string) => authFetch(url).then(r => r.json())
 
@@ -39,6 +43,12 @@ const metricsFetcher = (url: string) => authFetch(url).then(r => r.json()).then(
     salesToday: d.today_revenue || 0,
     systemLoad: 15 // Placeholder
   };
+});
+
+const bugsFetcher = (url: string) => authFetch(url).then(r => r.json()).then(res => {
+  // Handle both array and object responses
+  if (Array.isArray(res)) return res;
+  return res.data || [];
 });
 
 interface SystemMetrics {
@@ -102,7 +112,7 @@ export default function ActivityPage() {
     shouldRetryOnError: false,
     revalidateOnFocus: false
   })
-  const { data: bugs, error: bugsError } = useSWR<BugReport[]>('/api/erp/bugs', fetcher, {
+  const { data: bugs, error: bugsError } = useSWR<BugReport[]>('/api/erp/bugs', bugsFetcher, {
     refreshInterval: 60000,
     fallbackData: [],
     shouldRetryOnError: false,
@@ -230,6 +240,13 @@ export default function ActivityPage() {
         </Card>
       </div>
 
+      {/* AI-Powered Insights Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <AIInsightsWidget />
+        <AnomalyDetectionCard />
+        <PredictiveInsightsPanel />
+      </div>
+
       {/* AI System Activity Feed */}
       <Card>
         <CardHeader>
@@ -272,19 +289,23 @@ export default function ActivityPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {bugs?.slice(0, 5).map(bug => (
-                <div key={bug.id} className={`p-3 border rounded-lg ${getSeverityColor(bug.severity)}`}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{bug.title}</p>
-                      {bug.aiSuggestion && (
-                        <p className="text-xs mt-1 text-gray-600">💡 {bug.aiSuggestion}</p>
-                      )}
+              {Array.isArray(bugs) && bugs.length > 0 ? (
+                bugs.slice(0, 5).map(bug => (
+                  <div key={bug.id} className={`p-3 border rounded-lg ${getSeverityColor(bug.severity)}`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{bug.title}</p>
+                        {bug.aiSuggestion && (
+                          <p className="text-xs mt-1 text-gray-600">💡 {bug.aiSuggestion}</p>
+                        )}
+                      </div>
+                      <Badge variant="outline">{bug.status}</Badge>
                     </div>
-                    <Badge variant="outline">{bug.status}</Badge>
                   </div>
-                </div>
-              )) || <p className="text-sm text-gray-500 text-center py-4">No bugs reported</p>}
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4">No bugs reported ✨</p>
+              )}
             </div>
           </CardContent>
         </Card>

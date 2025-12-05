@@ -55,7 +55,7 @@ const menuItems: MenuItem[] = [
     color: 'from-sky-500 to-sky-600',
     submenus: [
       { label: 'GMB Posts', path: '/social/gmb' },
-      { label: 'GMB Dashboard', path: '/social/gmb' },
+      { label: 'GMB Dashboard', path: '/social/gmb/posts' },
       { label: 'GMB Accounts', path: '/social/gmb/accounts' },
       { label: 'Calendar & Schedule', path: '/social/gmb/calendar' },
       { label: 'Audit Logs', path: '/social/gmb/audit' },

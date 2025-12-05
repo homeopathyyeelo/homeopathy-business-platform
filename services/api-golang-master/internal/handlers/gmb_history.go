@@ -37,6 +37,9 @@ func (h *GMBHandler) GetPostsHistory(c *gin.Context) {
 	dateFrom := c.Query("date_from") // ISO date string
 	dateTo := c.Query("date_to")     // ISO date string
 	search := c.Query("search")      // Search in title/content
+	category := c.Query("category")
+	subcategory := c.Query("subcategory")
+	brand := c.Query("brand")
 
 	// Build query
 	query := h.DB.Model(&models.GMBPost{})
@@ -68,6 +71,16 @@ func (h *GMBHandler) GetPostsHistory(c *gin.Context) {
 		query = query.Where("status = ?", status)
 	}
 
+	if category != "" {
+		query = query.Where("category = ?", category)
+	}
+	if subcategory != "" {
+		query = query.Where("sub_category = ?", subcategory)
+	}
+	if brand != "" {
+		query = query.Where("brand ILIKE ?", "%"+brand+"%")
+	}
+
 	if dateFrom != "" {
 		if fromTime, err := time.Parse("2006-01-02", dateFrom); err == nil {
 			query = query.Where("created_at >= ?", fromTime)
@@ -94,7 +107,7 @@ func (h *GMBHandler) GetPostsHistory(c *gin.Context) {
 	// Get paginated posts
 	var posts []models.GMBPost
 	err := query.
-		Order("created_at DESC").
+		Order("published_at DESC").
 		Limit(limit).
 		Offset(offset).
 		Find(&posts).Error

@@ -1,0 +1,11 @@
+[
+  {
+    "name": "__Secure-1PSID",
+    "value": "placeholder",
+    "domain": ".google.com",
+    "path": "/",
+    "expires": 1735920000,
+    "httpOnly": true,
+    "secure": true
+  }
+]

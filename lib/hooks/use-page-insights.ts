@@ -9,11 +9,11 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { api } from '@/lib/api/api-client-central';
-import { 
-  getInsightsForPage, 
-  getPrioritizedInsights, 
+import {
+  getInsightsForPage,
+  getPrioritizedInsights,
   type InsightConfig,
-  type PageInsightsConfig 
+  type PageInsightsConfig
 } from '../insights/page-insights-config';
 
 const fetcher = (url: string) => api.get(url);
@@ -72,14 +72,14 @@ export function usePageInsights(maxInsights: number = 5): PageInsights {
       // Fetch each insight's data
       for (let i = 0; i < prioritizedInsights.length; i++) {
         const insightConfig = prioritizedInsights[i];
-        
+
         try {
           // Use API base URL from environment variable
           const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api/erp';
-          const apiUrl = insightConfig.dataFetcher.startsWith('http') 
-            ? insightConfig.dataFetcher 
+          const apiUrl = insightConfig.dataFetcher.startsWith('http')
+            ? insightConfig.dataFetcher
             : `http://localhost:3005${insightConfig.dataFetcher}`;
-          
+
           // Use centralized API client (auth automatic!)
           const data = await api.get(apiUrl);
 
@@ -123,10 +123,10 @@ export function usePageInsights(maxInsights: number = 5): PageInsights {
  */
 export function useInsight(endpoint: string, refreshInterval: number = 30000) {
   // Prepend API URL if needed
-  const apiUrl = endpoint.startsWith('http') 
-    ? endpoint 
+  const apiUrl = endpoint.startsWith('http')
+    ? endpoint
     : `http://localhost:3005${endpoint}`;
-  
+
   const { data, error, isLoading } = useSWR(apiUrl, fetcher, {
     refreshInterval,
     revalidateOnFocus: true,
@@ -145,7 +145,7 @@ export function useInsight(endpoint: string, refreshInterval: number = 30000) {
  */
 export function usePageContext() {
   const pathname = usePathname();
-  
+
   const getContext = () => {
     if (pathname?.startsWith('/products')) return 'products';
     if (pathname?.startsWith('/inventory')) return 'inventory';
@@ -158,6 +158,7 @@ export function usePageContext() {
     if (pathname?.startsWith('/reports')) return 'reports';
     if (pathname?.startsWith('/analytics')) return 'analytics';
     if (pathname?.startsWith('/marketing')) return 'marketing';
+    if (pathname?.startsWith('/social/gmb')) return 'gmb';
     if (pathname?.startsWith('/settings')) return 'settings';
     if (pathname === '/dashboard') return 'dashboard';
     return 'general';
@@ -177,6 +178,7 @@ export function usePageContext() {
     isReportsPage: pathname?.startsWith('/reports'),
     isAnalyticsPage: pathname?.startsWith('/analytics'),
     isMarketingPage: pathname?.startsWith('/marketing'),
+    isGMBPage: pathname?.startsWith('/social/gmb'),
     isSettingsPage: pathname?.startsWith('/settings'),
     isDashboard: pathname === '/dashboard'
   };

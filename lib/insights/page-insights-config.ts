@@ -176,6 +176,38 @@ export const PAGE_INSIGHTS_MAP: PageInsightsConfig[] = [
     ]
   },
 
+  // ============ GMB/SOCIAL MODULE ============
+  {
+    pagePattern: /^\/social\/gmb/,
+    pageName: 'GMB Marketing',
+    insights: [
+      {
+        title: 'Smart Insights',
+        icon: '🎯',
+        dataFetcher: 'http://localhost:3005/api/social/gmb/trends',
+        priority: 10
+      },
+      {
+        title: 'AI Content Ideas',
+        icon: '💡',
+        dataFetcher: 'http://localhost:3005/api/social/gmb/analytics?groupBy=ai',
+        priority: 9
+      },
+      {
+        title: 'Post Analytics',
+        icon: '📊',
+        dataFetcher: 'http://localhost:3005/api/social/gmb/analytics?groupBy=category',
+        priority: 8
+      },
+      {
+        title: 'Monthly Activity',
+        icon: '📈',
+        dataFetcher: 'http://localhost:3005/api/social/gmb/analytics?groupBy=month',
+        priority: 7
+      }
+    ]
+  },
+
   // ============ OTHER MODULES ============
   {
     pagePattern: /^\/(purchases|vendors|finance|reports|analytics|marketing|hr|settings)/,
