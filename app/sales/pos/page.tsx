@@ -442,7 +442,7 @@ export default function UniversalPOSPage() {
       const res = await golangAPI.get(`/api/erp/customers`, {
         params: { search: query, limit: 10 },
       });
-      setCustomers(res.data?.data?.items || []);
+      setCustomers(res.data?.data || []);
     } catch (error) {
       console.error('Customer search failed:', error);
     }
@@ -1204,7 +1204,7 @@ export default function UniversalPOSPage() {
               </div>
 
               {/* Customer Suggestions Dropdown */}
-              {customers.length > 0 && !selectedCustomer && (
+              {customers.length > 0 && (
                 <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
                   {customers.map((customer) => (
                     <div

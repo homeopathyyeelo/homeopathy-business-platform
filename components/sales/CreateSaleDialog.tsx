@@ -8,6 +8,7 @@ import InvoicePrintView from "./InvoicePrintView";
 import DiscountSection from "./DiscountSection";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import CustomerInsightsPanel from "./CustomerInsightsPanel";
 
 interface CreateSaleDialogProps {
   open: boolean;
@@ -20,7 +21,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
   const [showInvoice, setShowInvoice] = useState<boolean>(false);
   const [createdInvoice, setCreatedInvoice] = useState<any>(null);
   const [sendWhatsApp, setSendWhatsApp] = useState<boolean>(true);
-  
+
   const {
     date,
     setDate,
@@ -48,7 +49,9 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
     addItem,
     removeItem,
     updateItem,
-    handleSave
+    handleSave,
+    customerProfile,
+    loadingProfile
   } = useCreateSale(saleType, () => {
     if (onSuccess) onSuccess();
   });
@@ -60,17 +63,17 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
       setShowInvoice(true);
     }
   };
-  
+
   const handlePrint = () => {
     // The actual printing happens in the InvoicePrintView component now
     console.log("Printing invoice:", createdInvoice.invoiceNumber);
   };
-  
+
   const handleDownload = () => {
     // The actual downloading happens in the InvoicePrintView component now
     console.log("Downloading invoice:", createdInvoice.invoiceNumber);
   };
-  
+
   const handleClose = () => {
     setShowInvoice(false);
     onOpenChange(false);
@@ -86,7 +89,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
           <DialogHeader>
             <DialogTitle>Invoice Preview</DialogTitle>
           </DialogHeader>
-          
+
           <InvoicePrintView
             createdInvoice={createdInvoice}
             selectedCustomer={selectedCustomer}
@@ -94,7 +97,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
             onPrint={handlePrint}
             onDownload={handleDownload}
           />
-          
+
           <DialogFooter>
             <Button onClick={handleClose}>Close</Button>
           </DialogFooter>
@@ -109,7 +112,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
         <DialogHeader>
           <DialogTitle>Create New {saleType === 'retail' ? 'Retail' : 'Wholesale'} Sale</DialogTitle>
         </DialogHeader>
-        
+
         <SaleFormFields
           date={date}
           setDate={setDate}
@@ -125,8 +128,17 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
           pricingLevel={pricingLevel}
           setPricingLevel={setPricingLevel}
         />
-        
-        <InvoiceItemsTable 
+
+        {selectedCustomerId && (
+          <div className="mb-4">
+            <CustomerInsightsPanel
+              customerProfile={customerProfile}
+              loading={loadingProfile}
+            />
+          </div>
+        )}
+
+        <InvoiceItemsTable
           items={items}
           products={products}
           inventoryItems={inventoryItems}
@@ -137,7 +149,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
           totals={totals}
           showItemDiscounts={true}
         />
-        
+
         <DiscountSection
           subtotal={totals.subtotal}
           discountMode={billDiscountMode}
@@ -160,7 +172,7 @@ const CreateSaleDialog = ({ open, onOpenChange, onSuccess, saleType }: CreateSal
             </Label>
           </div>
         )}
-        
+
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={onSave} disabled={isSubmitting}>

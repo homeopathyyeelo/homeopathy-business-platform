@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -742,11 +744,15 @@ func (h *GMBHandler) GeneratePost(c *gin.Context) {
 	}
 
 	if req.Topic == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"error":   "Topic is required",
-		})
-		return
+		// Auto-select topic based on season if not provided
+		month := time.Now().Month()
+		if month >= 6 && month <= 9 { // Monsoon
+			req.Topic = "Monsoon Disease Prevention"
+		} else if month >= 11 || month <= 2 { // Winter
+			req.Topic = "Winter Immunity Boosting"
+		} else { // Summer/Spring
+			req.Topic = "Summer Health Tips"
+		}
 	}
 
 	var title, content string
@@ -941,6 +947,66 @@ func (h *GMBHandler) GetSuggestions(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"data":    suggestions,
+	})
+}
+
+// AutomatePost triggers the browser automation script
+func (h *GMBHandler) AutomatePost(c *gin.Context) {
+	var req struct {
+		Content string `json:"content"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Invalid request: " + err.Error(),
+		})
+		return
+	}
+
+	if req.Content == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"error":   "Content is required",
+		})
+		return
+	}
+
+	// Execute the node script
+	// We use exec.Command to run the node script
+	// We pass the content as an environment variable
+	cmd := exec.Command("node", "scripts/gmb-manual-assist.js", "--auto")
+	cmd.Dir = "/var/www/homeopathy-business-platform" // Ensure correct working directory
+	cmd.Env = append(os.Environ(), "POST_CONTENT="+req.Content)
+
+	// Capture output for debugging
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	if err := cmd.Start(); err != nil {
+		log.Printf("Failed to start automation script: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"error":   "Failed to start automation: " + err.Error(),
+		})
+		return
+	}
+
+	// Run in goroutine to log output after completion
+	go func() {
+		err := cmd.Wait()
+		if err != nil {
+			log.Printf("Automation script failed: %v\nStderr: %s\nStdout: %s", err, stderr.String(), out.String())
+		} else {
+			log.Printf("Automation script completed successfully.\nStdout: %s", out.String())
+		}
+	}()
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Browser automation started. Check your open browser window.",
 	})
 }
 

@@ -1,8 +1,7 @@
-
 import { useQuery } from "@tanstack/react-query";
-import { useDatabase } from "@/lib/db-client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Customer } from "@/types";
+import { api } from "@/lib/api";
 
 interface CustomerSelectorProps {
   selectedCustomerId: string;
@@ -22,14 +21,17 @@ const CustomerSelector = ({
   // Fetch customers data from the database
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ['customers'],
-    queryFn: () => useDatabase().getAll('customers')
+    queryFn: async () => {
+      const res = await api.customers.getAll();
+      return res.data?.data || [];
+    }
   });
-  
+
   // Filter customers by type if specified
-  const filteredCustomers = customerType === 'all' 
-    ? customers 
+  const filteredCustomers = customerType === 'all'
+    ? customers
     : customers.filter((customer: Customer) => customer.type === customerType);
-  
+
   return (
     <Select value={selectedCustomerId} onValueChange={onSelect}>
       <SelectTrigger className={className}>

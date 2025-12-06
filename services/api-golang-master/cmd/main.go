@@ -229,6 +229,7 @@ func main() {
 			social.POST("/gmb/validate", gmbHandler.ValidatePost)
 			social.POST("/gmb/post", gmbHandler.PostToGMB)
 			social.POST("/gmb/quick-post", gmbHandler.QuickPostToGMB) // Quick instant post
+			social.POST("/gmb/automate", gmbHandler.AutomatePost)     // Browser automation trigger
 
 			// NEW: Paginated publishing history
 			social.GET("/gmb/posts", gmbHandler.GetPostsHistory)            // Get paginated posts
@@ -574,6 +575,32 @@ func main() {
 			// AI Sales Forecasting
 			aiSalesHandler := handlers.NewAISalesHandler(db)
 			erp.POST("/ai/sales/forecast", aiSalesHandler.GetForecast)
+
+			// AI Finance
+			aiFinanceHandler := handlers.NewAIFinanceHandler(db)
+			erp.POST("/ai/finance/categorize", aiFinanceHandler.CategorizeExpense)
+
+			// AI Marketing
+			aiEmailHandler := handlers.NewAIEmailHandler(db)
+			erp.POST("/ai/marketing/email-generate", aiEmailHandler.GenerateEmail)
+
+			// AI Inventory
+			aiInventoryHandler := handlers.NewAIInventoryHandler(db)
+			erp.GET("/ai/inventory/demand-forecast", aiInventoryHandler.GetDemandForecast)
+
+			// AI CRM
+			aiCRMHandler := handlers.NewAICRMHandler(db)
+			erp.POST("/ai/crm/clv-predict", aiCRMHandler.PredictCLV)
+			erp.POST("/ai/crm/sentiment-analyze", aiCRMHandler.AnalyzeSentiment)
+
+			// AI HR
+			aiHRHandler := handlers.NewAIHRHandler(db)
+			erp.POST("/ai/hr/attrition-predict", aiHRHandler.PredictAttrition)
+			erp.POST("/ai/hr/resume-screen", aiHRHandler.ScreenResume)
+
+			// AI Manufacturing
+			aiManufacturingHandler := handlers.NewAIManufacturingHandler(db)
+			erp.POST("/ai/manufacturing/optimize", aiManufacturingHandler.OptimizeProduction)
 
 			// Price Management
 			erp.GET("/price-lists", priceListHandler.GetPriceLists)

@@ -4,33 +4,149 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 3.2s
+ ✓ Ready in 2s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 903ms (159 modules)
- ○ Compiling / ...
- ✓ Compiled / in 11.9s (1267 modules)
- GET / 200 in 12674ms
+ ✓ Compiled /middleware in 784ms (159 modules)
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 3.6s (2201 modules)
- GET /dashboard 200 in 3920ms
- GET /dashboard 200 in 175ms
- ○ Compiling /dashboard/stats ...
- ✓ Compiled /dashboard/stats in 549ms (2200 modules)
- GET /dashboard/stats 200 in 734ms
- ✓ Compiled in 458ms (986 modules)
- GET /dashboard/stats 200 in 269ms
- ✓ Compiled in 408ms (986 modules)
- GET /dashboard/stats 200 in 304ms
- ✓ Compiled in 528ms (986 modules)
- GET /dashboard/stats 200 in 133ms
- GET /dashboard/stats 200 in 754ms
- ✓ Compiled in 2.6s (2362 modules)
- GET /dashboard/stats 200 in 310ms
- ✓ Compiled in 656ms (986 modules)
- GET /dashboard/stats 200 in 219ms
- ✓ Compiled in 475ms (986 modules)
- GET /dashboard/stats 200 in 137ms
- ✓ Compiled in 546ms (986 modules)
- GET /dashboard/stats 200 in 248ms
- ✓ Compiled in 700ms (986 modules)
- GET /dashboard/stats 200 in 141ms
+ ✓ Compiled /dashboard in 10.1s (2191 modules)
+ GET /dashboard 200 in 11811ms
+ GET /dashboard 200 in 251ms
+ GET /dashboard 200 in 286ms
+ ○ Compiling /social/gmb ...
+ ✓ Compiled /social/gmb in 1330ms (2203 modules)
+ GET /social/gmb 200 in 1602ms
+ GET /social/gmb 200 in 129ms
+ GET /social/gmb 200 in 523ms
+ GET /social/gmb 200 in 315ms
+ ✓ Compiled in 1081ms (982 modules)
+ GET /social/gmb 200 in 281ms
+ GET /social/gmb 200 in 321ms
+ GET /social/gmb 200 in 379ms
+ ✓ Compiled in 1063ms (982 modules)
+ GET /social/gmb 200 in 257ms
+ GET /social/gmb 200 in 305ms
+ ✓ Compiled in 1443ms (982 modules)
+ GET /social/gmb 200 in 209ms
+ GET /social/gmb 200 in 324ms
+ ✓ Compiled in 1121ms (982 modules)
+ GET /social/gmb 200 in 180ms
+ GET /social/gmb 200 in 303ms
+ GET /social/gmb 200 in 272ms
+ ○ Compiling /social/gmb/posts ...
+ ✓ Compiled /social/gmb/posts in 2.2s (2236 modules)
+ GET /social/gmb/posts 200 in 2780ms
+ ✓ Compiled in 601ms (1004 modules)
+ GET /social/gmb/posts 200 in 202ms
+ GET /social/gmb/posts 200 in 619ms
+ ✓ Compiled in 1089ms (1004 modules)
+ GET /social/gmb/posts 200 in 238ms
+ GET /social/gmb/posts 200 in 322ms
+ GET /social/gmb/posts 200 in 365ms
+ ○ Compiling /social/gmb/calendar ...
+ ✓ Compiled /social/gmb/calendar in 2.1s (2353 modules)
+ GET /social/gmb/calendar 200 in 2356ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 651ms (2357 modules)
+ GET /api/social/gmb/schedule?start=2025-11-30T18:30:00.000Z&end=2025-12-31T18:29:59.999Z 404 in 1095ms
+ GET /api/social/gmb/schedule?start=2025-11-30T18:30:00.000Z&end=2025-12-31T18:29:59.999Z 404 in 151ms
+ GET /api/social/gmb/accounts 404 in 111ms
+ GET /social/gmb 200 in 403ms
+ ✓ Compiled in 1104ms (1062 modules)
+ GET /social/gmb 200 in 387ms
+ GET /social/gmb/calendar 200 in 389ms
+ ✓ Compiled in 1246ms (1062 modules)
+ GET /social/gmb 200 in 642ms
+ GET /social/gmb/calendar 200 in 643ms
+ ✓ Compiled in 1145ms (1062 modules)
+ GET /social/gmb 200 in 472ms
+ GET /social/gmb/calendar 200 in 475ms
+ ✓ Compiled in 500ms (1062 modules)
+ GET /social/gmb/calendar 200 in 715ms
+ GET /social/gmb 200 in 715ms
+ GET /social/gmb 200 in 337ms
+ ✓ Compiled in 1396ms (1062 modules)
+ GET /social/gmb 200 in 567ms
+ GET /social/gmb/calendar 200 in 570ms
+ ○ Compiling /social/gmb/content ...
+ ✓ Compiled /social/gmb/content in 2.4s (2369 modules)
+ GET /social/gmb/content 200 in 2693ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 514ms (1318 modules)
+ GET /api/social/gmb/content 404 in 943ms
+ GET /api/social/gmb/content 404 in 130ms
+ GET /social/gmb/content 200 in 333ms
+ GET /api/social/gmb/content 404 in 182ms
+ ○ Compiling /social/instagram ...
+ ✓ Compiled /social/instagram in 2.3s (2389 modules)
+ GET /social/instagram 200 in 2583ms
+ ○ Compiling /social/facebook ...
+ ✓ Compiled /social/facebook in 824ms (2385 modules)
+ ⨯ ReferenceError: config is not defined
+    at SocialFacebookPage (app/social/facebook/page.tsx:23:63)
+  21 |           </div>
+  22 |           <div>
+> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+     |                                                               ^
+  24 |             <p className="text-gray-500">{config.description}</p>
+  25 |           </div>
+  26 |         </div> {
+  digest: '3412998374'
+}
+ GET /social/facebook 500 in 1872ms
+ ○ Compiling /social/youtube ...
+ ✓ Compiled /social/youtube in 1466ms (2399 modules)
+ GET /social/ai-content 200 in 2751ms
+ GET /social/youtube 200 in 2071ms
+ ○ Compiling /social/accounts ...
+ ✓ Compiled /social/accounts in 675ms (2406 modules)
+ GET /social/accounts 200 in 1235ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: config is not defined
+    at SocialFacebookPage (app/social/facebook/page.tsx:23:63)
+  21 |           </div>
+  22 |           <div>
+> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+     |                                                               ^
+  24 |             <p className="text-gray-500">{config.description}</p>
+  25 |           </div>
+  26 |         </div> {
+  digest: '3412998374'
+}
+ GET /social/facebook 500 in 613ms
+ GET /social/gmb/content 200 in 181ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1266ms (834 modules)
+ GET /api/social/gmb/content 404 in 1607ms
+ GET /api/social/gmb/content 404 in 151ms
+ ○ Compiling /ai-campaigns/performance ...
+ ✓ Compiled /ai-campaigns/performance in 653ms (1914 modules)
+ GET /ai-campaigns/performance 200 in 849ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: config is not defined
+    at SocialFacebookPage (app/social/facebook/page.tsx:23:63)
+  21 |           </div>
+  22 |           <div>
+> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+     |                                                               ^
+  24 |             <p className="text-gray-500">{config.description}</p>
+  25 |           </div>
+  26 |         </div> {
+  digest: '3412998374'
+}
+ GET /social/facebook 500 in 447ms
+ ○ Compiling /marketing/whatsapp ...
+ ✓ Compiled /marketing/whatsapp in 865ms (1921 modules)
+ GET /marketing/whatsapp 200 in 1084ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: config is not defined
+    at SocialFacebookPage (app/social/facebook/page.tsx:23:63)
+  21 |           </div>
+  22 |           <div>
+> 23 |             <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+     |                                                               ^
+  24 |             <p className="text-gray-500">{config.description}</p>
+  25 |           </div>
+  26 |         </div> {
+  digest: '3412998374'
+}
+ GET /social/facebook 500 in 422ms

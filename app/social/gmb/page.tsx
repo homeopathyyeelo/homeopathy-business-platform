@@ -16,6 +16,7 @@ import {
   validateGMBContent,
   postGMBContent,
   initiateGmbOAuth,
+  automateGMBPost,
 } from "@/lib/hooks/gmb";
 
 type ScheduleMode = "now" | "daily" | "weekly" | "monthly";
@@ -171,6 +172,24 @@ export default function GMBPostAutomationCenter() {
       setStatusMessage("Error while posting to GMB");
     } finally {
       setIsPosting(false);
+    }
+  }
+
+  async function handleAutomate(postContent: string) {
+    if (!postContent) {
+      setStatusMessage("No content to post.");
+      return;
+    }
+    setStatusMessage("Starting browser automation...");
+    try {
+      const res = await automateGMBPost({ content: postContent });
+      if (res.success) {
+        setStatusMessage("Automation started! Check your browser window.");
+      } else {
+        setStatusMessage(res.error || "Failed to start automation.");
+      }
+    } catch (err) {
+      setStatusMessage("Error starting automation.");
     }
   }
 
@@ -507,8 +526,8 @@ export default function GMBPostAutomationCenter() {
                             item.status === "published"
                               ? "default"
                               : item.status === "failed"
-                              ? "destructive"
-                              : "outline"
+                                ? "destructive"
+                                : "outline"
                           }
                         >
                           {item.status}
@@ -519,7 +538,8 @@ export default function GMBPostAutomationCenter() {
                       </td>
                       <td className="py-2 pr-4 text-xs">{item.engagement?.views ?? 0}</td>
                       <td className="py-2 pr-4 text-xs">{item.engagement?.clicks ?? 0}</td>
-                      <td className="py-2 pr-4 text-xs">
+                      <td className="py-2 pr-4 text-xs">{item.engagement?.clicks ?? 0}</td>
+                      <td className="py-2 pr-4 text-xs flex gap-2">
                         <Button
                           variant="outline"
                           size="xs"
@@ -530,6 +550,13 @@ export default function GMBPostAutomationCenter() {
                           }}
                         >
                           Reuse
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="xs"
+                          onClick={() => handleAutomate(item.content || "")}
+                        >
+                          Auto-Post
                         </Button>
                       </td>
                     </tr>

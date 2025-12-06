@@ -138,3 +138,8 @@ export async function initiateGmbOAuth() {
   const res = await golangAPI.post('/api/social/gmb/oauth/initiate')
   return res.data as { success: boolean; authUrl?: string; error?: string }
 }
+
+export async function automateGMBPost(payload: { content: string }) {
+  const res = await golangAPI.post('/api/social/gmb/automate', payload)
+  return res.data as { success: boolean; message?: string; error?: string }
+}

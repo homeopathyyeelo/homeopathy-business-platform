@@ -18,24 +18,25 @@ func NewCustomerAnalyticsHandler(db *gorm.DB) *CustomerAnalyticsHandler {
 
 // Customer Profile with AI Insights
 type CustomerProfile struct {
-	ID              string               `json:"id"`
-	Name            string               `json:"name"`
-	Phone           string               `json:"phone"`
-	Email           string               `json:"email"`
-	GSTIN           string               `json:"gstin"`
-	TotalBills      int                  `json:"totalBills"`
-	TotalSpent      float64              `json:"totalSpent"`
-	Outstanding     float64              `json:"outstanding"`
-	CreditLimit     float64              `json:"creditLimit"`
-	LastVisit       *time.Time           `json:"lastVisit"`
-	AvgBillValue    float64              `json:"avgBillValue"`
-	TopProducts     []CustomerTopProduct `json:"topProducts"`
-	VisitPattern    VisitPattern         `json:"visitPattern"`
-	PaymentBehavior PaymentBehavior      `json:"paymentBehavior"`
-	AIInsights      []string             `json:"aiInsights"`
-	RiskScore       string               `json:"riskScore"`
-	LoyaltyPoints   int                  `json:"loyaltyPoints"`
-	CustomerType    string               `json:"customerType"`
+	ID                string               `json:"id"`
+	Name              string               `json:"name"`
+	Phone             string               `json:"phone"`
+	Email             string               `json:"email"`
+	GSTIN             string               `json:"gstin"`
+	TotalBills        int                  `json:"totalBills"`
+	TotalSpent        float64              `json:"totalSpent"`
+	Outstanding       float64              `json:"outstanding"`
+	CreditLimit       float64              `json:"creditLimit"`
+	LastVisit         *time.Time           `json:"lastVisit"`
+	AvgBillValue      float64              `json:"avgBillValue"`
+	TopProducts       []CustomerTopProduct `json:"topProducts"`
+	VisitPattern      VisitPattern         `json:"visitPattern"`
+	PaymentBehavior   PaymentBehavior      `json:"paymentBehavior"`
+	AIInsights        []string             `json:"aiInsights"`
+	RiskScore         string               `json:"riskScore"`
+	LoyaltyPoints     int                  `json:"loyaltyPoints"`
+	CustomerType      string               `json:"customerType"`
+	LastPurchaseItems []LastPurchaseItem   `json:"lastPurchaseItems"`
 }
 
 type CustomerTopProduct struct {
@@ -56,6 +57,12 @@ type PaymentBehavior struct {
 	PreferredMethod   string  `json:"preferredMethod"`
 	AvgPaymentDelay   int     `json:"avgPaymentDelay"`
 	CreditUtilization float64 `json:"creditUtilization"`
+}
+
+type LastPurchaseItem struct {
+	ProductName string  `json:"productName"`
+	Quantity    int     `json:"quantity"`
+	Price       float64 `json:"price"`
 }
 
 // GET /api/erp/customers/:id/profile
@@ -122,6 +129,20 @@ func (h *CustomerAnalyticsHandler) GetCustomerProfile(c *gin.Context) {
 		ORDER BY times_ordered DESC
 		LIMIT 5
 	`, customerID).Scan(&topProducts)
+
+	// Get last purchase items
+	var lastPurchaseItems []LastPurchaseItem
+	h.db.Raw(`
+		SELECT 
+			p.name as product_name, 
+			sii.quantity, 
+			sii.unit_price as price
+		FROM sales_invoice_items sii
+		JOIN products p ON p.id = sii.product_id
+		WHERE sii.invoice_id = (
+			SELECT id FROM sales_invoices WHERE customer_id = ? ORDER BY invoice_date DESC LIMIT 1
+		)
+	`, customerID).Scan(&lastPurchaseItems)
 
 	// Calculate visit pattern
 	var visitDays []struct {
@@ -195,24 +216,25 @@ func (h *CustomerAnalyticsHandler) GetCustomerProfile(c *gin.Context) {
 	}
 
 	profile := CustomerProfile{
-		ID:              customer.ID,
-		Name:            customer.Name,
-		Phone:           customer.Phone,
-		Email:           customer.Email,
-		GSTIN:           customer.GSTIN,
-		TotalBills:      stats.TotalBills,
-		TotalSpent:      stats.TotalSpent,
-		Outstanding:     stats.Outstanding,
-		CreditLimit:     customer.CreditLimit,
-		LastVisit:       stats.LastVisit,
-		AvgBillValue:    avgBillValue,
-		TopProducts:     topProducts,
-		VisitPattern:    visitPattern,
-		PaymentBehavior: paymentBehavior,
-		AIInsights:      aiInsights,
-		RiskScore:       riskScore,
-		LoyaltyPoints:   0, // TODO: Calculate
-		CustomerType:    customer.CustomerType,
+		ID:                customer.ID,
+		Name:              customer.Name,
+		Phone:             customer.Phone,
+		Email:             customer.Email,
+		GSTIN:             customer.GSTIN,
+		TotalBills:        stats.TotalBills,
+		TotalSpent:        stats.TotalSpent,
+		Outstanding:       stats.Outstanding,
+		CreditLimit:       customer.CreditLimit,
+		LastVisit:         stats.LastVisit,
+		AvgBillValue:      avgBillValue,
+		TopProducts:       topProducts,
+		VisitPattern:      visitPattern,
+		PaymentBehavior:   paymentBehavior,
+		AIInsights:        aiInsights,
+		RiskScore:         riskScore,
+		LoyaltyPoints:     0, // TODO: Calculate
+		CustomerType:      customer.CustomerType,
+		LastPurchaseItems: lastPurchaseItems,
 	}
 
 	c.JSON(http.StatusOK, gin.H{
