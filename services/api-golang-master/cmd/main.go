@@ -93,7 +93,10 @@ func main() {
 	systemHandler := handlers.NewSystemHandler()
 	userHandler := handlers.NewUserHandler()
 
-	socialHandler := handlers.NewSocialHandler(db)
+	// Initialize Marketing AI Service
+	marketingAIService := services.NewMarketingAIService(os.Getenv("AI_MODEL_URL"), "mistral")
+
+	socialHandler := handlers.NewSocialHandler(db, marketingAIService)
 	aiRecommendationHandler := handlers.NewAIRecommendationHandler(db)
 
 	// Settings handlers
@@ -123,7 +126,7 @@ func main() {
 	loyaltyHandler := handlers.NewLoyaltyHandler(db)
 	bulkOperationsHandler := handlers.NewBulkOperationsHandler(db)
 	outboxEventHandler := handlers.NewOutboxEventHandler()
-	whatsappHandler := handlers.NewWhatsAppHandler(db)
+	whatsappHandler := handlers.NewWhatsAppHandler(db, marketingAIService)
 	rackHandler := handlers.NewRackHandler()
 	invoiceParserHandler := handlers.NewInvoiceParserHandler(db)
 	financeHandler := handlers.NewFinanceHandler(db)
@@ -208,6 +211,8 @@ func main() {
 			social.POST("/accounts/connect", socialHandler.ConnectAccount)
 			social.GET("/posts", socialHandler.GetPosts)
 			social.POST("/posts", socialHandler.CreatePost)
+			social.POST("/post", socialHandler.MultiPost)               // Unified posting
+			social.POST("/ai-content", socialHandler.GenerateAIContent) // AI Content
 			social.GET("/analytics", socialHandler.GetAnalytics)
 
 			// GMB OAuth routes
@@ -865,6 +870,7 @@ func main() {
 		whatsapp := api.Group("/whatsapp", middleware.RequireAuth())
 		{
 			whatsapp.POST("/send", whatsappHandler.SendMessage)
+			whatsapp.POST("/bulk-send", whatsappHandler.BulkSendMessages) // Bulk send
 			whatsapp.GET("/templates", whatsappHandler.GetTemplates)
 			whatsapp.GET("/status/:messageId", whatsappHandler.GetMessageStatus)
 		}

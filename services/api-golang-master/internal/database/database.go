@@ -21,6 +21,8 @@ func Init(databaseURL string) *gorm.DB {
 		&models.GMBAccount{},
 		&models.GMBPost{},
 		&models.GMBHistory{},
+		&models.MarketingLog{},
+		&models.Customer{},
 	)
 	if err != nil {
 		log.Printf("Warning: Failed to auto-migrate GMB tables: %v", err)

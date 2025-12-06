@@ -173,6 +173,19 @@ export const api = {
     get: () => golangAPI.get('/api/erp/dashboard'),
   },
 
+  social: {
+    post: (data: any) => golangAPI.post('/api/social/post', data),
+    generateContent: (data: any) => golangAPI.post('/api/social/ai-content', data),
+    getAccounts: () => golangAPI.get('/api/social/accounts'),
+    getPosts: (params?: any) => golangAPI.get('/api/social/posts', { params }),
+    automateGMB: (data: any) => golangAPI.post('/api/social/gmb/automate', data),
+  },
+
+  whatsapp: {
+    sendBulk: (data: any) => golangAPI.post('/api/whatsapp/bulk-send', data),
+    getTemplates: () => golangAPI.get('/api/whatsapp/templates'),
+  },
+
   // ===== NESTJS API - Enterprise Features & Complex Business Logic =====
   // Advanced features, RBAC, complex workflows
   nest: {

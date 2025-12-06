@@ -182,6 +182,8 @@ type Customer struct {
 	OutstandingBalance float64 `json:"outstandingBalance" gorm:"default:0"`
 	LoyaltyPoints      int     `json:"loyaltyPoints" gorm:"default:0"`
 
+	OptOutMarketing bool `json:"optOutMarketing" gorm:"default:false"`
+
 	IsActive  bool      `json:"isActive" gorm:"default:true"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
@@ -1222,37 +1224,37 @@ type ProductImportStaging struct {
 
 // PrinterSettings stores printer configuration per counter/user
 type PrinterSettings struct {
-	ID             string     `json:"id" gorm:"type:uuid;primaryKey"`
-	CounterID      string     `json:"counterId" gorm:"not null;index"`
-	CounterName    string     `json:"counterName"`
-	UserID         *string    `json:"userId" gorm:"type:uuid;index"`
-	PaperSize      string     `json:"paperSize" gorm:"default:'3x5'"` // '3x5' or '4x6'
-	PrinterType    string     `json:"printerType" gorm:"default:'thermal'"` // 'thermal', 'a4', 'dot-matrix'
-	PrinterName    string     `json:"printerName"`
-	AutoPrint      bool       `json:"autoPrint" gorm:"default:false"`
-	CopiesPerPrint int        `json:"copiesPerPrint" gorm:"default:1"`
-	IsActive       bool       `json:"isActive" gorm:"default:true"`
-	CreatedAt      time.Time  `json:"createdAt"`
-	UpdatedAt      time.Time  `json:"updatedAt"`
+	ID             string    `json:"id" gorm:"type:uuid;primaryKey"`
+	CounterID      string    `json:"counterId" gorm:"not null;index"`
+	CounterName    string    `json:"counterName"`
+	UserID         *string   `json:"userId" gorm:"type:uuid;index"`
+	PaperSize      string    `json:"paperSize" gorm:"default:'3x5'"`       // '3x5' or '4x6'
+	PrinterType    string    `json:"printerType" gorm:"default:'thermal'"` // 'thermal', 'a4', 'dot-matrix'
+	PrinterName    string    `json:"printerName"`
+	AutoPrint      bool      `json:"autoPrint" gorm:"default:false"`
+	CopiesPerPrint int       `json:"copiesPerPrint" gorm:"default:1"`
+	IsActive       bool      `json:"isActive" gorm:"default:true"`
+	CreatedAt      time.Time `json:"createdAt"`
+	UpdatedAt      time.Time `json:"updatedAt"`
 }
 
 // BillSnapshot stores complete bill history
 type BillSnapshot struct {
-	ID              string     `json:"id" gorm:"type:uuid;primaryKey"`
-	ReferenceType   string     `json:"referenceType" gorm:"not null;index"` // 'ORDER', 'INVOICE', 'QUOTATION'
-	ReferenceID     string     `json:"referenceId" gorm:"type:uuid;not null;index"`
-	ReferenceNumber string     `json:"referenceNumber" gorm:"index"`
-	CustomerID      *string    `json:"customerId" gorm:"type:uuid;index"`
-	CustomerName    string     `json:"customerName"`
-	CustomerPhone   string     `json:"customerPhone"`
-	
+	ID              string  `json:"id" gorm:"type:uuid;primaryKey"`
+	ReferenceType   string  `json:"referenceType" gorm:"not null;index"` // 'ORDER', 'INVOICE', 'QUOTATION'
+	ReferenceID     string  `json:"referenceId" gorm:"type:uuid;not null;index"`
+	ReferenceNumber string  `json:"referenceNumber" gorm:"index"`
+	CustomerID      *string `json:"customerId" gorm:"type:uuid;index"`
+	CustomerName    string  `json:"customerName"`
+	CustomerPhone   string  `json:"customerPhone"`
+
 	// Bill Details
-	PaperSize      string  `json:"paperSize" gorm:"not null"`
-	BillData       string  `json:"billData" gorm:"type:jsonb;not null"` // Complete bill structure
-	PreviewText    string  `json:"previewText" gorm:"type:text"` // Plain text version
-	HTMLContent    string  `json:"htmlContent" gorm:"type:text"` // HTML version
-	PDFURL         string  `json:"pdfUrl"` // If PDF generated
-	
+	PaperSize   string `json:"paperSize" gorm:"not null"`
+	BillData    string `json:"billData" gorm:"type:jsonb;not null"` // Complete bill structure
+	PreviewText string `json:"previewText" gorm:"type:text"`        // Plain text version
+	HTMLContent string `json:"htmlContent" gorm:"type:text"`        // HTML version
+	PDFURL      string `json:"pdfUrl"`                              // If PDF generated
+
 	// Amounts
 	Subtotal       float64 `json:"subtotal"`
 	DiscountAmount float64 `json:"discountAmount"`
@@ -1260,16 +1262,16 @@ type BillSnapshot struct {
 	TotalAmount    float64 `json:"totalAmount"`
 	PaidAmount     float64 `json:"paidAmount"`
 	BalanceAmount  float64 `json:"balanceAmount"`
-	
+
 	// Status tracking
-	Status        string     `json:"status" gorm:"default:'pending';index"` // 'pending', 'completed', 'cancelled'
-	PaymentStatus string     `json:"paymentStatus" gorm:"default:'pending'"` // 'pending', 'partial', 'paid'
-	
+	Status        string `json:"status" gorm:"default:'pending';index"`  // 'pending', 'completed', 'cancelled'
+	PaymentStatus string `json:"paymentStatus" gorm:"default:'pending'"` // 'pending', 'partial', 'paid'
+
 	// Metadata
-	PrintedAt       *time.Time `json:"printedAt"`
-	EmailedAt       *time.Time `json:"emailedAt"`
-	WhatsAppSentAt  *time.Time `json:"whatsappSentAt"`
-	
+	PrintedAt      *time.Time `json:"printedAt"`
+	EmailedAt      *time.Time `json:"emailedAt"`
+	WhatsAppSentAt *time.Time `json:"whatsappSentAt"`
+
 	CreatedAt time.Time `json:"createdAt"`
 	CreatedBy string    `json:"createdBy"`
 }
